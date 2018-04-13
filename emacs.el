@@ -50,7 +50,7 @@
  '(org-agenda-files (quote ("~/file.org")))
  '(package-selected-packages
  (quote
-  (diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode jedi qt-pro-mode opencl-mode flyspell-popup alert anaconda-mode async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck jedi-core js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-statistics company-quickhelp company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex company-anaconda cmake-project bbdb-vcard bbdb-handy)))
+  (highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode jedi qt-pro-mode opencl-mode flyspell-popup alert anaconda-mode async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck jedi-core js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex company-anaconda cmake-project bbdb-vcard bbdb-handy)))
  '(same-window-buffer-names
  (quote
   ("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*")))
@@ -313,6 +313,22 @@
    )
   )
 
+(use-package highlight-escape-sequences :ensure t
+  :config
+  (add-hook 'prog-mode-hook 'hes-mode)
+  (custom-set-faces '(hes-escape-backslash-face
+					  ((t (:foreground "magenta")))))
+  (custom-set-faces '(hes-escape-sequence-face
+					  ((t (:foreground "magenta")))))
+  )
+
+(use-package highlight-numbers :ensure t
+  :config
+  (add-hook 'prog-mode-hook 'highlight-numbers-mode)
+    (custom-set-faces '(highlight-numbers-number
+						((t (:foreground "red")))))
+  )
+
 ;;____________________________________________________________
 ;; Resaltar parentesis a pares permanentemente... no me gusto
 ;;(use-package rainbow-delimiters :ensure t
@@ -341,13 +357,13 @@
   (use-package flyspell-popup :ensure t
 	:bind ("C-; . flyspell-popup-correct")
 	)
+
   (use-package flyspell-correct-ivy
 	:commands (flyspell-correct-ivy)
 	:bind (:map flyspell-mode-map
 				("C-;" . 'flyspell-correct-previous-word-generic))
 	:init
 	(setq flyspell-correct-interface #'flyspell-correct-ivy))
-
   )
 
 ;;________________________________
@@ -388,6 +404,13 @@
 		 ("C-c d" . cscope-find-global-definition)
 		 ("C-c f" . cscope-find-this-symbol)
 		 ("C-c *" . cscope-pop-mark)))
+
+;;_______________________________________
+;; company-c-headers
+
+(use-package company-c-headers :ensure t
+  :config
+  (add-to-list 'company-backends 'company-c-headers))
 
 ;;_______________________________________
 ;; C common mode (for all c-like languajes)
@@ -529,6 +552,7 @@
   :mode "\\.go\\'"
   :config
   (use-package company-go :ensure t
+	:after company
     :config
     (add-to-list 'company-backends 'company-go))
 
@@ -538,7 +562,12 @@
 ;;________________________________
 ;; lua language
 (use-package lua-mode :ensure t
-  :mode "\\.lua\\'")
+  :mode "\\.lua\\'"
+  :config
+  (use-package company-lua :ensure t
+	:after company
+	:config
+	(add-to-list 'company-backends 'company-c-headers)))
 
 ;;________________________________
 ;; systemd mode
@@ -648,7 +677,7 @@
 ;; Auto completamiento
 
 (use-package yasnippet :ensure t
-  :diminish yas-minor-mode
+  :diminish yas
   :init
   (yas-global-mode 1)
   (yas-reload-all)
@@ -656,10 +685,9 @@
   (message "Loaded yasnippet"))
 
 (use-package company :ensure t
-  :defer 10
-  :diminish company-mode
+  :defer t
   :bind (("M-RET" . company-complete))
-  :preface
+  :init (global-company-mode)
   ;; enable yasnippet everywhere
 ;;  (defvar company-mode/enable-yas t "Enable yasnippet for all backends.")
 ;;  (defun company-mode/backend-with-yas (backend)
@@ -670,17 +698,20 @@
 ;;	  (append (if (consp backend) backend (list backend))
 ;;			  '(:with company-yasnippet))))
   :config
+  (bind-key [remap completion-at-point] #'company-complete company-mode-map)
+
   (setq company-idle-delay 0              ;; no delay for autocomplete
 		company-minimum-prefix-length 2
-		company-tooltip-limit 20)
-  (setq company-backends
-		'((company-files          ; files & directory
-		   company-keywords       ; keywords
-		   company-capf
-		   company-yasnippet
-		   )
-		  (company-abbrev company-dabbrev)
-		  ))
+		company-tooltip-limit 20
+		company-show-numbers t)
+;;  (setq-default company-backends
+;;				'((company-files          ; files & directory
+;;				   company-keywords       ; keywords
+;;				   company-capf
+;;				   company-yasnippet
+;;				   )
+;;				  (company-abbrev company-dabbrev)
+;;				  ))
   (global-company-mode t)
   )
 
@@ -700,8 +731,10 @@
 		 (rtags-enable-standard-keybindings)
 
  		 (use-package company-rtags
+		   :after company
  		   :config
- 		   (push 'company-rtags company-backends))
+		   (add-to-list 'company-backends 'company-rtags))
+
 
  		 (use-package flycheck-rtags
  		   :after flycheck
@@ -713,7 +746,9 @@
 				  (setq-local flycheck-check-syntax-automatically nil)
  				  (setq rtags-enable-unsaved-reparsing t)
  				  (message "Loaded flycheck-rtags"))
- 		   (add-hook 'rtags-mode-hook #'my/flycheck-rtags-hook)))
+ 		   (add-hook 'rtags-mode-hook #'my/flycheck-rtags-hook))
+		 (message "Loading my rtags-common-hook")
+		 )
 
   (add-hook 'c-mode-common-hook #'my/rtags-common-hook))
 
@@ -880,8 +915,9 @@
 	   (require 'company-math)
 	   (require 'company-auctex)
 	   (company-auctex-init)
-       (add-to-list 'company-backends '(company-math-symbols-latex
-                                        company-latex-commands))
+	   (with-eval-after-load 'company
+		 (add-to-list 'company-backends '(company-math-symbols-latex
+										  company-latex-commands)))
        (flyspell-buffer)
        (message "Loaded my Latex mode")
        )
@@ -974,7 +1010,11 @@
 		enable-recursive-minibuffers t)
 
   (use-package swiper :ensure t
-	:bind ("C-s" . swiper))
+	:bind ("C-s" . swiper)
+	:config
+	(custom-set-faces '(swiper-line-face
+						((t (:inverse-video t)))))
+	)
 
   (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
 
@@ -1013,17 +1053,16 @@
 ;;______________________________________
 ;; CMake
 (use-package cmake-mode :ensure t
+  :after company
+  :diminish cmake-mode
   :mode ("/CMakeLists\\.txt\\'" "\\.cmake\\'")
   :init
-  :config
-  (add-to-list 'company-backends 'company-cmake))
-
-(use-package cmake-font-lock :ensure t
-  :after (cmake-mode)
-  :config
-  (add-hook 'cmake-mode-hook #'cmake-font-lock-activate)
-  (cmake-font-lock-activate)
-  )
+  (use-package cmake-font-lock :ensure t
+	:init
+	(add-hook 'cmake-mode-hook 'cmake-font-lock-activate)
+	)
+  (add-to-list 'company-backends 'company-cmake)
+)
 ;;______________________________________
 ;; Cobol
 (use-package cobol-mode :ensure t
