@@ -50,7 +50,7 @@
  '(org-agenda-files (quote ("~/file.org")))
  '(package-selected-packages
  (quote
-  (magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode jedi qt-pro-mode opencl-mode flyspell-popup alert anaconda-mode async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck jedi-core js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-statistics company-quickhelp company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex company-anaconda cmake-project bbdb-vcard bbdb-handy)))
+  (diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode jedi qt-pro-mode opencl-mode flyspell-popup alert anaconda-mode async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck jedi-core js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-statistics company-quickhelp company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex company-anaconda cmake-project bbdb-vcard bbdb-handy)))
  '(same-window-buffer-names
  (quote
   ("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*")))
@@ -341,11 +341,31 @@
   (use-package flyspell-popup :ensure t
 	:bind ("C-; . flyspell-popup-correct")
 	)
+  (use-package flyspell-correct-ivy
+	:commands (flyspell-correct-ivy)
+	:bind (:map flyspell-mode-map
+				("C-;" . 'flyspell-correct-previous-word-generic))
+	:init
+	(setq flyspell-correct-interface #'flyspell-correct-ivy))
+
   )
 
 ;;________________________________
 ;; {c/c++}-mode
 ;;________________________________
+
+;;_______________________________________
+;; Mark lined linger 80
+
+(use-package column-enforce-mode :ensure t
+  :hook prog-mode
+  :config
+  (column-enforce-mode t)
+  (setq column-enforce-comments nil)
+  ;;(setq column-enforce-column <your desired column>)
+  (custom-set-faces '(column-enforce-face
+					  ((t (:background "gray90" :foreground "black")))))
+  )
 
 ;;_______________________________________
 ;; Indent with tabs align with spaces
@@ -358,6 +378,16 @@
 ;;(use-package cmake-ide :ensure t
 ;;  :config
 ;;  (add-hook 'c-mode-common-hook #'cmake-ide-setup))
+
+;;_______________________________________
+;; Cscope for c-mode
+(use-package xcscope :ensure t
+  :init
+  (add-hook 'c-mode-common-hook 'cscope-setup)
+  :bind (("C-c ," . cscope-find-global-definition-no-prompting)
+		 ("C-c d" . cscope-find-global-definition)
+		 ("C-c f" . cscope-find-this-symbol)
+		 ("C-c *" . cscope-pop-mark)))
 
 ;;_______________________________________
 ;; C common mode (for all c-like languajes)
@@ -410,7 +440,6 @@
 ;; C++ mode
 
 (defun my/c++-mode-hook () "My C++-Mode hook function."
-       ;;       (my/c-mode-hook)
 	   (setq flycheck-gcc-language-standard "c++11")
 	   (require 'modern-cpp-font-lock)
 	   (modern-c++-font-lock-global-mode t)
@@ -767,7 +796,9 @@
   :defer t
   :config
   (setq langtool-default-language "en")
-  (setq langtool-language-tool-jar "/home/ergo/.emacs.d/LanguageTool-3.7/languagetool-commandline.jar"))
+  (setq langtool-language-tool-jar "/home/ergo/gits/languagetool/languagetool-standalone/target/LanguageTool-4.2-SNAPSHOT/LanguageTool-4.2-SNAPSHOT/languagetool-commandline.jar")
+  ;;(setq langtool-language-tool-jar "/home/ergo/.emacs.d/LanguageTool-3.7/languagetool-commandline.jar")
+  )
 
 ;;______________________________________
 ;; EMMS mode.
@@ -932,29 +963,43 @@
 ;;______________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
 (use-package ivy :ensure t
+  :bind ("C-c C-r" . ivy-resume)
   :config
   (defalias 'list-buffers 'ibuffer) ; make ibuffer default
   (ivy-mode 1)
+
   (setq ivy-use-virtual-buffers t
 		ivy-count-format "(%d/%d) "
-		ivy-wrap t)
-  (setq enable-recursive-minibuffers t)
-  (global-set-key (kbd "C-s") 'swiper)
-  (global-set-key (kbd "C-c C-r") 'ivy-resume)
-  (global-set-key (kbd "<f6>") 'ivy-resume)
-  (global-set-key (kbd "M-x") 'counsel-M-x)
-  (global-set-key (kbd "C-x C-f") 'counsel-find-file)
-  (global-set-key (kbd "<f1> f") 'counsel-describe-function)
-  (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-  (global-set-key (kbd "<f1> l") 'counsel-find-library)
-  (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-  (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+		ivy-wrap t
+		enable-recursive-minibuffers t)
+
+  (use-package swiper :ensure t
+	:bind ("C-s" . swiper))
+
+  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
+
+(use-package counsel :ensure t
+  :config
+  (counsel-mode 1)
+  (global-set-key (kbd "C-c k") 'counsel-ag)
   (global-set-key (kbd "C-c g") 'counsel-git)
   (global-set-key (kbd "C-c j") 'counsel-git-grep)
-  (global-set-key (kbd "C-c k") 'counsel-ag)
   (global-set-key (kbd "C-x l") 'counsel-locate)
-  (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
+
+;;  (use-package counsel-gtags :ensure t
+;;	:diminish counsel-gtags-mode
+;;	:hook c-mode-common
+;;	:config
+;;	(counsel-gtags-mode 1)
+;;	(add-to-list 'company-backends 'company-gtags)
+;;
+;;	(define-key counsel-gtags-mode-map (kbd "C-c d") 'counsel-gtags-find-definition)
+;;	(define-key counsel-gtags-mode-map (kbd "C-c r") 'counsel-gtags-find-reference)
+;;	(define-key counsel-gtags-mode-map (kbd "C-c s") 'counsel-gtags-find-symbol)
+;;	(define-key counsel-gtags-mode-map (kbd "C-c <") 'counsel-gtags-go-backward)
+;;	(define-key counsel-gtags-mode-map (kbd "C-c >") 'counsel-gtags-go-forward)
+;;	)
+  )
 
 ;;______________________________________
 ;; Magit
@@ -1115,4 +1160,3 @@
 
 (provide 'init)
 ;;; init.el ends here
-
