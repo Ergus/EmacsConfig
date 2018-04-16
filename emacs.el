@@ -27,7 +27,11 @@
 (require 'benchmark-init)
 (add-hook 'after-init-hook 'benchmark-init/deactivate)
 
-(require 'mocp)
+;;________________________________________________________________
+;; Mocp
+(autoload 'mocp
+       "mocp" "mocp in emacs" t)
+
 ;;________________________________________________________________
 ;; Dired-mode settings
 
@@ -40,8 +44,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
- (quote
-  ("a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
+   (quote
+	("a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
  '(dired-recursive-copies (quote top))
  '(dired-recursive-deletes (quote top))
  '(ecb-options-version "2.50")
@@ -49,11 +53,11 @@
  '(mumamo-submode-indent-offset 4)
  '(org-agenda-files (quote ("~/file.org")))
  '(package-selected-packages
- (quote
-  (highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode jedi qt-pro-mode opencl-mode flyspell-popup alert anaconda-mode async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck jedi-core js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex company-anaconda cmake-project bbdb-vcard bbdb-handy)))
+   (quote
+	(pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode jedi qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck jedi-core js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
  '(same-window-buffer-names
- (quote
-  ("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*")))
+   (quote
+	("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*")))
  '(show-paren-mode t))
 
 ;;    General settings
@@ -141,9 +145,9 @@
 ;;  More Misc
 ;;____________________________________________________________
 (setq-default vc-follow-symlinks nil;; Open links not open
-	      transient-mark-mode t ;; Highlight marked region
-	      line-number-mode t    ;; Display line numbers
-	      column-number-mode t) ;; Display column numbers
+			  transient-mark-mode t ;; Highlight marked region
+			  line-number-mode t    ;; Display line numbers
+			  column-number-mode t) ;; Display column numbers
 
 (global-linum-mode 1)  ;; Numero de linea a la izquierda
 (setq-default linum-format "%4d\u2502") ;; Formato linea
@@ -325,8 +329,8 @@
 (use-package highlight-numbers :ensure t
   :config
   (add-hook 'prog-mode-hook 'highlight-numbers-mode)
-    (custom-set-faces '(highlight-numbers-number
-						((t (:foreground "red")))))
+  (custom-set-faces '(highlight-numbers-number
+					  ((t (:foreground "red")))))
   )
 
 ;;____________________________________________________________
@@ -529,7 +533,7 @@
     :commands (flycheck-julia-setup)
     :init
     (add-hook 'julia-mode-hook #'flycheck-mode)
-  ))
+	))
 
 ;;________________________________
 ;; Rust Mode
@@ -689,14 +693,14 @@
   :bind (("M-RET" . company-complete))
   :init (global-company-mode)
   ;; enable yasnippet everywhere
-;;  (defvar company-mode/enable-yas t "Enable yasnippet for all backends.")
-;;  (defun company-mode/backend-with-yas (backend)
-;;	(if (or
-;;		 (not company-mode/enable-yas)
-;;		 (and (listp backend) (member 'company-yasnippet backend)))
-;;		backend
-;;	  (append (if (consp backend) backend (list backend))
-;;			  '(:with company-yasnippet))))
+  ;;  (defvar company-mode/enable-yas t "Enable yasnippet for all backends.")
+  ;;  (defun company-mode/backend-with-yas (backend)
+  ;;	(if (or
+  ;;		 (not company-mode/enable-yas)
+  ;;		 (and (listp backend) (member 'company-yasnippet backend)))
+  ;;		backend
+  ;;	  (append (if (consp backend) backend (list backend))
+  ;;			  '(:with company-yasnippet))))
   :config
   (bind-key [remap completion-at-point] #'company-complete company-mode-map)
 
@@ -704,14 +708,14 @@
 		company-minimum-prefix-length 2
 		company-tooltip-limit 20
 		company-show-numbers t)
-;;  (setq-default company-backends
-;;				'((company-files          ; files & directory
-;;				   company-keywords       ; keywords
-;;				   company-capf
-;;				   company-yasnippet
-;;				   )
-;;				  (company-abbrev company-dabbrev)
-;;				  ))
+  ;;  (setq-default company-backends
+  ;;				'((company-files          ; files & directory
+  ;;				   company-keywords       ; keywords
+  ;;				   company-capf
+  ;;				   company-yasnippet
+  ;;				   )
+  ;;				  (company-abbrev company-dabbrev)
+  ;;				  ))
   (global-company-mode t)
   )
 
@@ -812,12 +816,12 @@
   :init (global-flycheck-mode)
   :config
 
-;;  (require 'flycheck-cstyle)
-;;  (flycheck-cstyle-setup)
-;;  (flycheck-add-next-checker 'c/c++-clang '(warning . cstyle))
+  ;;  (require 'flycheck-cstyle)
+  ;;  (flycheck-cstyle-setup)
+  ;;  (flycheck-add-next-checker 'c/c++-clang '(warning . cstyle))
 
-;;  (require 'flycheck-clang-analyzer)
-;;  (flycheck-clang-analyzer-setup)
+  ;;  (require 'flycheck-clang-analyzer)
+  ;;  (flycheck-clang-analyzer-setup)
 
   (use-package flycheck-color-mode-line :ensure t
 	:init
@@ -942,14 +946,39 @@
 
 ;;______________________________________
 ;; Python mode
-(use-package anaconda-mode :ensure t
-  :hook python-mode
-  :init (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+(use-package elpy :ensure t
+  :init
+  (add-hook 'python-mode-hook #'elpy-enable)
   :config
+  (setq python-shell-interpreter "ipython"
+		python-shell-interpreter-args "-i --simple-prompt")
 
-  (use-package company-anaconda :ensure t
-    :init (add-to-list 'company-backends 'company-anaconda))
+  (use-package pyenv-mode :ensure t
+	:hook python-mode)
+
+  (setq python-shell-interpreter "ipython3"
+		python-shell-interpreter-args "-i --simple-prompt")
+
+  (use-package flycheck-pycheckers :ensure t
+	:after flycheck
+	:config
+	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))
   )
+
+(use-package jedi :ensure t
+  :init
+  (add-hook 'python-mode-hook 'jedi:setup)
+  :config
+  (setq jedi:complete-on-dot t)
+  (setq jedi:use-shortcuts t)
+
+  (use-package company-jedi :ensure t
+	:config
+	(add-to-list 'company-backends 'company-jedi))
+
+  (setq jedi:environment-virtualenv
+		(list (expand-file-name "~/.emacs.d/.python-environments/"))))
+;;
 
 ;;______________________________________
 ;; IDO siempre (probare un tiempo con helm/ivy)
@@ -1026,19 +1055,21 @@
   (global-set-key (kbd "C-c j") 'counsel-git-grep)
   (global-set-key (kbd "C-x l") 'counsel-locate)
 
-;;  (use-package counsel-gtags :ensure t
-;;	:diminish counsel-gtags-mode
-;;	:hook c-mode-common
-;;	:config
-;;	(counsel-gtags-mode 1)
-;;	(add-to-list 'company-backends 'company-gtags)
-;;
-;;	(define-key counsel-gtags-mode-map (kbd "C-c d") 'counsel-gtags-find-definition)
-;;	(define-key counsel-gtags-mode-map (kbd "C-c r") 'counsel-gtags-find-reference)
-;;	(define-key counsel-gtags-mode-map (kbd "C-c s") 'counsel-gtags-find-symbol)
-;;	(define-key counsel-gtags-mode-map (kbd "C-c <") 'counsel-gtags-go-backward)
-;;	(define-key counsel-gtags-mode-map (kbd "C-c >") 'counsel-gtags-go-forward)
-;;	)
+  (use-package counsel-gtags :ensure t
+	:config
+	(defun my/counsel-gtags-hook () "My counsel-gtags mode hook"
+		   (counsel-gtags-mode 1)
+		   (add-to-list 'company-backends 'company-gtags)
+
+		   (define-key counsel-gtags-mode-map (kbd "C-c d") 'counsel-gtags-find-definition)
+		   (define-key counsel-gtags-mode-map (kbd "C-c r") 'counsel-gtags-find-reference)
+		   (define-key counsel-gtags-mode-map (kbd "C-c s") 'counsel-gtags-find-symbol)
+		   (define-key counsel-gtags-mode-map (kbd "C-c <") 'counsel-gtags-go-backward)
+		   (define-key counsel-gtags-mode-map (kbd "C-c >") 'counsel-gtags-go-forward)
+		   (message "Loading my gtags mode hook")
+		   )
+	(add-hook 'c-mode-common-hook 'my/counsel-gtags-hook)
+	)
   )
 
 ;;______________________________________
@@ -1062,7 +1093,7 @@
 	(add-hook 'cmake-mode-hook 'cmake-font-lock-activate)
 	)
   (add-to-list 'company-backends 'company-cmake)
-)
+  )
 ;;______________________________________
 ;; Cobol
 (use-package cobol-mode :ensure t
@@ -1085,20 +1116,20 @@
   :defer t
   :config
   (defun jabber () "My jabber loader function."
-	 (interactive)
-	 (jabber-connect)
-	 (switch-to-buffer "*-jabber-*")
-	 )
+		 (interactive)
+		 (jabber-connect)
+		 (switch-to-buffer "*-jabber-*")
+		 )
 
   (setq jabber-account-list
-	'(
-	  ("kratsbinovish@gmail.com"
-	   (:network-server . "talk.google.com")
-	   (:connection-type . ssl)
-	   (:password . "***")
-	   )
-	  )
-	)
+		'(
+		  ("kratsbinovish@gmail.com"
+		   (:network-server . "talk.google.com")
+		   (:connection-type . ssl)
+		   (:password . "***")
+		   )
+		  )
+		)
   )
 
 ;;______________________________________
@@ -1116,13 +1147,13 @@
   ;;(exwm-config-default)
 
   (setq exwm-workspace-show-all-buffers t ;; share exwm buffers in all workspaces
-	exwm-layout-show-all-buffers t
-	exwm-workspace-number 2)          ;; 0 - 3, zero based
+		exwm-layout-show-all-buffers t
+		exwm-workspace-number 2)          ;; 0 - 3, zero based
 
   (exwm-input-set-key (kbd "s-&")
-		      (lambda (command)
-			(interactive (list (read-shell-command "$ ")))
-			(start-process-shell-command command nil command)))
+					  (lambda (command)
+						(interactive (list (read-shell-command "$ ")))
+						(start-process-shell-command command nil command)))
 
 
   (use-package exwm-randr
@@ -1130,11 +1161,11 @@
     ;;(setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "DP1" 2 "DP2"))
     (setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "HDMI1"))
     (add-hook 'exwm-randr-screen-change-hook
-	      (lambda ()
-		(start-process-shell-command
-		 "xrandr" nil "xrandr --output VIRTUAL1 --off --output eDP1 --primary --mode 1366x768 --pos 0x312 --rotate normal --output DP1 --off --output HDMI2 --off --output HDMI1 --mode 1920x1080 --pos 1366x0 --rotate normal --output DP2 --off"
-		 ;;"xrandr" nil "xrandr --output VIRTUAL1 --off --output eDP1 --primary --mode 1366x768 --pos 554x1080 --rotate normal --output DP1 --mode 1680x1050 --pos 1920x304 --rotate normal --output HDMI2 --off --output HDMI1 --off --output DP2 --mode 1920x1080 --pos 0x0 --rotate normal"
-		 )))
+			  (lambda ()
+				(start-process-shell-command
+				 "xrandr" nil "xrandr --output VIRTUAL1 --off --output eDP1 --primary --mode 1366x768 --pos 0x312 --rotate normal --output DP1 --off --output HDMI2 --off --output HDMI1 --mode 1920x1080 --pos 1366x0 --rotate normal --output DP2 --off"
+				 ;;"xrandr" nil "xrandr --output VIRTUAL1 --off --output eDP1 --primary --mode 1366x768 --pos 554x1080 --rotate normal --output DP1 --mode 1680x1050 --pos 1920x304 --rotate normal --output HDMI2 --off --output HDMI1 --off --output DP2 --mode 1920x1080 --pos 0x0 --rotate normal"
+				 )))
 
     (exwm-randr-enable)
     )
@@ -1147,9 +1178,9 @@
 
 
   (add-hook 'exwm-manage-finish-hook
-	    (lambda ()
-	      (when-let ((target (cdr (assoc exwm-class-name exwm-workspace-window-assignments))))
-		(exwm-workspace-move-window target))))
+			(lambda ()
+			  (when-let ((target (cdr (assoc exwm-class-name exwm-workspace-window-assignments))))
+				(exwm-workspace-move-window target))))
   (exwm-enable)
   )
 
