@@ -44,8 +44,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
-   (quote
-	("a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
+ (quote
+  ("84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
  '(dired-recursive-copies (quote top))
  '(dired-recursive-deletes (quote top))
  '(ecb-options-version "2.50")
@@ -53,11 +53,12 @@
  '(mumamo-submode-indent-offset 4)
  '(org-agenda-files (quote ("~/file.org")))
  '(package-selected-packages
-   (quote
-	(pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode jedi qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck jedi-core js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
+ (quote
+  (smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode jedi qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck jedi-core js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
+ '(paradox-github-token t)
  '(same-window-buffer-names
-   (quote
-	("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*")))
+ (quote
+  ("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*")))
  '(show-paren-mode t))
 
 ;;    General settings
@@ -77,8 +78,16 @@
 
 ;;____________________________________________________________
 ;; Status bar (mode line in emacs)
-(sml/setup)
-(setq sml/theme 'light)
+
+;;(use-package smart-mode-line :ensure t
+;;  :config
+;;  (setq sml/theme 'powerline)
+;;  (sml/setup)
+;;  )
+
+(use-package powerline :ensure t
+  :config
+  (powerline-default-theme))
 
 ;;____________________________________________________________
 ;;  Font lock
@@ -268,8 +277,8 @@
        (set-face-attribute 'region nil :background "white" :foreground "black") ;; Seleccion C-space
        (set-face-attribute 'linum nil :background "black" :foreground "green")  ;; resalta la linea actual
 	   ;; color de la linea en el panel activo
-	   (set-face-attribute  'mode-line nil :foreground "black" :background "gray90":box '(:line-width 1 :style released-button))
-	   (set-face-attribute  'mode-line-inactive nil :foreground "white" :background "gray10" :box '(:line-width 1 :style released-button))
+;;	   (set-face-attribute  'mode-line nil :foreground "black" :background "gray90":box '(:line-width 1 :style released-button))
+;;	   (set-face-attribute  'mode-line-inactive nil :foreground "black" :background "gray70" :box '(:line-width 1 :style released-button))
        )
 
 (my/colors)
@@ -289,8 +298,9 @@
 (use-package highlight-parentheses :ensure t
   :config
   (add-hook 'prog-mode-hook 'highlight-parentheses-mode)
-  (custom-set-faces
-   '(hl-paren-face ((t (:weight ultra-bold))) t))
+
+  (set-face-attribute 'hl-paren-face nil :weight 'ultra-bold)
+
   (setq hl-paren-colors
 		(quote
 		 ("brightgreen" "IndianRed1" "IndianRed3" "IndianRed4"))))
@@ -301,36 +311,27 @@
   :config
   (define-key function-key-map "\e[1;5R" [C-f3])
   (global-set-key (kbd "C-<f3>") 'highlight-blocks-now)
-  (custom-set-faces
-   ;; custom-set-faces was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   '(highlight-blocks-depth-2-face ((t (:background "gray15"))))
-   '(highlight-blocks-depth-3-face ((t (:background "gray20"))))
-   '(highlight-blocks-depth-4-face ((t (:background "gray25"))))
-   '(highlight-blocks-depth-5-face ((t (:background "gray30"))))
-   '(highlight-blocks-depth-6-face ((t (:background "gray35"))))
-   '(highlight-blocks-depth-7-face ((t (:background "gray40"))))
-   '(highlight-blocks-depth-8-face ((t (:background "gray45"))))
-   '(highlight-blocks-depth-9-face ((t (:background "gray50"))))
-   )
+
+  (set-face-attribute 'highlight-blocks-depth-2-face nil :background "gray15")
+  (set-face-attribute 'highlight-blocks-depth-3-face nil :background "gray20")
+  (set-face-attribute 'highlight-blocks-depth-4-face nil :background "gray25")
+  (set-face-attribute 'highlight-blocks-depth-5-face nil :background "gray30")
+  (set-face-attribute 'highlight-blocks-depth-6-face nil :background "gray35")
+  (set-face-attribute 'highlight-blocks-depth-7-face nil :background "gray40")
+  (set-face-attribute 'highlight-blocks-depth-8-face nil :background "gray45")
+  (set-face-attribute 'highlight-blocks-depth-9-face nil :background "gray50")
   )
 
 (use-package highlight-escape-sequences :ensure t
   :config
   (add-hook 'prog-mode-hook 'hes-mode)
-  (custom-set-faces '(hes-escape-backslash-face
-					  ((t (:foreground "magenta")))))
-  (custom-set-faces '(hes-escape-sequence-face
-					  ((t (:foreground "magenta")))))
-  )
+  (set-face-attribute 'hes-escape-backslash-face nil :foreground "magenta")
+  (set-face-attribute 'hes-escape-sequence-face nil :foreground "magenta"))
 
 (use-package highlight-numbers :ensure t
   :config
   (add-hook 'prog-mode-hook 'highlight-numbers-mode)
-  (custom-set-faces '(highlight-numbers-number
-					  ((t (:foreground "red")))))
+  (set-face-attribute 'highlight-numbers-number nil :foreground "red")
   )
 
 ;;____________________________________________________________
@@ -383,8 +384,9 @@
   (column-enforce-mode t)
   (setq column-enforce-comments nil)
   ;;(setq column-enforce-column <your desired column>)
-  (custom-set-faces '(column-enforce-face
-					  ((t (:background "gray90" :foreground "black")))))
+  (set-face-attribute 'column-enforce-face nil
+					  :background "gray90" :foreground "black")
+
   )
 
 ;;_______________________________________
@@ -413,6 +415,7 @@
 ;; company-c-headers
 
 (use-package company-c-headers :ensure t
+  :after company
   :config
   (add-to-list 'company-backends 'company-c-headers))
 
@@ -692,15 +695,6 @@
   :defer t
   :bind (("M-RET" . company-complete))
   :init (global-company-mode)
-  ;; enable yasnippet everywhere
-  ;;  (defvar company-mode/enable-yas t "Enable yasnippet for all backends.")
-  ;;  (defun company-mode/backend-with-yas (backend)
-  ;;	(if (or
-  ;;		 (not company-mode/enable-yas)
-  ;;		 (and (listp backend) (member 'company-yasnippet backend)))
-  ;;		backend
-  ;;	  (append (if (consp backend) backend (list backend))
-  ;;			  '(:with company-yasnippet))))
   :config
   (bind-key [remap completion-at-point] #'company-complete company-mode-map)
 
@@ -708,88 +702,88 @@
 		company-minimum-prefix-length 2
 		company-tooltip-limit 20
 		company-show-numbers t)
-  ;;  (setq-default company-backends
-  ;;				'((company-files          ; files & directory
-  ;;				   company-keywords       ; keywords
-  ;;				   company-capf
-  ;;				   company-yasnippet
-  ;;				   )
-  ;;				  (company-abbrev company-dabbrev)
-  ;;				  ))
   (global-company-mode t)
   )
 
-(use-package rtags
-  :config
-  (defun my/rtags-common-hook () "My rtags loader."
-		 (setq rtags-path "/usr/bin")
- 		 (rtags-start-process-unless-running)
- 		 (setq rtags-autostart-diagnostics t)
- 		 (rtags-diagnostics)
- 		 (setq rtags-completions-enabled t)
-		 (setq rtags-display-result-backend 'ivy)
-		 ;;(setq rtags-display-result-backend 'helm)
+;; (use-package rtags
+;;   :config
+;;   (defun my/rtags-common-hook () "My rtags loader."
+;; 		 (setq rtags-path "/usr/bin")
+;;  		 (rtags-start-process-unless-running)
+;;  		 (setq rtags-autostart-diagnostics t)
+;;  		 (rtags-diagnostics)
+;;  		 (setq rtags-completions-enabled t)
+;; 		 (setq rtags-display-result-backend 'ivy)
+;; 		 ;;(setq rtags-display-result-backend 'helm)
+;; 
+;; 		 (define-key c-mode-base-map (kbd "M-.") (function rtags-find-symbol-at-point))
+;; 		 (define-key c-mode-base-map (kbd "M-/") (function rtags-find-references-at-point))
+;; 		 (rtags-enable-standard-keybindings)
+;; 
+;;  		 (use-package company-rtags
+;; 		   :after company
+;;  		   :config
+;; 		   (add-to-list 'company-backends 'company-rtags))
+;; 
+;; 
+;;  		 (use-package flycheck-rtags
+;;  		   :after flycheck
+;;  		   :config
+;;  		   (defun my/flycheck-rtags-hook () "My flycheck-rtags hook."
+;;  				  (flycheck-select-checker 'rtags)
+;;  				  (setq-local rtags-periodic-reparse-timeout 10)
+;; 				  (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate.
+;; 				  (setq-local flycheck-check-syntax-automatically nil)
+;;  				  (setq rtags-enable-unsaved-reparsing t)
+;;  				  (message "Loaded flycheck-rtags"))
+;;  		   (add-hook 'rtags-mode-hook #'my/flycheck-rtags-hook))
+;; 		 (message "Loading my rtags-common-hook")
+;; 		 )
+;; 
+;;   (add-hook 'c-mode-common-hook #'my/rtags-common-hook))
 
-		 (define-key c-mode-base-map (kbd "M-.") (function rtags-find-symbol-at-point))
-		 (define-key c-mode-base-map (kbd "M-/") (function rtags-find-references-at-point))
-		 (rtags-enable-standard-keybindings)
+(use-package irony :ensure t
+  :defer t
+  :preface
+  (defun my/irony-mode-hook () "My irony mode hook."
+		 (unless (and buffer-file-name (file-remote-p buffer-file-name))
+		   ;;(irony-mode t)
+		   (irony-cdb-autosetup-compile-options)
 
- 		 (use-package company-rtags
-		   :after company
- 		   :config
-		   (add-to-list 'company-backends 'company-rtags))
+		   (use-package company-irony :ensure t
+			 :after company
+			 :config
+			 (use-package company-irony-c-headers :ensure t)
 
+			 (add-to-list 'company-backends
+						  '(company-irony-c-headers company-irony))
 
- 		 (use-package flycheck-rtags
- 		   :after flycheck
- 		   :config
- 		   (defun my/flycheck-rtags-hook () "My flycheck-rtags hook."
- 				  (flycheck-select-checker 'rtags)
- 				  (setq-local rtags-periodic-reparse-timeout 10)
-				  (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate.
-				  (setq-local flycheck-check-syntax-automatically nil)
- 				  (setq rtags-enable-unsaved-reparsing t)
- 				  (message "Loaded flycheck-rtags"))
- 		   (add-hook 'rtags-mode-hook #'my/flycheck-rtags-hook))
-		 (message "Loading my rtags-common-hook")
-		 )
+			 (company-irony-setup-begin-commands)
+			 (message "Loaded my company-irony"))
 
-  (add-hook 'c-mode-common-hook #'my/rtags-common-hook))
+		   ;;define-key irony-mode-map [remap completion-at-point]
+		   ;; 'irony-completion-at-point-async)
+		   ;;define-key irony-mode-map [remap complete-symbol]
+		   ;; 'irony-completion-at-point-async)
 
-;;(use-package irony :ensure t
-;;  :config
-;;  (defun my/irony-mode-hook () "My irony mode hook."
-;;		 (company-irony-setup-begin-commands)
-;;
-;;		 (use-package company-irony
-;;		   :config
-;;		   (add-to-list 'company-backends #'company-irony))
-;;
-;;		 (use-package company-irony-c-headers
-;;		  :config
-;;		  (add-to-list 'company-backends #'company-irony-c-headers))
-;;
-;;		 (use-package flycheck-irony :ensure t
-;;		   :after flycheck
-;;		   :config
-;;		   (add-hook 'irony-mode-hook #'flycheck-irony-setup)
-;;		   (message "Loaded flycheck-irony"))
-;;
-;;		 ;;(require 'company-c-headers)
-;;		 ;;(add-to-list 'company-backends '(company-c-headers)))
-;;
-;;		 (define-key irony-mode-map [remap completion-at-point]
-;;		   'irony-completion-at-point-async)
-;;		 (define-key irony-mode-map [remap complete-symbol]
-;;		   'irony-completion-at-point-async)
-;;
-;;		 (irony-cdb-autosetup-compile-options)
-;;		 (message "Loaded Irony-Mode"))
-;;
-;;  ;;(add-hook 'c++-mode-hook 'irony-mode)
-;;  (add-hook 'c-mode-hook 'my/irony-mode-hook)
-;;  (add-hook 'objc-mode-hook 'my/irony-mode-hook))
-;;  ;;(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+		   (define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
+		   (define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
+
+		   (use-package flycheck-irony :ensure t
+			 :after flycheck
+			 :config
+			 (add-hook 'irony-mode-hook #'flycheck-irony-setup)
+			 (message "Loaded my flycheck-irony"))
+
+		   (use-package irony-eldoc :ensure t
+			 :config
+			 (add-hook 'irony-mode-hook #'irony-eldoc))
+
+		   (message "Loaded my-Irony-Mode-hook")))
+  :init
+  (add-hook 'c++-mode-hook #'irony-mode)
+  (add-hook 'c-mode-hook #'irony-mode)
+  (add-hook 'irony-mode-hook #'my/irony-mode-hook))
 
 ;; (use-package ycmd :ensure t
 ;;   :init (add-hook 'c-mode-common-hook #'ycmd-mode)
@@ -828,6 +822,13 @@
 	(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
 	)
   )
+
+;;______________________________________
+;; Function arguments show
+
+(use-package eldoc :ensure t
+  :config 
+  (eldoc-mode t))
 
 ;;______________________________________
 ;; Chequeo de gramatica
@@ -973,6 +974,7 @@
   (setq jedi:use-shortcuts t)
 
   (use-package company-jedi :ensure t
+	:after company
 	:config
 	(add-to-list 'company-backends 'company-jedi))
 
@@ -1041,8 +1043,7 @@
   (use-package swiper :ensure t
 	:bind ("C-s" . swiper)
 	:config
-	(custom-set-faces '(swiper-line-face
-						((t (:inverse-video t)))))
+	(set-face-attribute 'swiper-line-face nil :inverse-video t)
 	)
 
   (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
@@ -1074,7 +1075,7 @@
 
 ;;______________________________________
 ;; Magit
-(use-package magit :ensure t)
+;;(use-package magit :ensure t)
 
 ;;______________________________________
 ;; Ensamblador
@@ -1230,3 +1231,9 @@
 
 (provide 'init)
 ;;; init.el ends here
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
