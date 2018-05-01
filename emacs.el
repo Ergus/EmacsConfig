@@ -28,15 +28,8 @@
 (add-hook 'after-init-hook 'benchmark-init/deactivate)
 
 ;;________________________________________________________________
-;; Mocp
-(autoload 'mocp
-       "mocp" "mocp in emacs" t)
-
-;;________________________________________________________________
-;; Dired-mode settings
-
-;; A few customizations:
-;; Among them: make copy and delete in dired recursive.
+;; Mocp music player
+(autoload 'mocp "mocp" "mocp in emacs" t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -54,15 +47,16 @@
  '(org-agenda-files (quote ("~/file.org")))
  '(package-selected-packages
  (quote
-  (smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode jedi qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck jedi-core js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
+  (ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
  '(paradox-github-token t)
  '(same-window-buffer-names
  (quote
   ("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*")))
  '(show-paren-mode t))
 
-;;    General settings
 ;;____________________________________________________________
+;;    General settings
+
 (require 'bind-key)
 (setq-default show-trailing-whitespace t ;;
 			  tab-width 4                ;; Tabulador a 4
@@ -76,8 +70,15 @@
 (electric-pair-mode t)         	 ;; Autoannadir parentesis
 (auto-revert-mode t)             ;; Autoload files changed in disk
 
+;;________________________________________________________________
+;; Startup screen
+
+(setq user-full-name "Jimmy Aguilar Mena"
+	  inhibit-startup-message t
+	  inhibit-startup-screen t)
+
 ;;____________________________________________________________
-;; Status bar (mode line in emacs)
+;; Status bar (mode line in emacs) two options to chose
 
 ;;(use-package smart-mode-line :ensure t
 ;;  :config
@@ -96,15 +97,16 @@
 
 
 ;;____________________________________________________________
-;; Miscelania
+;; Indentado on new line
+
 ;;(setq-default tab-always-indent t)            ;; make tab key always call a indent command.
 ;;(setq-default tab-always-indent nil)          ;; make tab key call indent command or insert tab character
 ;;(setq-default tab-always-indent 'complete)    ;; make tab key do indent first then completion.
 
-;;(desktop-save-mode 1)
-;;(electric-indent-mode -1)                    ;; Corrige indentacion con tab o enter (now default)
+;;(desktop-save-mode 1)                         ;; Save open windows before close, for next section
+;;(electric-indent-mode -1)                     ;; Corrige indentacion con tab o enter (now default)
 
-(use-package clean-aindent-mode :ensure t       ;; Elimina el indentado extra si no se ha llenado
+(use-package clean-aindent-mode :ensure t       ;; Elimina el indentado extra, mejor que los anteriores para programar
   :bind("RET" . newline-and-indent)
   :init
   (electric-indent-mode -1)  ; no electric indent, auto-indent is sufficient
@@ -116,7 +118,7 @@
 (global-set-key (kbd "M-f") 'menu-bar-open)
 
 ;;____________________________________________________________
-;; Clipboard
+;; Clipboard copy and paste
 (defun my/xclipboard () "Define my clipboard functions with xsel."
        (defun xcopy () "Copies selection to x-clipboard."
               (interactive)
@@ -151,25 +153,29 @@
 (my/xclipboard)
 (delete-selection-mode)  ;; Sobreescribe seleccion al pegar
 
+;;____________________________________________________________
 ;;  More Misc
-;;____________________________________________________________
-(setq-default vc-follow-symlinks nil;; Open links not open
-			  transient-mark-mode t ;; Highlight marked region
-			  line-number-mode t    ;; Display line numbers
-			  column-number-mode t) ;; Display column numbers
 
-(global-linum-mode 1)  ;; Numero de linea a la izquierda
-(setq-default linum-format "%4d\u2502") ;; Formato linea
-;;(setq-default linum-format "%4d|")      ;; Formato linea
+(global-linum-mode t)  ;; Numero de linea a la izquierda
 
-;;hlinum
+(setq-default vc-follow-symlinks nil	;; Open links not open
+			  transient-mark-mode t 	;; Highlight marked region
+			  line-number-mode t    	;; Display line numbers
+			  column-number-mode t  	;; Display column numbers
+			  linum-format "%4d\u2502") ;; Formato numero linea
+
 ;;____________________________________________________________
+;; hlinum
+
 (use-package hlinum :ensure t ;; resalta el numero de la linea
   :config
-  (hlinum-activate)             ;; Highlight linenum
+  (hlinum-activate)           ;; Highlight linenum
   ;; Keep highlighted linenum in all buffers
   ;;(setq-default linum-highlight-in-all-buffersp t)
   )
+
+;;____________________________________________________________
+;; Move current line up and down Shift+arrow
 
 (defun move-line-up ()
   "Move up the current line."
@@ -193,19 +199,19 @@
 
 ;;____________________________________________________________
 ;;  Seleccionar con el mouse
-(require 'mouse)
-(xterm-mouse-mode t)         ;; mover el cursor al click
-(defun track-mouse (e))
-(setq-default mouse-sel-mode t) ;; Mouse selection
+(use-package mouse
+  :config
+  (xterm-mouse-mode t)            ;; mover el cursor al click
+  (defun track-mouse (e))
+  (setq-default mouse-sel-mode t) ;; Mouse selection
+  (set-mouse-color "white")       ;; Flechita del mouse en blanco
+  (mouse-wheel-mode t))           ;; scrolling con el mouse
 
-(mouse-wheel-mode t)         ;; scrolling con el mouse
+(blink-cursor-mode 0)             ;; Parpadeo del cursor modo texto
+(set-cursor-color "white")        ;; Set cursor and mouse colours
 
-(blink-cursor-mode 0)        ;; Parpadeo del cursor modo texto
-(set-mouse-color "white")    ;; Flechita del mouse que se vea
-(set-cursor-color "white")   ;; Set cursor and mouse colours
-
-;; Multiple Cursors
 ;;____________________________________________________________
+;; Multiple Cursors
 (global-unset-key (kbd "C-c <down-mouse-1>"))
 (use-package multiple-cursors  :ensure t ;; Multiple cursors package
   :bind (("C-c m" . mc/edit-lines)
@@ -213,36 +219,16 @@
 		 ("C-c p" . mc/mark-previous-like-this)
          ("C-c <mouse-1>" . mc/add-cursor-on-click)))
 
+;;____________________________________________________________
 ;;  EXTRAS VARIOS
-;;____________________________________________________________
-(require 'sr-speedbar)           ;; Panel lateral
-(global-set-key (kbd "M-s") 'sr-speedbar-toggle)
-(setq sr-speedbar-right-side nil)
 
-;;  Files and directories
-;;____________________________________________________________
-;; M-o: avoid seeing all the backup files.
-;; C-x C-j: enter dired/dired-x mode.
-(add-hook 'dired-load-hook
-          (lambda ()
-            (load "dired-x")
-            ;; Set dired-x global variables here.  For example:
-            ;; (setq dired-guess-shell-gnutar "gtar")
-            ;; (setq dired-x-hands-off-my-keys nil)
-            ))
-
-;; Because Explorer and Finder have a mapping from file type to application,
-;; we need to tell emacs- what to do with each file type.
-(setq-default dired-guess-shell-alist-user
-              (list
-               (list "\\.\\(ps\|ps.gz\|eps\|eps.gz\|pdf\|PDF\\)$" "evince")
-               (list "\\.\\(rgb\|tiff\|tif\|xbm\|gif\|pgm\|ppm\|bmp\|tga\\)$" "eog ")
-               (list "\\.\\(ppm\|gif\|png\|jpg\|JPG\\)$" "eog")
-               (list "\\.\\(avi\|wav\|flv\|mov\|3gp\\)$" "vlc")
-               ))
+;; (use-package sr-speedbar :ensure t           ;; Panel lateral
+;;   :config
+;;   (global-set-key (kbd "M-s") 'sr-speedbar-toggle)
+;;   (setq sr-speedbar-right-side nil))
 
 ;;____________________________________________________________
-;;  The Colors
+;;  The Colors (I want to change this for a real theme)
 
 (defun my/colors () "Define my color theme."
        (set-background-color "black")
@@ -276,9 +262,9 @@
        (set-face-attribute 'isearch nil :background "blue" :foreground "white") ;; Busqueda
        (set-face-attribute 'region nil :background "white" :foreground "black") ;; Seleccion C-space
        (set-face-attribute 'linum nil :background "black" :foreground "green")  ;; resalta la linea actual
-	   ;; color de la linea en el panel activo
-;;	   (set-face-attribute  'mode-line nil :foreground "black" :background "gray90":box '(:line-width 1 :style released-button))
-;;	   (set-face-attribute  'mode-line-inactive nil :foreground "black" :background "gray70" :box '(:line-width 1 :style released-button))
+	   ;; color de la linea en el panel activo/inactivo
+	   ;; (set-face-attribute  'mode-line nil :foreground "black" :background "gray90":box '(:line-width 1 :style released-button))
+	   ;; (set-face-attribute  'mode-line-inactive nil :foreground "black" :background "gray70" :box '(:line-width 1 :style released-button))
        )
 
 (my/colors)
@@ -351,7 +337,7 @@
 ;;   '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :foreground "cyan"))))))
 
 ;;____________________________________________________________
-;; Flyspell
+;; Flyspell (ortografia)
 
 (use-package flyspell :ensure t
   :defer t
@@ -368,16 +354,14 @@
 	:bind (:map flyspell-mode-map
 				("C-;" . 'flyspell-correct-previous-word-generic))
 	:init
-	(setq flyspell-correct-interface #'flyspell-correct-ivy))
-  )
+	(setq flyspell-correct-interface #'flyspell-correct-ivy)))
 
 ;;________________________________
 ;; {c/c++}-mode
 ;;________________________________
 
 ;;_______________________________________
-;; Mark lined linger 80
-
+;; Mark column 80 when crossed
 (use-package column-enforce-mode :ensure t
   :hook prog-mode
   :config
@@ -385,9 +369,7 @@
   (setq column-enforce-comments nil)
   ;;(setq column-enforce-column <your desired column>)
   (set-face-attribute 'column-enforce-face nil
-					  :background "gray90" :foreground "black")
-
-  )
+					  :background "gray90" :foreground "black"))
 
 ;;_______________________________________
 ;; Indent with tabs align with spaces
@@ -413,11 +395,12 @@
 
 ;;_______________________________________
 ;; company-c-headers
-
 (use-package company-c-headers :ensure t
   :after company
   :config
-  (add-to-list 'company-backends 'company-c-headers))
+  (defun my/company-c-header-hook () "My company-c-header-hook."
+	  (add-to-list 'company-backends 'company-c-headers))
+  (add-hook 'c-mode-common-hook 'my/company-c-header-hook))
 
 ;;_______________________________________
 ;; C common mode (for all c-like languajes)
@@ -433,30 +416,27 @@
 
 ;;_______________________________________
 ;; c++-init-hook (before all the others)
+(defun my/c-init-hook ()   "Initialization for 'c-mode' run before any other."
+	   (setq c-doc-comment-style
+			 '((java-mode . javadoc)
+			   (pike-mode . autodoc)
+			   (c-mode    . javadoc)
+			   (c++-mode  . javadoc))
 
-(defun my/c-init-hook ()
-  "The initialization hook for 'c-mode' run before any other hooks."
-  (setq c-doc-comment-style
-        '((java-mode . javadoc)
-          (pike-mode . autodoc)
-          (c-mode    . javadoc)
-          (c++-mode  . javadoc)))
+			 c-basic-offset 4       ;; Default is 2
+			 c-indent-level 4       ;; Default is 2
+			 indent-tabs-mode t)
 
-  (setq c-basic-offset 4   ;; Default is 2
-		c-indent-level 4       ;; Default is 2
-		;;c-set-style "linux"
-		indent-tabs-mode t)
-  (setq-default c-default-style
-				'((java-mode . "java")
-				  (awk-mode . "awk")
-				  (other . "linux"))))
+	   (setq-default c-default-style
+					 '((java-mode . "java")
+					   (awk-mode . "awk")
+					   (other . "linux"))))
 
 ;; This hook run before any other hook in c-mode
 (add-hook 'c-initialization-hook 'my/c-init-hook)
 
 ;;_____________________________________________________
 ;; Agrega doble indentation a clases y simple a structs
-
 (defun my/c++-lineup-inclass (langelem) "LANGELEM Offset struct vs class."
        (let ((inclass (assoc 'inclass c-syntactic-context)))
          (save-excursion
@@ -468,7 +448,6 @@
 
 ;;_____________________________________________________
 ;; C++ mode
-
 (defun my/c++-mode-hook () "My C++-Mode hook function."
 	   (setq flycheck-gcc-language-standard "c++11")
 	   (require 'modern-cpp-font-lock)
@@ -574,7 +553,7 @@
   (use-package company-lua :ensure t
 	:after company
 	:config
-	(add-to-list 'company-backends 'company-c-headers)))
+	(add-to-list 'company-backends 'company-lua)))
 
 ;;________________________________
 ;; systemd mode
@@ -625,8 +604,11 @@
 (setq split-width-threshold 110)        ;; Original value 240 ancho minimo limite para split vertical
 
 ;; Move split keybindings
-(windmove-default-keybindings)          ;; Use Shift+arrow_keys to move cursor around split panes
-(setq-default windmove-wrap-around t )  ;; when cursor is on edge, move to the other side, as in a toroidal space
+(use-package windmove
+  :config
+  ;; use shift + arrow keys to switch between visible buffers
+  (windmove-default-keybindings)
+  (setq-default windmove-wrap-around t))
 
 ;; (add-hook 'term-setup-hook
 ;;   '(lambda ()
@@ -644,36 +626,10 @@
 (when (fboundp 'winner-mode) (winner-mode 1))   ;; recuperar Split configuration con C-c left/right
 
 ;;________________________________________________________________
-;;    Do not publish my email on Usenet
-(setq user-full-name       "Jimmy Aguilar Mena")
-
-;;________________________________________________________________
-;;    Don't display initial logo
-(setq inhibit-startup-message t
-	  inhibit-startup-screen t)
-
-;;________________________________________________________________
-;;    Mark user-written files (for subsequent searching)
-(add-hook 'dired-mode-hook
-          '(lambda ()
-             (define-key dired-mode-map ";" 'mark-cpp-tex-files)
-             ))
-
-;;________________________________________________________________
 ;; Confirmation for to exit emacs
 (defalias 'yes-or-no-p 'y-or-n-p)     ;; Reemplazar "yes" por "y" en el prompt
 ;;(fset 'yes-or-no-p 'y-or-n-p)       ;; Igual que el anterior
 (setq confirm-kill-emacs 'y-or-n-p)   ;; Puede ser 'nil o 'y-or-n-p
-
-;;_____________________________________
-;; Selective auto-fill
-(defun selective-auto-fill-disabling-hook ()
-  "Check to see if we should disable autofill."
-  (save-excursion
-    (when (re-search-forward "DoNotAutoFillThisFile" 1000 t)
-      (auto-fill-mode -1))))
-
-(add-hook 'find-file-hooks 'selective-auto-fill-disabling-hook)
 
 ;;________________________________________
 ;; Lines enabling gnuplot-mode
@@ -694,15 +650,23 @@
 (use-package company :ensure t
   :defer t
   :bind (("M-RET" . company-complete))
-  :init (global-company-mode)
+  :init
+  (global-company-mode)
   :config
   (bind-key [remap completion-at-point] #'company-complete company-mode-map)
 
-  (setq company-idle-delay 0              ;; no delay for autocomplete
+  (setq company-idle-delay 0   ;; no delay for autocomplete
 		company-minimum-prefix-length 2
 		company-tooltip-limit 20
+
 		company-show-numbers t)
-  (global-company-mode t)
+
+  (use-package company-quickhelp :ensure t
+	:after company
+	:config
+	(company-quickhelp-mode t)
+	(setq company-quickhelp-delay 1)
+	(define-key company-active-map (kbd "C-c h") #'company-quickhelp-manual-begin))
   )
 
 ;; (use-package rtags
@@ -819,15 +783,13 @@
 
   (use-package flycheck-color-mode-line :ensure t
 	:init
-	(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
-	)
-  )
+	(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)))
 
 ;;______________________________________
 ;; Function arguments show
 
 (use-package eldoc :ensure t
-  :config 
+  :config
   (eldoc-mode t))
 
 ;;______________________________________
@@ -836,9 +798,7 @@
   :defer t
   :config
   (setq langtool-default-language "en")
-  (setq langtool-language-tool-jar "/home/ergo/gits/languagetool/languagetool-standalone/target/LanguageTool-4.2-SNAPSHOT/LanguageTool-4.2-SNAPSHOT/languagetool-commandline.jar")
-  ;;(setq langtool-language-tool-jar "/home/ergo/.emacs.d/LanguageTool-3.7/languagetool-commandline.jar")
-  )
+  (setq langtool-language-tool-jar "/home/ergo/gits/languagetool/languagetool-standalone/target/LanguageTool-4.2-SNAPSHOT/LanguageTool-4.2-SNAPSHOT/languagetool-commandline.jar"))
 
 ;;______________________________________
 ;; EMMS mode.
@@ -947,40 +907,29 @@
 
 ;;______________________________________
 ;; Python mode
-(use-package elpy :ensure t
-  :init
-  (add-hook 'python-mode-hook #'elpy-enable)
+(use-package python-mode :ensure t
+  :mode ("\\.py" . python-mode)
   :config
-  (setq python-shell-interpreter "ipython"
-		python-shell-interpreter-args "-i --simple-prompt")
-
-  (use-package pyenv-mode :ensure t
-	:hook python-mode)
-
-  (setq python-shell-interpreter "ipython3"
-		python-shell-interpreter-args "-i --simple-prompt")
-
-  (use-package flycheck-pycheckers :ensure t
-	:after flycheck
-	:config
-	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))
-  )
-
-(use-package jedi :ensure t
-  :init
-  (add-hook 'python-mode-hook 'jedi:setup)
-  :config
-  (setq jedi:complete-on-dot t)
-  (setq jedi:use-shortcuts t)
 
   (use-package company-jedi :ensure t
 	:after company
 	:config
 	(add-to-list 'company-backends 'company-jedi))
 
-  (setq jedi:environment-virtualenv
-		(list (expand-file-name "~/.emacs.d/.python-environments/"))))
-;;
+  (use-package elpy :ensure t
+	:init
+	(add-hook 'python-mode-hook 'elpy-enable)
+	:config
+	(setq elpy-rpc-python-command "python3"
+		  elpy-rpc-backend "jedi"
+		  python-check-command "pyflakes"
+		  python-shell-interpreter "ipython3"
+		  python-shell-interpreter-args "-i --simple-prompt")
+
+	(use-package flycheck-pycheckers :ensure t
+	  :after flycheck
+	  :config
+	  (add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))))
 
 ;;______________________________________
 ;; IDO siempre (probare un tiempo con helm/ivy)
@@ -1027,12 +976,63 @@
 ;;  :init
 ;;  (bind-key "M-m" 'helm-swoop-from-isearch isearch-mode-map))
 
+;;________________________________________________________________
+;; Dired-mode settings
+(use-package dired
+  :config
+  (setq dired-recursive-copies 'top  ;; Always ask recursive copy
+		dired-recursive-deletes 'top ;; Always ask recursive delete
+		dired-dwim-target t)         ;; Copy in split mode with p
+
+  ;; Open in the same buffer in dired mode
+  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
+  (define-key dired-mode-map (kbd "^") (lambda () (interactive)
+										 (find-alternate-file ".."))); was dired-up-directory
+  (use-package dired-x
+	:config
+	(setq dired-guess-shell-alist-user
+		  (list
+		   (list "\\.\\(ps\|ps.gz\|eps\|eps.gz\|pdf\|PDF\\)$" "evince")
+		   (list "\\.\\(rgb\|tiff\|tif\|xbm\|gif\|pgm\|ppm\|bmp\|tga\\)$" "eog ")
+		   (list "\\.\\(ppm\|gif\|png\|jpg\|JPG\\)$" "eog")
+		   (list "\\.\\(avi\|wav\|flv\|mov\|3gp\\)$" "vlc")
+		   )))
+
+  (use-package dired-sidebar :ensure t
+	:commands (dired-sidebar-toggle-sidebar)
+	:config
+	(setq dired-sidebar-use-term-integration t
+		  dired-sidebar-theme 'nerd
+		  dired-sidebar-subtree-line-prefix " ."
+		  dired-sidebar-use-custom-font t)))
+
+(use-package ibuffer :ensure t
+  :bind ("C-x C-b" . ibuffer)
+  :config
+  (use-package ibuffer-sidebar :ensure t
+	:commands (ibuffer-sidebar-toggle-sidebar))
+
+  (use-package ibuffer-tramp :ensure t
+	:config
+	(defun my/ibuffer-tramp-hook () "ibuffer tram hook"
+		   (ibuffer-tramp-set-filter-groups-by-tramp-connection)
+		   (ibuffer-do-sort-by-alphabetic))
+	(add-hook 'ibuffer-hook 'my/ibuffer-tramp-hook)))
+
+
+(defun my/sidebar-toggle ()
+  "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
+  (interactive)
+  (dired-sidebar-toggle-sidebar)
+  (ibuffer-sidebar-toggle-sidebar))
+
+(global-set-key (kbd "M-s") 'my/sidebar-toggle)
+
 ;;______________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
 (use-package ivy :ensure t
   :bind ("C-c C-r" . ivy-resume)
   :config
-  (defalias 'list-buffers 'ibuffer) ; make ibuffer default
   (ivy-mode 1)
 
   (setq ivy-use-virtual-buffers t
@@ -1067,11 +1067,11 @@
 		   (define-key counsel-gtags-mode-map (kbd "C-c s") 'counsel-gtags-find-symbol)
 		   (define-key counsel-gtags-mode-map (kbd "C-c <") 'counsel-gtags-go-backward)
 		   (define-key counsel-gtags-mode-map (kbd "C-c >") 'counsel-gtags-go-forward)
-		   (message "Loading my gtags mode hook")
-		   )
-	(add-hook 'c-mode-common-hook 'my/counsel-gtags-hook)
-	)
-  )
+		   (message "Loading my gtags mode hook"))
+	(add-hook 'c-mode-common-hook 'my/counsel-gtags-hook)))
+
+(use-package imenu-anywhere :ensure t
+  :bind (("C-c i" . imenu-anywhere)))
 
 ;;______________________________________
 ;; Magit
