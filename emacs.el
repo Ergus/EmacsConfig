@@ -47,7 +47,7 @@
  '(org-agenda-files (quote ("~/file.org")))
  '(package-selected-packages
  (quote
-  (ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
+  (all-the-icons-ivy spaceline-all-the-icons spaceline spacemacs-theme ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander sr-speedbar ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
  '(paradox-github-token t)
  '(same-window-buffer-names
  (quote
@@ -88,7 +88,8 @@
 
 (use-package powerline :ensure t
   :config
-  (powerline-default-theme))
+  (powerline-default-theme)
+  )
 
 ;;____________________________________________________________
 ;;  Font lock
@@ -268,6 +269,10 @@
        )
 
 (my/colors)
+
+;;(use-package spacemacs-theme
+;;  :defer t
+;;  :init (load-theme 'spacemacs-dark t))
 
 ;;____________________________________________________________
 ;; Lineas de Indentado
@@ -653,7 +658,20 @@
   :init
   (global-company-mode)
   :config
-  (bind-key [remap completion-at-point] #'company-complete company-mode-map)
+  (define-key company-mode-map (kbd "M-RET") 'company-complete)
+  (define-key company-active-map (kbd "M-RET") 'company-other-backend)
+
+
+  (set-face-attribute 'company-tooltip nil        ;; dialog face
+					  :background "brightblack" :foreground "white")
+  (set-face-attribute 'company-tooltip-common nil ;; common part face
+					  :inherit 'company-tooltip :foreground "green")
+  (set-face-attribute 'company-tooltip-selection nil ;; selection face
+					  :background "blue" :weight 'ultra-bold)
+  (set-face-attribute 'company-scrollbar-bg nil   ;; scroll bar face bg
+					  :background "brightblack")
+  (set-face-attribute 'company-scrollbar-fg nil   ;; scroll bar face fg
+					  :background "blue")
 
   (setq company-idle-delay 0   ;; no delay for autocomplete
 		company-minimum-prefix-length 2
@@ -664,10 +682,7 @@
   (use-package company-quickhelp :ensure t
 	:after company
 	:config
-	(company-quickhelp-mode t)
-	(setq company-quickhelp-delay 1)
-	(define-key company-active-map (kbd "C-c h") #'company-quickhelp-manual-begin))
-  )
+	(company-quickhelp-mode)))
 
 ;; (use-package rtags
 ;;   :config
@@ -920,7 +935,7 @@
 	:init
 	(add-hook 'python-mode-hook 'elpy-enable)
 	:config
-	(setq elpy-rpc-python-command "python3"
+	(setq elpy-rpc-python-command "ipython3"
 		  elpy-rpc-backend "jedi"
 		  python-check-command "pyflakes"
 		  python-shell-interpreter "ipython3"
@@ -1078,6 +1093,15 @@
 ;;(use-package magit :ensure t)
 
 ;;______________________________________
+;; Git commit
+(use-package git-commit :ensure t
+  :commands global-git-commit-mode
+  :init
+  (setq git-commit-summary-max-length 50
+        fill-column 72)
+  (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell))
+
+;;______________________________________
 ;; Ensamblador
 (use-package nasm-mode :ensure t
   :mode ("\\.asm\\'" "\\.s\\'"))
@@ -1231,9 +1255,3 @@
 
 (provide 'init)
 ;;; init.el ends here
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
