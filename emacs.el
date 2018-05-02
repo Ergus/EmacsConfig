@@ -39,8 +39,6 @@
  '(custom-safe-themes
  (quote
   ("84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
- '(dired-recursive-copies (quote top))
- '(dired-recursive-deletes (quote top))
  '(ecb-options-version "2.50")
  '(large-file-warning-threshold 100000000)
  '(mumamo-submode-indent-offset 4)
@@ -1090,19 +1088,22 @@
 
 ;;______________________________________
 ;; Magit
-;;(use-package magit :ensure t)
+(use-package magit :ensure t
+  :commands magit-status
+  )
 
 ;;______________________________________
 ;; Git commit
 (use-package git-commit :ensure t
   :commands global-git-commit-mode
+  :mode ("COMMIT_EDITMSG")
   :init
   (setq git-commit-summary-max-length 50
         fill-column 72)
   (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell))
 
 ;;______________________________________
-;; Ensamblador
+;; Ensamblador nasm
 (use-package nasm-mode :ensure t
   :mode ("\\.asm\\'" "\\.s\\'"))
 
@@ -1126,17 +1127,17 @@
 
 ;;______________________________________
 ;; ssh
-(require 'tramp)
-(setq tramp-default-method "ssh")
-(autoload 'ssh-config-mode "ssh-config-mode" t)
-(add-to-list 'auto-mode-alist '("/\\.ssh/config\\'" . ssh-config-mode))
-(add-to-list 'auto-mode-alist '("/sshd?_config\\'" . ssh-config-mode))
-(add-to-list 'auto-mode-alist '("/known_hosts\\'" . ssh-known-hosts-mode))
-(add-to-list 'auto-mode-alist '("/authorized_keys2?\\'" . ssh-authorized-keys-mode))
-(add-hook 'ssh-config-mode-hook 'turn-on-font-lock)
+(use-package tramp :ensure t
+  :config
+  (setq tramp-default-method "ssh")
+  (autoload 'ssh-config-mode "ssh-config-mode" t)
+  (add-to-list 'auto-mode-alist '("/\\.ssh/config\\'" . ssh-config-mode))
+  (add-to-list 'auto-mode-alist '("/sshd?_config\\'" . ssh-config-mode))
+  (add-to-list 'auto-mode-alist '("/known_hosts\\'" . ssh-known-hosts-mode))
+  (add-to-list 'auto-mode-alist '("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
 
 ;;______________________________________
-;; Jabber
+;; Jabber (for gmail)
 (use-package jabber :ensure t
   :defer t
   :config
@@ -1158,7 +1159,7 @@
   )
 
 ;;______________________________________
-;;; EXWM
+;;; EXWM (emacs windows manager, a desktop)
 
 (use-package exwm
   :if (string= (getenv "exwm_enable") "yes")
@@ -1210,7 +1211,7 @@
   )
 
 ;;______________________________________
-;;; org-gcal
+;;; org-gcal (google calendar)
 
 (use-package calfw :ensure t
   :defer t
