@@ -27,6 +27,10 @@
   (require 'use-package)
   (setq-default use-package-verbose t))
 
+(use-package paradox :ensure t
+  :commands (paradox-upgrade-packages paradox-list-packages)
+  :config (setq paradox-execute-asynchronously t))
+
 ;;__________________________________________________________
 ;; Benchmark-init
 (use-package benchmark-init :ensure t
@@ -37,41 +41,114 @@
 ;; To put all my lisp scripts
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
-;;__________________________________________________________
-;; Mocp and multi-term music player
-(use-package multi-term :ensure t
-  :config
-  (autoload 'mocp "mocp" "mocp in emacs" t))
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
- (quote
-  ("84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
+   (quote
+	("84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
  '(ecb-options-version "2.50")
  '(large-file-warning-threshold 100000000)
  '(mumamo-submode-indent-offset 4)
  '(org-agenda-files (quote ("~/file.org")))
  '(package-selected-packages
- (quote
-  (yasnippet-snippets which-key winum all-the-icons-ivy spaceline-all-the-icons spaceline spacemacs-theme ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
+   (quote
+	(flycheck-status-emoji flycheck-popup-tip corral ivy-historian historian calfw cmake-font-lock dired-sidebar notmuch flycheck-color-mode-line irony systemd lua-mode rust-mode julia-mode markdown-mode cuda-mode column-enforce-mode move-text yasnippet-snippets which-key winum all-the-icons-ivy spaceline-all-the-icons spaceline spacemacs-theme ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
  '(paradox-github-token t)
  '(same-window-buffer-names
- (quote
-  ("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*"))))
+   (quote
+	("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*"))))
 
 ;;__________________________________________________________
-;; General settings
-(use-package bind-key :ensure t)
+;; Internal options
 
+(global-font-lock-mode t)      ;; Use font-lock everywhere.
+(setq font-lock-maximum-decoration t)
 (savehist-mode t)              	 ;; Historial
 (auto-compression-mode t)      	 ;; Uncompress on the fly:
 (show-paren-mode t)            	 ;; Highlight couple parentesis
 (electric-pair-mode t)         	 ;; Autoannadir parentesis
+(electric-indent-mode t)         ;; Corrige indentacion con tab o enter (now default)
 (auto-revert-mode t)             ;; Autoload files changed in disk
+(global-linum-mode t)            ;; Numero de linea a la izquierda
+;;(desktop-save-mode 1)            ;; Save open windows before close, for next section
+
+(setq-default vc-follow-symlinks nil	            ;; Open links not open
+			  transient-mark-mode t     ;; Highlight marked region
+			  line-number-mode t        ;; Display line numbers
+			  column-number-mode t      ;; Display column numbers
+			  linum-format "%4d\u2502"  ;; Formato numero linea
+			  tab-always-indent 't      ;; make tab key do indent only
+			  default-fill-column 80    ;; wrapping text at the 80 c
+			  initial-scratch-message "Welcome Jimmy!!"
+			  ring-bell-function 'ignore
+			  user-full-name "Jimmy Aguilar Mena"
+			  inhibit-startup-message t
+			  inhibit-startup-screen t
+			  show-trailing-whitespace t ;;
+			  tab-width 4                ;; Tabulador a 4
+			  make-backup-files nil      ;; Sin copias de seguridad
+			  visible-bell nil           ;; Flash the screen (def)
+			  scroll-step 1              ;; Scroll one by one
+			  ;;scroll-preserve-screen-position 1
+			  scroll-conservatively 100000
+			  scroll-margin 0
+			  )
+
+;;__________________________________________________________
+;;Packages options
+;;__________________________________________________________
+
+;;__________________________________________________________
+; Two options for diffs
+(use-package ediff
+  :config
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  (setq ediff-split-window-function 'split-window-horizontally)
+  (with-eval-after-load 'winner
+	(add-hook 'ediff-after-quit-hook-internal #'winner-undo)))
+
+;; more like vimdiff
+(use-package vdiff :ensure t
+  :commands (vdiff-files
+             vdiff-files3
+             vdiff-buffers
+			 vdiff-buffers3))
+
+;;__________________________________________________________
+;; Diminish to hide packages from bar
+(use-package diminish :ensure t)
+
+;;__________________________________________________________
+;; Smart-parents (parentesis correctos para los modos)
+(use-package smartparens :ensure t
+  :init (smartparens-global-mode)
+  :config
+    (use-package smartparens-config :ensure smartparens)
+    (smartparens-global-mode))
+
+
+;;__________________________________________________________
+;; Mocp and multi-term music player
+(use-package multi-term :ensure t
+  :config
+  (autoload 'mocp "mocp" "mocp in emacs" t))
+
+;;__________________________________________________________
+;; Indentado on new line smart way
+
+;;(use-package clean-aindent-mode :ensure t     ;; Elimina el indentado extra, mejor que los anteriores para programar
+;;  :bind("RET" . newline-and-indent)
+;;  :init
+;;  (electric-indent-mode -1)  ; no electric indent, auto-indent is sufficient
+;;  (clean-aindent-mode t)
+;;  (setq clean-aindent-is-simple-indent t))
+
+;;__________________________________________________________
+;; Keys
+(use-package bind-key :ensure t)
 
 ;;__________________________________________________________
 ;; which-key
@@ -95,9 +172,9 @@
 ;;  (setq sml/theme 'powerline)
 ;;  (sml/setup))
 
-;;(use-package powerline :ensure t
-;;  :config
-;;  (powerline-default-theme))
+;; (use-package powerline :ensure t
+;;   :config
+;;   (powerline-default-theme))
 
 (use-package spaceline :ensure t
   :demand t
@@ -113,31 +190,7 @@
 	(spaceline-spacemacs-theme))
 	;;(spaceline-toggle-minor-modes-off))
 
-  (set-face-attribute 'mode-line nil :background "#5c5cff" :foreground "white")
-  )
-
-
-;;__________________________________________________________
-;;  Font lock
-(global-font-lock-mode t)      ;; Use font-lock everywhere.
-(setq font-lock-maximum-decoration t)
-
-;;__________________________________________________________
-;; Indentado on new line
-
-;;(setq-default tab-always-indent t)            ;; make tab key always call a indent command.
-;;(setq-default tab-always-indent nil)          ;; make tab key call indent command or insert tab character
-;;(setq-default tab-always-indent 'complete)    ;; make tab key do indent first then completion.
-
-;;(desktop-save-mode 1)                         ;; Save open windows before close, for next section
-;;(electric-indent-mode -1)                     ;; Corrige indentacion con tab o enter (now default)
-
-(use-package clean-aindent-mode :ensure t       ;; Elimina el indentado extra, mejor que los anteriores para programar
-  :bind("RET" . newline-and-indent)
-  :init
-  (electric-indent-mode -1)  ; no electric indent, auto-indent is sufficient
-  (clean-aindent-mode t)
-  (setq clean-aindent-is-simple-indent t))
+  (set-face-attribute 'mode-line nil :background "#5c5cff" :foreground "white"))
 
 ;;__________________________________________________________
 ;; Menu bar
@@ -180,31 +233,6 @@
 (my/xclipboard)
 (delete-selection-mode)  ;; Sobreescribe seleccion al pegar
 
-;;__________________________________________________________
-;;  More Misc
-
-(global-linum-mode t)  ;; Numero de linea a la izquierda
-
-(setq-default vc-follow-symlinks nil	;; Open links not open
-			  transient-mark-mode t 	;; Highlight marked region
-			  line-number-mode t    	;; Display line numbers
-			  column-number-mode t  	;; Display column numbers
-			  linum-format "%4d\u2502"  ;; Formato numero linea
-			  default-fill-column 80    ;; wrapping text at the 80 c
-			  initial-scratch-message "Welcome Jimmy!!"
-			  ring-bell-function 'ignore
-			  user-full-name "Jimmy Aguilar Mena"
-			  inhibit-startup-message t
-			  inhibit-startup-screen t
-			  show-trailing-whitespace t ;;
-			  tab-width 4                ;; Tabulador a 4
-			  make-backup-files nil      ;; Sin copias de seguridad
-			  visible-bell nil           ;; Flash the screen (def)
-			  scroll-step 1              ;; Scroll one by one
-			  ;; scroll-preserve-screen-position 1
-			  ;; scroll-conservatively 100000
-			  ;; scroll-margin 0
-			  )
 ;;__________________________________________________________
 ;; hlinum
 (use-package hlinum :ensure t ;; resalta el numero de la linea
@@ -298,13 +326,6 @@
 (my/colors)
 
 ;;__________________________________________________________
-;; spacemacs theme, comentar linea anterior para activarlo
-
-;;(use-package spacemacs-theme
-;;  :defer t
-;;  :init (load-theme 'spacemacs-dark t))
-
-;;__________________________________________________________
 ;; Lineas de Indentado
 (use-package highlight-indent-guides :ensure t
   :config
@@ -356,24 +377,7 @@
   )
 
 ;;__________________________________________________________
-;; Resaltar parentesis a pares permanentemente... no me gusto
-;;(use-package rainbow-delimiters :ensure t
-;;  :config
-;;  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-;;  (custom-set-faces
-;;   '(rainbow-delimiters-depth-1-face ((t (:inherit rainbow-delimiters-base-face :foreground "blue"))))
-;;   '(rainbow-delimiters-depth-2-face ((t (:inherit rainbow-delimiters-base-face :foreground "magenta"))))
-;;   '(rainbow-delimiters-depth-3-face ((t (:inherit rainbow-delimiters-base-face :foreground "brightgreen"))))
-;;   '(rainbow-delimiters-depth-4-face ((t (:inherit rainbow-delimiters-base-face :foreground "brightyellow"))))
-;;   '(rainbow-delimiters-depth-5-face ((t (:inherit rainbow-delimiters-base-face :foreground "brightcyan"))))
-;;   '(rainbow-delimiters-depth-6-face ((t (:inherit rainbow-delimiters-base-face :foreground "brightmagenta"))))
-;;   '(rainbow-delimiters-depth-7-face ((t (:inherit rainbow-delimiters-base-face :foreground "green"))))
-;;   '(rainbow-delimiters-depth-8-face ((t (:inherit rainbow-delimiters-base-face :foreground "yellow"))))
-;;   '(rainbow-delimiters-depth-9-face ((t (:inherit rainbow-delimiters-base-face :foreground "cyan"))))))
-
-;;__________________________________________________________
-;; Flyspell (ortografia)
-
+;; Flyspell (Orthography)
 (use-package flyspell :ensure t
   :diminish
   :defer t
@@ -382,13 +386,13 @@
   (add-hook 'text-mode-hook 'flyspell-mode)
   :config
   (use-package flyspell-popup :ensure t
-	:bind ("C-; . flyspell-popup-correct")
-	)
+	:bind (:map flyspell-mode-map
+				("C-c ." . flyspell-popup-correct)))
 
-  (use-package flyspell-correct-ivy
+  (use-package flyspell-correct-ivy :ensure t
 	:commands (flyspell-correct-ivy)
 	:bind (:map flyspell-mode-map
-				("C-;" . 'flyspell-correct-previous-word-generic))
+				("C-c ;" . flyspell-correct-previous-word-generic))
 	:init
 	(setq flyspell-correct-interface #'flyspell-correct-ivy)))
 
@@ -821,7 +825,6 @@
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
 (use-package flycheck :ensure t
-  :diminish
   :init (global-flycheck-mode)
   :config
 
@@ -831,6 +834,17 @@
 
   ;;  (require 'flycheck-clang-analyzer)
   ;;  (flycheck-clang-analyzer-setup)
+
+  (setq-default flycheck-display-errors-delay 1)
+
+  (use-package flycheck-popup-tip :ensure t
+	:after flycheck
+	:config
+	(add-hook 'flycheck-mode-hook #'flycheck-popup-tip-mode))
+
+  (use-package flycheck-status-emoji :ensure t
+	:after flycheck
+	:config (add-hook 'flycheck-mode-hook #'flycheck-status-emoji-mode))
 
   (use-package flycheck-color-mode-line :ensure t
 	:init
@@ -1089,20 +1103,23 @@
   :diminish
   :bind ("C-c C-r" . ivy-resume)
   :config
+
   (ivy-mode 1)
 
   (setq ivy-use-virtual-buffers t
 		ivy-count-format "(%d/%d) "
 		ivy-wrap t
-		enable-recursive-minibuffers t)
+		enable-recursive-minibuffers t
+		ivy-re-builders-alist '((swiper . ivy--regex-plus)
+                                (amx . ivy--regex-fuzzy)
+                                (t . ivy--regex-plus)))
 
   (use-package swiper :ensure t
 	:bind ("C-s" . swiper)
 	:config
-	(set-face-attribute 'swiper-line-face nil 
+	(set-face-attribute 'swiper-line-face nil
 						:background "white" :foreground "black"
-						:weight 'ultra-bold)
-	)
+						:weight 'ultra-bold))
 
   (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
 
@@ -1132,6 +1149,19 @@
 
 (use-package imenu-anywhere :ensure t
   :bind (("C-c i" . imenu-anywhere)))
+
+;;__________________________________________________________
+;; Historical completion
+(use-package historian :ensure t
+  :config
+  (use-package ivy-historian :ensure t
+	:after ivy
+	:config (ivy-historian-mode t)))
+
+(use-package smex :ensure t)
+
+;;(use-package amx :ensure t
+;;  :config (amx-mode t))
 
 ;;__________________________________________________________
 ;; Magit
