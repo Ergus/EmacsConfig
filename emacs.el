@@ -73,6 +73,7 @@
 (electric-indent-mode t)         ;; Corrige indentacion con tab o enter (now default)
 (auto-revert-mode t)             ;; Autoload files changed in disk
 (global-linum-mode t)            ;; Numero de linea a la izquierda
+(delete-selection-mode)          ;; Sobreescribe seleccion al pegar
 ;;(desktop-save-mode 1)            ;; Save open windows before close, for next section
 
 (setq-default vc-follow-symlinks nil	            ;; Open links not open
@@ -200,7 +201,6 @@
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
 (defun my/xclipboard () "Define my clipboard functions with xsel."
-
        (defun xcopy () "Copies selection to x-clipboard."
               (interactive)
 			  (if (region-active-p)
@@ -222,12 +222,30 @@
 				  (clipboard-yank)
 				(insert (shell-command-to-string "xsel -o -b"))))
 
-       (global-set-key (kbd "M-w") 'xcopy)
+	   (global-set-key (kbd "M-w") 'xcopy)
        (global-set-key (kbd "C-S-v") 'xpaste)
-	   )
 
-(my/xclipboard)
-(delete-selection-mode)  ;; Sobreescribe seleccion al pegar
+	   ;; =================== For Lorentz ======================
+	   (defun aberrant-copy () "Lorentz's aberrant copy."
+			  (interactive)
+			  (call-interactively 'mouse-set-region)
+			  (if (use-region-p)
+				  (progn
+					(shell-command-on-region
+					 (region-beginning) (region-end) "xsel -i -p")
+					(message "Copied region to PRIMARY!"))
+				(message "No region active; can't yank!")))
+
+	   (defun aberrant-paste () "Lorentz's aberrant paste."
+			  (interactive)
+			  (insert (shell-command-to-string "xsel -o -p")))
+
+	   (global-set-key [drag-mouse-1] 'aberrant-copy)
+	   (global-set-key [mouse-2] 'aberrant-paste))
+
+(if (executable-find "xsel")
+	(my/xclipboard)
+  (message "No xsel in your path, install it in your system!!!"))
 
 ;;__________________________________________________________
 ;; hlinum
@@ -254,10 +272,6 @@
   (setq-default mouse-sel-mode t) ;; Mouse selection
   (set-mouse-color "white")       ;; Flechita del mouse en blanco
   (mouse-wheel-mode t)            ;; scrolling con el mouse
-  ;; Lorentz copy (no real clipboard)
-  ;;(setq select-active-regions 'only)
-  ;;(setq mouse-drag-copy-region t)
-  ;;(global-set-key [mouse-2] 'mouse-yank-at-click)
   )
 
   (global-set-key [drag-mouse-2] 'mouse-yank-at-click)
