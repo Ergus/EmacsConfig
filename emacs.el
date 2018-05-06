@@ -196,39 +196,35 @@
 ;; Menu bar
 (global-set-key (kbd "M-f") 'menu-bar-open)
 
+
 ;;__________________________________________________________
-;; Clipboard copy and paste with: C-c c & C-c v
+;; Clipboard copy and paste with: M-w & C-c v
 (defun my/xclipboard () "Define my clipboard functions with xsel."
+
        (defun xcopy () "Copies selection to x-clipboard."
               (interactive)
-              (if (display-graphic-p)
-                  (progn
-                    (message "Yanked region to x-clipboard!")
-                    (call-interactively 'clipboard-kill-ring-save)
-                    )
-                (if (region-active-p)
-                    (progn
-                      (shell-command-on-region
+			  (if (region-active-p)
+				  (if (display-graphic-p)
+					  (progn
+						(message "Copied region to x-clipboard!")
+						(call-interactively 'clipboard-kill-ring-save))
+					(progn
+					  (shell-command-on-region
 					   (region-beginning) (region-end) "xsel -i -b")
-                      (message "Yanked region to clipboard!")
-                      (deactivate-mark))
-                  (message "No region active; can't yank to clipboard!")))
-              )
+					  (message "Copied region to clipboard!") ;
+					  (deactivate-mark)
+					  (call-interactively 'kill-ring-save)))
+				(message "No region active; can't yank!")))
 
        (defun xpaste () "Pastes from x-clipboard."
               (interactive)
               (if (display-graphic-p)
-                  (progn
-                    (clipboard-yank)
-                    (message "graphics active")
-                    )
-                (insert (shell-command-to-string "xsel -o -b"))
-                )
-              )
+				  (clipboard-yank)
+				(insert (shell-command-to-string "xsel -o -b"))))
 
-       (global-set-key (kbd "C-c c") 'xcopy)
-       (global-set-key (kbd "C-c v") 'xpaste)
-       )
+       (global-set-key (kbd "M-w") 'xcopy)
+       (global-set-key (kbd "C-S-v") 'xpaste)
+	   )
 
 (my/xclipboard)
 (delete-selection-mode)  ;; Sobreescribe seleccion al pegar
@@ -257,7 +253,14 @@
   (defun track-mouse (e))
   (setq-default mouse-sel-mode t) ;; Mouse selection
   (set-mouse-color "white")       ;; Flechita del mouse en blanco
-  (mouse-wheel-mode t))           ;; scrolling con el mouse
+  (mouse-wheel-mode t)            ;; scrolling con el mouse
+  ;; Lorentz copy (no real clipboard)
+  ;;(setq select-active-regions 'only)
+  ;;(setq mouse-drag-copy-region t)
+  ;;(global-set-key [mouse-2] 'mouse-yank-at-click)
+  )
+
+  (global-set-key [drag-mouse-2] 'mouse-yank-at-click)
 
 (blink-cursor-mode 0)             ;; Parpadeo del cursor modo texto
 (set-cursor-color "white")        ;; Set cursor and mouse colours
@@ -988,7 +991,7 @@
 	:init
 	(add-hook 'python-mode-hook 'elpy-enable)
 	:config
-	(setq elpy-rpc-python-command "ipython3"
+	(setq elpy-rpc-python-command "python3"
 		  elpy-rpc-backend "jedi"
 		  python-check-command "pyflakes"
 		  python-shell-interpreter "ipython3"
