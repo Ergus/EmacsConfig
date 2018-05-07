@@ -72,7 +72,8 @@
 (auto-revert-mode t)             ;; Autoload files changed in disk
 (global-linum-mode t)            ;; Numero de linea a la izquierda
 (delete-selection-mode)          ;; Sobreescribe seleccion al pegar
-;;(desktop-save-mode 1)            ;; Save open windows before close, for next section
+(menu-bar-mode -1)               ;; Quitar barra superior (no la uso)
+;;(desktop-save-mode 1)          ;; Save open windows before close, for next section
 
 (setq-default vc-follow-symlinks nil	            ;; Open links not open
 			  transient-mark-mode t     ;; Highlight marked region
@@ -93,8 +94,8 @@
 			  ;;scroll-preserve-screen-position 1
 			  scroll-conservatively 100000
 			  scroll-margin 0
-			  fill-column 80
-			  tooltip-mode t     ;; Tool tip in the echo
+			  fill-column 80            ;; default is 70
+			  tooltip-mode t            ;; Tool tip in the echo
 			  )
 
 ;;__________________________________________________________
@@ -194,7 +195,51 @@
 
 ;;__________________________________________________________
 ;; Menu bar
-(global-set-key (kbd "M-f") 'menu-bar-open)
+;;(global-set-key (kbd "M-f") 'menu-bar-open)
+
+;;__________________________________________________________
+;; tabbar
+(use-package tabbar :ensure t
+    :config
+    (tabbar-mode 1)
+
+    (setq tabbar-buffer-groups-function
+		  (lambda ()
+			(list
+			 (cond ((string-equal "*" (substring (buffer-name) 0 1)) "emacs")
+				   ((eq major-mode 'dired-mode) "emacs")
+				   (t "user")))))
+
+	(set-face-attribute	'tabbar-default nil
+						:background "gray20" :foreground "white"
+						:box '(:line-width 1 :color "gray20" :style nil))
+	(set-face-attribute 'tabbar-unselected nil
+						:background "gray20" :foreground "white"
+						:box '(:line-width 5 :color "gray20" :style nil))
+	(set-face-attribute 'tabbar-selected nil
+						:background "#5c5cff" :foreground "white"
+						:box '(:line-width 5 :color "#5c5cff" :style nil))
+	(set-face-attribute 'tabbar-highlight nil
+						:background "white" :foreground "black" :underline nil
+						:box '(:line-width 5 :color "white" :style nil))
+	(set-face-attribute 'tabbar-button nil
+						:box '(:line-width 1 :color "gray20" :style nil))
+	(set-face-attribute 'tabbar-separator nil
+						:background "gray20" :height 0.6)
+
+    ;; update the tabbar's modified status on changes
+    ;; (add-hook 'after-change-functions
+	;; 		  (lambda (beginning end length)
+	;; 			(tabbar-set-template tabbar-current-tabset nil)))
+    ;; (add-hook 'after-save-hook
+	;; 		  (lambda ()
+	;; 			(tabbar-set-template tabbar-current-tabset nil)))
+
+	(custom-set-variables '(tabbar-separator (quote (1))))
+
+	(global-set-key [M-left] 'tabbar-backward-tab)
+	(global-set-key [M-right] 'tabbar-forward-tab)
+)
 
 
 ;;__________________________________________________________
