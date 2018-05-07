@@ -55,7 +55,7 @@
  '(org-agenda-files (quote ("~/file.org")))
  '(package-selected-packages
    (quote
-	(flycheck-status-emoji flycheck-popup-tip corral ivy-historian historian calfw cmake-font-lock dired-sidebar notmuch flycheck-color-mode-line irony systemd lua-mode rust-mode julia-mode markdown-mode cuda-mode column-enforce-mode move-text yasnippet-snippets which-key winum all-the-icons-ivy spaceline-all-the-icons spaceline spacemacs-theme ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
+	(tramp-term exec-path-from-shell flycheck-status-emoji flycheck-popup-tip corral ivy-historian historian calfw cmake-font-lock dired-sidebar notmuch flycheck-color-mode-line irony systemd lua-mode rust-mode julia-mode markdown-mode cuda-mode column-enforce-mode move-text yasnippet-snippets which-key winum all-the-icons-ivy spaceline-all-the-icons spaceline spacemacs-theme ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
  '(paradox-github-token t)
  '(same-window-buffer-names
    (quote
@@ -69,8 +69,6 @@
 (savehist-mode t)              	 ;; Historial
 (auto-compression-mode t)      	 ;; Uncompress on the fly:
 (show-paren-mode t)            	 ;; Highlight couple parentesis
-(electric-pair-mode t)         	 ;; Autoannadir parentesis
-(electric-indent-mode t)         ;; Corrige indentacion con tab o enter (now default)
 (auto-revert-mode t)             ;; Autoload files changed in disk
 (global-linum-mode t)            ;; Numero de linea a la izquierda
 (delete-selection-mode)          ;; Sobreescribe seleccion al pegar
@@ -82,20 +80,21 @@
 			  column-number-mode t      ;; Display column numbers
 			  linum-format "%4d\u2502"  ;; Formato numero linea
 			  tab-always-indent 't      ;; make tab key do indent only
-			  default-fill-column 80    ;; wrapping text at the 80 c
 			  initial-scratch-message "Welcome Jimmy!!"
 			  ring-bell-function 'ignore
 			  user-full-name "Jimmy Aguilar Mena"
 			  inhibit-startup-message t
 			  inhibit-startup-screen t
-			  show-trailing-whitespace t ;;
-			  tab-width 4                ;; Tabulador a 4
-			  make-backup-files nil      ;; Sin copias de seguridad
-			  visible-bell nil           ;; Flash the screen (def)
-			  scroll-step 1              ;; Scroll one by one
+			  tab-width 4               ;; Tabulador a 4
+			  make-backup-files nil     ;; Sin copias de seguridad
+			  create-lockfiles nil      ;; No lock files, goot for tramp
+			  visible-bell nil          ;; Flash the screen (def)
+			  scroll-step 1             ;; Scroll one by one
 			  ;;scroll-preserve-screen-position 1
 			  scroll-conservatively 100000
 			  scroll-margin 0
+			  fill-column 80
+			  tooltip-mode t     ;; Tool tip in the echo
 			  )
 
 ;;__________________________________________________________
@@ -119,7 +118,7 @@
 			 vdiff-buffers3))
 
 ;;__________________________________________________________
-;; Diminish to hide packages from bar
+;; Diminish To Hide Packages from bar
 (use-package diminish :ensure t)
 
 ;;__________________________________________________________
@@ -289,6 +288,18 @@
          ("C-c <mouse-1>" . mc/add-cursor-on-click)))
 
 ;;__________________________________________________________
+;; My program's mode hooks
+
+(defun my/prog-mode-hook () "Some hooks only for prog mode."
+	   (which-function-mode t)     ;; Shows the function in spaceline
+	   (electric-pair-mode t)      ;; Autoannadir parentesis
+	   (electric-indent-mode t)    ;; Corrige indentacion con tab o enter (now default)
+	   (setq show-trailing-whitespace t)
+	   )
+
+(add-hook 'prog-mode-hook 'my/prog-mode-hook)
+
+;;__________________________________________________________
 ;; Mark column 80 when crossed
 (use-package column-enforce-mode :ensure t
   :diminish
@@ -440,18 +451,21 @@
 		 ("C-c *" . cscope-pop-mark)))
 
 ;;__________________________________________________________
-;; company-c-headers
-(use-package company-c-headers :ensure t
-  :after company
-  :config
-  (defun my/company-c-header-hook () "My company-c-header-hook."
-	  (add-to-list 'company-backends 'company-c-headers))
-  (add-hook 'c-mode-common-hook 'my/company-c-header-hook))
-
-;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
+
+	   (use-package company-c-headers :ensure t ;; company-c-headers
+		 :after company
+		 :config
+		 (add-to-list 'company-backends 'company-c-headers))
+	   
+	   (use-package preproc-font-lock :ensure t ;; Preprocessor
+		 :config
+		 (preproc-font-lock-global-mode 1)
+		 (set-face-attribute 'preproc-font-lock-preprocessor-background nil
+							 :inherit 'font-lock-preprocessor-face))
+	   
 	   (c-set-offset 'cpp-macro 0 nil)
 	   (message "Loaded my/c-mode common"))
 
@@ -653,8 +667,9 @@
 (use-package windmove
   :config
   ;; use shift + arrow keys to switch between visible buffers
-  (windmove-default-keybindings)
-  (setq-default windmove-wrap-around t))
+  (windmove-default-keybindings)        ;; Move between panes S-arrow
+  (setq-default windmove-wrap-around t) ;; Cyclic bound mode
+  )
 
 ;; (add-hook 'term-setup-hook
 ;;   '(lambda ()
@@ -1149,6 +1164,12 @@
   (global-set-key (kbd "C-c j") 'counsel-git-grep)
   (global-set-key (kbd "C-c l") 'counsel-locate)
 
+  (use-package counsel-tramp :ensure t
+	:after exec-path-from-shell
+	:config
+	(setq tramp-default-method "ssh")
+	(define-key global-map (kbd "C-c s") 'counsel-tramp))
+
   (use-package counsel-gtags :ensure t
 	:diminish
 	:config
@@ -1219,9 +1240,17 @@
   :mode ("\\.cobc\\'" "\\.cob\\'" "\\.cbl\\'" "\\.cpy\\'"))
 
 ;;__________________________________________________________
+;; path
+(use-package exec-path-from-shell :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
+;;__________________________________________________________
 ;; ssh
 (use-package tramp :ensure t
   :config
+  (use-package tramp-term :ensure t)
+
   (setq tramp-default-method "ssh")
   (autoload 'ssh-config-mode "ssh-config-mode" t)
   (add-to-list 'auto-mode-alist '("/\\.ssh/config\\'" . ssh-config-mode))
