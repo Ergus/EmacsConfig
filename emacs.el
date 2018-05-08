@@ -59,7 +59,8 @@
  '(paradox-github-token t)
  '(same-window-buffer-names
    (quote
-	("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*"))))
+	("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*")))
+ '(tabbar-separator (quote (1))))
 
 ;;__________________________________________________________
 ;; Internal options
@@ -192,55 +193,6 @@
 	;;(spaceline-toggle-minor-modes-off))
 
   (set-face-attribute 'mode-line nil :background "#5c5cff" :foreground "white"))
-
-;;__________________________________________________________
-;; Menu bar
-;;(global-set-key (kbd "M-f") 'menu-bar-open)
-
-;;__________________________________________________________
-;; tabbar
-(use-package tabbar :ensure t
-    :config
-    (tabbar-mode 1)
-
-    (setq tabbar-buffer-groups-function
-		  (lambda ()
-			(list
-			 (cond ((string-equal "*" (substring (buffer-name) 0 1)) "emacs")
-				   ((eq major-mode 'dired-mode) "emacs")
-				   (t "user")))))
-
-	(set-face-attribute	'tabbar-default nil
-						:background "gray20" :foreground "white"
-						:box '(:line-width 1 :color "gray20" :style nil))
-	(set-face-attribute 'tabbar-unselected nil
-						:background "gray20" :foreground "white"
-						:box '(:line-width 5 :color "gray20" :style nil))
-	(set-face-attribute 'tabbar-selected nil
-						:background "#5c5cff" :foreground "white"
-						:box '(:line-width 5 :color "#5c5cff" :style nil))
-	(set-face-attribute 'tabbar-highlight nil
-						:background "white" :foreground "black" :underline nil
-						:box '(:line-width 5 :color "white" :style nil))
-	(set-face-attribute 'tabbar-button nil
-						:box '(:line-width 1 :color "gray20" :style nil))
-	(set-face-attribute 'tabbar-separator nil
-						:background "gray20" :height 0.6)
-
-    ;; update the tabbar's modified status on changes
-    ;; (add-hook 'after-change-functions
-	;; 		  (lambda (beginning end length)
-	;; 			(tabbar-set-template tabbar-current-tabset nil)))
-    ;; (add-hook 'after-save-hook
-	;; 		  (lambda ()
-	;; 			(tabbar-set-template tabbar-current-tabset nil)))
-
-	(custom-set-variables '(tabbar-separator (quote (1))))
-
-	(global-set-key [M-left] 'tabbar-backward-tab)
-	(global-set-key [M-right] 'tabbar-forward-tab)
-)
-
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
@@ -977,9 +929,9 @@
 (use-package message-mode
   :mode ("mutt-Ergus-*" "draft")
   :config
-  (auto-fill-mode 1)
-  (flyspell-mode 1)
-  (abbrev-mode 1)
+  (auto-fill-mode t)
+  (flyspell-mode t)
+  (abbrev-mode t)
   (mail-abbrevs-setup)
   )
 
@@ -992,53 +944,72 @@
 
 ;;__________________________________________________________
 ;; Latex mode
-(defun my/LaTeX-mode-hook () "My LaTeX Mode hook."
-       (setq reftex-cite-format 'biblatex
-			 reftex-plug-into-AUCTeX t
-             LaTeX-eqnarray-label "eq"
-             LaTeX-equation-label "eq"
-             LaTeX-figure-label "fig"
-             LaTeX-table-label "tab"
-             LaTeX-myChapter-label "chap"
-             TeX-PDF-mode t
-             TeX-auto-save t
-             TeX-newline-function 'reindent-then-newline-and-indent
-             TeX-parse-self t
-			 LaTeX-always-use-Biber t
-			 reftex-bibliography-commands '("Bibliography")
-             LaTeX-section-hook '(LaTeX-section-heading
-								  LaTeX-section-title
-								  LaTeX-section-toc
-								  LaTeX-section-section
-								  LaTeX-section-label)
-             )
-       ;; (setq LaTeX-item-indent 0)
-       (setq-default TeX-master nil)
-       (turn-on-auto-fill)
-       (visual-line-mode)
-       (LaTeX-math-mode)
-       (flyspell-mode 1)
-       (turn-on-reftex)
-       (add-to-list 'TeX-output-view-style
-                    '("^pdf$" "." "evince %o %(outpage)"))
 
-	   (require 'company-math)
-	   (require 'company-auctex)
-	   (company-auctex-init)
-	   (with-eval-after-load 'company
-		 (add-to-list 'company-backends '(company-math-symbols-latex
-										  company-latex-commands)))
-       (flyspell-buffer)
-       (message "Loaded my Latex mode")
-       )
-
-(use-package auctex :ensure t
+(use-package tex-site :ensure auctex
   :mode ("\\.tex\\'" . latex-mode)
-  :commands (latex-mode LaTeX-mode plain-tex-mode)
-  :init
-  (add-hook 'LaTeX-mode-hook 'my/LaTeX-mode-hook))
+  :config
+  (setq LaTeX-babel-hyphen nil
+		TeX-auto-save t
+		TeX-parse-self t
+		LaTeX-always-use-Biber t
+		TeX-save-query nil      ;; don't prompt for saving the .tex file
+		TeX-newline-function 'reindent-then-newline-and-indent
+		TeX-PDF-mode t
+		TeX-source-correlate-method 'synctex
+		TeX-source-correlate-mode t
+		TeX-source-correlate-start-server t
+		)
+  (setq-default TeX-master nil)
 
-(autoload 'reftex-index-phrase-mode "reftex-index" "Phrase Mode" t)
+  (setq LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
+  (flyspell-mode t)
+  (flyspell-buffer)
+  (turn-on-auto-fill)
+  (visual-line-mode)
+  ;;(LaTeX-math-mode)
+
+  (use-package reftex  ;; Reftex for cross references
+	:config
+	(add-hook 'LaTeX-mode-hook #'turn-on-reftex)   ; with AUCTeX LaTeX mode
+
+	(reftex-isearch-minor-mode)
+	(setq reftex-plug-into-AUCTeX t
+		  reftex-cite-prompt-optional-args t   ; Prompt for empty optional arguments in cite
+		  reftex-cite-format 'biblatex
+		  reftex-plug-into-AUCTeX t
+		  reftex-insert-label-flags '(t t)
+		  reftex-save-parse-info t
+		  reftex-enable-partial-scans t
+		  reftex-use-multiple-selection-buffers t
+		  )
+
+	(use-package company-reftex :ensure t
+	  :after company
+	  :config
+	  (add-to-list 'company-backends '(company-reftex-labels
+									   company-reftex-citations)))
+	)
+
+  (use-package company-math :ensure t
+	:after company
+	:config
+	(add-to-list 'company-backends '(company-math-symbols-latex
+									 company-latex-commands))
+	)
+
+  (use-package company-auctex :ensure t
+	:after company
+	:config
+	(company-auctex-init)
+	)
+
+  (add-to-list 'TeX-command-list
+			   '("Makeglossaries" "makeglossaries %s" TeX-run-command nil
+				 (latex-mode)
+				 :help "Run makeglossaries script, which will choose xindy or makeindex") t)
+
+  (add-to-list 'TeX-output-view-style '("^pdf$" "." "evince %o %(outpage)"))
+  )
 
 ;;__________________________________________________________
 ;;bibtex mode set use biblatex
