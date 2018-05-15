@@ -55,7 +55,7 @@
  '(org-agenda-files (quote ("~/file.org")))
  '(package-selected-packages
    (quote
-	(swiper company-reftex smartparens vdiff neotree tramp-term exec-path-from-shell flycheck-status-emoji flycheck-popup-tip corral ivy-historian historian calfw cmake-font-lock dired-sidebar notmuch flycheck-color-mode-line irony systemd lua-mode rust-mode julia-mode markdown-mode cuda-mode column-enforce-mode move-text yasnippet-snippets which-key winum all-the-icons-ivy spaceline-all-the-icons spaceline spacemacs-theme ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
+	(desktop-environment swiper company-reftex smartparens vdiff neotree tramp-term exec-path-from-shell flycheck-status-emoji flycheck-popup-tip corral ivy-historian historian calfw cmake-font-lock dired-sidebar notmuch flycheck-color-mode-line irony systemd lua-mode rust-mode julia-mode markdown-mode cuda-mode column-enforce-mode move-text yasnippet-snippets which-key winum all-the-icons-ivy spaceline-all-the-icons spaceline spacemacs-theme ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
  '(paradox-github-token t)
  '(same-window-buffer-names
    (quote
@@ -1298,55 +1298,86 @@
 
 ;;__________________________________________________________
 ;;; EXWM (emacs windows manager, a desktop)
-
-(use-package exwm
-  :if (string= (getenv "exwm_enable") "yes")
-  :ensure nil
+(use-package exwm :ensure t
+  :if (string= (getenv "XDG_CURRENT_DESKTOP") "exwm")
   :demand t
   :config
-
-  ;;(exwm-enable)
-  (require 'exwm-config)
-  (exwm-config-ido)
-  ;;(exwm-config-default)
-
   (setq exwm-workspace-show-all-buffers t ;; share exwm buffers in all workspaces
-		exwm-layout-show-all-buffers t
-		exwm-workspace-number 2)          ;; 0 - 3, zero based
-
-  (exwm-input-set-key (kbd "s-&")
-					  (lambda (command)
-						(interactive (list (read-shell-command "$ ")))
-						(start-process-shell-command command nil command)))
-
+		exwm-layout-show-all-buffers t)
 
   (use-package exwm-randr
     :config
-    ;;(setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "DP1" 2 "DP2"))
-    (setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "HDMI1"))
-    (add-hook 'exwm-randr-screen-change-hook
+	(defun my/exwm-randr-screen-change-hook () "My screen config hook"
+		   ;; get number of monitors
+		   (setq mons (shell-command-to-string "xrandr -q| grep \" connected\" | wc -l"))
+		   (setq exwm-workspace-number (string-to-number mons)) ;; Number of monitors
+		   (message "Configure %d monitors" exwm-workspace-number)
+		   (cond ((eq exwm-workspace-number 3)
+				  (setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "DP1" 2 "DP2"))
+				  (start-process-shell-command "xrandr" nil
+											   "xrandr --output VIRTUAL1 --off --output eDP1 --primary --mode 1366x768 --pos 554x1080 --rotate normal --output DP1 --mode 1680x1050 --pos 1920x304 --rotate normal --output HDMI2 --off --output HDMI1 --off --output DP2 --mode 1920x1080 --pos 0x0 --rotate normal"
+											   ))
+				 ((eq exwm-workspace-number 2)
+				  (setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "HDMI1"))
+				  (start-process-shell-command "xrandr" nil
+											   "xrandr --output VIRTUAL1 --off --output eDP1 --primary --mode 1366x768 --pos 0x312 --rotate normal --output DP1 --off --output HDMI2 --off --output HDMI1 --mode 1920x1080 --pos 1366x0 --rotate normal --output DP2 --off"
+											   ))
+				 )
+		   )
+    (add-hook 'exwm-randr-screen-change-hook 'my/exwm-randr-screen-change-hook)
+	(exwm-randr-enable))
+
+	(use-package exwm-systemtray
+	  :config
+	  (exwm-systemtray-enable))  ;; exwm system tray
+
+	(add-hook 'exwm-manage-finish-hook
 			  (lambda ()
-				(start-process-shell-command
-				 "xrandr" nil "xrandr --output VIRTUAL1 --off --output eDP1 --primary --mode 1366x768 --pos 0x312 --rotate normal --output DP1 --off --output HDMI2 --off --output HDMI1 --mode 1920x1080 --pos 1366x0 --rotate normal --output DP2 --off"
-				 ;;"xrandr" nil "xrandr --output VIRTUAL1 --off --output eDP1 --primary --mode 1366x768 --pos 554x1080 --rotate normal --output DP1 --mode 1680x1050 --pos 1920x304 --rotate normal --output HDMI2 --off --output HDMI1 --off --output DP2 --mode 1920x1080 --pos 0x0 --rotate normal"
-				 )))
+				(when-let ((target (cdr (assoc exwm-class-name exwm-workspace-window-assignments))))
+				  (exwm-workspace-move-window target))))
+	(use-package desktop-environment :ensure t
+	  :config
+	  (desktop-environment-mode))
 
-    (exwm-randr-enable)
-    )
+	(use-package symon :ensure t
+	  :config
+	  (symon-mode))
 
-  (require 'exwm-systemtray)
-  (exwm-systemtray-enable)  ;; exwm system tray
+	(use-package exwm-config
+	  :config
+	  (setq exwm-workspace-number 4)
+	  ;; Make class name the buffer name
+	  (add-hook 'exwm-update-class-hook
+				(lambda () (exwm-workspace-rename-buffer exwm-class-name)))
 
-  (require 'exwm-cm)
-  (exwm-cm-enable)
+	  (exwm-input-set-key (kbd "s-r") #'exwm-reset) ;;Reset
+	  (exwm-input-set-key (kbd "s-w") #'exwm-workspace-switch) ;;Switch workspace
+	  (exwm-input-set-key (kbd "s-&") #'counsel-linux-app) ;;Switch workspace
 
+	  (dotimes (i 10) ;; 's-N': Switch to certain workspace
+		(exwm-input-set-key (kbd (format "s-%d" i))
+							`(lambda ()
+							   (interactive)
+							   (exwm-workspace-switch-create ,i))))
 
-  (add-hook 'exwm-manage-finish-hook
-			(lambda ()
-			  (when-let ((target (cdr (assoc exwm-class-name exwm-workspace-window-assignments))))
-				(exwm-workspace-move-window target))))
-  (exwm-enable)
-  )
+	  ;; Line-editing shortcuts
+	  (setq exwm-input-simulation-keys
+			'(([?\C-b] . [left])
+			  ([?\C-f] . [right])
+			  ([?\C-p] . [up])
+			  ([?\C-n] . [down])
+			  ([?\C-a] . [home])
+			  ([?\C-e] . [end])
+			  ([?\M-v] . [prior])
+			  ([?\C-v] . [next])
+			  ([?\C-d] . [delete])
+			  ([?\C-k] . [S-end delete])))
+	  ;; Enable EXWM
+	  (exwm-enable)
+	  (exwm-config-misc)
+	  )
+	
+	)
 
 ;;__________________________________________________________
 ;;; org-gcal (google calendar, not configured now)
