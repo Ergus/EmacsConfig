@@ -55,7 +55,7 @@
  '(org-agenda-files (quote ("~/file.org")))
  '(package-selected-packages
    (quote
-	(desktop-environment swiper company-reftex smartparens vdiff neotree tramp-term exec-path-from-shell flycheck-status-emoji flycheck-popup-tip corral ivy-historian historian calfw cmake-font-lock dired-sidebar notmuch flycheck-color-mode-line irony systemd lua-mode rust-mode julia-mode markdown-mode cuda-mode column-enforce-mode move-text yasnippet-snippets which-key winum all-the-icons-ivy spaceline-all-the-icons spaceline spacemacs-theme ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
+	(counsel-projectile ibuffer-projectile projectile better-shell desktop-environment swiper company-reftex smartparens vdiff neotree tramp-term exec-path-from-shell flycheck-status-emoji flycheck-popup-tip corral ivy-historian historian calfw cmake-font-lock dired-sidebar notmuch flycheck-color-mode-line irony systemd lua-mode rust-mode julia-mode markdown-mode cuda-mode column-enforce-mode move-text yasnippet-snippets which-key winum all-the-icons-ivy spaceline-all-the-icons spaceline spacemacs-theme ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
  '(paradox-github-token t)
  '(same-window-buffer-names
    (quote
@@ -1134,9 +1134,18 @@
 	(defun my/ibuffer-tramp-hook () "ibuffer tram hook"
 		   (ibuffer-tramp-set-filter-groups-by-tramp-connection)
 		   (ibuffer-do-sort-by-alphabetic))
-	(add-hook 'ibuffer-hook 'my/ibuffer-tramp-hook)))
+	(add-hook 'ibuffer-hook 'my/ibuffer-tramp-hook))
+
+  (use-package ibuffer-projectile :ensure t
+	:after projectile
+	:config
+	(defun my/ibuffer-projectile-hook () "My ibuffer-projectile-hook."
+		   (ibuffer-projectile-set-filter-groups))
+	(add-hook 'ibuffer-hook 'my/ibuffer-projectile-hook))
+  )
 
 
+;; Sidebar Dired+ibuffer (de emacs defaults)
 (defun my/sidebar-toggle ()
   "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
   (interactive)
@@ -1144,6 +1153,30 @@
   (ibuffer-sidebar-toggle-sidebar))
 
 (global-set-key (kbd "M-s") 'my/sidebar-toggle)
+
+;;__________________________________________________________
+;; Alternative sidebar (better for projects)
+
+(use-package projectile :ensure t
+  :config
+  (projectile-mode t))
+
+;; (use-package treemacs :ensure t
+;;   :commands treemacs
+;;   :defer t
+;;   :config
+;;   (setq treemacs-collapse-dirs        (if (executable-find "python") 3 0)
+;; 		treemacs-follow-after-init    t
+;; 		treemacs-sorting              'alphabetic-desc)
+;; 
+;;   (treemacs-follow-mode t)
+;;   (treemacs-filewatch-mode t)
+;;   (treemacs-git-mode 'simple)
+;; 
+;;   (use-package treemacs-projectile :ensure t
+;; 	:after treemacs projectile)
+;;   )
+
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
@@ -1199,7 +1232,14 @@
 		   (define-key counsel-gtags-mode-map (kbd "C-c <") 'counsel-gtags-go-backward)
 		   (define-key counsel-gtags-mode-map (kbd "C-c >") 'counsel-gtags-go-forward)
 		   (message "Loading my gtags mode hook"))
-	(add-hook 'c-mode-common-hook 'my/counsel-gtags-hook)))
+	(add-hook 'c-mode-common-hook 'my/counsel-gtags-hook))
+
+  (use-package counsel-projectile :ensure t
+	:after projectile
+	:config
+	(counsel-projectile-mode t)
+	)
+  )
 
 (use-package imenu-anywhere :ensure t
   :bind (("C-c i" . imenu-anywhere)))
@@ -1262,6 +1302,12 @@
   (exec-path-from-shell-initialize))
 
 ;;__________________________________________________________
+;; Better shell (for ssh)
+(use-package better-shell :ensure t
+    :bind (("C-'" . better-shell-shell)
+           ("C-;" . better-shell-remote-open)))
+
+;;__________________________________________________________
 ;; ssh
 (use-package tramp :ensure t
   :config
@@ -1309,8 +1355,11 @@
     :config
 	(defun my/exwm-randr-screen-change-hook () "My screen config hook"
 		   ;; get number of monitors
-		   (setq mons (shell-command-to-string "xrandr -q| grep \" connected\" | wc -l"))
-		   (setq exwm-workspace-number (string-to-number mons)) ;; Number of monitors
+		   (setq exwm-workspace-number
+				 (string-to-number
+				  (shell-command-to-string
+				   "xrandr -q| grep -c \" connected\""))) ;; Number of monitors
+		   
 		   (message "Configure %d monitors" exwm-workspace-number)
 		   (cond ((eq exwm-workspace-number 3)
 				  (setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "DP1" 2 "DP2"))
@@ -1335,6 +1384,7 @@
 			  (lambda ()
 				(when-let ((target (cdr (assoc exwm-class-name exwm-workspace-window-assignments))))
 				  (exwm-workspace-move-window target))))
+
 	(use-package desktop-environment :ensure t
 	  :config
 	  (desktop-environment-mode))
@@ -1374,9 +1424,7 @@
 			  ([?\C-k] . [S-end delete])))
 	  ;; Enable EXWM
 	  (exwm-enable)
-	  (exwm-config-misc)
-	  )
-	
+	  (exwm-config-misc))
 	)
 
 ;;__________________________________________________________
@@ -1400,26 +1448,6 @@
       )))
 
   (setq cfw:org-overwrite-default-keybinding t)
-
-  (custom-set-faces
-   '(cfw:face-title ((t (:foreground "#f0dfaf" :weight bold :height 2.0 :inherit variable-pitch))))
-   '(cfw:face-header ((t (:foreground "#d0bf8f" :weight bold))))
-   '(cfw:face-sunday ((t :foreground "#cc9393" :background "grey10" :weight bold)))
-   '(cfw:face-saturday ((t :foreground "#8cd0d3" :background "grey10" :weight bold)))
-   '(cfw:face-holiday ((t :background "grey10" :foreground "#8c5353" :weight bold)))
-   '(cfw:face-grid ((t :foreground "DarkGrey")))
-   '(cfw:face-default-content ((t :foreground "#bfebbf")))
-   '(cfw:face-periods ((t :foreground "cyan")))
-   '(cfw:face-day-title ((t :background "grey10")))
-   '(cfw:face-default-day ((t :weight bold :inherit cfw:face-day-title)))
-   '(cfw:face-annotation ((t :foreground "RosyBrown" :inherit cfw:face-day-title)))
-   '(cfw:face-disable ((t :foreground "DarkGray" :inherit cfw:face-day-title)))
-   '(cfw:face-today-title ((t :background "#7f9f7f" :weight bold)))
-   '(cfw:face-today ((t :background: "grey10" :weight bold)))
-   '(cfw:face-select ((t :background "#2f2f2f")))
-   '(cfw:face-toolbar ((t :foreground "Steelblue4" :background "Steelblue4")))
-   '(cfw:face-toolbar-button-off ((t :foreground "Gray10" :weight bold)))
-   '(cfw:face-toolbar-button-on ((t :foreground "Gray50" :weight bold))))
   )
 
 (provide 'init)
