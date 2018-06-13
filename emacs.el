@@ -29,7 +29,9 @@
 
 (use-package paradox :ensure t
   :commands (paradox-upgrade-packages paradox-list-packages)
-  :config (setq paradox-execute-asynchronously t))
+  :config
+  ;;(setq paradox-execute-asynchronously t)  ;; No me convence
+  (setq paradox-spinner-type 'progress-bar))
 
 ;;__________________________________________________________
 ;; Benchmark-init
@@ -41,26 +43,13 @@
 ;; To put all my lisp scripts
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   (quote
-	("84d2f9eeb3f82d619ca4bfffe5f157282f4779732f48a5ac1484d94d5ff5b279" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
- '(ecb-options-version "2.50")
- '(large-file-warning-threshold 100000000)
- '(mumamo-submode-indent-offset 4)
- '(org-agenda-files (quote ("~/file.org")))
- '(package-selected-packages
-   (quote
-	(counsel-projectile ibuffer-projectile projectile better-shell desktop-environment swiper company-reftex smartparens vdiff neotree tramp-term exec-path-from-shell flycheck-status-emoji flycheck-popup-tip corral ivy-historian historian calfw cmake-font-lock dired-sidebar notmuch flycheck-color-mode-line irony systemd lua-mode rust-mode julia-mode markdown-mode cuda-mode column-enforce-mode move-text yasnippet-snippets which-key winum all-the-icons-ivy spaceline-all-the-icons spaceline spacemacs-theme ibuffer-sidebar ibuffer-tramp imenu-anywhere helm smart-mode-line-powerline-theme company-quickhelp symon gnuplot paradox irony-eldoc pyenv-mode python-mode flycheck-pycheckers ein elpy highlight-escape-sequences highlight-numbers diminish flyspell-correct-ivy helm-c-yasnippet helm-smex helm-tramp helm-cscope xcscope counsel-etags counsel-gtags ggtags helm-gtags magit bbdb- counsel-bbdb highlight-blocks counsel-notmuch counsel-tramp highlight-indent-guides highlight-parentheses smex counsel ivy multi-term bongo flycheck-ycmd company-ycmd ycmd modern-cpp-font-lock anzu smart-mode-line clean-aindent-mode multiple-cursors d-mode jabber exwm benchmark-init tabbar cobol-mode shell-pop smart-tabs-mode elscreen yasnippet yaxception flycheck-clang-analyzer flycheck-julia langtool company-go auctex company-auctex sphinx-mode qt-pro-mode opencl-mode flyspell-popup alert async bbdb bind-key cl-generic cmake-mode company concurrent emms flycheck js2-mode let-alist math-symbol-lists polymode popup with-editor sunrise-x-buttons sunrise-commander ruby-tools ruby-electric nasm-mode markdown-mode+ hlinum highlight go-snippets go-mode gnuplot-mode flycheck-rust flycheck-irony flycheck-cstyle f90-interface-browser elpa-mirror ecb company-math company-lua company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex cmake-project bbdb-vcard bbdb-handy)))
- '(paradox-github-token t)
- '(same-window-buffer-names
-   (quote
-	("*eshell*" "*Python*" "*shell*" "*Buffer List*" "*scheme*" "*")))
- '(tabbar-separator (quote (1))))
+;;__________________________________________________________
+;; Config file not here to not track it
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(unless (file-exists-p custom-file)
+  (write-region "" nil custom-file))
+
+(load custom-file)
 
 ;;__________________________________________________________
 ;; Internal options
@@ -165,6 +154,12 @@
   :config
   (setq winum-auto-setup-mode-line nil)
   (winum-mode))
+
+;;__________________________________________________________
+;; ace-window (windows change)
+(use-package ace-window :ensure t
+  :config
+  (global-set-key (kbd "M-o") 'ace-window))
 
 ;;__________________________________________________________
 ;; Status bar (mode line in emacs) two options to chose
@@ -343,6 +338,9 @@
        (set-face-attribute 'isearch nil :background "blue" :foreground "white") ;; Busqueda
        (set-face-attribute 'region nil :background "white" :foreground "black") ;; Seleccion C-space
        (set-face-attribute 'linum nil :background "black" :foreground "green")  ;; resalta la linea actual
+
+	   (set-face-attribute 'minibuffer-prompt nil :foreground "brightcyan")
+
 	   ;; color de la linea en el panel activo/inactivo
 	   ;; (set-face-attribute  'mode-line nil :foreground "black" :background "gray90":box '(:line-width 1 :style released-button))
 	   ;; (set-face-attribute  'mode-line-inactive nil :foreground "black" :background "gray70" :box '(:line-width 1 :style released-button))
@@ -511,6 +509,8 @@
 
 (defun my/c++-mode-hook () "My C++-Mode hook function."
 	   (setq flycheck-gcc-language-standard "c++11")
+	   (c-set-offset 'access-label '-)
+	   (c-set-offset 'inline-open 0)
        (c-set-offset 'inclass 'my/c++-lineup-inclass)
 	   (message "Loaded my c++-mode")
        )
@@ -536,6 +536,7 @@
 ;;__________________________________________________________
 ;; Markdown mode
 (use-package markdown-mode :ensure t
+  :commands (markdown-mode)
   :mode "\\.md\\'"
   :config
   (flyspell-mode 1))
@@ -938,6 +939,8 @@
 ;; Autocompleta direcciones
 (use-package notmuch :ensure t
   :defer t
+  :init
+  (setq notmuch-init-file "~/almacen/mail/notmuch-config")
   :config
   (require 'notmuch-address)
   (setq notmuch-address-command "/home/ergo/gits/notmuch-addrlookup-c/notmuch-addrlookup"))
@@ -945,7 +948,7 @@
 ;;__________________________________________________________
 ;; Latex mode
 
-(use-package tex-site :ensure auctex
+(use-package latex :ensure auctex
   :mode ("\\.tex\\'" . latex-mode)
   :config
   (setq LaTeX-babel-hyphen nil
@@ -957,8 +960,8 @@
 		TeX-PDF-mode t
 		TeX-source-correlate-method 'synctex
 		TeX-source-correlate-mode t
-		TeX-source-correlate-start-server t
-		)
+		TeX-source-correlate-start-server t)
+
   (setq-default TeX-master nil)
 
   (setq LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
@@ -1000,8 +1003,7 @@
   (use-package company-auctex :ensure t
 	:after company
 	:config
-	(company-auctex-init)
-	)
+	(company-auctex-init))
 
   (add-to-list 'TeX-command-list
 			   '("Makeglossaries" "makeglossaries %s" TeX-run-command nil
@@ -1033,19 +1035,47 @@
 	(add-to-list 'company-backends 'company-jedi))
 
   (use-package elpy :ensure t
-	:init
-	(add-hook 'python-mode-hook 'elpy-enable)
+	:commands elpy-enable
+	:init (with-eval-after-load 'python (elpy-enable))
 	:config
 	(setq elpy-rpc-python-command "python3"
 		  elpy-rpc-backend "jedi"
 		  python-check-command "pyflakes"
 		  python-shell-interpreter "ipython3"
-		  python-shell-interpreter-args "-i --simple-prompt")
+		  python-shell-interpreter-args "-i --simple-prompt"))
 
-	(use-package flycheck-pycheckers :ensure t
-	  :after flycheck
-	  :config
-	  (add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))))
+  (use-package flycheck-pycheckers :ensure t
+	:after flycheck
+	:config
+	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup)))
+
+;;(use-package python-mode :ensure t
+;;  :mode ("\\.py" . python-mode)
+;;  :config
+;;  (setq	python-shell-interpreter "ipython3"
+;;		python-shell-interpreter-args "--simple-prompt --pprint"
+;;		python-shell-completion-native-enable nil)
+;;
+;;  (use-package flycheck-pyflakes :ensure t
+;;	:init
+;;	(add-hook 'python-mode-hook 'flycheck-mode)
+;;	:config
+;;	(add-to-list 'flycheck-disabled-checkers 'python-flake8)
+;;	(add-to-list 'flycheck-disabled-checkers 'python-pylint))
+;;
+;;  (use-package anaconda-mode :ensure t
+;;	:init
+;;	(add-hook 'python-mode-hook 'anaconda-mode)
+;;	(add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+;;	:config
+;;	(use-package company-anaconda :ensure t
+;;	  :after company
+;;	  :config
+;;	  (add-to-list 'company-backends '(company-anaconda :with company-capf))))
+;;
+;;  (use-package pylint :ensure t
+;;	:commands pylint
+;;	:init (autoload 'tramp-tramp-file-p "tramp")))
 
 ;;__________________________________________________________
 ;; IDO siempre (probare un tiempo con helm/ivy)
@@ -1120,11 +1150,14 @@
 	:config
 	(setq dired-sidebar-use-term-integration t
 		  dired-sidebar-theme 'nerd
-		  dired-sidebar-subtree-line-prefix " ."
+		  dired-sidebar-subtree-line-prefix "."
 		  dired-sidebar-use-custom-font t)))
 
 (use-package ibuffer :ensure t
   :bind ("C-x C-b" . ibuffer)
+  :defer t
+  :init
+  (defalias 'list-buffers 'ibuffer) ; make ibuffer default
   :config
   (use-package ibuffer-sidebar :ensure t
 	:commands (ibuffer-sidebar-toggle-sidebar))
@@ -1155,28 +1188,18 @@
 (global-set-key (kbd "M-s") 'my/sidebar-toggle)
 
 ;;__________________________________________________________
-;; Alternative sidebar (better for projects)
-
-(use-package projectile :ensure t
+;; neotree
+(use-package neotree :ensure t
   :config
-  (projectile-mode t))
+  (global-set-key [f8] 'neotree-toggle))
 
-;; (use-package treemacs :ensure t
-;;   :commands treemacs
-;;   :defer t
-;;   :config
-;;   (setq treemacs-collapse-dirs        (if (executable-find "python") 3 0)
-;; 		treemacs-follow-after-init    t
-;; 		treemacs-sorting              'alphabetic-desc)
-;; 
-;;   (treemacs-follow-mode t)
-;;   (treemacs-filewatch-mode t)
-;;   (treemacs-git-mode 'simple)
-;; 
-;;   (use-package treemacs-projectile :ensure t
-;; 	:after treemacs projectile)
-;;   )
-
+;;__________________________________________________________
+;; Projectile
+(use-package projectile :ensure t
+  :commands (projectile-find-file projectile-switch-project)
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :init (setq projectile-completion-system 'ivy)
+  :config (projectile-mode t))
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
@@ -1184,30 +1207,29 @@
   :diminish
   :bind ("C-c C-r" . ivy-resume)
   :config
+  (ivy-mode t)
 
-  (ivy-mode 1)
-
-  (setq ivy-use-virtual-buffers t
+  (setq ivy-use-virtual-buffers t    ;; 
 		ivy-count-format "(%d/%d) "
-		ivy-wrap t
-		enable-recursive-minibuffers t
-		ivy-re-builders-alist '((swiper . ivy--regex-plus)
-                                (amx . ivy--regex-fuzzy)
-                                (t . ivy--regex-plus)))
+		ivy-display-style 'fancy
+		ivy-wrap t                   ;; cycle in minibuffer
+		enable-recursive-minibuffers t)
 
   (use-package swiper :ensure t
 	:bind ("C-s" . swiper)
 	:config
 	(set-face-attribute 'swiper-line-face nil
-						:background "white" :foreground "black"
-						:weight 'ultra-bold))
+						:background "brightblack" :foreground "white")
+	(set-face-attribute 'ivy-current-match nil
+						:background "brightblue" :foreground "white"
+						:weight 'bold))
 
   (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
 
 (use-package counsel :ensure t
   :diminish
   :config
-  (counsel-mode 1)
+  (counsel-mode t)
   (global-set-key (kbd "C-c k") 'counsel-ag)
   (global-set-key (kbd "C-c g") 'counsel-git)
   (global-set-key (kbd "C-c j") 'counsel-git-grep)
@@ -1252,16 +1274,16 @@
 	:after ivy
 	:config (ivy-historian-mode t)))
 
-(use-package smex :ensure t)
+;;(use-package smex :ensure t)
 
-;;(use-package amx :ensure t
-;;  :config (amx-mode t))
+(use-package amx :ensure t)
 
 ;;__________________________________________________________
 ;; Magit
 (use-package magit :ensure t
   :commands magit-status
-  )
+  :config
+  (setq magit-completing-read-function 'ivy-completing-read))
 
 ;;______________________________________
 ;; Git commit
@@ -1297,9 +1319,13 @@
 
 ;;__________________________________________________________
 ;; path
-(use-package exec-path-from-shell :ensure t
-  :config
-  (exec-path-from-shell-initialize))
+;;(use-package exec-path-from-shell :ensure t
+;;  :config
+;;  (exec-path-from-shell-initialize))
+
+(defun shell-command-on-buffer (command)
+  (interactive "sShell command on buffer: ")
+  (shell-command-on-region (point-min) (point-max) command t))
 
 ;;__________________________________________________________
 ;; Better shell (for ssh)
@@ -1313,12 +1339,16 @@
   :config
   (use-package tramp-term :ensure t)
 
-  (setq tramp-default-method "ssh")
-  (autoload 'ssh-config-mode "ssh-config-mode" t)
-  (add-to-list 'auto-mode-alist '("/\\.ssh/config\\'" . ssh-config-mode))
-  (add-to-list 'auto-mode-alist '("/sshd?_config\\'" . ssh-config-mode))
-  (add-to-list 'auto-mode-alist '("/known_hosts\\'" . ssh-known-hosts-mode))
-  (add-to-list 'auto-mode-alist '("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
+  (setq tramp-verbose 9
+		tramp-default-method "ssh"
+		tramp-use-ssh-controlmaster-options nil
+		tramp-persistency-file-name "~/.emacs.d/tramp"))
+
+(use-package ssh-config-mode
+  :mode (("/\\.ssh/config\\'" . ssh-config-mode)
+         ("/sshd?_config\\'" . ssh-config-mode)
+         ("/known_hosts\\'" . ssh-known-hosts-mode)
+         ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
 
 ;;__________________________________________________________
 ;; Jabber (for gmail)
@@ -1452,10 +1482,3 @@
 
 (provide 'init)
 ;;; init.el ends here
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
