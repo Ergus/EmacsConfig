@@ -65,6 +65,12 @@
 (menu-bar-mode -1)               ;; Quitar barra superior (no la uso)
 ;;(desktop-save-mode 1)          ;; Save open windows before close, for next section
 
+(when (display-graphic-p)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (global-hl-line-mode -1))
+
+
 (setq-default vc-follow-symlinks nil	            ;; Open links not open
 			  transient-mark-mode t     ;; Highlight marked region
 			  line-number-mode t        ;; Display line numbers
@@ -86,6 +92,7 @@
 			  scroll-margin 0
 			  fill-column 80            ;; default is 70
 			  tooltip-mode t            ;; Tool tip in the echo
+			  show-paren-style 'mixed   ;; show the matching paren or the expression
 			  )
 
 ;;__________________________________________________________
@@ -93,7 +100,7 @@
 ;;__________________________________________________________
 
 ;;__________________________________________________________
-; Two options for diffs
+										; Two options for diffs
 (use-package ediff
   :config
   (setq ediff-window-setup-function 'ediff-setup-windows-plain)
@@ -114,11 +121,11 @@
 
 ;;__________________________________________________________
 ;; Smart-parents (parentesis correctos para los modos)
-(use-package smartparens :ensure t
-  :init (smartparens-global-mode)
-  :config
-    (use-package smartparens-config :ensure smartparens)
-    (smartparens-global-mode))
+;;(use-package smartparens :ensure t
+;;  :init (smartparens-global-mode)
+;;  :config
+;;    (use-package smartparens-config :ensure smartparens)
+;;    (smartparens-global-mode))
 
 
 ;;__________________________________________________________
@@ -185,7 +192,7 @@
 	(setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
 	:config
 	(spaceline-spacemacs-theme))
-	;;(spaceline-toggle-minor-modes-off))
+  ;;(spaceline-toggle-minor-modes-off))
 
   (set-face-attribute 'mode-line nil :background "#5c5cff" :foreground "white"))
 
@@ -265,7 +272,7 @@
   (mouse-wheel-mode t)            ;; scrolling con el mouse
   )
 
-  (global-set-key [drag-mouse-2] 'mouse-yank-at-click)
+(global-set-key [drag-mouse-2] 'mouse-yank-at-click)
 
 (blink-cursor-mode 0)             ;; Parpadeo del cursor modo texto
 (set-cursor-color "white")        ;; Set cursor and mouse colours
@@ -539,7 +546,7 @@
   :commands (markdown-mode)
   :mode "\\.md\\'"
   :config
-  (flyspell-mode 1))
+  (flyspell-mode t))
 
 ;;__________________________________________________________
 ;; Restructured text
@@ -548,7 +555,7 @@
   :config
   (use-package sphinx-mode :ensure t
     :hook rst-mode)
-  (flyspell-mode 1))
+  (flyspell-mode t))
 
 ;;__________________________________________________________
 ;; Makefile
@@ -585,6 +592,11 @@
     :commands (flycheck-rust-setup)
     :init
     (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
+
+;;__________________________________________________________
+;; Ocaml Mode
+(use-package caml-mode :ensure caml
+  :mode "\\.ml\\'")
 
 ;;__________________________________________________________
 ;; D languaje
@@ -707,9 +719,9 @@
   (use-package yasnippet-snippets :ensure t)
 
   (defun my/company-yasnippet () "Company-Yasnippet completion"
-	(interactive)
-	(company-abort)
-	(call-interactively 'company-yasnippet))
+		 (interactive)
+		 (company-abort)
+		 (call-interactively 'company-yasnippet))
 
   (define-key company-active-map (kbd "M-/") 'my/company-yasnippet)
   (global-set-key (kbd "M-/") 'company-yasnippet))
@@ -717,8 +729,7 @@
 (use-package company :ensure t
   :defer t
   :bind (("M-RET" . company-complete))
-  :init
-  (global-company-mode)
+  :init (global-company-mode)
   :config
   (define-key company-mode-map (kbd "M-RET") 'company-complete)
   (define-key company-active-map (kbd "M-RET") 'company-other-backend)
@@ -735,10 +746,10 @@
   (set-face-attribute 'company-scrollbar-fg nil   ;; scroll bar face fg
 					  :background "blue")
 
-  (setq company-idle-delay 0   ;; no delay for autocomplete
+  (setq company-idle-delay 1   ;; no delay for autocomplete
 		company-minimum-prefix-length 2
 		company-tooltip-limit 20
-
+		
 		company-show-numbers t)
 
   (use-package company-quickhelp :ensure t
@@ -793,7 +804,6 @@
   :preface
   (defun my/irony-mode-hook () "My irony mode hook."
 		 (unless (and buffer-file-name (file-remote-p buffer-file-name))
-		   ;;(irony-mode t)
 		   (irony-cdb-autosetup-compile-options)
 
 		   (use-package company-irony :ensure t
@@ -823,12 +833,12 @@
 
 		   (use-package irony-eldoc :ensure t
 			 :config
-			 (add-hook 'irony-mode-hook #'irony-eldoc))
+			 (add-hook 'irony-mode-hook 'irony-eldoc))
 
 		   (message "Loaded my-Irony-Mode-hook")))
   :init
-  (add-hook 'c++-mode-hook #'irony-mode)
-  (add-hook 'c-mode-hook #'irony-mode)
+  (add-hook 'c++-mode-hook 'irony-mode)
+  (add-hook 'c-mode-hook 'irony-mode)
   (add-hook 'irony-mode-hook #'my/irony-mode-hook))
 
 ;;__________________________________________________________
@@ -920,20 +930,27 @@
   (use-package bbdb-handy :ensure t))
 
 (use-package mail-mode
-  :mode "/mutt"
-  :config
-  (abbrev-mode 1)
-  (mail-abbrevs-setup)
+  :mode ("/neomut")
+  :init
+  (defun my/mail-mode-hook () "My mail mode hook"
+		 (turn-on-auto-fill)
+		 (mail-abbrevs-setup)
+		 (message "Loaded Mail-mode")
+		 )
+  (add-hook 'mail-mode-hook 'my/mail-mode-hook)
   )
 
 ;; Asocia buffers que empiecen con messaje mode
 (use-package message-mode
-  :mode ("mutt-Ergus-*" "draft")
-  :config
-  (auto-fill-mode t)
-  (flyspell-mode t)
-  (abbrev-mode t)
-  (mail-abbrevs-setup)
+  :mode ("neomutt-Ergus-" "draft")
+  :init
+  (defun my/message-mode-hook () "My mail mode hook"
+		 (turn-on-auto-fill)
+		 (mail-abbrevs-setup)
+		 (flyspell-mode t)
+		 (message "Loaded Message-mode")
+		 )
+  (add-hook 'message-mode-hook 'my/message-mode-hook)
   )
 
 ;; Autocompleta direcciones
@@ -1036,18 +1053,23 @@
 
   (use-package elpy :ensure t
 	:commands elpy-enable
-	:init (with-eval-after-load 'python (elpy-enable))
+	:init
+	(with-eval-after-load 'python (elpy-enable))
+	(add-hook 'elpy-mode-hook 'turn-on-auto-fill)
 	:config
 	(setq elpy-rpc-python-command "python3"
 		  elpy-rpc-backend "jedi"
 		  python-check-command "pyflakes"
-		  python-shell-interpreter "ipython3"
+		  python-shell-interpreter "python3"
 		  python-shell-interpreter-args "-i --simple-prompt"))
 
   (use-package flycheck-pycheckers :ensure t
 	:after flycheck
 	:config
-	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup)))
+	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))
+
+  (use-package ipython-shell-send :ensure t)
+  )
 
 ;;(use-package python-mode :ensure t
 ;;  :mode ("\\.py" . python-mode)
@@ -1305,11 +1327,10 @@
 (use-package cmake-mode :ensure t
   :after company
   :mode ("/CMakeLists\\.txt\\'" "\\.cmake\\'")
-  :init
+  :config
   (use-package cmake-font-lock :ensure t
-	:init
-	(add-hook 'cmake-mode-hook 'cmake-font-lock-activate)
-	)
+	:config
+	(add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
   (add-to-list 'company-backends 'company-cmake))
 
 ;;__________________________________________________________
@@ -1330,8 +1351,8 @@
 ;;__________________________________________________________
 ;; Better shell (for ssh)
 (use-package better-shell :ensure t
-    :bind (("C-'" . better-shell-shell)
-           ("C-;" . better-shell-remote-open)))
+  :bind (("C-'" . better-shell-shell)
+         ("C-;" . better-shell-remote-open)))
 
 ;;__________________________________________________________
 ;; ssh
@@ -1366,7 +1387,7 @@
 		  ("kratsbinovish@gmail.com"
 		   (:network-server . "talk.google.com")
 		   (:connection-type . ssl)
-		   (:password . "***")
+		   (:password . "...")
 		   )
 		  )
 		)
@@ -1406,56 +1427,56 @@
     (add-hook 'exwm-randr-screen-change-hook 'my/exwm-randr-screen-change-hook)
 	(exwm-randr-enable))
 
-	(use-package exwm-systemtray
-	  :config
-	  (exwm-systemtray-enable))  ;; exwm system tray
+  (use-package exwm-systemtray
+	:config
+	(exwm-systemtray-enable))  ;; exwm system tray
 
-	(add-hook 'exwm-manage-finish-hook
-			  (lambda ()
-				(when-let ((target (cdr (assoc exwm-class-name exwm-workspace-window-assignments))))
-				  (exwm-workspace-move-window target))))
+  (add-hook 'exwm-manage-finish-hook
+			(lambda ()
+			  (when-let ((target (cdr (assoc exwm-class-name exwm-workspace-window-assignments))))
+				(exwm-workspace-move-window target))))
 
-	(use-package desktop-environment :ensure t
-	  :config
-	  (desktop-environment-mode))
+  (use-package desktop-environment :ensure t
+	:config
+	(desktop-environment-mode))
 
-	(use-package symon :ensure t
-	  :config
-	  (symon-mode))
+  (use-package symon :ensure t
+	:config
+	(symon-mode))
 
-	(use-package exwm-config
-	  :config
-	  (setq exwm-workspace-number 4)
-	  ;; Make class name the buffer name
-	  (add-hook 'exwm-update-class-hook
-				(lambda () (exwm-workspace-rename-buffer exwm-class-name)))
+  (use-package exwm-config
+	:config
+	(setq exwm-workspace-number 4)
+	;; Make class name the buffer name
+	(add-hook 'exwm-update-class-hook
+			  (lambda () (exwm-workspace-rename-buffer exwm-class-name)))
 
-	  (exwm-input-set-key (kbd "s-r") #'exwm-reset) ;;Reset
-	  (exwm-input-set-key (kbd "s-w") #'exwm-workspace-switch) ;;Switch workspace
-	  (exwm-input-set-key (kbd "s-&") #'counsel-linux-app) ;;Switch workspace
+	(exwm-input-set-key (kbd "s-r") #'exwm-reset) ;;Reset
+	(exwm-input-set-key (kbd "s-w") #'exwm-workspace-switch) ;;Switch workspace
+	(exwm-input-set-key (kbd "s-&") #'counsel-linux-app) ;;Switch workspace
 
-	  (dotimes (i 10) ;; 's-N': Switch to certain workspace
-		(exwm-input-set-key (kbd (format "s-%d" i))
-							`(lambda ()
-							   (interactive)
-							   (exwm-workspace-switch-create ,i))))
+	(dotimes (i 10) ;; 's-N': Switch to certain workspace
+	  (exwm-input-set-key (kbd (format "s-%d" i))
+						  `(lambda ()
+							 (interactive)
+							 (exwm-workspace-switch-create ,i))))
 
-	  ;; Line-editing shortcuts
-	  (setq exwm-input-simulation-keys
-			'(([?\C-b] . [left])
-			  ([?\C-f] . [right])
-			  ([?\C-p] . [up])
-			  ([?\C-n] . [down])
-			  ([?\C-a] . [home])
-			  ([?\C-e] . [end])
-			  ([?\M-v] . [prior])
-			  ([?\C-v] . [next])
-			  ([?\C-d] . [delete])
-			  ([?\C-k] . [S-end delete])))
-	  ;; Enable EXWM
-	  (exwm-enable)
-	  (exwm-config-misc))
-	)
+	;; Line-editing shortcuts
+	(setq exwm-input-simulation-keys
+		  '(([?\C-b] . [left])
+			([?\C-f] . [right])
+			([?\C-p] . [up])
+			([?\C-n] . [down])
+			([?\C-a] . [home])
+			([?\C-e] . [end])
+			([?\M-v] . [prior])
+			([?\C-v] . [next])
+			([?\C-d] . [delete])
+			([?\C-k] . [S-end delete])))
+	;; Enable EXWM
+	(exwm-enable)
+	(exwm-config-misc))
+  )
 
 ;;__________________________________________________________
 ;;; org-gcal (google calendar, not configured now)
@@ -1477,8 +1498,8 @@
       (cfw:ical-create-source "gcal" "https://somecalnedaraddress" "IndianRed") ; devorah calender
       )))
 
-  (setq cfw:org-overwrite-default-keybinding t)
-  )
+  (setq cfw:org-overwrite-default-keybinding t))
 
 (provide 'init)
 ;;; init.el ends here
+
