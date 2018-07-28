@@ -92,7 +92,7 @@
 			  scroll-margin 0
 			  fill-column 80            ;; default is 70
 			  tooltip-mode t            ;; Tool tip in the echo
-			  show-paren-style 'mixed   ;; show the matching paren or the expression
+			  ;;show-paren-style 'mixed   ;; show the matching paren or the expression
 			  )
 
 ;;__________________________________________________________
@@ -257,9 +257,9 @@
 ;;__________________________________________________________
 ;; Move current line up and down Shift+arrow
 (use-package move-text :ensure t
-  :bind
-  (([(control shift up)] . move-text-up)
-   ([(control shift down)] . move-text-down)))
+  :bind(("C-S-<up>" . move-text-up)
+		("C-S-<down>" . move-text-down))
+  )
 
 ;;__________________________________________________________
 ;;  Seleccionar con el mouse
@@ -282,19 +282,25 @@
 (global-unset-key (kbd "C-c <down-mouse-1>"))
 (use-package multiple-cursors  :ensure t ;; Multiple cursors package
   :bind (("C-c m" . mc/edit-lines)
-		 ("C-c n" . mc/mark-next-like-this)
-		 ("C-c p" . mc/mark-previous-like-this)
+		 ("C-c <down>" . mc/mark-next-like-this)
+		 ("C-c <up>" . mc/mark-previous-like-this)
          ("C-c <mouse-1>" . mc/add-cursor-on-click)))
 
 ;;__________________________________________________________
 ;; My program's mode hooks
 
+;; Spaces around operators
+(use-package electric-operator :ensure t
+  :config
+  (defun my/electric-operator-mode () "electric-operator-mode"
+		 (electric-operator-mode t))
+  (add-hook 'prog-mode-hook 'my/electric-operator-mode))
+
 (defun my/prog-mode-hook () "Some hooks only for prog mode."
-	   (which-function-mode t)     ;; Shows the function in spaceline
-	   (electric-pair-mode t)      ;; Autoannadir parentesis
-	   (electric-indent-mode t)    ;; Corrige indentacion con tab o enter (now default)
-	   (setq show-trailing-whitespace t)
-	   )
+	   (which-function-mode t)     		  ;; Shows the function in spaceline
+	   (electric-pair-mode t)      		  ;; Autoannadir parentesis
+	   (electric-indent-mode t)    		  ;; Corrige indentacion con tab o enter (now default)
+	   (setq show-trailing-whitespace t))
 
 (add-hook 'prog-mode-hook 'my/prog-mode-hook)
 
@@ -307,8 +313,10 @@
   (column-enforce-mode t)
   (setq column-enforce-comments nil)
   ;;(setq column-enforce-column <your desired column>)
+  ;;(set-face-attribute 'column-enforce-face nil
+  ;;					  :background "gray90" :foreground "black")
   (set-face-attribute 'column-enforce-face nil
-					  :background "gray90" :foreground "black"))
+					  :background "#1c1c1c1c1c1c"))
 
 ;;__________________________________________________________
 ;;  The Colors (I want to change this for a real theme, there are maaaaany)
@@ -325,8 +333,8 @@
 
        ;;(set-face-foreground 'font-lock-comment-face "LightSalmon4")   ;; Comentarios
        ;;(set-face-foreground 'font-lock-doc-face "LightSalmon1")       ;; Documentation
-       (set-face-foreground 'font-lock-comment-face "blue")         ;; Comentarios
-       (set-face-foreground 'font-lock-doc-face "blue")             ;; Documentation
+       (set-face-foreground 'font-lock-comment-face "blue")             ;; Comentarios
+       (set-face-foreground 'font-lock-doc-face "blue")                 ;; Documentation
 
        (set-face-foreground 'font-lock-string-face "red")           	;; Strings
        (set-face-foreground 'font-lock-function-name-face "white")  	;; Funciones
@@ -1234,6 +1242,7 @@
   (setq ivy-use-virtual-buffers t    ;; 
 		ivy-count-format "(%d/%d) "
 		ivy-display-style 'fancy
+		ivy-height 5
 		ivy-wrap t                   ;; cycle in minibuffer
 		enable-recursive-minibuffers t)
 
@@ -1309,10 +1318,10 @@
 
 ;;______________________________________
 ;; Git commit
+
 (use-package git-commit :ensure t
-  :commands global-git-commit-mode
-  :mode ("COMMIT_EDITMSG")
   :init
+  (global-git-commit-mode t)
   (setq git-commit-summary-max-length 50
         fill-column 72)
   (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell))
@@ -1351,8 +1360,7 @@
 ;;__________________________________________________________
 ;; Better shell (for ssh)
 (use-package better-shell :ensure t
-  :bind (("C-'" . better-shell-shell)
-         ("C-;" . better-shell-remote-open)))
+  :bind ("C-c b" . better-shell-shell))
 
 ;;__________________________________________________________
 ;; ssh
@@ -1500,6 +1508,8 @@
 
   (setq cfw:org-overwrite-default-keybinding t))
 
+
+(use-package evil :ensure t)
+
 (provide 'init)
 ;;; init.el ends here
-
