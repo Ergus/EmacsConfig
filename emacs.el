@@ -41,13 +41,21 @@
 
 ;;__________________________________________________________
 ;; To put all my lisp scripts
+(defvar mylisp-dir (expand-file-name "lisp" user-emacs-directory))
+
+(unless (file-exists-p mylisp-dir)
+  (make-directory mylisp-dir)
+  (message "Creating %s" mylisp-dir))
+
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
 ;;__________________________________________________________
 ;; Config file not here to not track it
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
 (unless (file-exists-p custom-file)
-  (write-region "" nil custom-file))
+  (write-region "" nil custom-file)
+  (message "Creating %s" custom-file))
 
 (load custom-file)
 
@@ -100,7 +108,7 @@
 ;;__________________________________________________________
 
 ;;__________________________________________________________
-										; Two options for diffs
+;; Two options for diffs
 (use-package ediff
   :config
   (setq ediff-window-setup-function 'ediff-setup-windows-plain)
@@ -247,19 +255,18 @@
 
 ;;__________________________________________________________
 ;; hlinum
-(use-package hlinum :ensure t ;; resalta el numero de la linea
-  :config
-  (hlinum-activate)           ;; Highlight linenum
-  ;; Keep highlighted linenum in all buffers
-  ;;(setq-default linum-highlight-in-all-buffersp t)
-  )
+;;(use-package hlinum :ensure t ;; resalta el numero de la linea
+;;  :config
+;;  (hlinum-activate)           ;; Highlight linenum
+;;  ;; Keep highlighted linenum in all buffers
+;;  ;;(setq-default linum-highlight-in-all-buffersp t)
+;;  )
 
 ;;__________________________________________________________
 ;; Move current line up and down Shift+arrow
 (use-package move-text :ensure t
-  :bind(("C-S-<up>" . move-text-up)
-		("C-S-<down>" . move-text-down))
-  )
+  :bind(("C-S-M-<up>" . move-text-up)
+		("C-S-M-<down>" . move-text-down)))
 
 ;;__________________________________________________________
 ;;  Seleccionar con el mouse
@@ -411,8 +418,7 @@
 (use-package highlight-numbers :ensure t
   :config
   (add-hook 'prog-mode-hook 'highlight-numbers-mode)
-  (set-face-attribute 'highlight-numbers-number nil :foreground "red")
-  )
+  (set-face-attribute 'highlight-numbers-number nil :foreground "red"))
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
@@ -469,13 +475,13 @@
 		 :after company
 		 :config
 		 (add-to-list 'company-backends 'company-c-headers))
-	   
+
 	   (use-package preproc-font-lock :ensure t ;; Preprocessor
 		 :config
 		 (preproc-font-lock-global-mode 1)
 		 (set-face-attribute 'preproc-font-lock-preprocessor-background nil
 							 :inherit 'font-lock-preprocessor-face))
-	   
+
 	   (c-set-offset 'cpp-macro 0 nil)
 	   (message "Loaded my/c-mode common"))
 
@@ -551,10 +557,12 @@
 ;;__________________________________________________________
 ;; Markdown mode
 (use-package markdown-mode :ensure t
-  :commands (markdown-mode)
-  :mode "\\.md\\'"
-  :config
-  (flyspell-mode t))
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+	:config
+	(flyspell-mode t))
 
 ;;__________________________________________________________
 ;; Restructured text
@@ -717,6 +725,7 @@
 
 ;;__________________________________________________________
 ;; Auto completamiento
+
 (use-package yasnippet :ensure t
   :diminish
   :after company
@@ -757,7 +766,6 @@
   (setq company-idle-delay 1   ;; no delay for autocomplete
 		company-minimum-prefix-length 2
 		company-tooltip-limit 20
-		
 		company-show-numbers t)
 
   (use-package company-quickhelp :ensure t
@@ -912,7 +920,7 @@
   :defer t
   :config
   (setq langtool-default-language "en")
-  (setq langtool-language-tool-jar "/home/ergo/gits/languagetool/languagetool-standalone/target/LanguageTool-4.2-SNAPSHOT/LanguageTool-4.2-SNAPSHOT/languagetool-commandline.jar"))
+  (setq langtool-language-tool-jar "~/gits/languagetool/languagetool-standalone/target/LanguageTool-4.3-SNAPSHOT/LanguageTool-4.3-SNAPSHOT/languagetool-commandline.jar"))
 
 ;;__________________________________________________________
 ;; EMMS mode.
@@ -922,7 +930,7 @@
   (require 'emms-setup)
   (emms-all)
   (emms-default-players)
-  (setq-default emms-source-file-default-directory "~/almacen/Musica/") )
+  (setq-default emms-source-file-default-directory "~/almacen/Musica/"))
 
 ;;__________________________________________________________
 ;; Email mode for mutt
@@ -930,12 +938,12 @@
 ;; bbdb
 (use-package abbrev :diminish)
 
-(use-package bbdb :ensure t
-  :defer t
-  :config
-  (bbdb-insinuate-message)
-  (use-package bbdb- :ensure t)
-  (use-package bbdb-handy :ensure t))
+;;(use-package bbdb :ensure t
+;;  :defer t
+;;  :config
+;;  (bbdb-insinuate-message)
+;;  (use-package bbdb- :ensure t)
+;;  )
 
 (use-package mail-mode
   :mode ("/neomut")
@@ -943,10 +951,8 @@
   (defun my/mail-mode-hook () "My mail mode hook"
 		 (turn-on-auto-fill)
 		 (mail-abbrevs-setup)
-		 (message "Loaded Mail-mode")
-		 )
-  (add-hook 'mail-mode-hook 'my/mail-mode-hook)
-  )
+		 (message "Loaded Mail-mode"))
+  (add-hook 'mail-mode-hook 'my/mail-mode-hook))
 
 ;; Asocia buffers que empiecen con messaje mode
 (use-package message-mode
@@ -956,19 +962,24 @@
 		 (turn-on-auto-fill)
 		 (mail-abbrevs-setup)
 		 (flyspell-mode t)
-		 (message "Loaded Message-mode")
-		 )
-  (add-hook 'message-mode-hook 'my/message-mode-hook)
-  )
+		 (message "Loaded Message-mode"))
+  (add-hook 'message-mode-hook 'my/message-mode-hook))
 
 ;; Autocompleta direcciones
 (use-package notmuch :ensure t
-  :defer t
   :init
+  (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
+  (setq message-default-mail-headers "Cc: \nBcc: \n")
   (setq notmuch-init-file "~/almacen/mail/notmuch-config")
-  :config
-  (require 'notmuch-address)
-  (setq notmuch-address-command "/home/ergo/gits/notmuch-addrlookup-c/notmuch-addrlookup"))
+  (use-package notmuch-address :ensure notmuch
+	:config
+	(setq notmuch-address-command "~/gits/notmuch-addrlookup-c/notmuch-addrlookup")
+	(notmuch-address-message-insinuate))
+
+  (use-package notmuch-company :ensure notmuch
+	:config
+	(add-to-list 'company-backends 'notmuch-company))
+  )
 
 ;;__________________________________________________________
 ;; Latex mode
@@ -1290,8 +1301,10 @@
   (use-package counsel-projectile :ensure t
 	:after projectile
 	:config
-	(counsel-projectile-mode t)
-	)
+	(counsel-projectile-mode t))
+
+  (use-package counsel-notmuch :ensure t)
+
   )
 
 (use-package imenu-anywhere :ensure t
@@ -1305,8 +1318,6 @@
 	:after ivy
 	:config (ivy-historian-mode t)))
 
-;;(use-package smex :ensure t)
-
 (use-package amx :ensure t)
 
 ;;__________________________________________________________
@@ -1318,7 +1329,6 @@
 
 ;;______________________________________
 ;; Git commit
-
 (use-package git-commit :ensure t
   :init
   (global-git-commit-mode t)
