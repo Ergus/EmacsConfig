@@ -14,7 +14,6 @@
 (require 'package)      ;; You might already have this line
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")))
-
 (package-initialize)
 
 ;;__________________________________________________________
@@ -77,7 +76,6 @@
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (global-hl-line-mode -1))
-
 
 (setq-default vc-follow-symlinks nil	            ;; Open links not open
 			  transient-mark-mode t     ;; Highlight marked region
@@ -164,11 +162,11 @@
   (which-key-mode t))
 
 ;;__________________________________________________________
-;; winum (windows number)
-;;(use-package winum :ensure t
-;;  :config
-;;  (setq winum-auto-setup-mode-line nil)
-;;  (winum-mode))
+;; winum (windows number) for spaceline
+(use-package winum :ensure t
+  :config
+  (setq winum-auto-setup-mode-line nil)
+  (winum-mode))
 
 ;;__________________________________________________________
 ;; ace-window (windows change)
@@ -200,9 +198,8 @@
 	(setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
 	:config
 	(spaceline-spacemacs-theme))
-  ;;(spaceline-toggle-minor-modes-off))
 
-  (set-face-attribute 'mode-line nil :background "#5c5cff" :foreground "white"))
+  (set-face-attribute 'mode-line nil :background "blue" :foreground "white"))
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
@@ -347,11 +344,7 @@
   :config
   (column-enforce-mode t)
   (setq column-enforce-comments nil)
-  ;;(setq column-enforce-column <your desired column>)
-  ;;(set-face-attribute 'column-enforce-face nil
-  ;;					  :background "gray90" :foreground "black")
-  (set-face-attribute 'column-enforce-face nil
-					  :background "#1c1c1c1c1c1c"))
+  (set-face-attribute 'column-enforce-face nil :background "#1c1c1c1c1c1c"))
 
 ;;__________________________________________________________
 ;;  The Colors (I want to change this for a real theme, there are maaaaany)
@@ -366,8 +359,6 @@
 
        (set-face-foreground 'font-lock-preprocessor-face "magenta3")    ;; Preprocessor
 
-       ;;(set-face-foreground 'font-lock-comment-face "LightSalmon4")   ;; Comentarios
-       ;;(set-face-foreground 'font-lock-doc-face "LightSalmon1")       ;; Documentation
        (set-face-foreground 'font-lock-comment-face "blue")             ;; Comentarios
        (set-face-foreground 'font-lock-doc-face "blue")                 ;; Documentation
 
@@ -390,10 +381,6 @@
        (set-face-attribute 'linum nil :background "black" :foreground "green")  ;; resalta la linea actual
 
 	   (set-face-attribute 'minibuffer-prompt nil :foreground "brightcyan")
-
-	   ;; color de la linea en el panel activo/inactivo
-	   ;; (set-face-attribute  'mode-line nil :foreground "black" :background "gray90":box '(:line-width 1 :style released-button))
-	   ;; (set-face-attribute  'mode-line-inactive nil :foreground "black" :background "gray70" :box '(:line-width 1 :style released-button))
        )
 
 (my/colors)
@@ -477,22 +464,6 @@
 (use-package smart-tabs-mode :ensure t
   :config
   (smart-tabs-insinuate 'c 'c++))
-
-;;__________________________________________________________
-;; Improve completion for cmake project (I don't need this now)
-;;(use-package cmake-ide :ensure t
-;;  :config
-;;  (add-hook 'c-mode-common-hook #'cmake-ide-setup))
-
-;;__________________________________________________________
-;; Cscope for c-mode (go to functions)
-;;(use-package xcscope :ensure t
-;;  :init
-;;  (add-hook 'c-mode-common-hook 'cscope-setup)
-;;  :bind (("C-c ," . cscope-find-global-definition-no-prompting)
-;;		 ("C-c d" . cscope-find-global-definition)
-;;		 ("C-c f" . cscope-find-this-symbol)
-;;		 ("C-c *" . cscope-pop-mark)))
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
@@ -724,19 +695,6 @@
   (setq-default windmove-wrap-around t) ;; Cyclic bound mode
   )
 
-;; (add-hook 'term-setup-hook
-;;   '(lambda ()
-;;      (define-key function-key-map "\e[1;3A" [M-up])
-;;      (define-key function-key-map "\e[1;3B" [M-down])
-;;      (define-key function-key-map "\e[1;3C" [M-right])
-;;      (define-key function-key-map "\e[1;3D" [M-left])
-;; 	 (define-key function-key-map "\e[1;2A" [S-up])
-;;      (define-key function-key-map "\e[1;2B" [S-down])
-;;      (define-key function-key-map "\e[1;2C" [S-right])
-;;      (define-key function-key-map "\e[1;2D" [S-left])
-;; 	 )
-;;   )
-
 (when (fboundp 'winner-mode) (winner-mode 1))   ;; recuperar Split configuration con C-c left/right
 
 ;;__________________________________________________________
@@ -800,45 +758,6 @@
 	(company-quickhelp-mode)))
 
 ;;__________________________________________________________
-;; rtags config (C Completion)
-;; (use-package rtags
-;;   :config
-;;   (defun my/rtags-common-hook () "My rtags loader."
-;; 		 (setq rtags-path "/usr/bin")
-;;  		 (rtags-start-process-unless-running)
-;;  		 (setq rtags-autostart-diagnostics t)
-;;  		 (rtags-diagnostics)
-;;  		 (setq rtags-completions-enabled t)
-;; 		 (setq rtags-display-result-backend 'ivy)
-;; 		 ;;(setq rtags-display-result-backend 'helm)
-;; 
-;; 		 (define-key c-mode-base-map (kbd "M-.") (function rtags-find-symbol-at-point))
-;; 		 (define-key c-mode-base-map (kbd "M-/") (function rtags-find-references-at-point))
-;; 		 (rtags-enable-standard-keybindings)
-;; 
-;;  		 (use-package company-rtags
-;; 		   :after company
-;;  		   :config
-;; 		   (add-to-list 'company-backends 'company-rtags))
-;; 
-;; 
-;;  		 (use-package flycheck-rtags
-;;  		   :after flycheck
-;;  		   :config
-;;  		   (defun my/flycheck-rtags-hook () "My flycheck-rtags hook."
-;;  				  (flycheck-select-checker 'rtags)
-;;  				  (setq-local rtags-periodic-reparse-timeout 10)
-;; 				  (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate.
-;; 				  (setq-local flycheck-check-syntax-automatically nil)
-;;  				  (setq rtags-enable-unsaved-reparsing t)
-;;  				  (message "Loaded flycheck-rtags"))
-;;  		   (add-hook 'rtags-mode-hook #'my/flycheck-rtags-hook))
-;; 		 (message "Loading my rtags-common-hook")
-;; 		 )
-;; 
-;;   (add-hook 'c-mode-common-hook #'my/rtags-common-hook))
-
-;;__________________________________________________________
 ;; Irony config (C completions)
 (use-package irony :ensure t
   :diminish
@@ -882,27 +801,6 @@
   (add-hook 'c++-mode-hook 'irony-mode)
   (add-hook 'c-mode-hook 'irony-mode)
   (add-hook 'irony-mode-hook #'my/irony-mode-hook))
-
-;;__________________________________________________________
-;; ycm (you complete me C completion)
-;; (use-package ycmd :ensure t
-;;   :init (add-hook 'c-mode-common-hook #'ycmd-mode)
-;;   :config
-;; 
-;;   (set-variable 'ycmd-server-command '("python2" "/home/ergo/gits/ycmd/ycmd"))
-;;   (set-variable 'ycmd-global-config	(expand-file-name "~/.emacs.d/ycm_conf.py"))
-;; 
-;;   ;;(set-variable 'ycmd-extra-conf-whitelist '("~/Repos/*"))
-;; 
-;;   (use-package company-ycmd :ensure t
-;;     :config (add-hook 'ycmd-mode-hook #'company-ycmd-setup))
-;; 
-;;   (use-package flycheck-ycmd :ensure t
-;; 	:config (add-hook 'ycmd-mode-hook #'flycheck-ycmd-setup)))
-;; 
-;; (use-package eldoc :ensure t
-;;   :diminish eldoc-mode
-;;   :init (add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup))
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
@@ -1152,42 +1050,69 @@
 ;;__________________________________________________________
 ;; Helm (probare un tiempo con helm/ivy)
 ;;(use-package helm :ensure t
-;;  :bind (("M-x" . helm-M-x)
-;;         ("C-x C-f" . helm-find-files)
-;;         ("C-x f" . helm-recentf)
+;;  :bind (
+;;		 ("M-x" . helm-M-x)
+;;		 ("C-x C-f" . helm-find-files)
+;;		 ("C-x h" . helm-command-prefix)
 ;;         ("C-SPC" . helm-dabbrev)
 ;;         ("M-y" . helm-show-kill-ring)
-;;         ("C-x b" . helm-buffers-list))
+;;         ("C-x b" . helm-mini)
+;;		 ("C-x C-b" . helm-buffers-list)
+;;		 )
 ;;  :bind (:map helm-map
-;;	      ("M-i" . helm-previous-line)
-;;	      ("M-k" . helm-next-line)
-;;	      ("M-I" . helm-previous-page)
-;;	      ("M-K" . helm-next-page)
-;;	      ("M-h" . helm-beginning-of-buffer)
-;;		  ("M-H" . helm-end-of-buffer))
+;;			  ("C-p" . helm-previous-line)
+;;			  ("C-n" . helm-next-line))
 ;;  :config
-;;  (setq-default helm-display-function 'helm-default-display-buffer)
-;;  (setq helm-split-window-in-side-p t)
-;;  (setq helm-buffers-fuzzy-matching t)
-;;  (helm-mode 1))
+;;  (require 'helm-config)
 ;;
-;;(use-package helm-descbinds :ensure t
-;;  :bind ("C-h b" . helm-descbinds))
+;;  (setq ;;helm-move-to-line-cycle-in-source t     ;; move to end or beginning of source when reaching top or bottom of source.
+;;		helm-ff-search-library-in-sexp t  		;; search for library in `require' and `declare-function' sexp.
+;;		helm-scroll-amount 8                    ;; scroll 8 lines other window using M-<next>/M-<prior>
+;;		helm-ff-file-name-history-use-recentf t
+;;		helm-split-window-in-side-p t
+;;		helm-M-x-fuzzy-match t
+;;		helm-buffers-fuzzy-matching t
+;;        helm-recentf-fuzzy-match t
+;;		helm-semantic-fuzzy-match t
+;;        helm-imenu-fuzzy-match t
+;;		)
 ;;
-;;(use-package helm-files
-;;  :bind (:map helm-find-files-map
-;;			  ("M-i" . nil)
-;;			  ("M-k" . nil)
-;;			  ("M-I" . nil)
-;;			  ("M-K" . nil)
-;;			  ("M-h" . nil)
-;;			  ("M-H" . nil)))
+;;  (helm-autoresize-mode t)
+;;  (helm-mode t)
 ;;
-;;(use-package helm-swoop :ensure t
-;;  :bind (("M-m" . helm-swoop)
-;;		 ("M-M" . helm-swoop-back-to-last-point))
-;;  :init
-;;  (bind-key "M-m" 'helm-swoop-from-isearch isearch-mode-map))
+;;  (use-package helm-descbinds :ensure t
+;;	:bind ("C-h b" . helm-descbinds))
+;;
+;;  (use-package helm-gtags :ensure t
+;;	:diminish
+;;	:config
+;;	(defun my/helm-gtags-hook () "My helm-gtags mode hook"
+;;		   (helm-gtags-path-style 'relative)
+;;		   (helm-gtags-ignore-case t)
+;;		   (helm-gtags-auto-update t)
+;;		   (helm-gtags-mode t)
+;;
+;;		   (define-key helm-gtags-mode-map (kbd "C-c d") 'helm-gtags-find-tag)
+;;		   (define-key helm-gtags-mode-map (kbd "C-c r") 'helm-gtags-find-rtag)
+;;		   (define-key helm-gtags-mode-map (kbd "C-c s") 'helm-gtags-find-symbol)
+;;		   (define-key helm-gtags-mode-map (kbd "C-c M-p") 'helm-gtags-parse-file)
+;;		   (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+;;		   (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+;;		   (define-key helm-gtags-mode-map (kbd "C-c DEL") 'helm-gtags-pop-stack)
+;;
+;;		   (add-to-list 'company-backends 'company-gtags)
+;;		   )
+;;
+;;	(add-hook 'c-mode-common-hook 'my/helm-gtags-hook))
+;;)
+;;
+;;  (use-package helm-files :ensure helm)
+;;
+;;  (use-package helm-swoop :ensure t
+;;	:bind (("C-s" . helm-swoop)
+;;		   ("M-M" . helm-swoop-back-to-last-point))
+;;	:init
+;;	(bind-key "M-m" 'helm-swoop-from-isearch isearch-mode-map)))
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
@@ -1262,11 +1187,11 @@
 
 ;;__________________________________________________________
 ;; Projectile
-(use-package projectile :ensure t
-  :commands (projectile-find-file projectile-switch-project)
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :init (setq projectile-completion-system 'ivy)
-  :config (projectile-mode t))
+;;(use-package projectile :ensure t
+;;  :commands (projectile-find-file projectile-switch-project)
+;;  :bind-keymap ("C-c p" . projectile-command-map)
+;;  :init (setq projectile-completion-system 'ivy)
+;;  :config (projectile-mode t))
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
@@ -1308,8 +1233,7 @@
   (use-package counsel-tramp :ensure t
 	:after exec-path-from-shell
 	:config
-	(setq tramp-default-method "ssh")
-	(define-key global-map (kbd "C-c s") 'counsel-tramp))
+	(setq tramp-default-method "ssh"))
 
   (use-package counsel-gtags :ensure t
 	:diminish
@@ -1323,7 +1247,7 @@
 		   (define-key counsel-gtags-mode-map (kbd "C-c s") 'counsel-gtags-find-symbol)
 		   (define-key counsel-gtags-mode-map (kbd "C-c <") 'counsel-gtags-go-backward)
 		   (define-key counsel-gtags-mode-map (kbd "C-c >") 'counsel-gtags-go-forward)
-		   (message "Loading my gtags mode hook"))
+		   (message "Loading my counsel gtags mode hook"))
 	(add-hook 'c-mode-common-hook 'my/counsel-gtags-hook))
 
   (use-package counsel-projectile :ensure t
@@ -1331,22 +1255,22 @@
 	:config
 	(counsel-projectile-mode t))
 
-  (use-package counsel-notmuch :ensure t)
-
-  )
+  (use-package counsel-notmuch :ensure t))
 
 (use-package imenu-anywhere :ensure t
   :bind (("C-c i" . imenu-anywhere)))
 
 ;;__________________________________________________________
 ;; Historical completion
-(use-package historian :ensure t
-  :config
-  (use-package ivy-historian :ensure t
-	:after ivy
-	:config (ivy-historian-mode t)))
+;;(use-package historian :ensure t
+;;  :config
+;;  (use-package ivy-historian :ensure t
+;;	:after ivy
+;;	:config (ivy-historian-mode t)))
 
-(use-package amx :ensure t)
+;;(use-package amx :ensure t)
+
+(use-package smex :ensure t)
 
 ;;__________________________________________________________
 ;; Magit
@@ -1387,10 +1311,6 @@
 
 ;;__________________________________________________________
 ;; path
-;;(use-package exec-path-from-shell :ensure t
-;;  :config
-;;  (exec-path-from-shell-initialize))
-
 (defun shell-command-on-buffer (command)
   (interactive "sShell command on buffer: ")
   (shell-command-on-region (point-min) (point-max) command t))
@@ -1456,7 +1376,7 @@
 				 (string-to-number
 				  (shell-command-to-string
 				   "xrandr -q| grep -c \" connected\""))) ;; Number of monitors
-		   
+
 		   (message "Configure %d monitors" exwm-workspace-number)
 		   (cond ((eq exwm-workspace-number 3)
 				  (setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "DP1" 2 "DP2"))
@@ -1526,25 +1446,19 @@
 
 ;;__________________________________________________________
 ;;; org-gcal (google calendar, not configured now)
+
 (use-package calfw :ensure t
-  :defer t
+  :commands (cfw:open-calendar-buffer)
   :config
-  (use-package calfw-org :ensure t)
-  (setq cfw:org-overwrite-default-keybinding t)
 
-  (use-package calfw-ical :ensure t)
-  (use-package calfw-gcal :ensure t)
+  (use-package calfw-org :ensure t
+	:config
+	(setq cfw:org-overwrite-default-keybinding t))
 
-  (defun mycalendar ()
-    (interactive)
-    (cfw:open-calendar-buffer
-     :contents-sources
-     (list
-      ;; (cfw:org-create-source "Green")  ; orgmode source
-      (cfw:ical-create-source "gcal" "https://somecalnedaraddress" "IndianRed") ; devorah calender
-      )))
-
-  (setq cfw:org-overwrite-default-keybinding t))
+  (use-package calfw-cal :ensure t)
+  (use-package calfw-ical :ensure t
+	:config
+	(cfw:open-ical-calendar my/gmailcal "Red")))
 
 
 ;;(use-package evil :ensure t)
