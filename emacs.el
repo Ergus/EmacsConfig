@@ -808,13 +808,6 @@
   :init (global-flycheck-mode)
   :config
 
-  ;;  (require 'flycheck-cstyle)
-  ;;  (flycheck-cstyle-setup)
-  ;;  (flycheck-add-next-checker 'c/c++-clang '(warning . cstyle))
-
-  ;;  (require 'flycheck-clang-analyzer)
-  ;;  (flycheck-clang-analyzer-setup)
-
   (setq-default flycheck-display-errors-delay 1)
 
   (use-package flycheck-popup-tip :ensure t
@@ -859,15 +852,7 @@
 ;;__________________________________________________________
 ;; Email mode for mutt
 ;;__________________________________________________________
-;; bbdb
 (use-package abbrev :diminish)
-
-;;(use-package bbdb :ensure t
-;;  :defer t
-;;  :config
-;;  (bbdb-insinuate-message)
-;;  (use-package bbdb- :ensure t)
-;;  )
 
 (use-package mail-mode
   :mode ("/neomut")
@@ -1014,33 +999,6 @@
   (use-package ipython-shell-send :ensure t)
   )
 
-;;(use-package python-mode :ensure t
-;;  :mode ("\\.py" . python-mode)
-;;  :config
-;;  (setq	python-shell-interpreter "ipython3"
-;;		python-shell-interpreter-args "--simple-prompt --pprint"
-;;		python-shell-completion-native-enable nil)
-;;
-;;  (use-package flycheck-pyflakes :ensure t
-;;	:init
-;;	(add-hook 'python-mode-hook 'flycheck-mode)
-;;	:config
-;;	(add-to-list 'flycheck-disabled-checkers 'python-flake8)
-;;	(add-to-list 'flycheck-disabled-checkers 'python-pylint))
-;;
-;;  (use-package anaconda-mode :ensure t
-;;	:init
-;;	(add-hook 'python-mode-hook 'anaconda-mode)
-;;	(add-hook 'python-mode-hook 'anaconda-eldoc-mode)
-;;	:config
-;;	(use-package company-anaconda :ensure t
-;;	  :after company
-;;	  :config
-;;	  (add-to-list 'company-backends '(company-anaconda :with company-capf))))
-;;
-;;  (use-package pylint :ensure t
-;;	:commands pylint
-;;	:init (autoload 'tramp-tramp-file-p "tramp")))
 
 ;;__________________________________________________________
 ;; IDO siempre (probare un tiempo con helm/ivy)
