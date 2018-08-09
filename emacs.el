@@ -165,16 +165,16 @@
 
 ;;__________________________________________________________
 ;; winum (windows number)
-(use-package winum :ensure t
-  :config
-  (setq winum-auto-setup-mode-line nil)
-  (winum-mode))
+;;(use-package winum :ensure t
+;;  :config
+;;  (setq winum-auto-setup-mode-line nil)
+;;  (winum-mode))
 
 ;;__________________________________________________________
 ;; ace-window (windows change)
-(use-package ace-window :ensure t
-  :config
-  (global-set-key (kbd "M-o") 'ace-window))
+;;(use-package ace-window :ensure t
+;;  :config
+;;  (global-set-key (kbd "M-o") 'ace-window))
 
 ;;__________________________________________________________
 ;; Status bar (mode line in emacs) two options to chose
@@ -264,9 +264,21 @@
 
 ;;__________________________________________________________
 ;; Move current line up and down Shift+arrow
+;;__________________________________________________________
+;; Move current line up and down Shift+arrow
 (use-package move-text :ensure t
-  :bind(("C-S-M-<up>" . move-text-up)
-		("C-S-M-<down>" . move-text-down)))
+  :bind(("C-M-p" . move-text-up)
+		("C-M-n" . move-text-down))
+  :init
+  (global-set-key (kbd "C-M-b")
+				  (lambda () (interactive) (transpose-words -1)))
+  (global-set-key (kbd "C-M-f")
+				  (lambda () (interactive) (transpose-words 1)))
+  (global-set-key (kbd "C-t")
+				  (lambda () (interactive) (transpose-chars -1)))
+  (global-set-key (kbd "M-t")
+				  (lambda () (interactive) (transpose-chars 1))))
+
 
 ;;__________________________________________________________
 ;;  Seleccionar con el mouse
@@ -281,7 +293,6 @@
 
 (global-set-key [drag-mouse-2] 'mouse-yank-at-click)
 
-(blink-cursor-mode 0)             ;; Parpadeo del cursor modo texto
 (set-cursor-color "white")        ;; Set cursor and mouse colours
 
 ;;__________________________________________________________
@@ -303,13 +314,30 @@
 		 (electric-operator-mode t))
   (add-hook 'prog-mode-hook 'my/electric-operator-mode))
 
+
+(use-package whitespace-mode
+  :hook prog-mode
+  :init
+  (setq whitespace-style '(face trailing)))
+
+
 (defun my/prog-mode-hook () "Some hooks only for prog mode."
 	   (which-function-mode t)     		  ;; Shows the function in spaceline
 	   (electric-pair-mode t)      		  ;; Autoannadir parentesis
 	   (electric-indent-mode t)    		  ;; Corrige indentacion con tab o enter (now default)
-	   (setq show-trailing-whitespace t))
+	   ;;(setq show-trailing-whitespace t)
+	   )
 
 (add-hook 'prog-mode-hook 'my/prog-mode-hook)
+
+
+;;__________________________________________________________
+;; 80 Column rules
+(use-package fill-column-indicator :ensure t
+  :config
+  (setq fci-rule-color "#7f7f7f7f7f7f")
+  (add-hook 'prog-mode-hook 'fci-mode))
+
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
@@ -390,14 +418,14 @@
 
   (setq hl-paren-colors
 		(quote
-		 ("brightgreen" "IndianRed1" "IndianRed3" "IndianRed4"))))
+		 ("brightgreen" "cyan" "brightred" "red"))))
 
 ;;__________________________________________________________
 ;; Resalta scopes entorno al cursor
 (use-package highlight-blocks :ensure t
   :config
   (define-key function-key-map "\e[1;5R" [C-f3])
-  (global-set-key (kbd "C-<f3>") 'highlight-blocks-now)
+  (global-set-key (kbd "C-c b") 'highlight-blocks-now)
 
   (set-face-attribute 'highlight-blocks-depth-2-face nil :background "gray15")
   (set-face-attribute 'highlight-blocks-depth-3-face nil :background "gray20")
@@ -458,13 +486,13 @@
 
 ;;__________________________________________________________
 ;; Cscope for c-mode (go to functions)
-(use-package xcscope :ensure t
-  :init
-  (add-hook 'c-mode-common-hook 'cscope-setup)
-  :bind (("C-c ," . cscope-find-global-definition-no-prompting)
-		 ("C-c d" . cscope-find-global-definition)
-		 ("C-c f" . cscope-find-this-symbol)
-		 ("C-c *" . cscope-pop-mark)))
+;;(use-package xcscope :ensure t
+;;  :init
+;;  (add-hook 'c-mode-common-hook 'cscope-setup)
+;;  :bind (("C-c ," . cscope-find-global-definition-no-prompting)
+;;		 ("C-c d" . cscope-find-global-definition)
+;;		 ("C-c f" . cscope-find-this-symbol)
+;;		 ("C-c *" . cscope-pop-mark)))
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
@@ -533,8 +561,7 @@
 	   (c-set-offset 'access-label '-)
 	   (c-set-offset 'inline-open 0)
        (c-set-offset 'inclass 'my/c++-lineup-inclass)
-	   (message "Loaded my c++-mode")
-       )
+	   (message "Loaded my c++-mode"))
 
 (add-hook 'c++-mode-hook 'my/c++-mode-hook)
 
@@ -715,7 +742,6 @@
 ;;__________________________________________________________
 ;; Confirmation for to exit emacs
 (defalias 'yes-or-no-p 'y-or-n-p)     ;; Reemplazar "yes" por "y" en el prompt
-;;(fset 'yes-or-no-p 'y-or-n-p)       ;; Igual que el anterior
 (setq confirm-kill-emacs 'y-or-n-p)   ;; Puede ser 'nil o 'y-or-n-p
 
 ;;__________________________________________________________
@@ -1226,7 +1252,7 @@
   (dired-sidebar-toggle-sidebar)
   (ibuffer-sidebar-toggle-sidebar))
 
-(global-set-key (kbd "M-s") 'my/sidebar-toggle)
+(global-set-key (kbd "C-c s") 'my/sidebar-toggle)
 
 ;;__________________________________________________________
 ;; neotree
@@ -1258,7 +1284,8 @@
 		enable-recursive-minibuffers t)
 
   (use-package swiper :ensure t
-	:bind ("C-s" . swiper)
+	:bind (("C-s" . swiper)
+		   ("C-r" . swiper))
 	:config
 	(set-face-attribute 'swiper-line-face nil
 						:background "brightblack" :foreground "white")
@@ -1270,6 +1297,7 @@
 
 (use-package counsel :ensure t
   :diminish
+  :bind
   :config
   (counsel-mode t)
   (global-set-key (kbd "C-c k") 'counsel-ag)
@@ -1370,7 +1398,7 @@
 ;;__________________________________________________________
 ;; Better shell (for ssh)
 (use-package better-shell :ensure t
-  :bind ("C-c b" . better-shell-shell))
+  :bind ("C-c t" . better-shell-shell))
 
 ;;__________________________________________________________
 ;; ssh
@@ -1519,7 +1547,7 @@
   (setq cfw:org-overwrite-default-keybinding t))
 
 
-(use-package evil :ensure t)
+;;(use-package evil :ensure t)
 
 (provide 'init)
 ;;; init.el ends here
