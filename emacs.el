@@ -29,7 +29,6 @@
 (use-package paradox :ensure t
   :commands (paradox-upgrade-packages paradox-list-packages)
   :config
-  ;;(setq paradox-execute-asynchronously t)  ;; No me convence
   (setq paradox-spinner-type 'progress-bar))
 
 ;;__________________________________________________________
@@ -70,7 +69,6 @@
 (global-linum-mode t)            ;; Numero de linea a la izquierda
 (delete-selection-mode)          ;; Sobreescribe seleccion al pegar
 (menu-bar-mode -1)               ;; Quitar barra superior (no la uso)
-;;(desktop-save-mode 1)          ;; Save open windows before close, for next section
 
 (when (display-graphic-p)
   (tool-bar-mode -1)
@@ -98,7 +96,6 @@
 			  scroll-margin 0
 			  fill-column 80            ;; default is 70
 			  tooltip-mode t            ;; Tool tip in the echo
-			  ;;show-paren-style 'mixed   ;; show the matching paren or the expression
 			  )
 
 ;;__________________________________________________________
@@ -126,29 +123,10 @@
 (use-package diminish :ensure t)
 
 ;;__________________________________________________________
-;; Smart-parents (parentesis correctos para los modos)
-;;(use-package smartparens :ensure t
-;;  :init (smartparens-global-mode)
-;;  :config
-;;    (use-package smartparens-config :ensure smartparens)
-;;    (smartparens-global-mode))
-
-
-;;__________________________________________________________
 ;; Mocp and multi-term music player
 (use-package multi-term :ensure t
   :config
   (autoload 'mocp "mocp" "mocp in emacs" t))
-
-;;__________________________________________________________
-;; Indentado on new line smart way
-
-;;(use-package clean-aindent-mode :ensure t     ;; Elimina el indentado extra, mejor que los anteriores para programar
-;;  :bind("RET" . newline-and-indent)
-;;  :init
-;;  (electric-indent-mode -1)  ; no electric indent, auto-indent is sufficient
-;;  (clean-aindent-mode t)
-;;  (setq clean-aindent-is-simple-indent t))
 
 ;;__________________________________________________________
 ;; Keys
@@ -169,22 +147,7 @@
   (winum-mode))
 
 ;;__________________________________________________________
-;; ace-window (windows change)
-;;(use-package ace-window :ensure t
-;;  :config
-;;  (global-set-key (kbd "M-o") 'ace-window))
-
-;;__________________________________________________________
 ;; Status bar (mode line in emacs) two options to chose
-
-;;(use-package smart-mode-line :ensure t
-;;  :config
-;;  (setq sml/theme 'powerline)
-;;  (sml/setup))
-
-;; (use-package powerline :ensure t
-;;   :config
-;;   (powerline-default-theme))
 
 (use-package spaceline :ensure t
   :demand t
@@ -251,17 +214,6 @@
   (message "No xsel in your path, install it in your system!!!"))
 
 ;;__________________________________________________________
-;; hlinum
-;;(use-package hlinum :ensure t ;; resalta el numero de la linea
-;;  :config
-;;  (hlinum-activate)           ;; Highlight linenum
-;;  ;; Keep highlighted linenum in all buffers
-;;  ;;(setq-default linum-highlight-in-all-buffersp t)
-;;  )
-
-;;__________________________________________________________
-;; Move current line up and down Shift+arrow
-;;__________________________________________________________
 ;; Move current line up and down Shift+arrow
 (use-package move-text :ensure t
   :bind(("C-M-p" . move-text-up)
@@ -275,7 +227,6 @@
 				  (lambda () (interactive) (transpose-chars -1)))
   (global-set-key (kbd "M-t")
 				  (lambda () (interactive) (transpose-chars 1))))
-
 
 ;;__________________________________________________________
 ;;  Seleccionar con el mouse
@@ -311,22 +262,18 @@
 		 (electric-operator-mode t))
   (add-hook 'prog-mode-hook 'my/electric-operator-mode))
 
-
 (use-package whitespace-mode
   :hook prog-mode
   :init
   (setq whitespace-style '(face trailing)))
 
-
 (defun my/prog-mode-hook () "Some hooks only for prog mode."
 	   (which-function-mode t)     		  ;; Shows the function in spaceline
 	   (electric-pair-mode t)      		  ;; Autoannadir parentesis
 	   (electric-indent-mode t)    		  ;; Corrige indentacion con tab o enter (now default)
-	   ;;(setq show-trailing-whitespace t)
 	   )
 
 (add-hook 'prog-mode-hook 'my/prog-mode-hook)
-
 
 ;;__________________________________________________________
 ;; 80 Column rules
@@ -334,7 +281,6 @@
   :config
   (setq fci-rule-color "#7f7f7f7f7f7f")
   (add-hook 'prog-mode-hook 'fci-mode))
-
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
@@ -421,8 +367,7 @@
   (set-face-attribute 'highlight-blocks-depth-6-face nil :background "gray35")
   (set-face-attribute 'highlight-blocks-depth-7-face nil :background "gray40")
   (set-face-attribute 'highlight-blocks-depth-8-face nil :background "gray45")
-  (set-face-attribute 'highlight-blocks-depth-9-face nil :background "gray50")
-  )
+  (set-face-attribute 'highlight-blocks-depth-9-face nil :background "gray50"))
 
 (use-package highlight-escape-sequences :ensure t
   :config
@@ -651,7 +596,6 @@
 (add-to-list 'auto-mode-alist '("\\.bat$" . dos-mode))
 
 ;;__________________________________________________________
-;; qt-pro-mode
 ;; Use for Qt's .pro and .pri files
 (use-package qt-pro-mode :ensure t
   :mode ("\\.pr[io]\\'")
@@ -685,12 +629,11 @@
 
 ;;__________________________________________________________
 ;; splitting
-(setq split-width-threshold 110)        ;; Original value 240 ancho minimo limite para split vertical
+(setq split-width-threshold 90)        ;; Original value 240 ancho minimo limite para split vertical
 
 ;; Move split keybindings
 (use-package windmove
   :config
-  ;; use shift + arrow keys to switch between visible buffers
   (windmove-default-keybindings)        ;; Move between panes S-arrow
   (setq-default windmove-wrap-around t) ;; Cyclic bound mode
   )
@@ -777,11 +720,6 @@
 
 			 (company-irony-setup-begin-commands)
 			 (message "Loaded my company-irony"))
-
-		   ;;define-key irony-mode-map [remap completion-at-point]
-		   ;; 'irony-completion-at-point-async)
-		   ;;define-key irony-mode-map [remap complete-symbol]
-		   ;; 'irony-completion-at-point-async)
 
 		   (define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
 		   (define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
@@ -887,8 +825,7 @@
 
   (use-package notmuch-company :ensure notmuch
 	:config
-	(add-to-list 'company-backends 'notmuch-company))
-  )
+	(add-to-list 'company-backends 'notmuch-company)))
 
 ;;__________________________________________________________
 ;; Latex mode
@@ -914,7 +851,6 @@
   (flyspell-buffer)
   (turn-on-auto-fill)
   (visual-line-mode)
-  ;;(LaTeX-math-mode)
 
   (use-package reftex  ;; Reftex for cross references
 	:config
@@ -928,22 +864,19 @@
 		  reftex-insert-label-flags '(t t)
 		  reftex-save-parse-info t
 		  reftex-enable-partial-scans t
-		  reftex-use-multiple-selection-buffers t
-		  )
+		  reftex-use-multiple-selection-buffers t)
 
 	(use-package company-reftex :ensure t
 	  :after company
 	  :config
 	  (add-to-list 'company-backends '(company-reftex-labels
-									   company-reftex-citations)))
-	)
+									   company-reftex-citations))))
 
   (use-package company-math :ensure t
 	:after company
 	:config
 	(add-to-list 'company-backends '(company-math-symbols-latex
-									 company-latex-commands))
-	)
+									 company-latex-commands)))
 
   (use-package company-auctex :ensure t
 	:after company
@@ -955,8 +888,7 @@
 				 (latex-mode)
 				 :help "Run makeglossaries script, which will choose xindy or makeindex") t)
 
-  (add-to-list 'TeX-output-view-style '("^pdf$" "." "evince %o %(outpage)"))
-  )
+  (add-to-list 'TeX-output-view-style '("^pdf$" "." "evince %o %(outpage)")))
 
 ;;__________________________________________________________
 ;;bibtex mode set use biblatex
@@ -996,81 +928,7 @@
 	:config
 	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))
 
-  (use-package ipython-shell-send :ensure t)
-  )
-
-
-;;__________________________________________________________
-;; IDO siempre (probare un tiempo con helm/ivy)
-;;(require 'ido)
-;;(ido-mode t)
-
-;;__________________________________________________________
-;; Helm (probare un tiempo con helm/ivy)
-;;(use-package helm :ensure t
-;;  :bind (
-;;		 ("M-x" . helm-M-x)
-;;		 ("C-x C-f" . helm-find-files)
-;;		 ("C-x h" . helm-command-prefix)
-;;         ("C-SPC" . helm-dabbrev)
-;;         ("M-y" . helm-show-kill-ring)
-;;         ("C-x b" . helm-mini)
-;;		 ("C-x C-b" . helm-buffers-list)
-;;		 )
-;;  :bind (:map helm-map
-;;			  ("C-p" . helm-previous-line)
-;;			  ("C-n" . helm-next-line))
-;;  :config
-;;  (require 'helm-config)
-;;
-;;  (setq ;;helm-move-to-line-cycle-in-source t     ;; move to end or beginning of source when reaching top or bottom of source.
-;;		helm-ff-search-library-in-sexp t  		;; search for library in `require' and `declare-function' sexp.
-;;		helm-scroll-amount 8                    ;; scroll 8 lines other window using M-<next>/M-<prior>
-;;		helm-ff-file-name-history-use-recentf t
-;;		helm-split-window-in-side-p t
-;;		helm-M-x-fuzzy-match t
-;;		helm-buffers-fuzzy-matching t
-;;        helm-recentf-fuzzy-match t
-;;		helm-semantic-fuzzy-match t
-;;        helm-imenu-fuzzy-match t
-;;		)
-;;
-;;  (helm-autoresize-mode t)
-;;  (helm-mode t)
-;;
-;;  (use-package helm-descbinds :ensure t
-;;	:bind ("C-h b" . helm-descbinds))
-;;
-;;  (use-package helm-gtags :ensure t
-;;	:diminish
-;;	:config
-;;	(defun my/helm-gtags-hook () "My helm-gtags mode hook"
-;;		   (helm-gtags-path-style 'relative)
-;;		   (helm-gtags-ignore-case t)
-;;		   (helm-gtags-auto-update t)
-;;		   (helm-gtags-mode t)
-;;
-;;		   (define-key helm-gtags-mode-map (kbd "C-c d") 'helm-gtags-find-tag)
-;;		   (define-key helm-gtags-mode-map (kbd "C-c r") 'helm-gtags-find-rtag)
-;;		   (define-key helm-gtags-mode-map (kbd "C-c s") 'helm-gtags-find-symbol)
-;;		   (define-key helm-gtags-mode-map (kbd "C-c M-p") 'helm-gtags-parse-file)
-;;		   (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-;;		   (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
-;;		   (define-key helm-gtags-mode-map (kbd "C-c DEL") 'helm-gtags-pop-stack)
-;;
-;;		   (add-to-list 'company-backends 'company-gtags)
-;;		   )
-;;
-;;	(add-hook 'c-mode-common-hook 'my/helm-gtags-hook))
-;;)
-;;
-;;  (use-package helm-files :ensure helm)
-;;
-;;  (use-package helm-swoop :ensure t
-;;	:bind (("C-s" . helm-swoop)
-;;		   ("M-M" . helm-swoop-back-to-last-point))
-;;	:init
-;;	(bind-key "M-m" 'helm-swoop-from-isearch isearch-mode-map)))
+  (use-package ipython-shell-send :ensure t))
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
@@ -1081,31 +939,30 @@
 		dired-dwim-target t)         ;; Copy in split mode with p
   (put 'dired-find-alternate-file 'disabled nil)
 
-  ;; Open in the same buffer in dired mode
-  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
-  (define-key dired-mode-map (kbd "^") (lambda () (interactive)
-										 (find-alternate-file ".."))); was dired-up-directory
-  (use-package dired-x
-	:config
-	(setq dired-guess-shell-alist-user
-		  (list
-		   (list "\\.\\(ps\|ps.gz\|eps\|eps.gz\|pdf\|PDF\\)$" "evince")
-		   (list "\\.\\(rgb\|tiff\|tif\|xbm\|gif\|pgm\|ppm\|bmp\|tga\\)$" "eog ")
-		   (list "\\.\\(ppm\|gif\|png\|jpg\|JPG\\)$" "eog")
-		   (list "\\.\\(avi\|wav\|flv\|mov\|3gp\\)$" "vlc")
-		   )))
+;  ;; Open in the same buffer in dired mode
+;  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
+;  (define-key dired-mode-map (kbd "^") (lambda () (interactive)
+;										 (find-alternate-file ".."))); was dired-up-directory
+;;  (use-package dired-x
+;;	:config
+;;	(setq dired-guess-shell-alist-user
+;;		  (list
+;;		   (list "\\.\\(ps\|ps.gz\|eps\|eps.gz\|pdf\|PDF\\)$" "evince")
+;;		   (list "\\.\\(rgb\|tiff\|tif\|xbm\|gif\|pgm\|ppm\|bmp\|tga\\)$" "eog ")
+;;		   (list "\\.\\(ppm\|gif\|png\|jpg\|JPG\\)$" "eog")
+;;		   (list "\\.\\(avi\|wav\|flv\|mov\|3gp\\)$" "vlc"))))
 
   (use-package dired-sidebar :ensure t
 	:commands (dired-sidebar-toggle-sidebar)
 	:config
-	(setq dired-sidebar-use-term-integration t
-		  dired-sidebar-theme 'nerd
-		  dired-sidebar-subtree-line-prefix "."
-		  dired-sidebar-use-custom-font t)))
+	(setq ;;dired-sidebar-use-term-integration t
+	      ;;dired-sidebar-theme 'nerd
+	      dired-sidebar-subtree-line-prefix ".")))
 
+;;__________________________________________________________
+;; ibuffer
 (use-package ibuffer :ensure t
   :bind ("C-x C-b" . ibuffer)
-  :defer t
   :init
   (defalias 'list-buffers 'ibuffer) ; make ibuffer default
   :config
@@ -1124,32 +981,22 @@
 	:config
 	(defun my/ibuffer-projectile-hook () "My ibuffer-projectile-hook."
 		   (ibuffer-projectile-set-filter-groups))
-	(add-hook 'ibuffer-hook 'my/ibuffer-projectile-hook))
-  )
+	(add-hook 'ibuffer-hook 'my/ibuffer-projectile-hook)))
 
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
-(defun my/sidebar-toggle ()
-  "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
-  (interactive)
-  (dired-sidebar-toggle-sidebar)
-  (ibuffer-sidebar-toggle-sidebar))
+(defun my/sidebar-toggle () "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
+	   (interactive)
+	   (ibuffer-sidebar-toggle-sidebar)
+	   (dired-sidebar-toggle-sidebar)
+	   )
 
 (global-set-key (kbd "C-c s") 'my/sidebar-toggle)
 
 ;;__________________________________________________________
 ;; neotree
 (use-package neotree :ensure t
-  :config
-  (global-set-key [f8] 'neotree-toggle))
-
-;;__________________________________________________________
-;; Projectile
-;;(use-package projectile :ensure t
-;;  :commands (projectile-find-file projectile-switch-project)
-;;  :bind-keymap ("C-c p" . projectile-command-map)
-;;  :init (setq projectile-completion-system 'ivy)
-;;  :config (projectile-mode t))
+  :bind ("C-c e" . neotree-toggle))
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
@@ -1202,7 +1049,7 @@
 
 		   (define-key counsel-gtags-mode-map (kbd "C-c d") 'counsel-gtags-find-definition)
 		   (define-key counsel-gtags-mode-map (kbd "C-c r") 'counsel-gtags-find-reference)
-		   (define-key counsel-gtags-mode-map (kbd "C-c s") 'counsel-gtags-find-symbol)
+		   (define-key counsel-gtags-mode-map (kbd "C-c f") 'counsel-gtags-find-symbol)
 		   (define-key counsel-gtags-mode-map (kbd "C-c <") 'counsel-gtags-go-backward)
 		   (define-key counsel-gtags-mode-map (kbd "C-c >") 'counsel-gtags-go-forward)
 		   (message "Loading my counsel gtags mode hook"))
@@ -1220,15 +1067,15 @@
 
 ;;__________________________________________________________
 ;; Historical completion
-;;(use-package historian :ensure t
-;;  :config
-;;  (use-package ivy-historian :ensure t
-;;	:after ivy
-;;	:config (ivy-historian-mode t)))
+(use-package historian :ensure t
+  :config
+  (use-package ivy-historian :ensure t
+	:after ivy
+	:config (ivy-historian-mode t)))
 
-;;(use-package amx :ensure t)
-
-(use-package smex :ensure t)
+;;__________________________________________________________
+;; Complete history
+(use-package amx :ensure t)
 
 ;;__________________________________________________________
 ;; Magit
@@ -1296,115 +1143,7 @@
          ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
 
 ;;__________________________________________________________
-;; Jabber (for gmail)
-(use-package jabber :ensure t
-  :defer t
-  :config
-  (defun jabber () "My jabber loader function."
-		 (interactive)
-		 (jabber-connect)
-		 (switch-to-buffer "*-jabber-*")
-		 )
-
-  (setq jabber-account-list
-		'(
-		  ("kratsbinovish@gmail.com"
-		   (:network-server . "talk.google.com")
-		   (:connection-type . ssl)
-		   (:password . "...")
-		   )
-		  )
-		)
-  )
-
-;;__________________________________________________________
-;;; EXWM (emacs windows manager, a desktop)
-(use-package exwm :ensure t
-  :if (string= (getenv "XDG_CURRENT_DESKTOP") "exwm")
-  :demand t
-  :config
-  (setq exwm-workspace-show-all-buffers t ;; share exwm buffers in all workspaces
-		exwm-layout-show-all-buffers t)
-
-  (use-package exwm-randr
-    :config
-	(defun my/exwm-randr-screen-change-hook () "My screen config hook"
-		   ;; get number of monitors
-		   (setq exwm-workspace-number
-				 (string-to-number
-				  (shell-command-to-string
-				   "xrandr -q| grep -c \" connected\""))) ;; Number of monitors
-
-		   (message "Configure %d monitors" exwm-workspace-number)
-		   (cond ((eq exwm-workspace-number 3)
-				  (setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "DP1" 2 "DP2"))
-				  (start-process-shell-command "xrandr" nil
-											   "xrandr --output VIRTUAL1 --off --output eDP1 --primary --mode 1366x768 --pos 554x1080 --rotate normal --output DP1 --mode 1680x1050 --pos 1920x304 --rotate normal --output HDMI2 --off --output HDMI1 --off --output DP2 --mode 1920x1080 --pos 0x0 --rotate normal"
-											   ))
-				 ((eq exwm-workspace-number 2)
-				  (setq exwm-randr-workspace-output-plist '(0 "eDP1" 1 "HDMI1"))
-				  (start-process-shell-command "xrandr" nil
-											   "xrandr --output VIRTUAL1 --off --output eDP1 --primary --mode 1366x768 --pos 0x312 --rotate normal --output DP1 --off --output HDMI2 --off --output HDMI1 --mode 1920x1080 --pos 1366x0 --rotate normal --output DP2 --off"
-											   ))
-				 )
-		   )
-    (add-hook 'exwm-randr-screen-change-hook 'my/exwm-randr-screen-change-hook)
-	(exwm-randr-enable))
-
-  (use-package exwm-systemtray
-	:config
-	(exwm-systemtray-enable))  ;; exwm system tray
-
-  (add-hook 'exwm-manage-finish-hook
-			(lambda ()
-			  (when-let ((target (cdr (assoc exwm-class-name exwm-workspace-window-assignments))))
-				(exwm-workspace-move-window target))))
-
-  (use-package desktop-environment :ensure t
-	:config
-	(desktop-environment-mode))
-
-  (use-package symon :ensure t
-	:config
-	(symon-mode))
-
-  (use-package exwm-config
-	:config
-	(setq exwm-workspace-number 4)
-	;; Make class name the buffer name
-	(add-hook 'exwm-update-class-hook
-			  (lambda () (exwm-workspace-rename-buffer exwm-class-name)))
-
-	(exwm-input-set-key (kbd "s-r") #'exwm-reset) ;;Reset
-	(exwm-input-set-key (kbd "s-w") #'exwm-workspace-switch) ;;Switch workspace
-	(exwm-input-set-key (kbd "s-&") #'counsel-linux-app) ;;Switch workspace
-
-	(dotimes (i 10) ;; 's-N': Switch to certain workspace
-	  (exwm-input-set-key (kbd (format "s-%d" i))
-						  `(lambda ()
-							 (interactive)
-							 (exwm-workspace-switch-create ,i))))
-
-	;; Line-editing shortcuts
-	(setq exwm-input-simulation-keys
-		  '(([?\C-b] . [left])
-			([?\C-f] . [right])
-			([?\C-p] . [up])
-			([?\C-n] . [down])
-			([?\C-a] . [home])
-			([?\C-e] . [end])
-			([?\M-v] . [prior])
-			([?\C-v] . [next])
-			([?\C-d] . [delete])
-			([?\C-k] . [S-end delete])))
-	;; Enable EXWM
-	(exwm-enable)
-	(exwm-config-misc))
-  )
-
-;;__________________________________________________________
 ;;; org-gcal (google calendar, not configured now)
-
 (use-package calfw :ensure t
   :commands (cfw:open-calendar-buffer)
   :config
@@ -1419,7 +1158,6 @@
 	(cfw:open-ical-calendar my/gmailcal "Red")))
 
 
-;;(use-package evil :ensure t)
 
 (provide 'init)
 ;;; init.el ends here
