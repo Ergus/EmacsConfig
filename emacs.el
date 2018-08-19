@@ -88,6 +88,8 @@
 			  inhibit-startup-screen t
 			  tab-width 4               ;; Tabulador a 4
 			  make-backup-files nil     ;; Sin copias de seguridad
+			  auto-save-list-file-name  nil
+			  auto-save-default         nil
 			  create-lockfiles nil      ;; No lock files, goot for tramp
 			  visible-bell nil          ;; Flash the screen (def)
 			  scroll-step 1             ;; Scroll one by one
@@ -255,13 +257,6 @@
 ;;__________________________________________________________
 ;; My program's mode hooks
 
-;; Spaces around operators
-(use-package electric-operator :ensure t
-  :config
-  (defun my/electric-operator-mode () "electric-operator-mode"
-		 (electric-operator-mode t))
-  (add-hook 'prog-mode-hook 'my/electric-operator-mode))
-
 (use-package whitespace-mode
   :hook prog-mode
   :init
@@ -279,8 +274,15 @@
 ;; 80 Column rules
 (use-package fill-column-indicator :ensure t
   :config
-  (setq fci-rule-color "#7f7f7f7f7f7f")
+  (setq	fci-rule-color "#7f7f7f7f7f7f"
+		fci-rule-character ?\u2502)
   (add-hook 'prog-mode-hook 'fci-mode))
+
+;;__________________________________________________________
+;; Undo tree
+(use-package undo-tree :ensure t
+  :diminish
+  :init (global-undo-tree-mode))
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
@@ -357,7 +359,7 @@
 ;; Resalta scopes entorno al cursor
 (use-package highlight-blocks :ensure t
   :config
-  (define-key function-key-map "\e[1;5R" [C-f3])
+  ;;(define-key function-key-map "\e[1;5R" [C-f3])
   (global-set-key (kbd "C-c b") 'highlight-blocks-now)
 
   (set-face-attribute 'highlight-blocks-depth-2-face nil :background "gray15")
@@ -414,6 +416,12 @@
 ;; C common mode (for all c-like languajes)
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
+	   ;; ;; Spaces around operators
+	   ;; (use-package electric-operator :ensure t
+	   ;; 	 :config
+	   ;; 	 (defun my/electric-operator-mode () "electric-operator-mode"
+	   ;; 			(electric-operator-mode t))
+	   ;; 	 (add-hook 'prog-mode-hook 'my/electric-operator-mode))
 
 	   (use-package company-c-headers :ensure t ;; company-c-headers
 		 :after company
@@ -753,9 +761,9 @@
 	:config
 	(add-hook 'flycheck-mode-hook #'flycheck-popup-tip-mode))
 
-  (use-package flycheck-status-emoji :ensure t
-	:after flycheck
-	:config (add-hook 'flycheck-mode-hook #'flycheck-status-emoji-mode))
+;;  (use-package flycheck-status-emoji :ensure t
+;;	:after flycheck
+;;	:config (add-hook 'flycheck-mode-hook #'flycheck-status-emoji-mode))
 
   (use-package flycheck-color-mode-line :ensure t
 	:init
@@ -1023,7 +1031,9 @@
 						:background "brightblue" :foreground "white"
 						:weight 'bold))
 
-  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
+  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
+  (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+  )
 
 (use-package counsel :ensure t
   :diminish
@@ -1032,7 +1042,7 @@
   (counsel-mode t)
   (global-set-key (kbd "C-c k") 'counsel-ag)
   (global-set-key (kbd "C-c g") 'counsel-git)
-  (global-set-key (kbd "C-c j") 'counsel-git-grep)
+  (global-set-key (kbd "C-c r") 'counsel-git-grep)
   (global-set-key (kbd "C-c l") 'counsel-locate)
 
   (use-package counsel-tramp :ensure t
@@ -1047,11 +1057,11 @@
 		   (counsel-gtags-mode 1)
 		   (add-to-list 'company-backends 'company-gtags)
 
-		   (define-key counsel-gtags-mode-map (kbd "C-c d") 'counsel-gtags-find-definition)
-		   (define-key counsel-gtags-mode-map (kbd "C-c r") 'counsel-gtags-find-reference)
-		   (define-key counsel-gtags-mode-map (kbd "C-c f") 'counsel-gtags-find-symbol)
-		   (define-key counsel-gtags-mode-map (kbd "C-c <") 'counsel-gtags-go-backward)
-		   (define-key counsel-gtags-mode-map (kbd "C-c >") 'counsel-gtags-go-forward)
+		   (define-key counsel-gtags-mode-map (kbd "C-c g d") 'counsel-gtags-find-definition)
+		   (define-key counsel-gtags-mode-map (kbd "C-c g r") 'counsel-gtags-find-reference)
+		   (define-key counsel-gtags-mode-map (kbd "C-c g f") 'counsel-gtags-find-symbol)
+		   (define-key counsel-gtags-mode-map (kbd "C-c g <") 'counsel-gtags-go-backward)
+		   (define-key counsel-gtags-mode-map (kbd "C-c g >") 'counsel-gtags-go-forward)
 		   (message "Loading my counsel gtags mode hook"))
 	(add-hook 'c-mode-common-hook 'my/counsel-gtags-hook))
 
@@ -1064,6 +1074,18 @@
 
 (use-package imenu-anywhere :ensure t
   :bind (("C-c i" . imenu-anywhere)))
+
+
+(use-package dumb-jump :ensure t
+  :bind (("C-c j o" . dumb-jump-go-other-window)
+         ("C-c j j" . dumb-jump-go)
+         ("C-c j i" . dumb-jump-go-prompt)
+         ("C-c j x" . dumb-jump-go-prefer-external)
+         ("C-c j z" . dumb-jump-go-prefer-external-other-window))
+  :config
+  (setq dumb-jump-selector 'ivy)
+  ;; (setq dumb-jump-selector 'helm)
+  )
 
 ;;__________________________________________________________
 ;; Historical completion
@@ -1133,6 +1155,7 @@
 
   (setq tramp-verbose 9
 		tramp-default-method "ssh"
+		tramp-change-syntax 'simplified
 		tramp-use-ssh-controlmaster-options nil
 		tramp-persistency-file-name "~/.emacs.d/tramp"))
 
@@ -1143,21 +1166,43 @@
          ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
 
 ;;__________________________________________________________
-;;; org-gcal (google calendar, not configured now)
-(use-package calfw :ensure t
-  :commands (cfw:open-calendar-buffer)
+;;; Google calendar (view only)
+
+(use-package org :ensure t
+  :mode ("\\.org$" . org-mode)
   :config
-
-  (use-package calfw-org :ensure t
-	:config
-	(setq cfw:org-overwrite-default-keybinding t))
-
-  (use-package calfw-cal :ensure t)
-  (use-package calfw-ical :ensure t
-	:config
-	(cfw:open-ical-calendar my/gmailcal "Red")))
+  (use-package org-bullets :ensure t
+	:hook (org-mode . org-bullets-mode))
+  )
 
 
+;;__________________________________________________________
+;;; Google calendar (view only)
+
+(use-package calfw :ensure t
+  :commands (my/calendar)
+  :config
+  (use-package calfw-org :ensure t)
+  (use-package calfw-ical :ensure t)
+  (use-package calfw-gcal :ensure t)
+
+  (setq cfw:org-overwrite-default-keybinding t)
+
+  (defun my/calendar ()
+    (interactive)
+    (cfw:open-calendar-buffer
+     :contents-sources
+     (list
+      (cfw:open-ical-calendar my/gmailcal "Red")
+      )))
+  (setq cfw:org-overwrite-default-keybinding t))
+
+
+;; (use-package ergoemacs-mode :ensure t
+;;   :config
+;;   (setq ergoemacs-theme "lvl1")
+;;   (ergoemacs-mode t)
+;;   )
 
 (provide 'init)
 ;;; init.el ends here
