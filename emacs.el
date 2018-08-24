@@ -216,21 +216,6 @@
   (message "No xsel in your path, install it in your system!!!"))
 
 ;;__________________________________________________________
-;; Move current line up and down Shift+arrow
-(use-package move-text :ensure t
-  :bind(("C-M-p" . move-text-up)
-		("C-M-n" . move-text-down))
-  :init
-  (global-set-key (kbd "C-M-b")
-				  (lambda () (interactive) (transpose-words -1)))
-  (global-set-key (kbd "C-M-f")
-				  (lambda () (interactive) (transpose-words 1)))
-  (global-set-key (kbd "C-t")
-				  (lambda () (interactive) (transpose-chars -1)))
-  (global-set-key (kbd "M-t")
-				  (lambda () (interactive) (transpose-chars 1))))
-
-;;__________________________________________________________
 ;;  Seleccionar con el mouse
 (use-package mouse
   :config
@@ -393,7 +378,9 @@
   :config
   (use-package flyspell-popup :ensure t
 	:bind (:map flyspell-mode-map
-				("C-c ." . flyspell-popup-correct)))
+				("C-c ." . flyspell-popup-correct)
+				("C-M-i" .  nil)
+				))
 
   (use-package flyspell-correct-ivy :ensure t
 	:commands (flyspell-correct-ivy)
@@ -1037,13 +1024,12 @@
 
 (use-package counsel :ensure t
   :diminish
-  :bind
   :config
   (counsel-mode t)
-  (global-set-key (kbd "C-c k") 'counsel-ag)
-  (global-set-key (kbd "C-c g") 'counsel-git)
-  (global-set-key (kbd "C-c r") 'counsel-git-grep)
-  (global-set-key (kbd "C-c l") 'counsel-locate)
+  (define-key counsel-mode-map (kbd "C-c k") 'counsel-ag)
+  (define-key counsel-mode-map (kbd "C-c g") 'counsel-git)
+  (define-key counsel-mode-map (kbd "C-c r") 'counsel-git-grep)
+  (define-key counsel-mode-map (kbd "C-c l") 'counsel-locate)
 
   (use-package counsel-tramp :ensure t
 	:after exec-path-from-shell
@@ -1197,6 +1183,60 @@
       )))
   (setq cfw:org-overwrite-default-keybinding t))
 
+
+
+;; Some editing commands
+
+;;(global-set-key (read-kbd-macro "<M-DEL>") )
+
+;;(global-set-key (kbd "M-t") (backward-kill-word))
+
+;;__________________________________________________________
+;; Move current line up and down Shift+arrow
+
+(defvar my/keys-minor-mode-map
+  (let ((map (make-sparse-keymap)))
+
+	(if (display-graphic-p)
+		  (define-key input-decode-map (kbd "C-i") (kbd "<up>")))
+
+	;;(define-key map "\e[A"  'previous-line)   		  ;; C-i aleas de <up> in xterm
+	(define-key map (kbd "C-k") 'next-line)       		;; replaces kill-line
+	(define-key map (kbd "C-l") 'forward-char)    		;; replaces recenter-top-bottom
+	(define-key map (kbd "C-j") 'backward-char)   		;; replaces electric-newline-and-maybe-indent
+
+	(define-key map (kbd "M-i")  'backward-paragraph)    ;; M-i aleas de C-<up> in xterm
+	(define-key map (kbd "M-k") 'forward-paragraph)  	;; replaces kill-sentence
+	(define-key map (kbd "M-l") 'right-word)         	;; replaces downcase-word
+	(define-key map (kbd "M-j") 'left-word)          	;; replaces indent-new-comment-line
+
+	(define-key map (kbd "C-n") 'kill-line)          	;; Before C-k
+	(define-key map (kbd "M-n") 'kill-sentence)       	;; Before M-k
+	(define-key map (kbd "C-M-i") 'kill-sentence)       ;; Before M-k
+	(use-package move-text :ensure t
+	  :init
+	  (define-key map (kbd "C-M-i") 'move-text-up)
+	  (define-key map (kbd "C-M-k") 'move-text-down)
+
+	  (define-key map (kbd "C-M-j")
+		(lambda () (interactive) (transpose-words -1)))
+	  (define-key map (kbd "C-M-l")
+		(lambda () (interactive) (transpose-words 1)))
+	  (define-key map (kbd "C-t")
+		(lambda () (interactive) (transpose-chars -1)))
+	  (define-key map (kbd "M-t")
+		(lambda () (interactive) (transpose-chars 1)))
+	)
+    map)
+  "My-keys-minor-mode key map.")
+
+(define-minor-mode my/keys-minor-mode
+  "A minor mode so that my key settings override annoying major modes."
+  :init-value nil
+  :lighter " my/keys"
+  :global t)
+
+(my/keys-minor-mode t)
 
 ;; (use-package ergoemacs-mode :ensure t
 ;;   :config
