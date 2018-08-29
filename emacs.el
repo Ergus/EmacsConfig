@@ -1242,13 +1242,6 @@
 	(define-key map (kbd "C-M-i") 'move-text-up)
 	(define-key map (kbd "C-M-k") 'move-text-down)
 
-	;; move-text
-	(require 'move-text)
-	(define-key map (kbd "C-M-j") (lambda () (interactive) (transpose-words -1)))
-	(define-key map (kbd "C-M-l") (lambda () (interactive) (transpose-words 1)))
-	(define-key map (kbd "C-t") (lambda () (interactive) (transpose-chars -1)))
-	(define-key map (kbd "M-t") (lambda () (interactive) (transpose-chars 1)))
-
 	(require 'windmove)
 	(define-key map (kbd "C-x i") 'windmove-up)    ;; replaces insert-file
 	(define-key map (kbd "C-x k") 'windmove-down)  ;; replaces kill-buffer
@@ -1257,6 +1250,17 @@
 
     map)
   "My-keys-minor-mode key map.")
+
+;;__________________________________________________________
+;; Move current line up and down Shift+arrow
+(use-package move-text :ensure t
+  :bind(("C-M-<up>" . move-text-up)
+        ("C-M-<down>" . move-text-down))
+  :init
+  (global-set-key (kbd "C-M-<left>") (lambda () (interactive) (transpose-words -1)))
+  (global-set-key (kbd "C-M-<right>") (lambda () (interactive) (transpose-words 1)))
+  (global-set-key (kbd "C-t") (lambda () (interactive) (transpose-chars -1)))
+  (global-set-key (kbd "M-t") (lambda () (interactive) (transpose-chars 1))))
 
 (define-minor-mode my/keys-minor-mode
   "A minor mode so that my key settings override annoying major modes."
