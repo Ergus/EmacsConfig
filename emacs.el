@@ -48,6 +48,63 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
 ;;__________________________________________________________
+;;  The Colors (I want to change this for a real theme, there are maaaaany)
+
+(defun my/colors () "Define my color theme."
+	   (defconst myblack         "#000000" "Color red")
+	   (defconst myred           "#cd0000" "Color red")
+	   (defconst mygreen         "#00cd00" "Color green")
+	   (defconst myyellow        "#cdcd00" "Color yellow")
+	   (defconst myblue          "#0000ee" "Color blue")
+	   (defconst mymagenta       "#cd00cd" "Color magenta")
+	   (defconst mycyan          "#00cdcd" "Color cyan")
+	   (defconst mywhite         "#e5e5e5" "Color white")
+	   (defconst mybrightblack   "#7f7f7f" "Color brightblack")
+	   (defconst mybrightred     "#ff0000" "Color brightred")
+	   (defconst mybrightgreen   "#00ff00" "Color brightgreen")
+	   (defconst mybrightyellow  "#ffff00" "Color brightyellow")
+	   (defconst mybrightblue    "#5c5cff" "Color brightblue")
+	   (defconst mybrightmagenta "#ff00ff" "Color brightmagenta")
+	   (defconst mybrightcyan    "#00ffff" "Color brightcyan")
+	   (defconst mybrightwhite   "#ffffff" "Color brightwhite")
+
+       (set-background-color myblack)
+       (set-foreground-color mywhite)
+
+       ;;(set-face-foreground 'bold "LightGoldenrod")
+       ;;(set-face-foreground 'bold-italic "grey20")
+       ;;(set-face-foreground 'italic "yellow3")
+
+       (set-face-foreground 'font-lock-preprocessor-face mymagenta)     ;; Preprocessor
+
+       (set-face-foreground 'font-lock-comment-face myblue)             ;; Comentarios
+       (set-face-foreground 'font-lock-doc-face myblue)                 ;; Documentation
+
+       (set-face-foreground 'font-lock-string-face myred)           	;; Strings
+       (set-face-foreground 'font-lock-function-name-face mywhite)  	;; Funciones
+       (set-face-foreground 'font-lock-variable-name-face mywhite)  	;; Variables
+       (set-face-foreground 'font-lock-constant-face mymagenta)   	    ;; Constates y Clases
+
+       (set-face-foreground 'font-lock-type-face mygreen)               ;; Tipos (int, float)
+       (set-face-foreground 'font-lock-keyword-face mybrightyellow)     ;; Keywords (for, if)
+       (set-face-foreground 'font-lock-builtin-face mygreen)            ;; Keywords (for, if)
+
+       (set-face-attribute 'highlight nil :foreground myred)
+
+       (set-face-attribute 'secondary-selection nil :background mybrightblue :foreground myblue)
+
+       ;; search C-s, resalta lo que encuentra
+       (set-face-attribute 'isearch nil :background mygreen
+						   :foreground mybrightwhite :weight 'bold)            ;; Search
+       (set-face-attribute 'region nil :inherit nil :background mybrightblack) ;; Seleccion C-space
+
+       (set-face-attribute 'line-number nil :foreground mybrightblack)         ;; numero de linea
+	   (set-face-attribute 'line-number-current-line nil :foreground mygreen)  ;; resalta la linea actual
+       )
+
+(my/colors)
+
+;;__________________________________________________________
 ;; Config file not here to not track it
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
@@ -61,12 +118,12 @@
 ;; Internal options
 
 (global-font-lock-mode t)      ;; Use font-lock everywhere.
-(setq font-lock-maximum-decoration t)
+
 (savehist-mode t)              	 ;; Historial
 (auto-compression-mode t)      	 ;; Uncompress on the fly:
 (show-paren-mode t)            	 ;; Highlight couple parentesis
 (auto-revert-mode t)             ;; Autoload files changed in disk
-(global-linum-mode t)            ;; Numero de linea a la izquierda
+(global-display-line-numbers-mode) ;; line numbers on the left
 (delete-selection-mode)          ;; Sobreescribe seleccion al pegar
 (menu-bar-mode -1)               ;; Quitar barra superior (no la uso)
 
@@ -79,7 +136,6 @@
 			  transient-mark-mode t     ;; Highlight marked region
 			  line-number-mode t        ;; Display line numbers
 			  column-number-mode t      ;; Display column numbers
-			  linum-format "%4d\u2502"  ;; Formato numero linea
 			  tab-always-indent 't      ;; make tab key do indent only
 			  initial-scratch-message "Welcome Jimmy!!"
 			  ring-bell-function 'ignore
@@ -98,6 +154,8 @@
 			  scroll-margin 0
 			  fill-column 80            ;; default is 70
 			  tooltip-mode t            ;; Tool tip in the echo
+			  confirm-kill-processes    nil ;; no ask for confirm kill processes on exit
+			  font-lock-maximum-decoration t
 			  )
 
 ;;__________________________________________________________
@@ -164,7 +222,7 @@
 	:config
 	(spaceline-spacemacs-theme))
 
-  (set-face-attribute 'mode-line nil :background "blue" :foreground "white"))
+  (set-face-attribute 'mode-line nil :background myblue :foreground mywhite))
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
@@ -277,46 +335,7 @@
   :config
   (column-enforce-mode t)
   (setq column-enforce-comments nil)
-  (set-face-attribute 'column-enforce-face nil :background "#1c1c1c1c1c1c"))
-
-;;__________________________________________________________
-;;  The Colors (I want to change this for a real theme, there are maaaaany)
-
-(defun my/colors () "Define my color theme."
-       (set-background-color "black")
-       (set-foreground-color "white")
-
-       (set-face-foreground 'bold "LightGoldenrod")
-       (set-face-foreground 'bold-italic "grey20")
-       (set-face-foreground 'italic "yellow3")
-
-       (set-face-foreground 'font-lock-preprocessor-face "magenta3")    ;; Preprocessor
-
-       (set-face-foreground 'font-lock-comment-face "blue")             ;; Comentarios
-       (set-face-foreground 'font-lock-doc-face "blue")                 ;; Documentation
-
-       (set-face-foreground 'font-lock-string-face "red")           	;; Strings
-       (set-face-foreground 'font-lock-function-name-face "white")  	;; Funciones
-       (set-face-foreground 'font-lock-variable-name-face "white")  	;; Variables
-       (set-face-foreground 'font-lock-constant-face "DeepPink1")   	;; Constates y Clases
-
-       (set-face-foreground 'font-lock-type-face "green")       ;; Tipos (int, float)
-       (set-face-foreground 'font-lock-keyword-face "DarkGoldenrod1")   ;; Keywords (for, if)
-       (set-face-foreground 'font-lock-builtin-face "green4")   ;; Keywords (for, if)
-
-       (set-face-attribute 'highlight nil :foreground "red")
-
-       (set-face-attribute 'secondary-selection nil :background "darkblue" :foreground "skyblue")
-
-       ;; search C-s, resalta lo que encuentra
-       (set-face-attribute 'isearch nil :background "blue" :foreground "white") ;; Busqueda
-       (set-face-attribute 'region nil :background "white" :foreground "black") ;; Seleccion C-space
-       (set-face-attribute 'linum nil :background "black" :foreground "green")  ;; resalta la linea actual
-
-	   (set-face-attribute 'minibuffer-prompt nil :foreground "brightcyan")
-       )
-
-(my/colors)
+  (set-face-attribute 'column-enforce-face nil :background mybrightblack))
 
 ;;__________________________________________________________
 ;; Lineas de Indentado
@@ -325,7 +344,7 @@
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
   (setq highlight-indent-guides-method 'character)
   (setq highlight-indent-guides-auto-enabled nil)
-  (set-face-foreground 'highlight-indent-guides-character-face "gray20"))
+  (set-face-foreground 'highlight-indent-guides-character-face mybrightblack))
 
 ;;__________________________________________________________
 ;; Resalta parentesis entorno al cursor
@@ -334,11 +353,11 @@
   :config
   (add-hook 'prog-mode-hook 'highlight-parentheses-mode)
 
-  (set-face-attribute 'hl-paren-face nil :weight 'ultra-bold)
+  (set-face-attribute 'hl-paren-face nil :weight 'bold)
 
   (setq hl-paren-colors
 		(quote
-		 ("brightgreen" "cyan" "brightred" "red"))))
+		 ("#00ff00" "#00ffff" "#ff0000" "#cd0000"))))
 
 ;;__________________________________________________________
 ;; Resalta scopes entorno al cursor
@@ -347,25 +366,25 @@
   ;;(define-key function-key-map "\e[1;5R" [C-f3])
   (global-set-key (kbd "C-c b") 'highlight-blocks-now)
 
-  (set-face-attribute 'highlight-blocks-depth-2-face nil :background "gray15")
-  (set-face-attribute 'highlight-blocks-depth-3-face nil :background "gray20")
-  (set-face-attribute 'highlight-blocks-depth-4-face nil :background "gray25")
-  (set-face-attribute 'highlight-blocks-depth-5-face nil :background "gray30")
-  (set-face-attribute 'highlight-blocks-depth-6-face nil :background "gray35")
-  (set-face-attribute 'highlight-blocks-depth-7-face nil :background "gray40")
-  (set-face-attribute 'highlight-blocks-depth-8-face nil :background "gray45")
-  (set-face-attribute 'highlight-blocks-depth-9-face nil :background "gray50"))
+  (set-face-attribute 'highlight-blocks-depth-2-face nil :background "#262626") ;; gray15
+  (set-face-attribute 'highlight-blocks-depth-3-face nil :background "#333333") ;; gray20
+  (set-face-attribute 'highlight-blocks-depth-4-face nil :background "#404040") ;; gray25
+  (set-face-attribute 'highlight-blocks-depth-5-face nil :background "#4d4d4d")
+  (set-face-attribute 'highlight-blocks-depth-6-face nil :background "#595959")
+  (set-face-attribute 'highlight-blocks-depth-7-face nil :background "#666666")
+  (set-face-attribute 'highlight-blocks-depth-8-face nil :background "#737373")
+  (set-face-attribute 'highlight-blocks-depth-9-face nil :background "#7f7f7f"))
 
 (use-package highlight-escape-sequences :ensure t
   :config
   (add-hook 'prog-mode-hook 'hes-mode)
-  (set-face-attribute 'hes-escape-backslash-face nil :foreground "magenta")
-  (set-face-attribute 'hes-escape-sequence-face nil :foreground "magenta"))
+  (set-face-attribute 'hes-escape-backslash-face nil :foreground mymagenta)
+  (set-face-attribute 'hes-escape-sequence-face nil :foreground mymagenta))
 
 (use-package highlight-numbers :ensure t
   :config
   (add-hook 'prog-mode-hook 'highlight-numbers-mode)
-  (set-face-attribute 'highlight-numbers-number nil :foreground "red"))
+  (set-face-attribute 'highlight-numbers-number nil :foreground myred))
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
@@ -675,17 +694,17 @@
 
 
   (set-face-attribute 'company-tooltip nil        ;; dialog face
-					  :background "brightblack" :foreground "white")
+					  :background mybrightblack :foreground mywhite)
   (set-face-attribute 'company-tooltip-common nil ;; common part face
-					  :inherit 'company-tooltip :foreground "green")
+					  :inherit 'company-tooltip :foreground mygreen)
   (set-face-attribute 'company-tooltip-selection nil ;; selection face
-					  :background "blue" :weight 'ultra-bold)
+					  :background myblue :weight 'ultra-bold)
   (set-face-attribute 'company-scrollbar-bg nil   ;; scroll bar face bg
-					  :background "brightblack")
+					  :background mybrightblack)
   (set-face-attribute 'company-scrollbar-fg nil   ;; scroll bar face fg
-					  :background "blue")
+					  :background myblue)
 
-  (setq company-idle-delay 1   ;; no delay for autocomplete
+  (setq company-idle-delay 1.0   ;; no delay for autocomplete
 		company-minimum-prefix-length 2
 		company-tooltip-limit 20
 		company-show-numbers t)
@@ -938,14 +957,14 @@
 ;  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
 ;  (define-key dired-mode-map (kbd "^") (lambda () (interactive)
 ;										 (find-alternate-file ".."))); was dired-up-directory
-;;  (use-package dired-x
-;;	:config
-;;	(setq dired-guess-shell-alist-user
-;;		  (list
-;;		   (list "\\.\\(ps\|ps.gz\|eps\|eps.gz\|pdf\|PDF\\)$" "evince")
-;;		   (list "\\.\\(rgb\|tiff\|tif\|xbm\|gif\|pgm\|ppm\|bmp\|tga\\)$" "eog ")
-;;		   (list "\\.\\(ppm\|gif\|png\|jpg\|JPG\\)$" "eog")
-;;		   (list "\\.\\(avi\|wav\|flv\|mov\|3gp\\)$" "vlc"))))
+  (use-package dired-x
+	:config
+	(setq dired-guess-shell-alist-user
+		  (list
+		   (list "\\.\\(ps\|ps.gz\|eps\|eps.gz\|pdf\|PDF\\)$" "evince")
+		   (list "\\.\\(rgb\|tiff\|tif\|xbm\|gif\|pgm\|ppm\|bmp\|tga\\)$" "eog ")
+		   (list "\\.\\(ppm\|gif\|png\|jpg\|JPG\\)$" "eog")
+		   (list "\\.\\(avi\|wav\|flv\|mov\|3gp\\)$" "vlc"))))
 
   (use-package dired-sidebar :ensure t
 	:commands (dired-sidebar-toggle-sidebar)
@@ -995,13 +1014,20 @@
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
+(use-package headlong :ensure t
+  :defer t)
+
 (use-package ivy :ensure t
   :diminish
   :bind ("C-c C-r" . ivy-resume)
   :config
   (ivy-mode t)
 
-  (setq ivy-use-virtual-buffers t    ;; 
+  (set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
+  (set-face-attribute 'ivy-current-match nil :inherit nil
+					  :background mybrightblack :weight 'ultra-bold)
+
+  (setq ivy-use-virtual-buffers t    ;;
 		ivy-count-format "(%d/%d) "
 		ivy-display-style 'fancy
 		ivy-height 5
@@ -1012,11 +1038,9 @@
 	:bind (("C-s" . swiper)
 		   ("C-r" . swiper))
 	:config
-	(set-face-attribute 'swiper-line-face nil
-						:background "brightblack" :foreground "white")
-	(set-face-attribute 'ivy-current-match nil
-						:background "brightblue" :foreground "white"
-						:weight 'bold))
+	(set-face-attribute 'swiper-line-face nil :inherit nil
+						:background mybrightblack :weight 'bold)
+	)
 
   (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
   (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
@@ -1194,6 +1218,8 @@
 ;;__________________________________________________________
 ;; Move current line up and down Shift+arrow
 
+(use-package move-text :ensure t)
+
 (defvar my/keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
 
@@ -1212,21 +1238,23 @@
 
 	(define-key map (kbd "C-n") 'kill-line)          	;; Before C-k
 	(define-key map (kbd "M-n") 'kill-sentence)       	;; Before M-k
-	(define-key map (kbd "C-M-i") 'kill-sentence)       ;; Before M-k
-	(use-package move-text :ensure t
-	  :init
-	  (define-key map (kbd "C-M-i") 'move-text-up)
-	  (define-key map (kbd "C-M-k") 'move-text-down)
 
-	  (define-key map (kbd "C-M-j")
-		(lambda () (interactive) (transpose-words -1)))
-	  (define-key map (kbd "C-M-l")
-		(lambda () (interactive) (transpose-words 1)))
-	  (define-key map (kbd "C-t")
-		(lambda () (interactive) (transpose-chars -1)))
-	  (define-key map (kbd "M-t")
-		(lambda () (interactive) (transpose-chars 1)))
-	)
+	(define-key map (kbd "C-M-i") 'move-text-up)
+	(define-key map (kbd "C-M-k") 'move-text-down)
+
+	;; move-text
+	(require 'move-text)
+	(define-key map (kbd "C-M-j") (lambda () (interactive) (transpose-words -1)))
+	(define-key map (kbd "C-M-l") (lambda () (interactive) (transpose-words 1)))
+	(define-key map (kbd "C-t") (lambda () (interactive) (transpose-chars -1)))
+	(define-key map (kbd "M-t") (lambda () (interactive) (transpose-chars 1)))
+
+	(require 'windmove)
+	(define-key map (kbd "C-x i") 'windmove-up)    ;; replaces insert-file
+	(define-key map (kbd "C-x k") 'windmove-down)  ;; replaces kill-buffer
+	(define-key map (kbd "C-x l") 'windmove-right) ;; replaces count-lines-page
+	(define-key map (kbd "C-x j") 'windmove-left)  ;; replaces nothing
+
     map)
   "My-keys-minor-mode key map.")
 
@@ -1236,13 +1264,7 @@
   :lighter " my/keys"
   :global t)
 
-(my/keys-minor-mode t)
-
-;; (use-package ergoemacs-mode :ensure t
-;;   :config
-;;   (setq ergoemacs-theme "lvl1")
-;;   (ergoemacs-mode t)
-;;   )
+;;(my/keys-minor-mode t)
 
 (provide 'init)
 ;;; init.el ends here
