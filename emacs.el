@@ -156,11 +156,19 @@
 			  tooltip-mode t            ;; Tool tip in the echo
 			  confirm-kill-processes    nil ;; no ask for confirm kill processes on exit
 			  font-lock-maximum-decoration t
+			  show-paren-when-point-inside-paren t ;; show parent even when over
+			  display-line-numbers-widen t  ;; keep line numbers inside a narrow buffers
 			  )
 
 ;;__________________________________________________________
 ;;Packages options
 ;;__________________________________________________________
+
+(use-package gdb
+  :commands gdb
+  :init
+  (setq-default gdb-many-windows t)
+  )
 
 ;;__________________________________________________________
 ;; Two options for diffs
@@ -648,8 +656,8 @@
 ;; Move split keybindings
 (use-package windmove
   :config
-  (windmove-default-keybindings)        ;; Move between panes S-arrow
-  (setq-default windmove-wrap-around t) ;; Cyclic bound mode
+  (windmove-default-keybindings 'meta)  ;; Move between panes S-arrow
+  (setq windmove-wrap-around t)         ;; Cyclic bound mode
   )
 
 (when (fboundp 'winner-mode) (winner-mode 1))   ;; recuperar Split configuration con C-c left/right
@@ -821,7 +829,7 @@
   :init
   (defun my/message-mode-hook () "My mail mode hook"
 		 (turn-on-auto-fill)
-		 (mail-abbrevs-setup)
+		 (mail2-abbrevs-setup)
 		 (flyspell-mode t)
 		 (message "Loaded Message-mode"))
   (add-hook 'message-mode-hook 'my/message-mode-hook))
@@ -1025,7 +1033,7 @@
 
   (set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
   (set-face-attribute 'ivy-current-match nil :inherit nil
-					  :background mybrightblack :weight 'ultra-bold)
+					  :background mybrightblue :foreground mywhite :weight 'ultra-bold)
 
   (setq ivy-use-virtual-buffers t    ;;
 		ivy-count-format "(%d/%d) "
@@ -1208,49 +1216,6 @@
   (setq cfw:org-overwrite-default-keybinding t))
 
 
-
-;; Some editing commands
-
-;;(global-set-key (read-kbd-macro "<M-DEL>") )
-
-;;(global-set-key (kbd "M-t") (backward-kill-word))
-
-;;__________________________________________________________
-;; Move current line up and down Shift+arrow
-
-(use-package move-text :ensure t)
-
-(defvar my/keys-minor-mode-map
-  (let ((map (make-sparse-keymap)))
-
-	(if (display-graphic-p)
-		  (define-key input-decode-map (kbd "C-i") (kbd "<up>")))
-
-	;;(define-key map "\e[A"  'previous-line)   		  ;; C-i aleas de <up> in xterm
-	(define-key map (kbd "C-k") 'next-line)       		;; replaces kill-line
-	(define-key map (kbd "C-l") 'forward-char)    		;; replaces recenter-top-bottom
-	(define-key map (kbd "C-j") 'backward-char)   		;; replaces electric-newline-and-maybe-indent
-
-	(define-key map (kbd "M-i")  'backward-paragraph)    ;; M-i aleas de C-<up> in xterm
-	(define-key map (kbd "M-k") 'forward-paragraph)  	;; replaces kill-sentence
-	(define-key map (kbd "M-l") 'right-word)         	;; replaces downcase-word
-	(define-key map (kbd "M-j") 'left-word)          	;; replaces indent-new-comment-line
-
-	(define-key map (kbd "C-n") 'kill-line)          	;; Before C-k
-	(define-key map (kbd "M-n") 'kill-sentence)       	;; Before M-k
-
-	(define-key map (kbd "C-M-i") 'move-text-up)
-	(define-key map (kbd "C-M-k") 'move-text-down)
-
-	(require 'windmove)
-	(define-key map (kbd "C-x i") 'windmove-up)    ;; replaces insert-file
-	(define-key map (kbd "C-x k") 'windmove-down)  ;; replaces kill-buffer
-	(define-key map (kbd "C-x l") 'windmove-right) ;; replaces count-lines-page
-	(define-key map (kbd "C-x j") 'windmove-left)  ;; replaces nothing
-
-    map)
-  "My-keys-minor-mode key map.")
-
 ;;__________________________________________________________
 ;; Move current line up and down Shift+arrow
 (use-package move-text :ensure t
@@ -1262,6 +1227,9 @@
   (global-set-key (kbd "C-t") (lambda () (interactive) (transpose-chars -1)))
   (global-set-key (kbd "M-t") (lambda () (interactive) (transpose-chars 1))))
 
+
+;;__________________________________________________________
+;; Move current line up and down Shift+arrow
 (define-minor-mode my/keys-minor-mode
   "A minor mode so that my key settings override annoying major modes."
   :init-value nil
