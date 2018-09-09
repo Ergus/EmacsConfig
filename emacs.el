@@ -86,7 +86,7 @@
        (set-face-foreground 'font-lock-constant-face mymagenta)   	    ;; Constates y Clases
 
        (set-face-foreground 'font-lock-type-face mygreen)               ;; Tipos (int, float)
-       (set-face-foreground 'font-lock-keyword-face mybrightyellow)     ;; Keywords (for, if)
+       (set-face-foreground 'font-lock-keyword-face myyellow)     ;; Keywords (for, if)
        (set-face-foreground 'font-lock-builtin-face mygreen)            ;; Keywords (for, if)
 
        (set-face-attribute 'highlight nil :foreground myred)
@@ -124,8 +124,12 @@
 (show-paren-mode t)            	 ;; Highlight couple parentesis
 (auto-revert-mode t)             ;; Autoload files changed in disk
 (global-display-line-numbers-mode) ;; line numbers on the left
-(delete-selection-mode)          ;; Sobreescribe seleccion al pegar
+(delete-selection-mode t)        ;; Sobreescribe seleccion al pegar
+
 (menu-bar-mode -1)               ;; Quitar barra superior (no la uso)
+(tool-bar-mode -1)               ;; Quitar barra superior (no la uso)
+(size-indication-mode t)
+(scroll-bar-mode -1)
 
 (when (display-graphic-p)
   (tool-bar-mode -1)
@@ -163,6 +167,10 @@
 ;;__________________________________________________________
 ;;Packages options
 ;;__________________________________________________________
+
+(use-package cua-base
+  :config
+  (cua-selection-mode t))            ;; Better rectangle selection
 
 (use-package gdb
   :commands gdb
@@ -220,15 +228,16 @@
 (use-package spaceline :ensure t
   :demand t
   :init
-  (if (display-graphic-p)
+  (require 'spaceline-config)
+
+  :config
+   (if (display-graphic-p)
 	  (setq powerline-default-separator 'arrow-fade)
 	(setq powerline-default-separator 'utf-8))
-  :config
-  (use-package spaceline-config :ensure spaceline
-	:init
-	(setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
-	:config
-	(spaceline-spacemacs-theme))
+
+
+  (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
+  (spaceline-spacemacs-theme)
 
   (set-face-attribute 'mode-line nil :background myblue :foreground mywhite))
 
@@ -281,6 +290,7 @@
 	(my/xclipboard)
   (message "No xsel in your path, install it in your system!!!"))
 
+
 ;;__________________________________________________________
 ;;  Seleccionar con el mouse
 (use-package mouse
@@ -300,10 +310,14 @@
 ;; Multiple Cursors
 (global-unset-key (kbd "C-c <down-mouse-1>"))
 (use-package multiple-cursors  :ensure t ;; Multiple cursors package
-  :bind (("C-c m" . mc/edit-lines)
-		 ("C-c <down>" . mc/mark-next-like-this)
-		 ("C-c <up>" . mc/mark-previous-like-this)
-         ("C-c <mouse-1>" . mc/add-cursor-on-click)))
+  :bind (("C-c m m" . mc/edit-lines)
+		 ("C-c m r" . mc/mark-all-in-region)
+		 ("C-c m s" . mc/mark-more-like-this-extended)
+		 ("C-c m a" . mc/mark-all-like-this)
+		 ("C-c m w" . mc/mark-all-words-like-this)
+		 ("C-c m <down>" . mc/mark-next-like-this)
+		 ("C-c m <up>" . mc/mark-previous-like-this)
+         ("C-c m <mouse-1>" . mc/add-cursor-on-click)))
 
 ;;__________________________________________________________
 ;; My program's mode hooks
@@ -406,8 +420,7 @@
   (use-package flyspell-popup :ensure t
 	:bind (:map flyspell-mode-map
 				("C-c ." . flyspell-popup-correct)
-				("C-M-i" .  nil)
-				))
+				("C-M-i" .  nil)))
 
   (use-package flyspell-correct-ivy :ensure t
 	:commands (flyspell-correct-ivy)
@@ -693,13 +706,11 @@
   (global-set-key (kbd "M-/") 'company-yasnippet))
 
 (use-package company :ensure t
-  :defer t
-  :bind (("M-RET" . company-complete))
+  :diminish
+  :bind (:map company-mode-map ("M-RET" . company-complete)
+		 :map company-active-map ("M-RET" . company-other-backend))
   :init (global-company-mode)
   :config
-  (define-key company-mode-map (kbd "M-RET") 'company-complete)
-  (define-key company-active-map (kbd "M-RET") 'company-other-backend)
-
 
   (set-face-attribute 'company-tooltip nil        ;; dialog face
 					  :background mybrightblack :foreground mywhite)
@@ -765,6 +776,7 @@
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
 (use-package flycheck :ensure t
+  :diminish
   :init (global-flycheck-mode)
   :config
 
@@ -804,10 +816,19 @@
 (use-package emms :ensure t
   :defer t
   :config
-  (require 'emms-setup)
-  (emms-all)
-  (emms-default-players)
-  (setq-default emms-source-file-default-directory "~/almacen/Musica/"))
+  (require 'emms-player-simple)
+  (require 'emms-source-file)
+  (require 'emms-source-playlist)
+  (require 'emms-player-vlc)
+  (setq emms-player-list '(emms-player-mpg321
+                           emms-player-ogg123
+                           emms-player-vlc
+						   emms-player-vlc-playlist))
+  (setq emms-playlist-buffer-name "*Music*"
+		emms-playing-time 1
+		emms-source-file-default-directory "~/almacen/Musica/"
+		emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
+		emms-stream-info-backend 'vlc))
 
 ;;__________________________________________________________
 ;; Email mode for mutt
@@ -955,6 +976,10 @@
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
 (use-package dired
+  :commands dired
+  :bind (:map dired-mode-map
+			  ("RET" . dired-find-alternate-file)
+			  ("^" . (lambda () (interactive) (find-alternate-file ".."))))
   :config
   (setq dired-recursive-copies 'top  ;; Always ask recursive copy
 		dired-recursive-deletes 'top ;; Always ask recursive delete
@@ -1027,9 +1052,9 @@
 
 (use-package ivy :ensure t
   :diminish
-  :bind ("C-c C-r" . ivy-resume)
-  :config
-  (ivy-mode t)
+  :bind (:map ivy-minibuffer-map ("TAB" . ivy-partial))
+
+   :config (ivy-mode t)
 
   (set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
   (set-face-attribute 'ivy-current-match nil :inherit nil
@@ -1228,15 +1253,7 @@
   (global-set-key (kbd "M-t") (lambda () (interactive) (transpose-chars 1))))
 
 
-;;__________________________________________________________
-;; Move current line up and down Shift+arrow
-(define-minor-mode my/keys-minor-mode
-  "A minor mode so that my key settings override annoying major modes."
-  :init-value nil
-  :lighter " my/keys"
-  :global t)
-
-;;(my/keys-minor-mode t)
+(setq evil-want-integration nil)
 
 (provide 'init)
 ;;; init.el ends here
