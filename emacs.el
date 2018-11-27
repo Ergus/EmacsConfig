@@ -131,17 +131,12 @@
 (size-indication-mode t)
 (scroll-bar-mode -1)
 
-(when (display-graphic-p)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (global-hl-line-mode -1))
-
 (setq-default vc-follow-symlinks nil	            ;; Open links not open
 			  transient-mark-mode t     ;; Highlight marked region
 			  line-number-mode t        ;; Display line numbers
 			  column-number-mode t      ;; Display column numbers
 			  tab-always-indent 't      ;; make tab key do indent only
-			  initial-scratch-message "Welcome Jimmy!!"
+			  initial-scratch-message "# Welcome Jimmy!!"
 			  ring-bell-function 'ignore
 			  user-full-name "Jimmy Aguilar Mena"
 			  inhibit-startup-message t
@@ -158,10 +153,13 @@
 			  scroll-margin 0
 			  fill-column 80            ;; default is 70
 			  tooltip-mode t            ;; Tool tip in the echo
-			  confirm-kill-processes    nil ;; no ask for confirm kill processes on exit
+			  confirm-kill-processes    nil ;; no ask for confirm kill processes on exi
 			  font-lock-maximum-decoration t
 			  show-paren-when-point-inside-paren t ;; show parent even when over
 			  display-line-numbers-widen t  ;; keep line numbers inside a narrow buffers
+			  ;; kill-whole-line t
+			  ;; initial-major-mode 'python-mode
+			  ;; initial-scratch-message nil
 			  )
 
 ;;__________________________________________________________
@@ -236,7 +234,8 @@
 	(setq powerline-default-separator 'utf-8))
 
 
-  (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
+  ;;(setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
+  (setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
   (spaceline-spacemacs-theme)
 
   (set-face-attribute 'mode-line nil :background myblue :foreground mywhite))
@@ -290,6 +289,8 @@
 	(my/xclipboard)
   (message "No xsel in your path, install it in your system!!!"))
 
+(define-key function-key-map "\eC-BackSpace"   [C-backspace])
+(define-key function-key-map "\eC-S-BackSpace" [C-S-backspace])
 
 ;;__________________________________________________________
 ;;  Seleccionar con el mouse
@@ -771,7 +772,9 @@
   :init
   (add-hook 'c++-mode-hook 'irony-mode)
   (add-hook 'c-mode-hook 'irony-mode)
-  (add-hook 'irony-mode-hook #'my/irony-mode-hook))
+  (add-hook 'arduino-mode-hook 'irony-mode)
+  (add-hook 'irony-mode-hook #'my/irony-mode-hook)
+  )
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
@@ -950,9 +953,9 @@
   :config
 
   (use-package company-jedi :ensure t
-	:after company
-	:config
-	(add-to-list 'company-backends 'company-jedi))
+  	:after company
+  	:config
+  	(add-to-list 'company-backends 'company-jedi))
 
   (use-package elpy :ensure t
 	:commands elpy-enable
@@ -967,11 +970,10 @@
 		  python-shell-interpreter-args "-i --simple-prompt"))
 
   (use-package flycheck-pycheckers :ensure t
-	:after flycheck
-	:config
-	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))
-
-  (use-package ipython-shell-send :ensure t))
+  	:after flycheck
+  	:config
+  	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))
+  )
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
@@ -1047,14 +1049,12 @@
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
-(use-package headlong :ensure t
-  :defer t)
+(use-package headlong :ensure t :defer t)
 
 (use-package ivy :ensure t
   :diminish
   :bind (:map ivy-minibuffer-map ("TAB" . ivy-partial))
-
-   :config (ivy-mode t)
+  :config (ivy-mode t)
 
   (set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
   (set-face-attribute 'ivy-current-match nil :inherit nil
@@ -1072,12 +1072,10 @@
 		   ("C-r" . swiper))
 	:config
 	(set-face-attribute 'swiper-line-face nil :inherit nil
-						:background mybrightblack :weight 'bold)
-	)
+						:background mybrightblack :weight 'bold))
 
   (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-  (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
-  )
+  (define-key read-expression-map (kbd "C-r") 'counsel-expression-history))
 
 (use-package counsel :ensure t
   :diminish
@@ -1126,9 +1124,37 @@
          ("C-c j x" . dumb-jump-go-prefer-external)
          ("C-c j z" . dumb-jump-go-prefer-external-other-window))
   :config
-  (setq dumb-jump-selector 'ivy)
-  ;; (setq dumb-jump-selector 'helm)
-  )
+  (setq dumb-jump-selector 'ivy))
+
+(use-package hydra :ensure t
+  :init (use-package ivy-hydra :ensure t)
+  :config
+  (global-set-key
+   (kbd "C-z")
+   (defhydra hydra-vi (:pre (set-cursor-color "#e52b50")
+  					   :post (set-cursor-color "#ffffff")
+					   :color amaranth)
+     "vi"
+     ("l" forward-char)
+     ("k" next-line)
+     ("j" backward-char)
+     ("i" previous-line)
+     ("m" set-mark-command "mark")
+     ("a" move-beginning-of-line "beg")
+     ("e" move-end-of-line "end")
+	 ("b" left-word "pWord")
+	 ("w" right-word "nWord")
+	 ("<" beginning-of-buffer "head")
+	 (">" end-of-buffer "tail")
+	 ("^" back-to-indentation "indent")
+     ("d" kill-region "kill")
+	 ("u" undo-tree-undo "undo")
+	 ("p" yank "paste")
+	 ("C-i" backward-paragraph "pPar")
+	 ("C-k" forward-paragraph "nPar")
+     ("y" kill-ring-save "yank")
+     ("ESC" nil)))
+  (hydra-set-property 'hydra-vi :verbosity 1))
 
 ;;__________________________________________________________
 ;; Historical completion
@@ -1252,8 +1278,43 @@
   (global-set-key (kbd "C-t") (lambda () (interactive) (transpose-chars -1)))
   (global-set-key (kbd "M-t") (lambda () (interactive) (transpose-chars 1))))
 
+;;__________________________________________________________
+;; for having tabs in top
+(use-package elscreen :ensure t
+  :commands (elscreen-start)
+  :init
+  (setq elscreen-tab-display-kill-screen nil))
 
-(setq evil-want-integration nil)
+;;__________________________________________________________
+;; evil mode
+;; (use-package evil :ensure t
+;;   :init
+;;   (setq evil-want-integration t
+;;  		evil-want-keybinding nil)
+;;   :config
+;;   (evil-mode 1)
+
+;;   (use-package evil-collection :ensure t
+;;  	:after evil
+;;  	:config
+;;  	(evil-collection-init))
+
+;;   (use-package evil-tabs :ensure t
+;;  	:config
+;;  	(global-evil-tabs-mode t))
+
+;;   (use-package evil-tutor :ensure t)
+;;   )
+
+
+(use-package arduino-mode :ensure t
+  :mode "\\.ino\\'"
+  :config
+  (use-package company-arduino :ensure t
+	:config
+	(add-hook 'irony-mode-hook 'company-arduino-turn-on)
+	)
+  )
 
 (provide 'init)
 ;;; init.el ends here
