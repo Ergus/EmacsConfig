@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs Initialization and Configuration
-;; Copyright (C) 2018 Jimmy Aguilar Mena
+;; Copyright (C) 2018 Jimmy Aguilar DenaDena
 
 ;; Author: Jimmy Aguilar Mena
 ;; Version: 0.1
@@ -148,7 +148,7 @@
 			  create-lockfiles nil      ;; No lock files, goot for tramp
 			  visible-bell nil          ;; Flash the screen (def)
 			  scroll-step 1             ;; Scroll one by one
-			  ;;scroll-preserve-screen-position 1
+			  scroll-preserve-screen-position nil
 			  scroll-conservatively 100000
 			  scroll-margin 0
 			  fill-column 80            ;; default is 70
@@ -289,9 +289,10 @@
 	(my/xclipboard)
   (message "No xsel in your path, install it in your system!!!"))
 
-(define-key function-key-map "\eC-BackSpace"   [C-backspace])
-(define-key function-key-map "\eC-S-BackSpace" [C-S-backspace])
-
+(unless (display-graphic-p)
+  (define-key function-key-map "\eC-BackSpace"   [C-backspace])
+  (define-key function-key-map "\eC-S-BackSpace" [C-S-backspace])
+  )
 ;;__________________________________________________________
 ;;  Seleccionar con el mouse
 (use-package mouse
@@ -361,7 +362,7 @@
   (set-face-attribute 'column-enforce-face nil :background mybrightblack))
 
 ;;__________________________________________________________
-;; Lineas de Indentado
+;; Lineas de Indent
 (use-package highlight-indent-guides :ensure t
   :config
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
@@ -412,23 +413,17 @@
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
 (use-package flyspell :ensure t
+  :hook ((prog-mode . flyspell-prog-mode)
+		 (text-mode . flyspell-mode))
+  :bind (:map flyspell-mode-map
+			  ("C-M-i" .  nil)
+			  ("C-;" .  nil))
   :diminish
-  :defer t
-  :init
-  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-  (add-hook 'text-mode-hook 'flyspell-mode)
   :config
-  (use-package flyspell-popup :ensure t
-	:bind (:map flyspell-mode-map
-				("C-c ." . flyspell-popup-correct)
-				("C-M-i" .  nil)))
-
   (use-package flyspell-correct-ivy :ensure t
-	:commands (flyspell-correct-ivy)
-	:bind (:map flyspell-mode-map
-				("C-c ;" . flyspell-correct-previous-word-generic))
-	:init
-	(setq flyspell-correct-interface #'flyspell-correct-ivy)))
+	:bind ("C-c f" . flyspell-correct-wrapper)))
+
+
 
 ;;__________________________________________________________
 ;; {c/c++}-mode
@@ -665,7 +660,7 @@
 
 ;;__________________________________________________________
 ;; splitting
-(setq split-width-threshold 90)        ;; Original value 240 ancho minimo limite para split vertical
+(setq split-width-threshold 180)        ;; Original value 240 ancho minimo limite para split vertical
 
 ;; Move split keybindings
 (use-package windmove
@@ -1045,7 +1040,7 @@
 ;;__________________________________________________________
 ;; neotree
 (use-package neotree :ensure t
-  :bind ("C-c e" . neotree-toggle))
+  :bind ("C-c n" . neotree-toggle))
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
@@ -1069,42 +1064,44 @@
 
   (use-package swiper :ensure t
 	:bind (("C-s" . swiper)
-		   ("C-r" . swiper))
+		   ("C-r" . swiper)
+		   :map minibuffer-local-map ("C-r" . counsel-minibuffer-history)
+		   :map read-expression-map ("C-r" . counsel-expression-history))
 	:config
 	(set-face-attribute 'swiper-line-face nil :inherit nil
-						:background mybrightblack :weight 'bold))
-
-  (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-  (define-key read-expression-map (kbd "C-r") 'counsel-expression-history))
+						:background mybrightblack :weight 'bold)))
 
 (use-package counsel :ensure t
   :diminish
-  :config
+  :init
   (counsel-mode t)
-  (define-key counsel-mode-map (kbd "C-c k") 'counsel-ag)
-  (define-key counsel-mode-map (kbd "C-c g") 'counsel-git)
-  (define-key counsel-mode-map (kbd "C-c r") 'counsel-git-grep)
-  (define-key counsel-mode-map (kbd "C-c l") 'counsel-locate)
-
+  :bind (:map counsel-mode-map
+			  ("C-c c a" . counsel-ag)
+			  ("C-c c a" . 'counsel-ag)
+			  ("C-c c i" . 'counsel-imenu)
+			  ("C-c c g" . 'counsel-grep)
+			  ("C-c c t" . 'counsel-git)
+			  ("C-c c r" . 'counsel-git-grep)
+			  ("C-c c l" . 'counsel-locate))
+  :config
   (use-package counsel-tramp :ensure t
 	:after exec-path-from-shell
-	:config
+	:config 
 	(setq tramp-default-method "ssh"))
 
   (use-package counsel-gtags :ensure t
 	:diminish
+	:hook (c-mode-common . counsel-gtags-mode)
+	:bind (:map counsel-gtags-mode-map
+				("C-c g q" . counsel-gtags-find-definition)
+				("C-c g q" . counsel-gtags-find-definition)
+				("C-c g r" . counsel-gtags-find-reference)
+				("C-c g s" . counsel-gtags-find-symbol)
+				("C-c g p" . counsel-gtags-go-backward)
+				("C-c g n" . counsel-gtags-go-forward))
 	:config
-	(defun my/counsel-gtags-hook () "My counsel-gtags mode hook"
-		   (counsel-gtags-mode 1)
-		   (add-to-list 'company-backends 'company-gtags)
-
-		   (define-key counsel-gtags-mode-map (kbd "C-c g d") 'counsel-gtags-find-definition)
-		   (define-key counsel-gtags-mode-map (kbd "C-c g r") 'counsel-gtags-find-reference)
-		   (define-key counsel-gtags-mode-map (kbd "C-c g f") 'counsel-gtags-find-symbol)
-		   (define-key counsel-gtags-mode-map (kbd "C-c g <") 'counsel-gtags-go-backward)
-		   (define-key counsel-gtags-mode-map (kbd "C-c g >") 'counsel-gtags-go-forward)
-		   (message "Loading my counsel gtags mode hook"))
-	(add-hook 'c-mode-common-hook 'my/counsel-gtags-hook))
+	(counsel-gtags-mode 1)
+	(add-to-list 'company-backends 'company-gtags))
 
   (use-package counsel-projectile :ensure t
 	:after projectile
@@ -1113,16 +1110,14 @@
 
   (use-package counsel-notmuch :ensure t))
 
-(use-package imenu-anywhere :ensure t
-  :bind (("C-c i" . imenu-anywhere)))
-
-
 (use-package dumb-jump :ensure t
-  :bind (("C-c j o" . dumb-jump-go-other-window)
-         ("C-c j j" . dumb-jump-go)
+  :bind (("C-c j 4 n" . dumb-jump-go-other-window)
+         ("C-c j 4 x" . dumb-jump-go-prefer-external-other-window)
+         ("C-c j n" . dumb-jump-go)
          ("C-c j i" . dumb-jump-go-prompt)
          ("C-c j x" . dumb-jump-go-prefer-external)
-         ("C-c j z" . dumb-jump-go-prefer-external-other-window))
+		 ("C-c j p" . dumb-jump-back)
+		 ("C-c j q" . dumb-jump-quick-look))
   :config
   (setq dumb-jump-selector 'ivy))
 
@@ -1130,10 +1125,10 @@
   :init (use-package ivy-hydra :ensure t)
   :config
   (global-set-key
-   (kbd "C-z")
+   (kbd "C-c h")
    (defhydra hydra-vi (:pre (set-cursor-color "#e52b50")
-  					   :post (set-cursor-color "#ffffff")
-					   :color amaranth)
+  							:post (set-cursor-color "#ffffff")
+							:color amaranth)
      "vi"
      ("l" forward-char)
      ("k" next-line)
@@ -1306,6 +1301,28 @@
 ;;   (use-package evil-tutor :ensure t)
 ;;   )
 
+(use-package avy :ensure t
+  :bind (("C-c a c" . avy-goto-char)
+		 ("C-c a i" . avy-goto-char-in-line)
+		 ("C-c a 2" . avy-goto-char-2)
+		 ("C-c a t" . avy-goto-char-timer)
+		 ("C-c a l" . avy-goto-line)
+		 ("C-c a a" . avy-goto-word-1)
+		 ("C-c a w" . avy-goto-word-0))
+
+  :config
+  (setq avy-keys (nconc (number-sequence ?a ?z)  ;; Order of proposals
+						(number-sequence ?A ?Z)
+						(number-sequence ?1 ?9)
+						'(?0))
+		avy-style 'at                            ;; Propose only 1 letter
+		avy-background t
+		avy-all-windows nil                      ;; Only current window
+		avy-case-fold-search nil
+		avy-highlight-first t
+		)
+  (set-face-attribute 'avy-lead-face nil :background nil :foreground myred)
+  )
 
 (use-package arduino-mode :ensure t
   :mode "\\.ino\\'"
@@ -1314,6 +1331,16 @@
 	:config
 	(add-hook 'irony-mode-hook 'company-arduino-turn-on)
 	)
+  )
+
+
+(use-package expand-region :ensure t
+  :bind (("C-c e e" . er/expand-region)
+		 ("C-c e w" . er/mark-word)
+		 ("C-c e i" . er/mark-inside-pairs)
+		 ("C-c e o" . er/mark-outside-pairs)
+		 ("C-c e f" . er/mark-defun)
+		 )
   )
 
 (provide 'init)
