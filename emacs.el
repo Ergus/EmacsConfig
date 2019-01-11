@@ -270,29 +270,45 @@
 ;; Clipboard copy and paste with: M-w & C-c v
 
 (defun my/xclipboard () "Define my clipboard functions with xsel."
-	   (defun xcopy () "Copies selection to x-clipboard."
-			  (interactive)
-			  (if (region-active-p)
-				  (if (display-graphic-p)
-					  (progn
-						(message "Copied region to x-clipboard!")
-						(call-interactively 'clipboard-kill-ring-save))
-					(progn
-					  (shell-command-on-region
-					   (region-beginning) (region-end) "xsel -i -b")
-					  (message "Copied region to clipboard!") ;
-					  (deactivate-mark)
-					  (call-interactively 'kill-ring-save)))
-				(message "No region active; can't yank!")))
 
-	   (defun xpaste () "Pastes from x-clipboard."
-			  (interactive)
-			  (if (display-graphic-p)
-				  (clipboard-yank)
-				(insert (shell-command-to-string "xsel -o -b"))))
+	   (defun my/xcopy (beg end &optional region) "Copies selection to x-clipboard and ."
+			  (interactive (list (mark) (point)
+								 (prefix-numeric-value current-prefix-arg)))
 
-	   (global-set-key (kbd "M-w") 'xcopy)
-	   (global-set-key (kbd "C-S-v") 'xpaste)
+			  (when (region-active-p)
+				(shell-command-on-region (region-beginning) (region-end) "xsel -i -b"))
+
+			  (copy-region-as-kill beg end region)
+
+			  (if (called-interactively-p 'interactive)
+				  (indicate-copied-region)))
+
+	   (defun my/xyank (&optional arg) "Pastes from x-clipboard."
+			  (interactive "*P")
+
+			  (setq yank-window-start (window-start))
+			  (setq this-command t)
+			  (push-mark)
+			  (insert-for-yank (shell-command-to-string "xsel -o -b"))
+			  (if (consp arg) ;; change mark and point if universal arg
+				  (goto-char (prog1 (mark t)
+							   (set-marker (mark-marker) (point) (current-buffer)))))
+			  (if (eq this-command t)
+				  (setq this-command 'my/xyank))
+			  nil)
+
+	   (defun my/xkill (beg end &optional region) "Copies selection to x-clipboard and ."
+			  (interactive (list (mark) (point)
+								 (prefix-numeric-value current-prefix-arg)))
+
+			  (when (use-region-p)
+				(shell-command-on-region (region-beginning) (region-end) "xsel -i -b"))
+
+			  (kill-region beg end region))
+
+	   (global-set-key (kbd "M-w") 'my/xcopy)
+	   (global-set-key (kbd "C-S-v") 'my/xpaste)
+	   (global-set-key (kbd "C-w") 'my/xkill)
 
 	   ;; =================== For Lorentz ======================
 	   (defun aberrant-copy () "Lorentz's aberrant copy."
@@ -310,21 +326,31 @@
 			  (insert (shell-command-to-string "xsel -o -p")))
 
 	   (global-set-key [drag-mouse-1] 'aberrant-copy)
-	   (global-set-key [mouse-2] 'aberrant-paste))
+	   (global-set-key [mouse-2] 'aberrant-paste)
 
-(if (executable-find "xsel")
-	(my/xclipboard)
-  (message "No xsel in your path, install it in your system!!!"))
+	   (use-package whole-line-or-region :ensure t)
+
+	   (defun my/whole-line-or-region-xcopy (prefix)
+		 "Copy region or PREFIX whole lines."
+		 (interactive "p")
+		 (whole-line-or-region-call-with-region 'my/xcopy prefix t))
+
+	   (defun my/whole-line-or-region-xkill (prefix)
+		 "Copy region or PREFIX whole lines."
+		 (interactive "p")
+		 (whole-line-or-region-call-with-region 'my/xkill prefix t))
+
+	   (global-set-key (kbd "M-w") 'my/whole-line-or-region-xcopy)
+	   (global-set-key (kbd "C-w") 'my/whole-line-or-region-xkill)
+	   (global-set-key (kbd "C-y") 'whole-line-or-region-yank)
+	   )
 
 (unless (display-graphic-p)
+  (if (executable-find "xsel")
+	  (my/xclipboard)
+	(message "No xsel in your path, install it in your system!!!"))
   (define-key function-key-map "\eC-BackSpace"	 [C-backspace])
-  (define-key function-key-map "\eC-S-BackSpace" [C-S-backspace])
-  )
-
-(use-package whole-line-or-region :ensure t
-  :config
-  (whole-line-or-region-global-mode t)
-  )
+  (define-key function-key-map "\eC-S-BackSpace" [C-S-backspace]))
 ;;__________________________________________________________
 ;;	Seleccionar con el mouse
 (use-package mouse
@@ -894,10 +920,6 @@
 	:after flycheck
 	:config
 	(add-hook 'flycheck-mode-hook #'flycheck-popup-tip-mode))
-
-  ;;  (use-package flycheck-status-emoji :ensure t
-  ;;	:after flycheck
-  ;;	:config (add-hook 'flycheck-mode-hook #'flycheck-status-emoji-mode))
 
   (use-package flycheck-color-mode-line :ensure t
 	:init
