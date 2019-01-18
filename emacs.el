@@ -123,9 +123,9 @@
 (auto-compression-mode t)		 ;; Uncompress on the fly:
 (show-paren-mode t)				 ;; Highlight couple parentesis
 (auto-revert-mode t)			 ;; Autoload files changed in disk
-(global-display-line-numbers-mode) ;; line numbers on the left
+(global-display-line-numbers-mode t) ;; line numbers on the left
 (delete-selection-mode t)		 ;; Sobreescribe seleccion al pegar
-
+(electric-indent-mode -1)
 (menu-bar-mode -1)				 ;; Quitar barra superior (no la uso)
 (tool-bar-mode -1)				 ;; Quitar barra superior (no la uso)
 (size-indication-mode t)
@@ -264,7 +264,19 @@
 ;;   ;;(setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
 ;;   (spaceline-emacs-theme)
 
-;;   (set-face-attribute 'mode-line nil :background myblue :foreground mywhite))
+;;   (set-face-attribute 'mode-line nil :background myblue :foreground mywhite)
+;; )
+
+(use-package smart-mode-line :ensure t
+  :config
+  (use-package smart-mode-line-powerline-theme :ensure t
+	:config
+	(setq sml/theme 'powerline)
+	)
+  (setq 
+		sml/no-confirm-load-theme t
+		sml/name-width 40)
+  (sml/setup))
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
@@ -390,12 +402,17 @@
   :init
   (setq whitespace-style '(face trailing)))
 
-;; (defun my/prog-mode-hook () "Some hooks only for prog mode."
-;; 	   (electric-pair-mode t)			  ;; Autoannadir parentesis
-;; 	   (which-function-mode t)			  ;; Shows the function in spaceline
-;; 	   )
+(use-package clean-aindent-mode :ensure t
+  :hook prog-mode
+  :config
+  (setq clean-aindent-is-simple-indent t))
 
-;; (add-hook 'prog-mode-hook 'my/prog-mode-hook)
+(defun my/prog-mode-hook () "Some hooks only for prog mode."
+	   ;;(electric-pair-mode t)			  ;; Autoannadir parentesis
+	   (which-function-mode t)			  ;; Shows the function in spaceline
+	   )
+
+(add-hook 'prog-mode-hook 'my/prog-mode-hook)
 
 ;;__________________________________________________________
 ;; 80 Column rules
@@ -446,10 +463,12 @@
 ;;__________________________________________________________
 ;; Resalta scopes entorno al cursor
 (use-package highlight-blocks :ensure t
+  :commands (highlight-blocks-now highlight-blocks-mode)
+  :bind (("C-c b n" . highlight-blocks-now)
+		 ("C-c b m" . highlight-blocks-mode))
+  :init
+  (which-key-add-key-based-replacements "C-c b" "highlight-blocks")
   :config
-  ;;(define-key function-key-map "\e[1;5R" [C-f3])
-  (global-set-key (kbd "C-c b") 'highlight-blocks-now)
-
   (set-face-attribute 'highlight-blocks-depth-2-face nil :background "#262626") ;; gray15
   (set-face-attribute 'highlight-blocks-depth-3-face nil :background "#333333") ;; gray20
   (set-face-attribute 'highlight-blocks-depth-4-face nil :background "#404040") ;; gray25
@@ -460,14 +479,14 @@
   (set-face-attribute 'highlight-blocks-depth-9-face nil :background "#7f7f7f"))
 
 (use-package highlight-escape-sequences :ensure t
+  :hook (prog-mode . hes-mode)
   :config
-  (add-hook 'prog-mode-hook 'hes-mode)
   (set-face-attribute 'hes-escape-backslash-face nil :foreground mymagenta)
   (set-face-attribute 'hes-escape-sequence-face nil :foreground mymagenta))
 
 (use-package highlight-numbers :ensure t
+  :hook (prog-mode . highlight-numbers-mode)
   :config
-  (add-hook 'prog-mode-hook 'highlight-numbers-mode)
   (set-face-attribute 'highlight-numbers-number nil :foreground myred))
 
 ;;__________________________________________________________
@@ -504,9 +523,10 @@
 
 ;;__________________________________________________________
 ;; Indent with tabs align with spaces
-(use-package smart-tabs-mode :ensure t
-  :config
-  (smart-tabs-insinuate 'c 'c++))
+;; (use-package smart-tabs-mode :ensure t
+;;   :hook (prog-mode)
+;;   :config
+;;   (smart-tabs-insinuate 'c 'c++))
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
@@ -523,7 +543,7 @@
 			   (pike-mode . autodoc)
 			   (c-mode	  . javadoc)
 			   (c++-mode  . javadoc))
-			 ;;c-basic-offset 4		  ;; Default is 2
+			 c-basic-offset 4		  ;; Default is set-from-style
 			 indent-tabs-mode t)
 
 	   (c-setup-doc-comment-style)	 ;; update commentd style
@@ -750,6 +770,7 @@
 
 ;; winum (windows number) for spaceline
 (use-package winum :ensure t
+  :defer t
   :config
   (winum-set-keymap-prefix (kbd "C-x w"))
   (setq winum-auto-setup-mode-line nil)
@@ -1178,8 +1199,7 @@
 (defun my/sidebar-toggle () "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
 	   (interactive)
 	   (ibuffer-sidebar-toggle-sidebar)
-	   (dired-sidebar-toggle-sidebar)
-	   )
+	   (dired-sidebar-toggle-sidebar))
 
 (global-set-key (kbd "C-c s") 'my/sidebar-toggle)
 
@@ -1520,25 +1540,17 @@
 		web-mode-enable-block-face t
 		web-mode-enable-auto-expanding t
 		web-mode-enable-current-column-highlight t
-		web-mode-script-padding 2
-		web-mode-style-padding 2
-		web-mode-comment-style 2
-		web-mode-code-indent-offset 2
-		web-mode-markup-indent-offset 2
-		web-mode-code-indent-offset 2
-		indent-tabs-mode nil)
+		web-mode-comment-style 2)
   :config
 
   (use-package company-web :ensure t
 	:config
 	(add-to-list (make-local-variable 'company-backends) '(company-web-html)))
-  
+
   (setq web-mode-engines-alist
 		'(("php"	. "\\.phtml\\'")))
-  
-  (use-package web-mode-edit-element :ensure t)
 
-  )
+  (use-package web-mode-edit-element :ensure t))
 
 (use-package nginx-mode :ensure t
   :commands (nginx-mode)
