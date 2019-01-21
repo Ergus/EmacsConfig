@@ -159,7 +159,6 @@
 			  display-line-numbers-widen t	;; keep line numbers inside a narrow buffers
 			  visible-cursor nil
 			  ;; kill-whole-line t
-			  ;; initial-major-mode 'python-mode
 			  )
 
 ;;__________________________________________________________
@@ -273,8 +272,7 @@
 	:config
 	(setq sml/theme 'powerline)
 	)
-  (setq 
-		sml/no-confirm-load-theme t
+  (setq sml/no-confirm-load-theme t
 		sml/name-width 40)
   (sml/setup))
 
@@ -492,6 +490,7 @@
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
 (use-package flyspell :ensure t
+  :diminish
   :hook ((prog-mode . flyspell-prog-mode)
 		 (text-mode . flyspell-mode))
   :bind (:map flyspell-mode-map
@@ -504,8 +503,7 @@
 			  ("C-c f b" . flyspell-buffer)
 			  ("C-c f n" . flyspell-goto-next-error)
 			  )
-  :diminish
-  :init
+  :config
   (which-key-add-key-based-replacements "C-c f" "flyspell")
 
   (use-package flyspell-correct-ivy :ensure t
@@ -529,6 +527,48 @@
 ;;   (smart-tabs-insinuate 'c 'c++))
 
 ;;__________________________________________________________
+;; Irony config (C completions)
+
+(defun my/irony-mode-hook ()
+  "My irony-mode Hook.
+
+This is in the hook for c-common mode.  If the file is remote it loads
+company-c-headers instead if irony"
+  (when (and (member major-mode '(c++-mode c-mode arduino-mode))
+				buffer-file-name)
+
+		 (if (string-match-p tramp-file-name-regexp buffer-file-name)
+			 (use-package company-c-headers :ensure t ;; company-c-headers
+			   :after company
+			   :config
+			   (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
+
+		   (use-package irony :ensure t
+			 :diminish
+			 :config
+			 (irony-mode)
+			 (irony-cdb-autosetup-compile-options)
+
+			 (use-package company-irony :ensure t
+			   :config
+			   (use-package company-irony-c-headers :ensure t)
+
+			   (add-to-list (make-local-variable 'company-backends)
+							'(company-irony-c-headers company-irony)))
+
+			 (define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
+			 (define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
+
+			 (use-package flycheck-irony :ensure t
+			   :after flycheck
+			   :config
+			   (flycheck-irony-setup))
+
+			 (use-package irony-eldoc :ensure t
+			   :config
+			   (irony-eldoc))))))
+
+;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
 
 (setq-default c-default-style
@@ -537,6 +577,8 @@
 				(other . "linux")))
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
+
+	   (my/irony-mode-hook)
 
 	   (setq c-doc-comment-style
 			 '((java-mode . javadoc)
@@ -547,11 +589,6 @@
 			 indent-tabs-mode t)
 
 	   (c-setup-doc-comment-style)	 ;; update commentd style
-
-	   (use-package company-c-headers :ensure t ;; company-c-headers
-		 :after company
-		 :config
-		 (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
 
 	   (use-package preproc-font-lock :ensure t ;; Preprocessor
 		 :config
@@ -641,8 +678,7 @@
   :config
   (use-package ruby-tools :ensure t)
   (use-package ruby-electric :ensure t
-	:hook ruby-electric-mode
-	)
+	:hook ruby-electric-mode)
   (setq-default ruby-indent-level 2))
 
 ;;__________________________________________________________
@@ -651,9 +687,9 @@
   :mode "\\.jl\\'"
   :config
   (use-package flycheck-julia :ensure t
-	:commands (flycheck-julia-setup)
-	:init
-	(add-hook 'julia-mode-hook #'flycheck-mode)))
+	:after flycheck
+	:config
+	(flycheck-julia-setup)))
 
 ;;__________________________________________________________
 ;; Rust Mode
@@ -661,9 +697,9 @@
   :mode "\\.rs\\'"
   :config
   (use-package flycheck-rust :ensure t
-	:commands (flycheck-rust-setup)
-	:init
-	(add-hook 'flycheck-mode-hook #'flycheck-rust-setup)))
+	:after flycheck
+	:config
+	(flycheck-rust-setup)))
 
 ;;__________________________________________________________
 ;; Ocaml Mode
@@ -835,9 +871,12 @@
   (use-package yasnippet :ensure t
 	:diminish
 	:hook (prog-mode . yas-minor-mode)
+	:bind (:map yas-minor-mode-map 
+				("TAB" . nil)
+				("C-c & TAB" . yas-maybe-expand))
 	:init
-	:config
 	(which-key-add-key-based-replacements "C-c &" "yasnipet")
+	:config
 	(use-package yasnippet-snippets :ensure t)
 	(yas-reload-all)
 	(add-to-list 'company-backends 'company-yasnippet))
@@ -868,65 +907,30 @@
 ;;__________________________________________________________
 ;; LSP try for a while
 
-(use-package lsp-mode :ensure t
-  :hook ((c++-mode . lsp)
-		 (c-mode . lsp))
-  :init
-  (setq lsp-auto-configure nil
-		lsp-prefer-flymake nil)
+;; (use-package lsp-mode :ensure t
+;;   :hook ((c++-mode . lsp)
+;; 		 (c-mode . lsp))
+;;   :init
+;;   (setq lsp-auto-configure nil
+;; 		lsp-prefer-flymake nil)
 
-  :config
+;;   :config
 
-  (use-package lsp-ui :ensure t
-	:after flycheck
-	:config
-	(lsp-ui-mode)
-	(use-package lsp-ui-flycheck
-	  :config
-	  (lsp-ui-flycheck-enable t)
-	  )
-	)
+;;   (use-package lsp-ui :ensure t
+;; 	:after flycheck
+;; 	:config
+;; 	(lsp-ui-mode)
+;; 	(use-package lsp-ui-flycheck
+;; 	  :config
+;; 	  (lsp-ui-flycheck-enable t)
+;; 	  )
+;; 	)
 
-  (use-package company-lsp :ensure t
-	:after company
-	:config
-	(add-to-list (make-local-variable 'company-backends) 'company-lsp))
-  )
-
-;;__________________________________________________________
-;; Irony config (C completions)
-;; (use-package irony :ensure t
-;;	 :diminish
-;;	 :preface
-;;	 (defun my/irony-mode-hook () "My conditional hook for irony"
-;;		 (unless (string-match-p tramp-file-name-regexp buffer-file-name)
-;;		   (irony-mode)))
-
-;;	 :hook ((c++-mode . my/irony-mode-hook)
-;;		 (c-mode . my/irony-mode-hook)
-;;		 (arduino-mode . my/irony-mode-hook))
-
-;;	 :config
-;;	 (irony-cdb-autosetup-compile-options)
-
-;;	 (use-package company-irony :ensure t
-;;	:config
-;;	(use-package company-irony-c-headers :ensure t)
-
-;;	(add-to-list (make-local-variable 'company-backends)
-;;				 '(company-irony-c-headers company-irony)))
-
-;;	 (define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
-;;	 (define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
-
-;;	 (use-package flycheck-irony :ensure t
-;;	:after flycheck
-;;	:config
-;;	(add-hook 'irony-mode-hook #'flycheck-irony-setup))
-
-;;	 (use-package irony-eldoc :ensure t
-;;	:config
-;;	(add-hook 'irony-mode-hook 'irony-eldoc)))
+;;   (use-package company-lsp :ensure t
+;; 	:after company
+;; 	:config
+;; 	(add-to-list (make-local-variable 'company-backends) 'company-lsp))
+;;   )
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
@@ -940,11 +944,12 @@
   (use-package flycheck-popup-tip :ensure t
 	:after flycheck
 	:config
-	(add-hook 'flycheck-mode-hook #'flycheck-popup-tip-mode))
+	(flycheck-popup-tip-mode))
 
   (use-package flycheck-color-mode-line :ensure t
-	:init
-	(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)))
+	:after flycheck
+	:config
+	(flycheck-color-mode-line-mode)))
 
 ;;__________________________________________________________
 ;; Function arguments show
@@ -995,15 +1000,11 @@
 ;; Asocia buffers que empiecen con messaje mode
 (use-package message-mode
   :mode ("neomutt-Ergus-" "draft")
-  :init
+  :preface
   (defun my/message-mode-hook () "My mail mode hook"
-		 (message "Will load my message mode hook")
 		 (turn-on-auto-fill)
-		 (message "Will load my message mode hook1")
 		 (mail-abbrevs-setup)
-		 (message "Will load my message mode hook2")
 		 (flyspell-mode t)
-		 (message "Will load my message mode hook3")
 
 		 (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
 		 (setq notmuch-init-file "~/almacen/mail/notmuch-config")
@@ -1017,7 +1018,7 @@
 		   (add-to-list (make-local-variable 'company-backends) 'notmuch-company))
 		 (message "Loaded my message mode hook")
 		 )
-
+  :init
   (add-hook 'message-mode-hook 'my/message-mode-hook))
 
 
@@ -1099,29 +1100,29 @@
 (use-package python-mode :ensure t
   :mode ("\\.py" . python-mode)
   :config
-
   (use-package company-jedi :ensure t
 	:after company
 	:config
 	(add-to-list (make-local-variable 'company-backends) 'company-jedi))
 
   (use-package elpy :ensure t
-	:commands elpy-enable
-	:init
-	(with-eval-after-load 'python (elpy-enable))
-	(add-hook 'elpy-mode-hook 'turn-on-auto-fill)
 	:config
-	(setq elpy-rpc-python-command "python3"
-		  elpy-rpc-backend "jedi"
-		  python-check-command "pyflakes"
-		  python-shell-interpreter "python3"
-		  python-shell-interpreter-args "-i --simple-prompt"))
+	(setq python-shell-interpreter "jupyter"
+		  python-shell-interpreter-args "console --simple-prompt"
+		  python-shell-prompt-detect-failure-warning nil
+		  elpy-rpc-python-command "python3"
+		  python-check-command "flake8"
+		  )
+	(add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")
+	(elpy-enable)
+
+	)
 
   (use-package flycheck-pycheckers :ensure t
 	:after flycheck
 	:config
-	(add-hook 'flycheck-mode-hook #'flycheck-pycheckers-setup))
-  )
+	(setq flycheck-pycheckers-checkers '(pylint flake8 mypy3))
+	(flycheck-pycheckers-setup)))
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
@@ -1489,7 +1490,13 @@
   :config
   (use-package company-arduino :ensure t
 	:config
-	(add-hook 'irony-mode-hook 'company-arduino-turn-on)))
+	(company-arduino-turn-on))
+
+  (use-package flycheck-arduino
+	:after flycheck
+	:config
+	(flycheck-arduino-setup))
+  )
 
 (use-package expand-region :ensure t
   :bind (("C-c e e" . er/expand-region)
