@@ -800,18 +800,22 @@ company-c-headers instead if irony"
 (use-package winner
   :bind (("C-x w u" . winner-undo)
 		 ("C-x w r" . winner-redo))
-  :init
+  :config
   (setq winner-dont-bind-my-keys t)
   (winner-mode t))
 
 ;; winum (windows number) for spaceline
 (use-package winum :ensure t
-  :defer t
+  :bind (("C-x w 1" . winum-select-window-1)
+		 ("C-x w 2" . winum-select-window-2)
+		 ("C-x w 3" . winum-select-window-3)
+		 ("C-x w 4" . winum-select-window-4)
+		 ("C-x w 5" . winum-select-window-5)
+		 ("C-x w 6" . winum-select-window-6)
+		 ("C-x w 7" . winum-select-window-7)
+		 ("C-x w 8" . winum-select-window-8))
   :config
-  (winum-set-keymap-prefix (kbd "C-x w"))
-  (setq winum-auto-setup-mode-line nil)
   (winum-mode))
-
 
 ;;__________________________________________________________
 ;; Confirmation for to exit emacs
