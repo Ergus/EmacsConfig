@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs Initialization and Configuration
-;; Copyright (C) 2018 Jimmy Aguilar DenaDena
+;; Copyright (C) 2018 Jimmy Aguilar Mena
 
 ;; Author: Jimmy Aguilar Mena
 ;; Version: 0.1
@@ -24,7 +24,8 @@
 
 (eval-when-compile
   (require 'use-package)
-  (setq-default use-package-verbose t))
+  ;;(setq-default use-package-verbose t)
+  )
 
 (use-package paradox :ensure t
   :commands (paradox-upgrade-packages paradox-list-packages)
@@ -59,7 +60,7 @@
 	   (defconst mymagenta		 "#cd00cd" "Color magenta")
 	   (defconst mycyan			 "#00cdcd" "Color cyan")
 	   (defconst mywhite		 "#e5e5e5" "Color white")
-	   (defconst mybrightblack	 "#7f7f7f" "Color brightblack")
+	   (defconst mybrightblack	 "#7f7f7f" "Color brightblack") ;; 
 	   (defconst mybrightred	 "#ff0000" "Color brightred")
 	   (defconst mybrightgreen	 "#00ff00" "Color brightgreen")
 	   (defconst mybrightyellow	 "#ffff00" "Color brightyellow")
@@ -89,13 +90,14 @@
 	   (set-face-foreground 'font-lock-keyword-face myyellow)	  ;; Keywords (for, if)
 	   (set-face-foreground 'font-lock-builtin-face mygreen)			;; Keywords (for, if)
 
-	   (set-face-attribute 'highlight nil :foreground myred)
+	   (set-face-attribute 'highlight nil :background mybrightblack :foreground nil)
 
-	   (set-face-attribute 'secondary-selection nil :background mybrightblue :foreground myblue)
+	   (set-face-attribute 'secondary-selection nil :background mybrightblue 
+						   :foreground myblue :weight 'bold)
 
 	   ;; search C-s, resalta lo que encuentra
-	   (set-face-attribute 'isearch nil :background mygreen
-						   :foreground mybrightwhite :weight 'bold)			   ;; Search
+	   (set-face-attribute 'isearch nil :background myblue
+						   :foreground mywhite :weight 'ultrabold)			   ;; Search
 	   (set-face-attribute 'region nil :inherit nil :background mybrightblack) ;; Seleccion C-space
 
 	   (set-face-attribute 'line-number nil :foreground mybrightblack)		   ;; numero de linea
@@ -117,11 +119,14 @@
 ;;__________________________________________________________
 ;; Internal options
 
-(global-font-lock-mode t)	   ;; Use font-lock everywhere.
+(setq show-paren-delay 0)
+(show-paren-mode t)				 ;; Highlight couple parentesis
+
+
+(global-font-lock-mode t)	     ;; Use font-lock everywhere.
 
 (savehist-mode t)				 ;; Historial
 (auto-compression-mode t)		 ;; Uncompress on the fly:
-(show-paren-mode t)				 ;; Highlight couple parentesis
 (auto-revert-mode t)			 ;; Autoload files changed in disk
 (global-display-line-numbers-mode t) ;; line numbers on the left
 (delete-selection-mode t)		 ;; Sobreescribe seleccion al pegar
@@ -157,10 +162,12 @@
 			  font-lock-maximum-decoration t
 			  show-paren-when-point-inside-paren t ;; show parent even when over
 			  display-line-numbers-widen t	;; keep line numbers inside a narrow buffers
+			  ;;split-width-threshold 160		;; Original value 240 ancho minimo limite para split vertical
 			  visible-cursor nil
 			  ;; kill-whole-line t
 			  )
 
+(put 'narrow-to-region 'disabled nil)
 ;;__________________________________________________________
 ;;Packages options
 ;;__________________________________________________________
@@ -172,11 +179,11 @@
   :config
   (use-package tramp-term :ensure t)
 
-  (setq ;;tramp-verbose 9
-   tramp-default-method "ssh"
-   tramp-change-syntax 'simplified
-   tramp-use-ssh-controlmaster-options nil
-   tramp-persistency-file-name "~/.emacs.d/tramp"))
+  (setq tramp-default-method "ssh"
+		tramp-use-ssh-controlmaster-options nil
+		tramp-completion-reread-directory-timeout t
+		tramp-persistency-file-name "~/.emacs.d/tramp")
+  )
 
 (use-package ssh-config-mode :ensure t
   :mode (("/\\.ssh/config\\'" . ssh-config-mode)
@@ -241,6 +248,7 @@
   (setq which-key-separator ": " )
   (which-key-mode t)
   (which-key-add-key-based-replacements
+	"C-c s" "sidebars"
 	"C-x r" "rectangle-register"
 	"C-x n" "narrow"
 	"C-x a" "abrev"))
@@ -359,8 +367,9 @@
   (if (executable-find "xsel")
 	  (my/xclipboard)
 	(message "No xsel in your path, install it in your system!!!"))
-  (define-key function-key-map "\eC-BackSpace"	 [C-backspace])
-  (define-key function-key-map "\eC-S-BackSpace" [C-S-backspace]))
+  ;;(define-key function-key-map "\eC-BackSpace"	 [C-backspace])
+  ;;(define-key function-key-map "\eC-S-BackSpace" [C-S-backspace])
+  )
 ;;__________________________________________________________
 ;;	Seleccionar con el mouse
 (use-package mouse
@@ -402,7 +411,9 @@
 
 (use-package clean-aindent-mode :ensure t
   :hook prog-mode
+  :bind ("RET" . newline-and-indent)
   :config
+  (clean-aindent-mode t)
   (setq clean-aindent-is-simple-indent t))
 
 (defun my/prog-mode-hook () "Some hooks only for prog mode."
@@ -415,10 +426,10 @@
 ;;__________________________________________________________
 ;; 80 Column rules
 (use-package fill-column-indicator :ensure t
+  :hook (prog-mode  . fci-mode)
   :config
   (setq fci-rule-color "#7f7f7f7f7f7f"
-		fci-rule-character ?\u2502)
-  (add-hook 'prog-mode-hook 'fci-mode))
+		fci-rule-character ?\u2502))
 
 ;;__________________________________________________________
 ;; Undo tree
@@ -506,11 +517,11 @@
   :config
   (which-key-add-key-based-replacements "C-c f" "flyspell")
 
-  (use-package flyspell-correct-ivy :ensure t
+  (use-package flyspell-correct-ido :ensure flyspell-correct
 	:diminish
 	:bind ("C-c f f" . flyspell-correct-wrapper)
 	:init
-	(setq flyspell-correct-interface #'flyspell-correct-ivy)
+	(setq flyspell-correct-interface 'flyspell-correct-ido)
 	))
 
 
@@ -556,8 +567,8 @@ company-c-headers instead if irony"
 			   (add-to-list (make-local-variable 'company-backends)
 							'(company-irony-c-headers company-irony)))
 
-			 (define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
-			 (define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
+			 ;;(define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
+			 ;;(define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
 
 			 (use-package flycheck-irony :ensure t
 			   :after flycheck
@@ -778,17 +789,13 @@ company-c-headers instead if irony"
 
 ;;__________________________________________________________
 ;; splitting
-(setq split-width-threshold 180)		;; Original value 240 ancho minimo limite para split vertical
 
 ;; Move split keybindings
 (use-package windmove
   :bind (("C-x <left>" . windmove-left)
 		 ("C-x <right>" . windmove-right)
 		 ("C-x <up>" . windmove-up)
-		 ("C-x <down>" . windmove-down)
-		 ("C-x w p" . previous-buffer)
-		 ("C-x w n" . next-buffer))
-
+		 ("C-x <down>" . windmove-down))
   :init
   (which-key-add-key-based-replacements "C-x w" "windmove winner")
   ;;:config
@@ -797,10 +804,10 @@ company-c-headers instead if irony"
   )
 
 ;; Undo redo split
-(use-package winner
-  :bind (("C-x w u" . winner-undo)
-		 ("C-x w r" . winner-redo))
-  :config
+(use-package winner-mode
+  :bind (("C-x C-/" . winner-undo)
+		 ("C-x C-?" . winner-redo))
+  :init
   (setq winner-dont-bind-my-keys t)
   (winner-mode t))
 
@@ -814,7 +821,7 @@ company-c-headers instead if irony"
 		 ("C-x w 6" . winum-select-window-6)
 		 ("C-x w 7" . winum-select-window-7)
 		 ("C-x w 8" . winum-select-window-8))
-  :config
+  :init
   (winum-mode))
 
 ;;__________________________________________________________
@@ -1155,6 +1162,7 @@ company-c-headers instead if irony"
 		   (list "\\.\\(avi\|wav\|flv\|mov\|3gp\\)$" "vlc"))))
 
   (use-package dired-sidebar :ensure t
+	:bind ("C-c s d" . dired-sidebar-toggle-sidebar)
 	:commands (dired-sidebar-toggle-sidebar)
 	:config
 	(setq ;;dired-sidebar-use-term-integration t
@@ -1171,7 +1179,7 @@ company-c-headers instead if irony"
   (projectile-mode t)
 
   :custom
-  (projectile-completion-system 'ivy)
+  (projectile-completion-system 'ido)
   (projectile-file-exists-remote-cache-expire (* 10 60)))
 
 ;;__________________________________________________________
@@ -1182,6 +1190,7 @@ company-c-headers instead if irony"
   (defalias 'list-buffers 'ibuffer) ; make ibuffer default
   :config
   (use-package ibuffer-sidebar :ensure t
+	:bind ("C-c s b")
 	:commands (ibuffer-sidebar-toggle-sidebar))
 
   (use-package ibuffer-tramp :ensure t
@@ -1206,92 +1215,176 @@ company-c-headers instead if irony"
 	   (ibuffer-sidebar-toggle-sidebar)
 	   (dired-sidebar-toggle-sidebar))
 
-(global-set-key (kbd "C-c s") 'my/sidebar-toggle)
+(global-set-key (kbd "C-c s s") 'my/sidebar-toggle)
 
 ;;__________________________________________________________
 ;; neotree
 (use-package neotree :ensure t
-  :bind ("C-c n" . neotree-toggle))
+  :bind ("C-c s n" . neotree-toggle))
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
 (use-package headlong :ensure t :defer t)
 
-(use-package ivy :ensure t
-  :diminish
-  :demand
-  :bind (:map ivy-minibuffer-map ("TAB" . ivy-partial))
-  :config
-  (ivy-mode t)
+(use-package ggtags :ensure t
+  :when (executable-find "global")
+  :bind (("C-c g t" . ggtags-find-tag-dwim)
+		 ("C-c g c" . ggtags-create-tags)
+		 ("C-c g d" . ggtags-find-definition)
+		 ("C-c g C-f" . ggtags-find-file)
 
-  (set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
-  (set-face-attribute 'ivy-current-match nil :inherit nil
-					  :background mybrightblue :foreground mywhite :weight 'ultra-bold)
-
-  (setq ivy-use-virtual-buffers t	 ;;
-		ivy-count-format "(%d/%d) "
-		ivy-display-style 'fancy
-		ivy-height 5
-		ivy-wrap t					 ;; cycle in minibuffer
-		enable-recursive-minibuffers t)
-
-  (use-package ivy-rich :ensure t
-	:config
-	(ivy-rich-mode 1))
-  
-  (use-package swiper :ensure t
-	:bind (("C-s" . swiper)
-		   ("C-r" . swiper)
-		   :map minibuffer-local-map ("C-r" . counsel-minibuffer-history)
-		   :map read-expression-map ("C-r" . counsel-expression-history))
-	:config
-	(set-face-attribute 'swiper-line-face nil :inherit nil
-						:background mybrightblack :weight 'bold)))
-
-(use-package counsel :ensure t
-  :diminish
-  :bind (:map counsel-mode-map
-			  ("C-c c a" . counsel-ag)
-			  ("C-c c a" . 'counsel-ag)
-			  ("C-c c i" . 'counsel-imenu)
-			  ("C-c c g" . 'counsel-grep)
-			  ("C-c c t" . 'counsel-git)
-			  ("C-c c r" . 'counsel-git-grep)
-			  ("C-c c l" . 'counsel-locate))
+		 ( "C-c g o" .  ggtags-find-other-symbol)
+		 ( "C-c g r" .  ggtags-find-reference)
+		 ( "C-c g s" .  ggtags-show-definition)
+		 ( "C-c g g" .  ggtags-grep)
+		 ;; ( ">" .  ggtags-next-mark)
+		 ;; ( "<" .  ggtags-prev-mark)
+		 ;; ( "h" .  ggtags-view-tag-history)
+		 ;; ( "R" .  ggtags-query-replace)
+		 ;; ( "C" .  ggtags-create-tags)
+		 ;; ( "U" .  ggtags-update-tags)
+		 )
   :init
-  (counsel-mode t)
-  (which-key-add-key-based-replacements "C-c c" "counsel")
-
-  :config
-  (use-package counsel-tramp :ensure t
-	:after exec-path-from-shell
-	:commands counsel-tramp
-	:config
-	(setq tramp-default-method "ssh"))
-
-  (use-package counsel-gtags :ensure t
-	:diminish
-	:hook (c-mode-common . counsel-gtags-mode)
-	:bind (:map counsel-gtags-mode-map
-				("C-c g q" . counsel-gtags-find-definition)
-				("C-c g q" . counsel-gtags-find-definition)
-				("C-c g r" . counsel-gtags-find-reference)
-				("C-c g s" . counsel-gtags-find-symbol)
-				("C-c g p" . counsel-gtags-go-backward)
-				("C-c g n" . counsel-gtags-go-forward)
-				("C-c g c" . counsel-gtags-create-tags)
-				("C-c g u" . counsel-gtags-update-tags))
-	:init
-	(which-key-add-key-based-replacements "C-c g" "counsel-gtags")
-	:config
-	(counsel-gtags-mode 1)
-	(add-to-list (make-local-variable 'company-backends) 'company-gtags))
-
-  (use-package counsel-projectile :ensure t
-	:after projectile
-	:config
-	(counsel-projectile-mode t))
+  (which-key-add-key-based-replacements "C-c g" "ggtags")
   )
+
+(use-package ido
+  :config
+
+  (setq ido-enable-flex-matching t               ;; Better maching
+		completion-auto-help nil
+		ido-case-fold t                            ;; Ignore case
+		ido-default-file-method 'selected-window   ;; Open here
+		ido-default-buffer-method 'selected-window
+		max-mini-window-height 0.25
+		ido-use-virtual-buffers t                  ;; Like in ido
+		ido-auto-merge-work-directories-length -1  ;; Limit ido to current dir
+		ido-use-filename-at-point 'guess
+		;;ido-enable-prefix t
+		ido-cannot-complete-command 'ignore)       ; avoid open help when can't complete
+  (ido-mode)
+  (ido-everywhere 1)
+
+  (use-package ido-vertical-mode :ensure t
+  	:config
+  	(setq ido-vertical-show-count t
+  		  ido-vertical-define-keys 'C-n-C-p-up-and-down
+  		  ido-use-faces t)
+  	(set-face-attribute 'ido-vertical-first-match-face nil
+  						:background nil
+  						:foreground mygreen)
+  	(set-face-attribute 'ido-vertical-only-match-face nil
+  						:background nil
+  						:foreground mygreen)
+  	(set-face-attribute 'ido-vertical-match-face nil
+  						:foreground myred)
+  	(ido-vertical-mode 1))
+
+  (use-package ido-completing-read+ :ensure t
+  	:config
+  	(ido-ubiquitous-mode 1))
+
+  (use-package crm-custom :ensure t
+  	:config
+  	(crm-custom-mode 1))
+
+  (use-package ido-occur :ensure t
+	:bind (("C-c i o" . ido-occur)
+		   ("C-c i p" . ido-occur-at-point)
+		   :map isearch-mode-map
+		   ("C-o" . ido-occur-from-isearch))
+	))
+
+(use-package imenu-anywhere :ensure t
+  :bind ("C-c i i" . ido-imenu-anywhere)
+  :init
+  (setq imenu-auto-rescan t)
+  )
+
+(use-package imenu-list :ensure t
+  :bind ("C-c s i" . imenu-list-smart-toggle)
+  :config
+  (setq imenu-list-position 'left))
+
+
+;; (use-package ivy :ensure t
+;;   :diminish
+;;   :demand
+;;   :bind (:map ivy-minibuffer-map ("TAB" . ivy-partial))
+;;   :config
+;;   (ivy-mode t)
+
+;;   (set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
+;;   (set-face-attribute 'ivy-current-match nil :inherit nil
+;; 					  :background mybrightblue :foreground mywhite :weight 'ultra-bold)
+
+;;   (setq ivy-use-virtual-buffers t	 ;;
+;; 		ivy-count-format "(%d/%d) "
+;; 		ivy-display-style 'fancy
+;; 		ivy-height 5
+;; 		ivy-wrap t					 ;; cycle in minibuffer
+;; 		enable-recursive-minibuffers t)
+
+;;   (use-package ivy-rich :ensure t
+;; 	:config
+;; 	(ivy-rich-mode 1))
+
+(use-package swiper :ensure t
+  :bind (("C-s" . swiper)
+		 ("C-r" . swiper)
+		 :map minibuffer-local-map ("C-r" . counsel-minibuffer-history)
+		 :map read-expression-map ("C-r" . counsel-expression-history))
+  :config
+  (set-face-attribute 'swiper-line-face nil :inherit nil
+					  :background mybrightblack :weight 'bold)
+  (set-face-attribute 'ivy-current-match nil
+					  :background mybrightblack :foreground nil :weight 'bold)
+  )
+
+;; (use-package counsel :ensure t
+;;   :diminish
+;;   :bind (:map counsel-mode-map
+;; 			  ("C-c c a" . counsel-ag)
+;; 			  ("C-c c a" . 'counsel-ag)
+;; 			  ("C-c c i" . 'counsel-imenu)
+;; 			  ("C-c c g" . 'counsel-grep)
+;; 			  ("C-c c t" . 'counsel-git)
+;; 			  ("C-c c r" . 'counsel-git-grep)
+;; 			  ("C-c c l" . 'counsel-locate))
+;;   :init
+;;   (counsel-mode t)
+;;   (which-key-add-key-based-replacements "C-c c" "counsel")
+
+;;   :config
+;;   (use-package counsel-tramp :ensure t
+;; 	:after exec-path-from-shell
+;; 	:commands counsel-tramp
+;; 	:config
+;; 	(setq tramp-default-method "ssh"))
+
+;;   (use-package counsel-gtags :ensure t
+;; 	:diminish
+;; 	:hook (c-mode-common . counsel-gtags-mode)
+;; 	:bind (:map counsel-gtags-mode-map
+;; 				("C-c g q" . counsel-gtags-find-definition)
+;; 				("C-c g q" . counsel-gtags-find-definition)
+;; 				("C-c g r" . counsel-gtags-find-reference)
+;; 				("C-c g s" . counsel-gtags-find-symbol)
+;; 				("C-c g p" . counsel-gtags-go-backward)
+;; 				("C-c g n" . counsel-gtags-go-forward)
+;; 				("C-c g c" . counsel-gtags-create-tags)
+;; 				("C-c g u" . counsel-gtags-update-tags))
+;; 	:init
+;; 	(which-key-add-key-based-replacements "C-c g" "counsel-gtags")
+;; 	:config
+;; 	(counsel-gtags-mode 1)
+;; 	(add-to-list (make-local-variable 'company-backends) 'company-gtags))
+
+;;   (use-package counsel-projectile :ensure t
+;; 	:after projectile
+;; 	:config
+;; 	(counsel-projectile-mode t))
+;;   )
 
 (use-package dumb-jump :ensure t
   :bind (("C-c j 4 n" . dumb-jump-go-other-window)
@@ -1303,14 +1396,15 @@ company-c-headers instead if irony"
 		 ("C-c j q" . dumb-jump-quick-look))
   :init
   (which-key-add-key-based-replacements "C-c j" "dumb-jump")
-  :config
-  (setq dumb-jump-selector 'ivy))
+  ;;:config
+  ;;(setq dumb-jump-selector 'ivy)
+  )
 
 (use-package hydra :ensure t
   :init
   (which-key-add-key-based-replacements "C-c v" "hydra-vi")
   :config
-  (use-package ivy-hydra :ensure t)
+  ;;(use-package ivy-hydra :ensure t)
   (global-set-key (kbd "C-c v")
 				  (defhydra hydra-vi (:pre (set-cursor-color "#e52b50")
 										   :post (set-cursor-color "#ffffff")
@@ -1344,21 +1438,24 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; Historical completion
 (use-package historian :ensure t
-  :config
-  (use-package ivy-historian :ensure t
-	:after ivy
-	:config (ivy-historian-mode t)))
+  ;; :config
+  ;; (use-package ivy-historian :ensure t
+  ;; 	:after ivy
+  ;; 	:config (ivy-historian-mode t))
+  )
 
 ;;__________________________________________________________
 ;; Complete history
-(use-package amx :ensure t)
+(use-package amx :ensure t
+  :bind (("M-x" . amx)
+		 ("M-X" . amx-major-mode-commands)))
 
 ;;__________________________________________________________
 ;; Magit
 (use-package magit :ensure t
   :commands magit-status
   :config
-  (setq magit-completing-read-function 'ivy-completing-read))
+  (setq magit-completing-read-function 'magit-ido-completing-read))
 
 ;;______________________________________
 ;; Git commit
@@ -1506,10 +1603,13 @@ company-c-headers instead if irony"
   :bind (("C-c e e" . er/expand-region)
 		 ("C-c e w" . er/mark-word)
 		 ("C-c e c" . er/mark-comment)
-		 ("C-c e s s" . er/c-mark-statement)
+		 ("C-c e s" . er/c-mark-statement)
 		 ("C-c e i" . er/mark-inside-pairs)
 		 ("C-c e o" . er/mark-outside-pairs)
-		 ("C-c e f" . er/mark-defun))
+		 ("C-c e f" . er/mark-defun)
+		 ("C-c e m" . er/mark-email)
+		 ("C-c e u" . er/mark-url)
+		 )
   :init
   (which-key-add-key-based-replacements "C-c e" "expand-region")
   )
@@ -1575,6 +1675,19 @@ company-c-headers instead if irony"
 
 (use-package sudo-edit :ensure t
   :commands sudo-edit)
+
+(use-package evil :ensure t
+  :commands evil-mode
+  :config
+  (use-package evil-leader :ensure t
+	:config
+	(global-evil-leader-mode)
+	(evil-leader/set-key "e" 'find-file
+						 "b" 'switch-to-buffer
+						 "k" 'kill-buffer))
+  (evil-mode t)
+  )
+
 
 (provide 'init)
 ;;; init.el ends here
