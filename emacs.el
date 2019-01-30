@@ -92,12 +92,13 @@
 
 	   (set-face-attribute 'highlight nil :background mybrightblack :foreground nil)
 
-	   (set-face-attribute 'secondary-selection nil :background mybrightblue 
+	   (set-face-attribute 'secondary-selection nil :background mybrightblue
 						   :foreground myblue :weight 'bold)
 
 	   ;; search C-s, resalta lo que encuentra
 	   (set-face-attribute 'isearch nil :background myblue
 						   :foreground mywhite :weight 'ultrabold)			   ;; Search
+
 	   (set-face-attribute 'region nil :inherit nil :background mybrightblack) ;; Seleccion C-space
 
 	   (set-face-attribute 'line-number nil :foreground mybrightblack)		   ;; numero de linea
@@ -122,9 +123,7 @@
 (setq show-paren-delay 0)
 (show-paren-mode t)				 ;; Highlight couple parentesis
 
-
-(global-font-lock-mode t)	     ;; Use font-lock everywhere.
-
+(global-font-lock-mode t)	   ;; Use font-lock everywhere.
 (savehist-mode t)				 ;; Historial
 (auto-compression-mode t)		 ;; Uncompress on the fly:
 (auto-revert-mode t)			 ;; Autoload files changed in disk
@@ -164,6 +163,7 @@
 			  display-line-numbers-widen t	;; keep line numbers inside a narrow buffers
 			  ;;split-width-threshold 160		;; Original value 240 ancho minimo limite para split vertical
 			  visible-cursor nil
+			  ;; split-width-threshold 180
 			  ;; kill-whole-line t
 			  )
 
@@ -180,10 +180,10 @@
   (use-package tramp-term :ensure t)
 
   (setq tramp-default-method "ssh"
-		tramp-use-ssh-controlmaster-options nil
-		tramp-completion-reread-directory-timeout t
-		tramp-persistency-file-name "~/.emacs.d/tramp")
-  )
+		;;tramp-change-syntax 'simplified
+        tramp-use-ssh-controlmaster-options nil
+        tramp-completion-reread-directory-timeout t
+        tramp-persistency-file-name "~/.emacs.d/tramp"))
 
 (use-package ssh-config-mode :ensure t
   :mode (("/\\.ssh/config\\'" . ssh-config-mode)
@@ -370,6 +370,7 @@
   ;;(define-key function-key-map "\eC-BackSpace"	 [C-backspace])
   ;;(define-key function-key-map "\eC-S-BackSpace" [C-S-backspace])
   )
+
 ;;__________________________________________________________
 ;;	Seleccionar con el mouse
 (use-package mouse
@@ -521,9 +522,7 @@
 	:diminish
 	:bind ("C-c f f" . flyspell-correct-wrapper)
 	:init
-	(setq flyspell-correct-interface 'flyspell-correct-ido)
-	))
-
+	(setq flyspell-correct-interface 'flyspell-correct-ivy)))
 
 
 ;;__________________________________________________________
@@ -805,8 +804,8 @@ company-c-headers instead if irony"
 
 ;; Undo redo split
 (use-package winner-mode
-  :bind (("C-x C-/" . winner-undo)
-		 ("C-x C-?" . winner-redo))
+  :bind (("C-x w u" . winner-undo)
+		 ("C-x w r" . winner-redo))
   :init
   (setq winner-dont-bind-my-keys t)
   (winner-mode t))
@@ -1226,86 +1225,58 @@ company-c-headers instead if irony"
 ;; Ivy (probare un tiempo con helm/ivy)
 (use-package headlong :ensure t :defer t)
 
-(use-package ggtags :ensure t
-  :when (executable-find "global")
-  :bind (("C-c g t" . ggtags-find-tag-dwim)
-		 ("C-c g c" . ggtags-create-tags)
-		 ("C-c g d" . ggtags-find-definition)
-		 ("C-c g C-f" . ggtags-find-file)
-
-		 ( "C-c g o" .  ggtags-find-other-symbol)
-		 ( "C-c g r" .  ggtags-find-reference)
-		 ( "C-c g s" .  ggtags-show-definition)
-		 ( "C-c g g" .  ggtags-grep)
-		 ;; ( ">" .  ggtags-next-mark)
-		 ;; ( "<" .  ggtags-prev-mark)
-		 ;; ( "h" .  ggtags-view-tag-history)
-		 ;; ( "R" .  ggtags-query-replace)
-		 ;; ( "C" .  ggtags-create-tags)
-		 ;; ( "U" .  ggtags-update-tags)
-		 )
-  :init
-  (which-key-add-key-based-replacements "C-c g" "ggtags")
-  )
-
-(use-package ido
+(use-package ivy :ensure t
+  :diminish
+  :demand
+  :bind (("C-c i r" . ivy-resume)
+		 :map ivy-minibuffer-map
+			  ("TAB" . ivy-partial)
+			  ("RET" . ivy-alt-done))
   :config
 
-  (setq ido-enable-flex-matching t               ;; Better maching
-		completion-auto-help nil
-		ido-case-fold t                            ;; Ignore case
-		ido-default-file-method 'selected-window   ;; Open here
-		ido-default-buffer-method 'selected-window
-		max-mini-window-height 0.25
-		ido-use-virtual-buffers t                  ;; Like in ido
-		ido-auto-merge-work-directories-length -1  ;; Limit ido to current dir
-		ido-use-filename-at-point 'guess
-		;;ido-enable-prefix t
-		ido-cannot-complete-command 'ignore)       ; avoid open help when can't complete
-  (ido-mode)
-  (ido-everywhere 1)
+;;  (set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
+  (set-face-attribute 'ivy-current-match nil
+                      :inherit nil :background mybrightblack :foreground mywhite :weight 'ultrabold)
+  (set-face-attribute 'ivy-minibuffer-match-face-1 nil ;; Espacio entre matches
+                       :inherit nil :background mybrightblack)
+  (set-face-attribute 'ivy-minibuffer-match-face-2 nil ;; primer match
+                       :inherit nil :background mybrightblack)
+  (set-face-attribute 'ivy-minibuffer-match-face-3 nil ;; segundo match
+                       :inherit nil :background mybrightblack)
 
-  (use-package ido-vertical-mode :ensure t
-  	:config
-  	(setq ido-vertical-show-count t
-  		  ido-vertical-define-keys 'C-n-C-p-up-and-down
-  		  ido-use-faces t)
-  	(set-face-attribute 'ido-vertical-first-match-face nil
-  						:background nil
-  						:foreground mygreen)
-  	(set-face-attribute 'ido-vertical-only-match-face nil
-  						:background nil
-  						:foreground mygreen)
-  	(set-face-attribute 'ido-vertical-match-face nil
-  						:foreground myred)
-  	(ido-vertical-mode 1))
 
-  (use-package ido-completing-read+ :ensure t
-  	:config
-  	(ido-ubiquitous-mode 1))
+  (setq ivy-use-virtual-buffers t
+		ivy-count-format "(%d/%d) "
+		ivy-display-style 'fancy
+		;;ivy-height 5
+		;;ivy-wrap t					 ;; cycle in minibuffer
+		enable-recursive-minibuffers t)
 
-  (use-package crm-custom :ensure t
-  	:config
-  	(crm-custom-mode 1))
+  (ivy-mode t)
 
-  (use-package ido-occur :ensure t
-	:bind (("C-c i o" . ido-occur)
-		   ("C-c i p" . ido-occur-at-point)
-		   :map isearch-mode-map
-		   ("C-o" . ido-occur-from-isearch))
+  (use-package ivy-rich :ensure t
+	:config
+	(ivy-rich-mode 1))
+
+  (use-package swiper :ensure t
+	:bind (("C-s" . swiper)
+		   ("C-r" . swiper)
+		   :map minibuffer-local-map ("C-r" . counsel-minibuffer-history)
+		   :map read-expression-map ("C-r" . counsel-expression-history))
+	:config
+	;; (set-face-attribute 'swiper-line-face nil :inherit nil
+	;; 					:background mybrightblack :weight 'bold)
 	))
 
 (use-package imenu-anywhere :ensure t
-  :bind ("C-c i i" . ido-imenu-anywhere)
+  :bind ("C-c i i" . ivy-imenu-anywhere)
   :init
-  (setq imenu-auto-rescan t)
-  )
+  (setq imenu-auto-rescan t))
 
 (use-package imenu-list :ensure t
   :bind ("C-c s i" . imenu-list-smart-toggle)
   :config
   (setq imenu-list-position 'left))
-
 
 ;; (use-package ivy :ensure t
 ;;   :diminish
@@ -1328,7 +1299,6 @@ company-c-headers instead if irony"
 ;;   (use-package ivy-rich :ensure t
 ;; 	:config
 ;; 	(ivy-rich-mode 1))
-
 (use-package swiper :ensure t
   :bind (("C-s" . swiper)
 		 ("C-r" . swiper)
@@ -1608,41 +1578,30 @@ company-c-headers instead if irony"
 		 ("C-c e o" . er/mark-outside-pairs)
 		 ("C-c e f" . er/mark-defun)
 		 ("C-c e m" . er/mark-email)
-		 ("C-c e u" . er/mark-url)
-		 )
+		 ("C-c e u" . er/mark-url))
   :init
-  (which-key-add-key-based-replacements "C-c e" "expand-region")
-  )
+  (which-key-add-key-based-replacements "C-c e" "expand-region"))
 
-;; (use-package evil :ensure t
-;;	 :init
-;;	 (setq evil-want-integration t
-;;			evil-want-keybinding nil)
-;;	 :config
-;;	 (evil-mode 1)
+(use-package evil :ensure t
+  :commands evil-mode
+  :init
+  (setq	evil-want-keybinding nil)
+  :config
+  (use-package evil-leader :ensure t
+    :config
+    (global-evil-leader-mode)
+    (evil-leader/set-key "e" 'find-file
+                         "b" 'switch-to-buffer
+                         "k" 'kill-buffer))
+  (evil-mode t)
 
-;;	 (use-package evil-collection :ensure t
-;;		:after evil
-;;		:config
-;;		(evil-collection-init))
+  (use-package evil-collection :ensure t
+	:config
+	(evil-collection-init))
 
-;;	 (use-package evil-tabs :ensure t
-;;		:config
-;;		(global-evil-tabs-mode t))
-
-;;	 (use-package evil-tutor :ensure t)
-;;	 )
-
-;; (use-package php-mode :ensure t
-;;	 :mode "\\.php\\'"
-;;	 :config
-;;	 (require 'php-ext)
-;;	 (use-package company-php :ensure t
-;;	:config
-;;	(ac-php-core-eldoc-setup) ;; enable eldoc
-;;	(add-to-list 'company-backends 'company-ac-php-backend))
-;;	 )
-
+  (use-package evil-tabs :ensure t
+	:config
+	(global-evil-tabs-mode t)))
 
 (use-package web-mode :ensure t
   :mode ("\\.html\\'" "\\.php\\'")
