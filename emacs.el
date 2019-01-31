@@ -15,7 +15,6 @@
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
 						 ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
-
 ;;__________________________________________________________
 ;; use-package
 (unless (package-installed-p 'use-package)
@@ -60,7 +59,7 @@
 	   (defconst mymagenta		 "#cd00cd" "Color magenta")
 	   (defconst mycyan			 "#00cdcd" "Color cyan")
 	   (defconst mywhite		 "#e5e5e5" "Color white")
-	   (defconst mybrightblack	 "#7f7f7f" "Color brightblack") ;; 
+	   (defconst mybrightblack	 "#1c1c1c" "Color brightblack") ;; "#7f7f7f"
 	   (defconst mybrightred	 "#ff0000" "Color brightred")
 	   (defconst mybrightgreen	 "#00ff00" "Color brightgreen")
 	   (defconst mybrightyellow	 "#ffff00" "Color brightyellow")
@@ -1234,9 +1233,9 @@ company-c-headers instead if irony"
 			  ("RET" . ivy-alt-done))
   :config
 
-;;  (set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
+  ;;(set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
   (set-face-attribute 'ivy-current-match nil
-                      :inherit nil :background mybrightblack :foreground mywhite :weight 'ultrabold)
+                      :background mybrightblack :foreground mygreen :weight 'ultrabold)
   (set-face-attribute 'ivy-minibuffer-match-face-1 nil ;; Espacio entre matches
                        :inherit nil :background mybrightblack)
   (set-face-attribute 'ivy-minibuffer-match-face-2 nil ;; primer match
@@ -1278,83 +1277,50 @@ company-c-headers instead if irony"
   :config
   (setq imenu-list-position 'left))
 
-;; (use-package ivy :ensure t
-;;   :diminish
-;;   :demand
-;;   :bind (:map ivy-minibuffer-map ("TAB" . ivy-partial))
-;;   :config
-;;   (ivy-mode t)
+(use-package counsel :ensure t
+  :diminish
+  :bind (:map counsel-mode-map
+			  ("C-c c a" . counsel-ag)
+			  ("C-c c a" . 'counsel-ag)
+			  ("C-c c i" . 'counsel-imenu)
+			  ("C-c c g" . 'counsel-grep)
+			  ("C-c c t" . 'counsel-git)
+			  ("C-c c r" . 'counsel-git-grep)
+			  ("C-c c l" . 'counsel-locate))
+  :init
+  (counsel-mode t)
+  (which-key-add-key-based-replacements "C-c c" "counsel")
 
-;;   (set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
-;;   (set-face-attribute 'ivy-current-match nil :inherit nil
-;; 					  :background mybrightblue :foreground mywhite :weight 'ultra-bold)
-
-;;   (setq ivy-use-virtual-buffers t	 ;;
-;; 		ivy-count-format "(%d/%d) "
-;; 		ivy-display-style 'fancy
-;; 		ivy-height 5
-;; 		ivy-wrap t					 ;; cycle in minibuffer
-;; 		enable-recursive-minibuffers t)
-
-;;   (use-package ivy-rich :ensure t
-;; 	:config
-;; 	(ivy-rich-mode 1))
-(use-package swiper :ensure t
-  :bind (("C-s" . swiper)
-		 ("C-r" . swiper)
-		 :map minibuffer-local-map ("C-r" . counsel-minibuffer-history)
-		 :map read-expression-map ("C-r" . counsel-expression-history))
   :config
-  (set-face-attribute 'swiper-line-face nil :inherit nil
-					  :background mybrightblack :weight 'bold)
-  (set-face-attribute 'ivy-current-match nil
-					  :background mybrightblack :foreground nil :weight 'bold)
+  (use-package counsel-tramp :ensure t
+	:after exec-path-from-shell
+	:commands counsel-tramp
+	:config
+	(setq tramp-default-method "ssh"))
+
+  (use-package counsel-gtags :ensure t
+	:diminish
+	:hook (c-mode-common . counsel-gtags-mode)
+	:bind (:map counsel-gtags-mode-map
+				("C-c g q" . counsel-gtags-find-definition)
+				("C-c g q" . counsel-gtags-find-definition)
+				("C-c g r" . counsel-gtags-find-reference)
+				("C-c g s" . counsel-gtags-find-symbol)
+				("C-c g p" . counsel-gtags-go-backward)
+				("C-c g n" . counsel-gtags-go-forward)
+				("C-c g c" . counsel-gtags-create-tags)
+				("C-c g u" . counsel-gtags-update-tags))
+	:init
+	(which-key-add-key-based-replacements "C-c g" "counsel-gtags")
+	:config
+	(counsel-gtags-mode 1)
+	(add-to-list (make-local-variable 'company-backends) 'company-gtags))
+
+  (use-package counsel-projectile :ensure t
+	:after projectile
+	:config
+	(counsel-projectile-mode t))
   )
-
-;; (use-package counsel :ensure t
-;;   :diminish
-;;   :bind (:map counsel-mode-map
-;; 			  ("C-c c a" . counsel-ag)
-;; 			  ("C-c c a" . 'counsel-ag)
-;; 			  ("C-c c i" . 'counsel-imenu)
-;; 			  ("C-c c g" . 'counsel-grep)
-;; 			  ("C-c c t" . 'counsel-git)
-;; 			  ("C-c c r" . 'counsel-git-grep)
-;; 			  ("C-c c l" . 'counsel-locate))
-;;   :init
-;;   (counsel-mode t)
-;;   (which-key-add-key-based-replacements "C-c c" "counsel")
-
-;;   :config
-;;   (use-package counsel-tramp :ensure t
-;; 	:after exec-path-from-shell
-;; 	:commands counsel-tramp
-;; 	:config
-;; 	(setq tramp-default-method "ssh"))
-
-;;   (use-package counsel-gtags :ensure t
-;; 	:diminish
-;; 	:hook (c-mode-common . counsel-gtags-mode)
-;; 	:bind (:map counsel-gtags-mode-map
-;; 				("C-c g q" . counsel-gtags-find-definition)
-;; 				("C-c g q" . counsel-gtags-find-definition)
-;; 				("C-c g r" . counsel-gtags-find-reference)
-;; 				("C-c g s" . counsel-gtags-find-symbol)
-;; 				("C-c g p" . counsel-gtags-go-backward)
-;; 				("C-c g n" . counsel-gtags-go-forward)
-;; 				("C-c g c" . counsel-gtags-create-tags)
-;; 				("C-c g u" . counsel-gtags-update-tags))
-;; 	:init
-;; 	(which-key-add-key-based-replacements "C-c g" "counsel-gtags")
-;; 	:config
-;; 	(counsel-gtags-mode 1)
-;; 	(add-to-list (make-local-variable 'company-backends) 'company-gtags))
-
-;;   (use-package counsel-projectile :ensure t
-;; 	:after projectile
-;; 	:config
-;; 	(counsel-projectile-mode t))
-;;   )
 
 (use-package dumb-jump :ensure t
   :bind (("C-c j 4 n" . dumb-jump-go-other-window)
@@ -1401,18 +1367,15 @@ company-c-headers instead if irony"
 					("y" kill-ring-save "yank")
 					("ESC" nil)
 					("C-g" nil)))
-  (hydra-set-property 'hydra-vi :verbosity 1)
-  
-  )
+  (hydra-set-property 'hydra-vi :verbosity 1))
 
 ;;__________________________________________________________
 ;; Historical completion
 (use-package historian :ensure t
-  ;; :config
-  ;; (use-package ivy-historian :ensure t
-  ;; 	:after ivy
-  ;; 	:config (ivy-historian-mode t))
-  )
+  :config
+  (use-package ivy-historian :ensure t
+  	:after ivy
+  	:config (ivy-historian-mode t)))
 
 ;;__________________________________________________________
 ;; Complete history
@@ -1474,9 +1437,7 @@ company-c-headers instead if irony"
   :mode ("\\.org$" . org-mode)
   :config
   (use-package org-bullets :ensure t
-	:hook (org-mode . org-bullets-mode))
-  )
-
+	:hook (org-mode . org-bullets-mode)))
 
 ;;__________________________________________________________
 ;;; Google calendar (view only)
@@ -1520,7 +1481,8 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; evil mode
 (use-package avy :ensure t
-  :bind (("C-; c" . avy-goto-char)
+  :bind (("C-; r" . avy-resume)
+		 ("C-; c" . avy-goto-char)
 		 ("C-; i" . avy-goto-char-in-line)
 		 ("C-; 2" . avy-goto-char-2)
 		 ("C-; t" . avy-goto-char-timer)
@@ -1578,30 +1540,14 @@ company-c-headers instead if irony"
 		 ("C-c e o" . er/mark-outside-pairs)
 		 ("C-c e f" . er/mark-defun)
 		 ("C-c e m" . er/mark-email)
-		 ("C-c e u" . er/mark-url))
+		 ("C-c e u" . er/mark-url)
+		 ("C-c e \"" . er/mark-outside-quotes)
+		 ("C-c e '" . er/mark-inside-quotes)
+		 ("C-c e -" . er/contract-region)
+		 )
   :init
   (which-key-add-key-based-replacements "C-c e" "expand-region"))
 
-(use-package evil :ensure t
-  :commands evil-mode
-  :init
-  (setq	evil-want-keybinding nil)
-  :config
-  (use-package evil-leader :ensure t
-    :config
-    (global-evil-leader-mode)
-    (evil-leader/set-key "e" 'find-file
-                         "b" 'switch-to-buffer
-                         "k" 'kill-buffer))
-  (evil-mode t)
-
-  (use-package evil-collection :ensure t
-	:config
-	(evil-collection-init))
-
-  (use-package evil-tabs :ensure t
-	:config
-	(global-evil-tabs-mode t)))
 
 (use-package web-mode :ensure t
   :mode ("\\.html\\'" "\\.php\\'")
@@ -1626,8 +1572,7 @@ company-c-headers instead if irony"
   :commands (nginx-mode)
   :config
   (use-package company-nginx :ensure t
-	:hook nginx-mode)
-  )
+	:hook nginx-mode))
 
 (use-package json-mode :ensure t
   :mode "\\.json\\'")
