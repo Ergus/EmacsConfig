@@ -23,7 +23,7 @@
 
 (eval-when-compile
   (require 'use-package)
-  ;;(setq-default use-package-verbose t)
+  (setq-default use-package-verbose t)
   )
 
 (use-package paradox :ensure t
@@ -59,7 +59,7 @@
 	   (defconst mymagenta		 "#cd00cd" "Color magenta")
 	   (defconst mycyan			 "#00cdcd" "Color cyan")
 	   (defconst mywhite		 "#e5e5e5" "Color white")
-	   (defconst mybrightblack	 "#1c1c1c" "Color brightblack") ;; "#7f7f7f"
+	   (defconst mybrightblack	 "#7f7f7f" "Color brightblack") ;; 
 	   (defconst mybrightred	 "#ff0000" "Color brightred")
 	   (defconst mybrightgreen	 "#00ff00" "Color brightgreen")
 	   (defconst mybrightyellow	 "#ffff00" "Color brightyellow")
@@ -133,13 +133,14 @@
 (tool-bar-mode -1)				 ;; Quitar barra superior (no la uso)
 (size-indication-mode t)
 (scroll-bar-mode -1)
+(transient-mark-mode t)
+(tooltip-mode -1)			;; Tool tip in the echo
 
-(setq-default vc-follow-symlinks nil				;; Open links not open
-			  transient-mark-mode t		;; Highlight marked region
+(setq-default vc-follow-symlinks nil	;; Open links not open
 			  line-number-mode t		;; Display line numbers
 			  column-number-mode t		;; Display column numbers
 			  tab-always-indent 't		;; make tab key do indent only
-			  initial-scratch-message "# Welcome Jimmy!!"
+			  initial-scratch-message ";; Welcome Jimmy!!"
 			  ring-bell-function 'ignore
 			  user-full-name "Jimmy Aguilar Mena"
 			  inhibit-startup-message t
@@ -150,23 +151,24 @@
 			  auto-save-default			nil
 			  create-lockfiles nil		;; No lock files, goot for tramp
 			  visible-bell nil			;; Flash the screen (def)
-			  scroll-step 1				;; Scroll one by one
-			  scroll-preserve-screen-position nil
+			  ;;scroll-preserve-screen-position nil ;; Cursor keeps screen position (default nil)
+			  ;; scroll-step 1			;; Scroll one by one (better conservatively)
 			  scroll-conservatively 100000
-			  scroll-margin 0
-			  fill-column 80			;; default is 70
-			  tooltip-mode t			;; Tool tip in the echo
-			  confirm-kill-processes	nil ;; no ask for confirm kill processes on exi
+			  ;; scroll-margin 0			   ;; lines at top or button to scroll
+			  fill-column 80				   ;; default is 70
+			  confirm-kill-processes	nil	   ;; no ask for confirm kill processes on exi
 			  font-lock-maximum-decoration t
-			  show-paren-when-point-inside-paren t ;; show parent even when over
-			  display-line-numbers-widen t	;; keep line numbers inside a narrow buffers
-			  ;;split-width-threshold 160		;; Original value 240 ancho minimo limite para split vertical
+			  display-line-numbers-widen t	   ;; keep line numbers inside a narrow buffers
+			  display-line-numbers-width 4	   ;; Minimum line number width
+			  ;; split-width-threshold 160	   ;; Original value 240 ancho minimo limite para split vertical
 			  visible-cursor nil
 			  ;; split-width-threshold 180
 			  ;; kill-whole-line t
+			  ;; load-prefer-newer t
+			  read-key-delay 0.005
 			  )
 
-(put 'narrow-to-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)		   ;; Enable narrow commands
 ;;__________________________________________________________
 ;;Packages options
 ;;__________________________________________________________
@@ -180,9 +182,9 @@
 
   (setq tramp-default-method "ssh"
 		;;tramp-change-syntax 'simplified
-        tramp-use-ssh-controlmaster-options nil
-        tramp-completion-reread-directory-timeout t
-        tramp-persistency-file-name "~/.emacs.d/tramp"))
+		tramp-use-ssh-controlmaster-options nil
+		tramp-completion-reread-directory-timeout t
+		tramp-persistency-file-name "~/.emacs.d/tramp"))
 
 (use-package ssh-config-mode :ensure t
   :mode (("/\\.ssh/config\\'" . ssh-config-mode)
@@ -213,8 +215,8 @@
 			 ediff-buffers
 			 ediff-buffers3)
   :config
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-  (setq ediff-split-window-function 'split-window-horizontally)
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain
+		ediff-split-window-function 'split-window-horizontally)
   (with-eval-after-load 'winner
 	(add-hook 'ediff-after-quit-hook-internal #'winner-undo)))
 
@@ -244,7 +246,8 @@
 (use-package which-key :ensure t
   :diminish
   :config
-  (setq which-key-separator ": " )
+  (setq which-key-separator ": "
+		which-key-idle-delay 0.4)
   (which-key-mode t)
   (which-key-add-key-based-replacements
 	"C-c s" "sidebars"
@@ -256,21 +259,21 @@
 ;; Status bar (mode line in emacs) two options to chose
 
 ;; (use-package spaceline :ensure t
-;;   :demand t
-;;   ;;:init
-;;   ;;(require 'spaceline-config)
+;;	 :demand t
+;;	 ;;:init
+;;	 ;;(require 'spaceline-config)
 
-;;   :config
-;;   (if (display-graphic-p)
-;; 	  (setq powerline-default-separator 'arrow-fade)
-;; 	(setq powerline-default-separator 'utf-8))
+;;	 :config
+;;	 (if (display-graphic-p)
+;;	  (setq powerline-default-separator 'arrow-fade)
+;;	(setq powerline-default-separator 'utf-8))
 
 
-;;   (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
-;;   ;;(setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
-;;   (spaceline-emacs-theme)
+;;	 (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
+;;	 ;;(setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+;;	 (spaceline-emacs-theme)
 
-;;   (set-face-attribute 'mode-line nil :background myblue :foreground mywhite)
+;;	 (set-face-attribute 'mode-line nil :background myblue :foreground mywhite)
 ;; )
 
 (use-package smart-mode-line :ensure t
@@ -391,11 +394,11 @@
 (use-package multiple-cursors  :ensure t ;; Multiple cursors package
   :bind (("C-c m m" . mc/edit-lines)
 		 ("C-c m r" . mc/mark-all-in-region)
-		 ("C-c m s" . mc/mark-more-like-this-extended)
+		 ("C-c m i" . mc/mark-more-like-this-extended)
 		 ("C-c m a" . mc/mark-all-like-this)
 		 ("C-c m w" . mc/mark-all-words-like-this)
-		 ("C-c m <down>" . mc/mark-next-like-this)
-		 ("C-c m <up>" . mc/mark-previous-like-this)
+		 ("C-c m n" . mc/mark-next-like-this)
+		 ("C-c m p" . mc/mark-previous-like-this)
 		 ("C-c m <mouse-1>" . mc/add-cursor-on-click))
   :init
   (which-key-add-key-based-replacements "C-c m" "multiple-cursors")
@@ -426,7 +429,7 @@
 ;;__________________________________________________________
 ;; 80 Column rules
 (use-package fill-column-indicator :ensure t
-  :hook (prog-mode  . fci-mode)
+  :hook (prog-mode	. fci-mode)
   :config
   (setq fci-rule-color "#7f7f7f7f7f7f"
 		fci-rule-character ?\u2502))
@@ -440,34 +443,31 @@
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
 ;; (use-package column-enforce-mode :ensure t
-;;   :diminish
-;;   :hook prog-mode
-;;   :config
-;;   (column-enforce-mode t)
-;;   (setq column-enforce-comments nil)
-;;   (set-face-attribute 'column-enforce-face nil :background mybrightblack))
+;;	 :diminish
+;;	 :hook prog-mode
+;;	 :config
+;;	 (column-enforce-mode t)
+;;	 (setq column-enforce-comments nil)
+;;	 (set-face-attribute 'column-enforce-face nil :background mybrightblack))
 
 ;;__________________________________________________________
 ;; Lineas de Indent
 (use-package highlight-indent-guides :ensure t
+  :hook (prog-mode . highlight-indent-guides-mode)
   :config
-  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-  (setq highlight-indent-guides-method 'character)
-  (setq highlight-indent-guides-auto-enabled nil)
+  (setq highlight-indent-guides-method 'character
+		highlight-indent-guides-auto-enabled nil)
   (set-face-foreground 'highlight-indent-guides-character-face mybrightblack))
 
 ;;__________________________________________________________
 ;; Resalta parentesis entorno al cursor
-(use-package highlight-parentheses :ensure t
-  :diminish
-  :config
-  (add-hook 'prog-mode-hook 'highlight-parentheses-mode)
-
-  (set-face-attribute 'hl-paren-face nil :weight 'bold)
-
-  (setq hl-paren-colors
-		(quote
-		 ("#00ff00" "#00ffff" "#ff0000" "#cd0000"))))
+;; (use-package highlight-parentheses :ensure t
+;;	 :diminish
+;;	 :hook (prog-mode . highlight-parentheses-mode)
+;;	 :config
+;;	 (set-face-attribute 'hl-paren-face nil :weight 'bold)
+;;	 (setq hl-paren-delay 0.05
+;;		hl-paren-colors	'("#00ff00" "#00ffff" "#ff0000" "#cd0000")))
 
 ;;__________________________________________________________
 ;; Resalta scopes entorno al cursor
@@ -531,9 +531,9 @@
 ;;__________________________________________________________
 ;; Indent with tabs align with spaces
 ;; (use-package smart-tabs-mode :ensure t
-;;   :hook (prog-mode)
-;;   :config
-;;   (smart-tabs-insinuate 'c 'c++))
+;;	 :hook (prog-mode)
+;;	 :config
+;;	 (smart-tabs-insinuate 'c 'c++))
 
 ;;__________________________________________________________
 ;; Irony config (C completions)
@@ -541,41 +541,41 @@
 (defun my/irony-mode-hook ()
   "My irony-mode Hook.
 
-This is in the hook for c-common mode.  If the file is remote it loads
+This is in the hook for c-common mode.	If the file is remote it loads
 company-c-headers instead if irony"
   (when (and (member major-mode '(c++-mode c-mode arduino-mode))
-				buffer-file-name)
+			 buffer-file-name)
 
-		 (if (string-match-p tramp-file-name-regexp buffer-file-name)
-			 (use-package company-c-headers :ensure t ;; company-c-headers
-			   :after company
-			   :config
-			   (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
+	(if (string-match-p tramp-file-name-regexp buffer-file-name)
+		(use-package company-c-headers :ensure t ;; company-c-headers
+		  :after company
+		  :config
+		  (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
 
-		   (use-package irony :ensure t
-			 :diminish
-			 :config
-			 (irony-mode)
-			 (irony-cdb-autosetup-compile-options)
+	  (use-package irony :ensure t
+		:diminish
+		:config
+		(irony-mode)
+		(irony-cdb-autosetup-compile-options)
 
-			 (use-package company-irony :ensure t
-			   :config
-			   (use-package company-irony-c-headers :ensure t)
+		(use-package company-irony :ensure t
+		  :config
+		  (use-package company-irony-c-headers :ensure t)
 
-			   (add-to-list (make-local-variable 'company-backends)
-							'(company-irony-c-headers company-irony)))
+		  (add-to-list (make-local-variable 'company-backends)
+					   '(company-irony-c-headers company-irony)))
 
-			 ;;(define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
-			 ;;(define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
+		(define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
+		(define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
 
-			 (use-package flycheck-irony :ensure t
-			   :after flycheck
-			   :config
-			   (flycheck-irony-setup))
+		(use-package flycheck-irony :ensure t
+		  :after flycheck
+		  :config
+		  (flycheck-irony-setup))
 
-			 (use-package irony-eldoc :ensure t
-			   :config
-			   (irony-eldoc))))))
+		(use-package irony-eldoc :ensure t
+		  :config
+		  (irony-eldoc))))))
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
@@ -917,29 +917,29 @@ company-c-headers instead if irony"
 ;; LSP try for a while
 
 ;; (use-package lsp-mode :ensure t
-;;   :hook ((c++-mode . lsp)
-;; 		 (c-mode . lsp))
-;;   :init
-;;   (setq lsp-auto-configure nil
-;; 		lsp-prefer-flymake nil)
+;;	 :hook ((c++-mode . lsp)
+;;		 (c-mode . lsp))
+;;	 :init
+;;	 (setq lsp-auto-configure nil
+;;		lsp-prefer-flymake nil)
 
-;;   :config
+;;	 :config
 
-;;   (use-package lsp-ui :ensure t
-;; 	:after flycheck
-;; 	:config
-;; 	(lsp-ui-mode)
-;; 	(use-package lsp-ui-flycheck
-;; 	  :config
-;; 	  (lsp-ui-flycheck-enable t)
-;; 	  )
-;; 	)
+;;	 (use-package lsp-ui :ensure t
+;;	:after flycheck
+;;	:config
+;;	(lsp-ui-mode)
+;;	(use-package lsp-ui-flycheck
+;;	  :config
+;;	  (lsp-ui-flycheck-enable t)
+;;	  )
+;;	)
 
-;;   (use-package company-lsp :ensure t
-;; 	:after company
-;; 	:config
-;; 	(add-to-list (make-local-variable 'company-backends) 'company-lsp))
-;;   )
+;;	 (use-package company-lsp :ensure t
+;;	:after company
+;;	:config
+;;	(add-to-list (make-local-variable 'company-backends) 'company-lsp))
+;;	 )
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
@@ -1229,19 +1229,19 @@ company-c-headers instead if irony"
   :demand
   :bind (("C-c i r" . ivy-resume)
 		 :map ivy-minibuffer-map
-			  ("TAB" . ivy-partial)
-			  ("RET" . ivy-alt-done))
+		 ("TAB" . ivy-partial)
+		 ("RET" . ivy-alt-done))
   :config
 
   ;;(set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
   (set-face-attribute 'ivy-current-match nil
-                      :background mybrightblack :foreground mygreen :weight 'ultrabold)
+					  :background mybrightblack :foreground mygreen :weight 'ultrabold)
   (set-face-attribute 'ivy-minibuffer-match-face-1 nil ;; Espacio entre matches
-                       :inherit nil :background mybrightblack)
+					  :inherit nil :background mybrightblack)
   (set-face-attribute 'ivy-minibuffer-match-face-2 nil ;; primer match
-                       :inherit nil :background mybrightblack)
+					  :inherit nil :background mybrightblack)
   (set-face-attribute 'ivy-minibuffer-match-face-3 nil ;; segundo match
-                       :inherit nil :background mybrightblack)
+					  :inherit nil :background mybrightblack)
 
 
   (setq ivy-use-virtual-buffers t
@@ -1264,7 +1264,7 @@ company-c-headers instead if irony"
 		   :map read-expression-map ("C-r" . counsel-expression-history))
 	:config
 	;; (set-face-attribute 'swiper-line-face nil :inherit nil
-	;; 					:background mybrightblack :weight 'bold)
+	;;					:background mybrightblack :weight 'bold)
 	))
 
 (use-package imenu-anywhere :ensure t
@@ -1374,8 +1374,8 @@ company-c-headers instead if irony"
 (use-package historian :ensure t
   :config
   (use-package ivy-historian :ensure t
-  	:after ivy
-  	:config (ivy-historian-mode t)))
+	:after ivy
+	:config (ivy-historian-mode t)))
 
 ;;__________________________________________________________
 ;; Complete history
@@ -1429,7 +1429,7 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; Better shell (for ssh)
 (use-package better-shell :ensure t
-  :bind ("C-c t" . better-shell-shell))
+  :bind ("C-c C-b" . better-shell-shell))
 ;;__________________________________________________________
 ;;; Google calendar (view only)
 
@@ -1464,19 +1464,25 @@ company-c-headers instead if irony"
 ;; Move current line up and down Shift+arrow
 (use-package move-text :ensure t
   :bind(("C-M-<up>" . move-text-up)
-		("C-M-<down>" . move-text-down))
-  :init
-  (global-set-key (kbd "C-M-<left>") (lambda () (interactive) (transpose-words -1)))
-  (global-set-key (kbd "C-M-<right>") (lambda () (interactive) (transpose-words 1)))
-  (global-set-key (kbd "C-t") (lambda () (interactive) (transpose-chars -1)))
-  (global-set-key (kbd "M-t") (lambda () (interactive) (transpose-chars 1))))
+		("C-M-<down>" . move-text-down)
+		("C-M-<left>" . (lambda () (interactive) (transpose-words -1)))
+		("C-M-<right>" . (lambda () (interactive) (transpose-words 1)))
+		("M-<left>" . (lambda () (interactive) (transpose-chars -1)))
+		("M-<right>" . (lambda () (interactive) (transpose-chars 1)))))
 
 ;;__________________________________________________________
 ;; for having tabs in top
 (use-package elscreen :ensure t
-  :commands (elscreen-start)
+  :bind ("C-c t" . elscreen-start)
   :init
-  (setq elscreen-tab-display-kill-screen nil))
+  (which-key-add-key-based-replacements	"C-c t" "elscreen")
+  :config
+  (global-set-key (kbd "C-c t") nil)
+  (setq elscreen-prefix-key (kbd "C-c t")
+		elscreen-tab-display-kill-screen nil
+		elscreen-tab-display-control nil
+		elscreen-display-screen-number nil)
+  )
 
 ;;__________________________________________________________
 ;; evil mode
@@ -1583,13 +1589,15 @@ company-c-headers instead if irony"
 (use-package evil :ensure t
   :commands evil-mode
   :config
+  (setq evil-esc-delay 0.001
+		show-paren-when-point-inside-paren t)	 ;; show parent even when over)
+
   (use-package evil-leader :ensure t
 	:config
 	(global-evil-leader-mode)
 	(evil-leader/set-key "e" 'find-file
 						 "b" 'switch-to-buffer
 						 "k" 'kill-buffer))
-  (evil-mode t)
   )
 
 
