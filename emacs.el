@@ -23,8 +23,7 @@
 
 (eval-when-compile
   (require 'use-package)
-  (setq-default use-package-verbose t)
-  )
+  (setq-default use-package-verbose t))
 
 (use-package paradox :ensure t
   :commands (paradox-upgrade-packages paradox-list-packages)
@@ -149,7 +148,7 @@
 			  make-backup-files nil		;; Sin copias de seguridad
 			  auto-save-list-file-name	nil
 			  auto-save-default			nil
-			  create-lockfiles nil		;; No lock files, goot for tramp
+			  create-lockfiles nil		;; No lock files, good for tramp
 			  visible-bell nil			;; Flash the screen (def)
 			  ;;scroll-preserve-screen-position nil ;; Cursor keeps screen position (default nil)
 			  ;; scroll-step 1			;; Scroll one by one (better conservatively)
@@ -166,7 +165,10 @@
 			  ;; kill-whole-line t
 			  ;; load-prefer-newer t
 			  read-key-delay 0.005
+			  mouse-scroll-delay 0
 			  )
+
+
 
 (put 'narrow-to-region 'disabled nil)		   ;; Enable narrow commands
 ;;__________________________________________________________
@@ -178,6 +180,7 @@
 (use-package tramp :ensure t
   :defer t
   :config
+  (setq compilation-scroll-output 'first-error)
   (use-package tramp-term :ensure t)
 
   (setq tramp-default-method "ssh"
@@ -196,9 +199,9 @@
 ;;__________________________________________________________
 ;; cua rectangles
 
-(use-package cua-base
-  :config
-  (cua-selection-mode t))			 ;; Better rectangle selection
+;; (use-package cua-base
+;;   :config
+;;   (cua-selection-mode t))			 ;; Better rectangle selection
 
 (use-package gdb
   :commands gdb
@@ -259,21 +262,21 @@
 ;; Status bar (mode line in emacs) two options to chose
 
 ;; (use-package spaceline :ensure t
-;;	 :demand t
-;;	 ;;:init
-;;	 ;;(require 'spaceline-config)
+;; 	 :demand t
+;; 	 ;;:init
+;; 	 ;;(require 'spaceline-config)
 
-;;	 :config
-;;	 (if (display-graphic-p)
-;;	  (setq powerline-default-separator 'arrow-fade)
-;;	(setq powerline-default-separator 'utf-8))
+;; 	 :config
+;; 	 (if (display-graphic-p)
+;; 	  (setq powerline-default-separator 'arrow-fade)
+;; 	(setq powerline-default-separator 'utf-8))
 
 
-;;	 (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
-;;	 ;;(setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
-;;	 (spaceline-emacs-theme)
+;; 	 (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
+;; 	 ;;(setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+;; 	 (spaceline-emacs-theme)
 
-;;	 (set-face-attribute 'mode-line nil :background myblue :foreground mywhite)
+;; 	 (set-face-attribute 'mode-line nil :background myblue :foreground mywhite)
 ;; )
 
 (use-package smart-mode-line :ensure t
@@ -285,6 +288,13 @@
   (setq sml/no-confirm-load-theme t
 		sml/name-width 40)
   (sml/setup))
+
+;; (setq-default mode-line-format
+;;           (list
+;;            "%m: %b: (l:%2l,c:%2C) %I(%2p)"
+;;            ))
+
+
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
@@ -419,12 +429,12 @@
   (clean-aindent-mode t)
   (setq clean-aindent-is-simple-indent t))
 
-(defun my/prog-mode-hook () "Some hooks only for prog mode."
-	   ;;(electric-pair-mode t)			  ;; Autoannadir parentesis
-	   (which-function-mode t)			  ;; Shows the function in spaceline
-	   )
+;; (defun my/prog-mode-hook () "Some hooks only for prog mode."
+;; 	   ;;(electric-pair-mode t)			  ;; Autoannadir parentesis
+;; 	   (which-function-mode t)			  ;; Shows the function in spaceline
+;; 	   )
 
-(add-hook 'prog-mode-hook 'my/prog-mode-hook)
+;; (add-hook 'prog-mode-hook 'my/prog-mode-hook)
 
 ;;__________________________________________________________
 ;; 80 Column rules
@@ -502,7 +512,7 @@
 ;; Flyspell (Orthography)
 (use-package flyspell :ensure t
   :diminish
-  :hook ((prog-mode . flyspell-prog-mode)
+  :hook (;;(prog-mode . flyspell-prog-mode)
 		 (text-mode . flyspell-mode))
   :bind (:map flyspell-mode-map
 			  ("C-M-i" .  nil)
@@ -536,46 +546,86 @@
 ;;	 (smart-tabs-insinuate 'c 'c++))
 
 ;;__________________________________________________________
+;; ycmd Mode
+
+;; (use-package ycmd :ensure t
+;;	 :hook ((c-mode . ycmd-mode)
+;;		 (c++-mode . ycmd-mode))
+;;	 :config
+;;	 (setq ycmd-server-command '("python" "/home/ergo/gits/ycmd/ycmd"))
+;;	 (setq ycmd-global-config "/home/ergo/gits/ycmd/.ycm_extra_conf.py")
+
+;;	 (use-package company-ycmd :ensure t
+;;	:config
+;;	(company-ycmd-setup))
+
+;;	 (use-package flycheck-ycmd :ensure t
+;;	:config
+;;	(flycheck-ycmd-setup))
+
+;;	 (use-package ycmd-eldoc
+;;	:config
+;;	(ycmd-eldoc-setup)))
+
+;;__________________________________________________________
+;; LSP try for a while
+
+(defun my/lsp-mode-hook () "My lsp mode hook"
+
+  (use-package lsp-mode :ensure t
+	:hook ((c++-mode . lsp)
+		   (c-mode . lsp))
+	:init
+	(setq lsp-auto-configure nil
+		  lsp-prefer-flymake nil)
+
+	:config
+	(require 'lsp-clients)
+	;; (use-package lsp-ui :ensure t
+	;;   :after flycheck
+	;;   :config
+	;;   (lsp-ui-mode)
+	;;   (use-package lsp-ui-flycheck
+	;; 	:config
+	;; 	(lsp-ui-flycheck-enable t)))
+
+	(use-package company-lsp :ensure t
+	  :after company
+	  :config
+	  (add-to-list (make-local-variable 'company-backends) 'company-lsp))))
+
+;;__________________________________________________________
 ;; Irony config (C completions)
 
-(defun my/irony-mode-hook ()
-  "My irony-mode Hook.
+(defun my/irony-mode-hook () "My irony-mode Hook.
 
 This is in the hook for c-common mode.	If the file is remote it loads
 company-c-headers instead if irony"
-  (when (and (member major-mode '(c++-mode c-mode arduino-mode))
-			 buffer-file-name)
+  (use-package irony :ensure t
+	:diminish
+	:config
+	(irony-mode)
+	(irony-cdb-autosetup-compile-options)
 
-	(if (string-match-p tramp-file-name-regexp buffer-file-name)
-		(use-package company-c-headers :ensure t ;; company-c-headers
-		  :after company
-		  :config
-		  (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
+	(use-package company-irony :ensure t
+	  :config
+	  (use-package company-irony-c-headers :ensure t)
 
-	  (use-package irony :ensure t
-		:diminish
-		:config
-		(irony-mode)
-		(irony-cdb-autosetup-compile-options)
+	  (add-to-list (make-local-variable 'company-backends)
+				   '(company-irony-c-headers company-irony)))
 
-		(use-package company-irony :ensure t
-		  :config
-		  (use-package company-irony-c-headers :ensure t)
+	(define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
+	(define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
 
-		  (add-to-list (make-local-variable 'company-backends)
-					   '(company-irony-c-headers company-irony)))
+	(use-package flycheck-irony :ensure t
+	  :after flycheck
+	  :config
+	  (flycheck-irony-setup))
 
-		(define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
-		(define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
-
-		(use-package flycheck-irony :ensure t
-		  :after flycheck
-		  :config
-		  (flycheck-irony-setup))
-
-		(use-package irony-eldoc :ensure t
-		  :config
-		  (irony-eldoc))))))
+	(use-package irony-eldoc :ensure t
+	  :if eldoc-mode
+	  :config
+	  (irony-eldoc))))
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
@@ -587,7 +637,18 @@ company-c-headers instead if irony"
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
 
-	   (my/irony-mode-hook)
+	   (when (and (member major-mode '(c++-mode c-mode arduino-mode))
+				  buffer-file-name)
+
+		 (if (string-match-p tramp-file-name-regexp buffer-file-name)
+		 	 (use-package company-c-headers :ensure t ;; company-c-headers
+			   :after company
+			   :config
+			   (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
+
+		   (my/lsp-mode-hook)
+		   ;;(my/irony-mode-hook)
+		   ))
 
 	   (setq c-doc-comment-style
 			 '((java-mode . javadoc)
@@ -846,8 +907,7 @@ company-c-headers instead if irony"
 
 (use-package company :ensure t
   :bind (:map company-mode-map ("C-c RET" . company-other-backend)
-			  :map company-active-map ("C-c RET" . company-other-backend)
-			  )
+			  :map company-active-map ("C-c RET" . company-other-backend))
   :init (add-hook 'after-init-hook 'global-company-mode)
   :config
 
@@ -863,90 +923,34 @@ company-c-headers instead if irony"
 					  :background myblue)
   (setq company-idle-delay 1.0	 ;; no delay for autocomplete
 		company-minimum-prefix-length 2
-		company-tooltip-limit 20
-		company-show-numbers t
+		;;company-tooltip-limit 20
+		;;company-show-numbers t
 		company-backends '(company-semantic
 						   company-capf		 ;; completion at point
 						   company-files	 ;; company files
 						   (company-dabbrev-code company-gtags company-keywords)
 						   company-dabbrev
-						   ))
+						   )))
 
-  ;; (use-package company-quickhelp :ensure t
-  ;;	:after company
-  ;;	:config
-  ;;	(company-quickhelp-mode))
+;; (use-package yasnippet :ensure t
+;; 	:diminish
+;; 	:hook (prog-mode . yas-minor-mode)
+;; 	:bind (:map yas-minor-mode-map ("TAB" . nil)
+;; 				("C-c & TAB" . yas-maybe-expand))
+;; 	:init
+;; 	(which-key-add-key-based-replacements "C-c &" "yasnippet")
+;; 	:config
+;; 	(use-package yasnippet-snippets :ensure t)
+;; 	(add-to-list 'company-backends 'company-yasnippet))
 
-  (use-package yasnippet :ensure t
-	:diminish
-	:hook (prog-mode . yas-minor-mode)
-	:bind (:map yas-minor-mode-map 
-				("TAB" . nil)
-				("C-c & TAB" . yas-maybe-expand))
-	:init
-	(which-key-add-key-based-replacements "C-c &" "yasnipet")
-	:config
-	(use-package yasnippet-snippets :ensure t)
-	(yas-reload-all)
-	(add-to-list 'company-backends 'company-yasnippet))
-  )
-
-;;__________________________________________________________
-;; ycmd Mode
-
-;; (use-package ycmd :ensure t
-;;	 :hook ((c-mode . ycmd-mode)
-;;		 (c++-mode . ycmd-mode))
-;;	 :config
-;;	 (setq ycmd-server-command '("python" "/home/ergo/gits/ycmd/ycmd"))
-;;	 (setq ycmd-global-config "/home/ergo/gits/ycmd/.ycm_extra_conf.py")
-
-;;	 (use-package company-ycmd :ensure t
-;;	:config
-;;	(company-ycmd-setup))
-
-;;	 (use-package flycheck-ycmd :ensure t
-;;	:config
-;;	(flycheck-ycmd-setup))
-
-;;	 (use-package ycmd-eldoc
-;;	:config
-;;	(ycmd-eldoc-setup)))
-
-;;__________________________________________________________
-;; LSP try for a while
-
-;; (use-package lsp-mode :ensure t
-;;	 :hook ((c++-mode . lsp)
-;;		 (c-mode . lsp))
-;;	 :init
-;;	 (setq lsp-auto-configure nil
-;;		lsp-prefer-flymake nil)
-
-;;	 :config
-
-;;	 (use-package lsp-ui :ensure t
-;;	:after flycheck
-;;	:config
-;;	(lsp-ui-mode)
-;;	(use-package lsp-ui-flycheck
-;;	  :config
-;;	  (lsp-ui-flycheck-enable t)
-;;	  )
-;;	)
-
-;;	 (use-package company-lsp :ensure t
-;;	:after company
-;;	:config
-;;	(add-to-list (make-local-variable 'company-backends) 'company-lsp))
-;;	 )
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
 (use-package flycheck :ensure t
   :diminish
-  :init (global-flycheck-mode)
+  :if (< (buffer-size) 200000)
   :config
+  (flycheck-mode 1)
   (which-key-add-key-based-replacements "C-c !" "flycheck")
   (setq-default flycheck-display-errors-delay 1)
 
@@ -1000,35 +1004,33 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 (use-package abbrev :diminish)
 
-(use-package mail-mode
-  :mode ("/neomut")
-  :config
-  (turn-on-auto-fill)
-  (mail-abbrevs-setup))
+;; (use-package mail-mode
+;;   :mode ()
+;;   :config
+;;   (setq-local normal-auto-fill-function 'do-auto-fill)
+;;   (auto-fill-mode t)
+;;   (mail-abbrevs-setup))
 
 ;; Asocia buffers que empiecen con messaje mode
 (use-package message-mode
-  :mode ("neomutt-Ergus-" "draft")
-  :preface
-  (defun my/message-mode-hook () "My mail mode hook"
-		 (turn-on-auto-fill)
-		 (mail-abbrevs-setup)
-		 (flyspell-mode t)
-
-		 (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
-		 (setq notmuch-init-file "~/almacen/mail/notmuch-config")
-
-		 (use-package notmuch-address :ensure notmuch
-		   :config
-		   (setq notmuch-address-command "~/gits/notmuch-addrlookup-c/notmuch-addrlookup"))
-
-		 (use-package notmuch-company :ensure notmuch
-		   :config
-		   (add-to-list (make-local-variable 'company-backends) 'notmuch-company))
-		 (message "Loaded my message mode hook")
-		 )
+  :mode ("/neomut" "neomutt-Ergus-" "draft")
   :init
-  (add-hook 'message-mode-hook 'my/message-mode-hook))
+  (setq mail-header-separator "")
+  :config
+  (auto-fill-mode t)
+  (mail-abbrevs-setup)
+  (flyspell-mode t)
+
+  (use-package notmuch-address :ensure notmuch
+	:init
+	(setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
+	(setq notmuch-init-file "~/almacen/mail/notmuch-config")
+	:config
+	(setq notmuch-address-command "~/gits/notmuch-addrlookup-c/notmuch-addrlookup"))
+
+  (use-package notmuch-company :ensure notmuch
+	:config
+	(add-to-list (make-local-variable 'company-backends) 'notmuch-company)))
 
 
 ;;__________________________________________________________
@@ -1042,19 +1044,17 @@ company-c-headers instead if irony"
 		TeX-parse-self t
 		LaTeX-always-use-Biber t
 		TeX-save-query nil		;; don't prompt for saving the .tex file
-		TeX-newline-function 'reindent-then-newline-and-indent
-		TeX-PDF-mode t
-		TeX-source-correlate-method 'synctex
-		TeX-source-correlate-mode t
+		;;TeX-newline-function 'reindent-then-newline-and-indent
+		;;TeX-source-correlate-method 'synctex
 		TeX-source-correlate-start-server t)
 
+  (TeX-source-correlate-mode t)
   (setq-default TeX-master nil)
 
-  (setq LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
-  (flyspell-mode t)
-  (flyspell-buffer)
-  (turn-on-auto-fill)
-  (visual-line-mode)
+  ;;(setq LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
+  (flyspell-mode 1)
+  (visual-line-mode 1)
+  (auto-fill-mode 1)
 
   (use-package reftex  ;; Reftex for cross references
 	:config
@@ -1092,7 +1092,7 @@ company-c-headers instead if irony"
 				 (latex-mode)
 				 :help "Run makeglossaries script, which will choose xindy or makeindex") t)
 
-  (add-to-list 'TeX-output-view-style '("^pdf$" "." "evince %o %(outpage)")))
+  (flyspell-buffer))
 
 ;;__________________________________________________________
 ;;bibtex mode set use biblatex
@@ -1247,6 +1247,7 @@ company-c-headers instead if irony"
   (setq ivy-use-virtual-buffers t
 		ivy-count-format "(%d/%d) "
 		ivy-display-style 'fancy
+		ivy-pulse-delay nil
 		;;ivy-height 5
 		;;ivy-wrap t					 ;; cycle in minibuffer
 		enable-recursive-minibuffers t)
@@ -1262,7 +1263,7 @@ company-c-headers instead if irony"
 		   ("C-r" . swiper)
 		   :map minibuffer-local-map ("C-r" . counsel-minibuffer-history)
 		   :map read-expression-map ("C-r" . counsel-expression-history))
-	:config
+	;;:config
 	;; (set-face-attribute 'swiper-line-face nil :inherit nil
 	;;					:background mybrightblack :weight 'bold)
 	))
@@ -1486,6 +1487,7 @@ company-c-headers instead if irony"
 
 ;;__________________________________________________________
 ;; evil mode
+
 (use-package avy :ensure t
   :bind (("C-; r" . avy-resume)
 		 ("C-; c" . avy-goto-char)
@@ -1493,7 +1495,6 @@ company-c-headers instead if irony"
 		 ("C-; 2" . avy-goto-char-2)
 		 ("C-; t" . avy-goto-char-timer)
 		 ("C-; l" . avy-goto-line)
-		 ;;("C-; w" . avy-goto-word-0)
 		 ("C-; ;" . avy-goto-word-or-subword-1)
 		 ("C-; m r" . avy-move-region)
 		 ("C-; m l" . avy-move-line)
@@ -1503,14 +1504,20 @@ company-c-headers instead if irony"
 		 ("C-; y l" . avy-kill-ring-save-whole-line)
 		 ("C-; w r" . avy-copy-region)
 		 ("C-; w l" . avy-copy-line)
-		 )
+		 ("C-; p" . avy-prev)
+		 ("C-; n" . avy-next)
+		 ("C-; C-x" . avy-pop-mark)
+		 ("C-; e" . avy-goto-end-of-line))
   :init
   (which-key-add-key-based-replacements
 	"C-; m" "avy-move"
 	"C-; k" "avy-kill"
 	"C-; y" "avy-paste"
-	"C-; w" "avy-copy"
-	)
+	"C-; w" "avy-copy")
+
+  (use-package zzz-to-char :ensure t
+  :bind(("C-; k u" . zzz-up-to-char)
+		("C-; k z" . zzz-to-char)))
 
   :config
   (setq avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
@@ -1522,7 +1529,7 @@ company-c-headers instead if irony"
 		avy-all-windows nil						 ;; Only current window
 		avy-case-fold-search nil
 		avy-highlight-first t)
-  (set-face-attribute 'avy-lead-face nil :background nil :foreground myred))
+  (set-face-attribute 'avy-lead-face nil :background myblack :foreground myred))
 
 (use-package arduino-mode :ensure t
   :mode "\\.ino\\'"
@@ -1544,6 +1551,8 @@ company-c-headers instead if irony"
 		 ("C-c e s" . er/c-mark-statement)
 		 ("C-c e i" . er/mark-inside-pairs)
 		 ("C-c e o" . er/mark-outside-pairs)
+		 ("C-c e t p" . er/mark-text-paragraph)
+		 ("C-c e t s" . er/mark-text-sentence)
 		 ("C-c e f" . er/mark-defun)
 		 ("C-c e m" . er/mark-email)
 		 ("C-c e u" . er/mark-url)
@@ -1588,16 +1597,22 @@ company-c-headers instead if irony"
 
 (use-package evil :ensure t
   :commands evil-mode
-  :config
+  :init
   (setq evil-esc-delay 0.001
-		show-paren-when-point-inside-paren t)	 ;; show parent even when over)
+		evil-want-keybinding nil)
+  :config
+  (setq show-paren-when-point-inside-paren t)	 ;; show parent even when over)
 
-  (use-package evil-leader :ensure t
+  (use-package evil-collection :ensure t
 	:config
-	(global-evil-leader-mode)
-	(evil-leader/set-key "e" 'find-file
-						 "b" 'switch-to-buffer
-						 "k" 'kill-buffer))
+	(evil-collection-init))
+
+  ;; (use-package evil-leader :ensure t
+  ;; 	:config
+  ;; 	(global-evil-leader-mode)
+  ;; 	(evil-leader/set-key "e" 'find-file
+  ;; 						 "b" 'switch-to-buffer
+  ;; 						 "k" 'kill-buffer))
   )
 
 
