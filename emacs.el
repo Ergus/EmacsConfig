@@ -240,6 +240,13 @@
   :commands (multi-term-dedicated-open
 			 multi-term))
 
+(use-package sane-term :ensure t
+  :bind (("C-x t" . sane-term)
+		 ("C-x T" . sane-term-create))
+  :init
+  (setq sane-term-shell-command "/bin/bash")
+  )
+
 ;;__________________________________________________________
 ;; Keys
 (use-package bind-key :ensure t)
@@ -261,33 +268,32 @@
 ;;__________________________________________________________
 ;; Status bar (mode line in emacs) two options to chose
 
-;; (use-package spaceline :ensure t
-;; 	 :demand t
-;; 	 ;;:init
-;; 	 ;;(require 'spaceline-config)
+(use-package spaceline :ensure t
+	 :demand t
+	 ;;:init
+	 ;;(require 'spaceline-config)
 
-;; 	 :config
-;; 	 (if (display-graphic-p)
-;; 	  (setq powerline-default-separator 'arrow-fade)
-;; 	(setq powerline-default-separator 'utf-8))
+	 :config
+	 (if (display-graphic-p)
+	  (setq powerline-default-separator 'arrow-fade)
+	(setq powerline-default-separator 'utf-8))
 
 
-;; 	 (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
-;; 	 ;;(setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
-;; 	 (spaceline-emacs-theme)
+	 (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
+	 ;;(setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+	 (spaceline-emacs-theme)
 
-;; 	 (set-face-attribute 'mode-line nil :background myblue :foreground mywhite)
-;; )
+	 (set-face-attribute 'mode-line nil :background myblue :foreground mywhite))
 
-(use-package smart-mode-line :ensure t
-  :config
-  (use-package smart-mode-line-powerline-theme :ensure t
-	:config
-	(setq sml/theme 'powerline)
-	)
-  (setq sml/no-confirm-load-theme t
-		sml/name-width 40)
-  (sml/setup))
+;; (use-package smart-mode-line :ensure t
+;;   :config
+;;   (use-package smart-mode-line-powerline-theme :ensure t
+;; 	:config
+;; 	(setq sml/theme 'powerline)
+;; 	)
+;;   (setq sml/no-confirm-load-theme t
+;; 		sml/name-width 40)
+;;   (sml/setup))
 
 ;; (setq-default mode-line-format
 ;;           (list
@@ -412,6 +418,8 @@
 		 ("C-c m <mouse-1>" . mc/add-cursor-on-click))
   :init
   (which-key-add-key-based-replacements "C-c m" "multiple-cursors")
+  :config
+  (setq mc/always-run-for-all t)
   )
 
 ;;__________________________________________________________
@@ -662,7 +670,7 @@ company-c-headers instead if irony"
 
 	   (use-package preproc-font-lock :ensure t ;; Preprocessor
 		 :config
-		 (preproc-font-lock-global-mode 1)
+		 (preproc-font-lock-mode 1)
 		 (set-face-attribute 'preproc-font-lock-preprocessor-background nil
 							 :inherit 'font-lock-preprocessor-face))
 
@@ -1289,7 +1297,7 @@ company-c-headers instead if irony"
 			  ("C-c c r" . 'counsel-git-grep)
 			  ("C-c c l" . 'counsel-locate))
   :init
-  (counsel-mode t)
+  ;;(counsel-mode t)
   (which-key-add-key-based-replacements "C-c c" "counsel")
 
   :config
@@ -1387,9 +1395,7 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; Magit
 (use-package magit :ensure t
-  :commands magit-status
-  :config
-  (setq magit-completing-read-function 'magit-ido-completing-read))
+  :commands magit-status)
 
 ;;______________________________________
 ;; Git commit
@@ -1424,8 +1430,9 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; path
 (defun shell-command-on-buffer (command)
-  (interactive "sShell command on buffer: ")
-  (shell-command-on-region (point-min) (point-max) command t))
+  (interactive (list
+				(read-shell-command "Shell command on buffer: " nil nil)))
+  (shell-command-on-region (point-min) (point-max) command t t))
 
 ;;__________________________________________________________
 ;; Better shell (for ssh)
