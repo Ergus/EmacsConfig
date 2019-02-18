@@ -23,7 +23,8 @@
 
 (eval-when-compile
   (require 'use-package)
-  (setq-default use-package-verbose t))
+  (setq-default use-package-verbose t)
+  )
 
 (use-package paradox :ensure t
   :commands (paradox-upgrade-packages paradox-list-packages)
@@ -49,58 +50,56 @@
 ;;__________________________________________________________
 ;;	The Colors (I want to change this for a real theme, there are maaaaany)
 
+(defconst my/colors '((black . "#000000")
+					  (red . "#cd0000")
+					  (green . "#00cd00")
+					  (yellow . "#cdcd00")
+					  (blue . "#0000ee")
+					  (magenta . "#cd00cd")
+					  (cyan . "#00cdcd")
+					  (white . "#e5e5e5")
+					  (brightblack . "#7f7f7f") ;; 
+					  (brightred . "#ff0000")
+					  (brightgreen . "#00ff00")
+					  (brightyellow . "#ffff00")
+					  (brightblue . "#5c5cff")
+					  (brightmagenta . "#ff00ff")
+					  (brightcyan . "#00ffff")
+					  (brightwhite . "#ffffff"))
+  "List of colors.")
+
 (defun my/colors () "Define my color theme."
-	   (defconst myblack		 "#000000" "Color red")
-	   (defconst myred			 "#cd0000" "Color red")
-	   (defconst mygreen		 "#00cd00" "Color green")
-	   (defconst myyellow		 "#cdcd00" "Color yellow")
-	   (defconst myblue			 "#0000ee" "Color blue")
-	   (defconst mymagenta		 "#cd00cd" "Color magenta")
-	   (defconst mycyan			 "#00cdcd" "Color cyan")
-	   (defconst mywhite		 "#e5e5e5" "Color white")
-	   (defconst mybrightblack	 "#7f7f7f" "Color brightblack") ;; 
-	   (defconst mybrightred	 "#ff0000" "Color brightred")
-	   (defconst mybrightgreen	 "#00ff00" "Color brightgreen")
-	   (defconst mybrightyellow	 "#ffff00" "Color brightyellow")
-	   (defconst mybrightblue	 "#5c5cff" "Color brightblue")
-	   (defconst mybrightmagenta "#ff00ff" "Color brightmagenta")
-	   (defconst mybrightcyan	 "#00ffff" "Color brightcyan")
-	   (defconst mybrightwhite	 "#ffffff" "Color brightwhite")
 
-	   (set-background-color myblack)
-	   (set-foreground-color mywhite)
+	   (set-background-color (cdr (assoc 'black my/colors)))
+	   (set-foreground-color (cdr (assoc 'white my/colors)))
 
-	   ;;(set-face-foreground 'bold "LightGoldenrod")
-	   ;;(set-face-foreground 'bold-italic "grey20")
-	   ;;(set-face-foreground 'italic "yellow3")
+	   (set-face-foreground 'font-lock-preprocessor-face (cdr (assoc 'magenta my/colors)))		;; Preprocessor
 
-	   (set-face-foreground 'font-lock-preprocessor-face mymagenta)		;; Preprocessor
+	   (set-face-foreground 'font-lock-comment-face (cdr (assoc 'blue my/colors)))				;; Comentarios
+	   (set-face-foreground 'font-lock-doc-face (cdr (assoc 'blue my/colors)))					;; Documentation
 
-	   (set-face-foreground 'font-lock-comment-face myblue)				;; Comentarios
-	   (set-face-foreground 'font-lock-doc-face myblue)					;; Documentation
+	   (set-face-foreground 'font-lock-string-face (cdr (assoc 'red my/colors)))				;; Strings
+	   (set-face-foreground 'font-lock-function-name-face (cdr (assoc 'white my/colors)))		;; Funciones
+	   (set-face-foreground 'font-lock-variable-name-face (cdr (assoc 'white my/colors)))		;; Variables
+	   (set-face-foreground 'font-lock-constant-face (cdr (assoc 'magenta my/colors)))			;; Constates y Clases
 
-	   (set-face-foreground 'font-lock-string-face myred)				;; Strings
-	   (set-face-foreground 'font-lock-function-name-face mywhite)		;; Funciones
-	   (set-face-foreground 'font-lock-variable-name-face mywhite)		;; Variables
-	   (set-face-foreground 'font-lock-constant-face mymagenta)			;; Constates y Clases
+	   (set-face-foreground 'font-lock-type-face (cdr (assoc 'green my/colors)))				;; Tipos (int, float)
+	   (set-face-foreground 'font-lock-keyword-face (cdr (assoc 'yellow my/colors)))  	        ;; Keywords (for, if)
+	   (set-face-foreground 'font-lock-builtin-face (cdr (assoc 'green my/colors)))			    ;; Keywords (for, if)
 
-	   (set-face-foreground 'font-lock-type-face mygreen)				;; Tipos (int, float)
-	   (set-face-foreground 'font-lock-keyword-face myyellow)	  ;; Keywords (for, if)
-	   (set-face-foreground 'font-lock-builtin-face mygreen)			;; Keywords (for, if)
+	   (set-face-attribute 'highlight nil :background (cdr (assoc 'brightblack my/colors)) :foreground nil)
 
-	   (set-face-attribute 'highlight nil :background mybrightblack :foreground nil)
-
-	   (set-face-attribute 'secondary-selection nil :background mybrightblue
-						   :foreground myblue :weight 'bold)
+	   (set-face-attribute 'secondary-selection nil :background (cdr (assoc 'brightblue my/colors))
+						   :foreground (cdr (assoc 'blue my/colors)) :weight 'bold)
 
 	   ;; search C-s, resalta lo que encuentra
-	   (set-face-attribute 'isearch nil :background myblue
-						   :foreground mywhite :weight 'ultrabold)			   ;; Search
+	   (set-face-attribute 'isearch nil :background (cdr (assoc 'blue my/colors))
+						   :foreground (cdr (assoc 'white my/colors)) :weight 'ultrabold)			   ;; Search
 
-	   (set-face-attribute 'region nil :inherit nil :background mybrightblack) ;; Seleccion C-space
+	   (set-face-attribute 'region nil :inherit nil :background (cdr (assoc 'brightblack my/colors))) ;; Seleccion C-space
 
-	   (set-face-attribute 'line-number nil :foreground mybrightblack)		   ;; numero de linea
-	   (set-face-attribute 'line-number-current-line nil :foreground mygreen)  ;; resalta la linea actual
+	   (set-face-attribute 'line-number nil :foreground (cdr (assoc 'brightblack my/colors)))		   ;; numero de linea
+	   (set-face-attribute 'line-number-current-line nil :foreground (cdr (assoc 'green my/colors)))  ;; resalta la linea actual
 	   )
 
 (my/colors)
@@ -110,8 +109,7 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
 (unless (file-exists-p custom-file)
-  (write-region "" nil custom-file)
-  (message "Creating %s" custom-file))
+  (write-region "" nil custom-file))
 
 (load custom-file)
 
@@ -174,6 +172,9 @@
 ;;__________________________________________________________
 ;;Packages options
 ;;__________________________________________________________
+;;__________________________________________________________
+;; Keys
+(use-package bind-key :ensure t)
 
 ;;__________________________________________________________
 ;; ssh
@@ -194,6 +195,12 @@
 		 ("/sshd?_config\\'" . ssh-config-mode)
 		 ("/known_hosts\\'" . ssh-known-hosts-mode)
 		 ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
+
+
+(defun my/term-mode-hook () "My term mode hook"
+	   (display-line-numbers-mode -1))
+
+(add-hook 'term-mode-hook 'my/term-mode-hook)
 
 
 ;;__________________________________________________________
@@ -248,16 +255,12 @@
   )
 
 ;;__________________________________________________________
-;; Keys
-(use-package bind-key :ensure t)
-
-;;__________________________________________________________
 ;; which-key
 (use-package which-key :ensure t
   :diminish
   :config
   (setq which-key-separator ": "
-		which-key-idle-delay 0.4)
+		which-key-idle-delay 0.8)
   (which-key-mode t)
   (which-key-add-key-based-replacements
 	"C-c s" "sidebars"
@@ -268,22 +271,22 @@
 ;;__________________________________________________________
 ;; Status bar (mode line in emacs) two options to chose
 
-(use-package spaceline :ensure t
-	 :demand t
-	 ;;:init
-	 ;;(require 'spaceline-config)
+;; (use-package spaceline :ensure t
+;; 	 :demand t
+;; 	 ;;:init
+;; 	 ;;(require 'spaceline-config)
 
-	 :config
-	 (if (display-graphic-p)
-	  (setq powerline-default-separator 'arrow-fade)
-	(setq powerline-default-separator 'utf-8))
+;; 	 :config
+;; 	 (if (display-graphic-p)
+;; 	  (setq powerline-default-separator 'arrow-fade)
+;; 	(setq powerline-default-separator 'utf-8))
 
 
-	 (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
-	 ;;(setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
-	 (spaceline-emacs-theme)
+;; 	 (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
+;; 	 ;;(setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+;; 	 (spaceline-emacs-theme)
 
-	 (set-face-attribute 'mode-line nil :background myblue :foreground mywhite))
+;; 	 (set-face-attribute 'mode-line nil :background myblue :foreground mywhite))
 
 ;; (use-package smart-mode-line :ensure t
 ;;   :config
@@ -473,9 +476,9 @@
 (use-package highlight-indent-guides :ensure t
   :hook (prog-mode . highlight-indent-guides-mode)
   :config
-  (setq highlight-indent-guides-method 'character
-		highlight-indent-guides-auto-enabled nil)
-  (set-face-foreground 'highlight-indent-guides-character-face mybrightblack))
+  (setq highlight-indent-guides-auto-enabled nil
+		highlight-indent-guides-method 'character)
+  (set-face-attribute 'highlight-indent-guides-character-face nil :foreground "#242424"))
 
 ;;__________________________________________________________
 ;; Resalta parentesis entorno al cursor
@@ -508,13 +511,13 @@
 (use-package highlight-escape-sequences :ensure t
   :hook (prog-mode . hes-mode)
   :config
-  (set-face-attribute 'hes-escape-backslash-face nil :foreground mymagenta)
-  (set-face-attribute 'hes-escape-sequence-face nil :foreground mymagenta))
+  (set-face-attribute 'hes-escape-backslash-face nil :foreground (cdr (assoc 'magenta my/colors)))
+  (set-face-attribute 'hes-escape-sequence-face nil :foreground (cdr (assoc 'magenta my/colors))))
 
 (use-package highlight-numbers :ensure t
   :hook (prog-mode . highlight-numbers-mode)
   :config
-  (set-face-attribute 'highlight-numbers-number nil :foreground myred))
+  (set-face-attribute 'highlight-numbers-number nil :foreground (cdr (assoc 'red my/colors))))
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
@@ -580,27 +583,27 @@
 
 (defun my/lsp-mode-hook () "My lsp mode hook"
 
-  (use-package lsp-mode :ensure t
-	:hook ((c++-mode . lsp)
-		   (c-mode . lsp))
-	:init
-	(setq lsp-auto-configure nil
-		  lsp-prefer-flymake nil)
+	   (use-package lsp-mode :ensure t
+		 :hook ((c++-mode . lsp)
+				(c-mode . lsp))
+		 :init
+		 (setq lsp-auto-configure nil
+			   lsp-prefer-flymake nil)
 
-	:config
-	(require 'lsp-clients)
-	;; (use-package lsp-ui :ensure t
-	;;   :after flycheck
-	;;   :config
-	;;   (lsp-ui-mode)
-	;;   (use-package lsp-ui-flycheck
-	;; 	:config
-	;; 	(lsp-ui-flycheck-enable t)))
+		 :config
+		 (require 'lsp-clients)
+		 ;; (use-package lsp-ui :ensure t
+		 ;;   :after flycheck
+		 ;;   :config
+		 ;;   (lsp-ui-mode)
+		 ;;   (use-package lsp-ui-flycheck
+		 ;; 	:config
+		 ;; 	(lsp-ui-flycheck-enable t)))
 
-	(use-package company-lsp :ensure t
-	  :after company
-	  :config
-	  (add-to-list (make-local-variable 'company-backends) 'company-lsp))))
+		 (use-package company-lsp :ensure t
+		   :after company
+		   :config
+		   (add-to-list (make-local-variable 'company-backends) 'company-lsp))))
 
 ;;__________________________________________________________
 ;; Irony config (C completions)
@@ -609,31 +612,31 @@
 
 This is in the hook for c-common mode.	If the file is remote it loads
 company-c-headers instead if irony"
-  (use-package irony :ensure t
-	:diminish
-	:config
-	(irony-mode)
-	(irony-cdb-autosetup-compile-options)
+	   (use-package irony :ensure t
+		 :diminish
+		 :config
+		 (irony-mode)
+		 (irony-cdb-autosetup-compile-options)
 
-	(use-package company-irony :ensure t
-	  :config
-	  (use-package company-irony-c-headers :ensure t)
+		 (use-package company-irony :ensure t
+		   :config
+		   (use-package company-irony-c-headers :ensure t)
 
-	  (add-to-list (make-local-variable 'company-backends)
-				   '(company-irony-c-headers company-irony)))
+		   (add-to-list (make-local-variable 'company-backends)
+						'(company-irony-c-headers company-irony)))
 
-	(define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
-	(define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
+		 (define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
+		 (define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
 
-	(use-package flycheck-irony :ensure t
-	  :after flycheck
-	  :config
-	  (flycheck-irony-setup))
+		 (use-package flycheck-irony :ensure t
+		   :after flycheck
+		   :config
+		   (flycheck-irony-setup))
 
-	(use-package irony-eldoc :ensure t
-	  :if eldoc-mode
-	  :config
-	  (irony-eldoc))))
+		 (use-package irony-eldoc :ensure t
+		   :if eldoc-mode
+		   :config
+		   (irony-eldoc))))
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
@@ -641,7 +644,9 @@ company-c-headers instead if irony"
 (setq-default c-default-style
 			  '((java-mode . "java")
 				(awk-mode . "awk")
-				(other . "linux")))
+				(other . "linux"))
+			  c-basic-offset 4		  ;; Default is set-from-style
+			  indent-tabs-mode t)
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
 
@@ -653,20 +658,7 @@ company-c-headers instead if irony"
 			   :after company
 			   :config
 			   (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
-
-		   (my/lsp-mode-hook)
-		   ;;(my/irony-mode-hook)
-		   ))
-
-	   (setq c-doc-comment-style
-			 '((java-mode . javadoc)
-			   (pike-mode . autodoc)
-			   (c-mode	  . javadoc)
-			   (c++-mode  . javadoc))
-			 c-basic-offset 4		  ;; Default is set-from-style
-			 indent-tabs-mode t)
-
-	   (c-setup-doc-comment-style)	 ;; update commentd style
+		   (my/lsp-mode-hook)))
 
 	   (use-package preproc-font-lock :ensure t ;; Preprocessor
 		 :config
@@ -918,17 +910,6 @@ company-c-headers instead if irony"
 			  :map company-active-map ("C-c RET" . company-other-backend))
   :init (add-hook 'after-init-hook 'global-company-mode)
   :config
-
-  (set-face-attribute 'company-tooltip nil		  ;; dialog face
-					  :background mybrightblack :foreground mywhite)
-  (set-face-attribute 'company-tooltip-common nil ;; common part face
-					  :inherit 'company-tooltip :foreground mygreen)
-  (set-face-attribute 'company-tooltip-selection nil ;; selection face
-					  :background myblue :weight 'ultra-bold)
-  (set-face-attribute 'company-scrollbar-bg nil	  ;; scroll bar face bg
-					  :background mybrightblack)
-  (set-face-attribute 'company-scrollbar-fg nil	  ;; scroll bar face fg
-					  :background myblue)
   (setq company-idle-delay 1.0	 ;; no delay for autocomplete
 		company-minimum-prefix-length 2
 		;;company-tooltip-limit 20
@@ -937,8 +918,19 @@ company-c-headers instead if irony"
 						   company-capf		 ;; completion at point
 						   company-files	 ;; company files
 						   (company-dabbrev-code company-gtags company-keywords)
-						   company-dabbrev
-						   )))
+						   company-dabbrev))
+
+  (set-face-attribute 'company-tooltip nil		  ;; dialog face
+					  :background (cdr (assoc 'brightblack my/colors)) :foreground (cdr (assoc 'white my/colors)))
+  (set-face-attribute 'company-tooltip-common nil ;; common part face
+					  :inherit 'company-tooltip :foreground (cdr (assoc 'green my/colors)))
+  (set-face-attribute 'company-tooltip-selection nil ;; selection face
+					  :background (cdr (assoc 'blue my/colors)) :weight 'ultra-bold)
+  (set-face-attribute 'company-scrollbar-bg nil	  ;; scroll bar face bg
+					  :background (cdr (assoc 'brightblack my/colors)))
+  (set-face-attribute 'company-scrollbar-fg nil	  ;; scroll bar face fg
+   					  :background (cdr (assoc 'blue my/colors)))
+  )
 
 ;; (use-package yasnippet :ensure t
 ;; 	:diminish
@@ -957,8 +949,8 @@ company-c-headers instead if irony"
 (use-package flycheck :ensure t
   :diminish
   :if (< (buffer-size) 200000)
+  :hook (prog-mode . flycheck-mode)
   :config
-  (flycheck-mode 1)
   (which-key-add-key-based-replacements "C-c !" "flycheck")
   (setq-default flycheck-display-errors-delay 1)
 
@@ -1032,7 +1024,7 @@ company-c-headers instead if irony"
   (use-package notmuch-address :ensure notmuch
 	:init
 	(setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
-	(setq notmuch-init-file "~/almacen/mail/notmuch-config")
+	;;(setq notmuch-init-file "~/almacen/mail/notmuch-config")
 	:config
 	(setq notmuch-address-command "~/gits/notmuch-addrlookup-c/notmuch-addrlookup"))
 
@@ -1234,7 +1226,6 @@ company-c-headers instead if irony"
 
 (use-package ivy :ensure t
   :diminish
-  :demand
   :bind (("C-c i r" . ivy-resume)
 		 :map ivy-minibuffer-map
 		 ("TAB" . ivy-partial)
@@ -1243,14 +1234,13 @@ company-c-headers instead if irony"
 
   ;;(set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
   (set-face-attribute 'ivy-current-match nil
-					  :background mybrightblack :foreground mygreen :weight 'ultrabold)
+  					  :background (cdr (assoc 'brightblack my/colors)) :foreground nil :weight 'ultrabold)
   (set-face-attribute 'ivy-minibuffer-match-face-1 nil ;; Espacio entre matches
-					  :inherit nil :background mybrightblack)
+  					  :inherit nil :background (cdr (assoc 'blue my/colors)))
   (set-face-attribute 'ivy-minibuffer-match-face-2 nil ;; primer match
-					  :inherit nil :background mybrightblack)
+  					  :inherit nil :background (cdr (assoc 'blue my/colors)))
   (set-face-attribute 'ivy-minibuffer-match-face-3 nil ;; segundo match
-					  :inherit nil :background mybrightblack)
-
+  					  :inherit nil :background (cdr (assoc 'blue my/colors)))
 
   (setq ivy-use-virtual-buffers t
 		ivy-count-format "(%d/%d) "
@@ -1264,17 +1254,13 @@ company-c-headers instead if irony"
 
   (use-package ivy-rich :ensure t
 	:config
-	(ivy-rich-mode 1))
+	(ivy-rich-mode 1)))
 
-  (use-package swiper :ensure t
-	:bind (("C-s" . swiper)
-		   ("C-r" . swiper)
-		   :map minibuffer-local-map ("C-r" . counsel-minibuffer-history)
-		   :map read-expression-map ("C-r" . counsel-expression-history))
-	;;:config
-	;; (set-face-attribute 'swiper-line-face nil :inherit nil
-	;;					:background mybrightblack :weight 'bold)
-	))
+(use-package swiper :ensure t
+  :bind (("C-s" . swiper)
+		 ("C-r" . swiper)
+		 :map minibuffer-local-map ("C-r" . counsel-minibuffer-history)
+		 :map read-expression-map ("C-r" . counsel-minibuffer-history)))
 
 (use-package imenu-anywhere :ensure t
   :bind ("C-c i i" . ivy-imenu-anywhere)
@@ -1288,6 +1274,8 @@ company-c-headers instead if irony"
 
 (use-package counsel :ensure t
   :diminish
+  :bind (("M-x" . counsel-M-x)
+		 ("C-x C-f" . counsel-find-file))
   :bind (:map counsel-mode-map
 			  ("C-c c a" . counsel-ag)
 			  ("C-c c a" . 'counsel-ag)
@@ -1296,16 +1284,17 @@ company-c-headers instead if irony"
 			  ("C-c c t" . 'counsel-git)
 			  ("C-c c r" . 'counsel-git-grep)
 			  ("C-c c l" . 'counsel-locate))
+  :bind (:map help-map                                   ; help-map
+              ("f" . counsel-describe-function)
+              ("v" . counsel-describe-variable)
+              ("C-l" . counsel-info-lookup-symbol))
   :init
-  ;;(counsel-mode t)
   (which-key-add-key-based-replacements "C-c c" "counsel")
 
   :config
-  (use-package counsel-tramp :ensure t
-	:after exec-path-from-shell
-	:commands counsel-tramp
-	:config
-	(setq tramp-default-method "ssh"))
+  (counsel-mode t)
+
+  (use-package amx :ensure t)  ;; Complete history
 
   (use-package counsel-gtags :ensure t
 	:diminish
@@ -1328,8 +1317,7 @@ company-c-headers instead if irony"
   (use-package counsel-projectile :ensure t
 	:after projectile
 	:config
-	(counsel-projectile-mode t))
-  )
+	(counsel-projectile-mode t)))
 
 (use-package dumb-jump :ensure t
   :bind (("C-c j 4 n" . dumb-jump-go-other-window)
@@ -1341,9 +1329,8 @@ company-c-headers instead if irony"
 		 ("C-c j q" . dumb-jump-quick-look))
   :init
   (which-key-add-key-based-replacements "C-c j" "dumb-jump")
-  ;;:config
-  ;;(setq dumb-jump-selector 'ivy)
-  )
+  :config
+  (setq dumb-jump-selector 'ivy))
 
 (use-package hydra :ensure t
   :init
@@ -1352,8 +1339,9 @@ company-c-headers instead if irony"
   ;;(use-package ivy-hydra :ensure t)
   (global-set-key (kbd "C-c v")
 				  (defhydra hydra-vi (:pre (set-cursor-color "#e52b50")
-										   :post (set-cursor-color "#ffffff")
-										   :color amaranth)
+									  :post (set-cursor-color "#ffffff")
+									  :color red
+									  :foreign-keys warn)
 					"vi"
 					("/" search-forward)
 					("l" forward-char)
@@ -1374,6 +1362,7 @@ company-c-headers instead if irony"
 					("C-i" backward-paragraph "pPar")
 					("C-k" forward-paragraph "nPar")
 					("y" kill-ring-save "yank")
+					("v" set-mark-command "mark")
 					("ESC" nil)
 					("C-g" nil)))
   (hydra-set-property 'hydra-vi :verbosity 1))
@@ -1385,12 +1374,6 @@ company-c-headers instead if irony"
   (use-package ivy-historian :ensure t
 	:after ivy
 	:config (ivy-historian-mode t)))
-
-;;__________________________________________________________
-;; Complete history
-(use-package amx :ensure t
-  :bind (("M-x" . amx)
-		 ("M-X" . amx-major-mode-commands)))
 
 ;;__________________________________________________________
 ;; Magit
@@ -1523,8 +1506,8 @@ company-c-headers instead if irony"
 	"C-; w" "avy-copy")
 
   (use-package zzz-to-char :ensure t
-  :bind(("C-; k u" . zzz-up-to-char)
-		("C-; k z" . zzz-to-char)))
+	:bind(("C-; k u" . zzz-up-to-char)
+		  ("C-; k z" . zzz-to-char)))
 
   :config
   (setq avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
@@ -1536,7 +1519,7 @@ company-c-headers instead if irony"
 		avy-all-windows nil						 ;; Only current window
 		avy-case-fold-search nil
 		avy-highlight-first t)
-  (set-face-attribute 'avy-lead-face nil :background myblack :foreground myred))
+  (set-face-attribute 'avy-lead-face nil :background (cdr (assoc 'black my/colors)) :foreground (cdr (assoc 'red my/colors))))
 
 (use-package arduino-mode :ensure t
   :mode "\\.ino\\'"
