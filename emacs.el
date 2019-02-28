@@ -47,6 +47,7 @@
 (electric-indent-mode -1)
 (tooltip-mode -1)			;; Tool tip in the echo
 (flymake-mode -1)
+(electric-pair-mode t)
 
 (global-font-lock-mode t)	   ;; Use font-lock everywhere.
 (savehist-mode t)				 ;; Historial
@@ -55,6 +56,9 @@
 (delete-selection-mode t)		 ;; Sobreescribe seleccion al pegar
 (size-indication-mode t)
 (transient-mark-mode t)
+(prefer-coding-system 'utf-8)
+(which-function-mode t)
+(column-number-mode t)
 
 (setq-default vc-follow-symlinks t	;; Open links not open
 			  line-number-mode t		;; Display line numbers
@@ -88,9 +92,17 @@
 			  read-key-delay 0.005
 			  mouse-scroll-delay 0
 			  recenter-redisplay nil
+			  isearch-allow-scroll t
 			  )
 
+
+
 (put 'narrow-to-region 'disabled nil)		   ;; Enable narrow commands
+(put 'upcase-region 'disabled nil)
+;;__________________________________________________________
+;; Confirmation for to exit emacs
+(defalias 'yes-or-no-p 'y-or-n-p)	  ;; Reemplazar "yes" por "y" en el prompt
+(setq confirm-kill-emacs 'y-or-n-p)	  ;; Puede ser 'nil o 'y-or-n-p
 
 ;;__________________________________________________________
 ;; For using Melpa and Elpa
@@ -106,6 +118,9 @@
   (package-install 'use-package))
 
 (eval-and-compile
+  (setq use-package-always-ensure t
+		use-package-enable-imenu-support t)
+
   (require 'use-package)
 
   (if init-file-debug
@@ -116,7 +131,8 @@
 	(setq use-package-verbose nil
 		  use-package-expand-minimally t)))
 
-(setq use-package-always-ensure t)
+(use-package use-package-hydra)
+
 ;;__________________________________________________________
 ;; Benchmark-init
 (use-package benchmark-init
@@ -140,8 +156,7 @@
 
 (load custom-file)
 
-;;__________________________________________________________
-;; To put all my lisp scripts
+;; Personal Lisp dir
 (defvar mylisp-dir (expand-file-name "lisp" user-emacs-directory))
 
 (unless (file-exists-p mylisp-dir)
@@ -150,8 +165,12 @@
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
-;; System Lisp scripts
-(add-to-list 'load-path "/usr/share/emacs/site-lisp")
+;; System Lisp dir
+(defvar syslisp-dir "/usr/share/emacs/site-lisp")
+
+(when (file-exists-p syslisp-dir)
+  (add-to-list 'load-path syslisp-dir))
+
 ;;__________________________________________________________
 ;;	The Colors (I want to change this for a real theme, there are maaaaany)
 
@@ -179,7 +198,6 @@
 	   (set-foreground-color (cdr (assoc 'white my/colors)))
 
 	   (set-face-foreground 'font-lock-preprocessor-face (cdr (assoc 'magenta my/colors)))		;; Preprocessor
-
 	   (set-face-foreground 'font-lock-comment-face (cdr (assoc 'cyan my/colors)))				;; Comentarios
 	   (set-face-foreground 'font-lock-doc-face (cdr (assoc 'brightcyan my/colors)))					;; Documentation
 
@@ -237,7 +255,13 @@
 
 
 (defun my/term-mode-hook () "My term mode hook"
-	   (display-line-numbers-mode -1))
+	   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
+  	   (setq-local mouse-yank-at-point t)
+  	   (setq-local transient-mark-mode nil)
+	   (display-line-numbers-mode -1)
+  	   (auto-fill-mode -1)
+  	   (setq tab-width 8 )
+	   )
 
 (add-hook 'term-mode-hook 'my/term-mode-hook)
 
@@ -246,14 +270,14 @@
 
 (use-package minibuffer :ensure nil
   :config
-  (defun my-minibuffer-setup-hook ()
+  (defun my/minibuffer-setup-hook ()
     (setq gc-cons-threshold most-positive-fixnum))
 
-  (defun my-minibuffer-exit-hook ()
+  (defun my/minibuffer-exit-hook ()
     (setq gc-cons-threshold 800000))
 
-  (add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
-  (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook))
+  (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook))
 
 
 ;;__________________________________________________________
@@ -266,7 +290,9 @@
 (use-package gdb :ensure nil
   :commands gdb
   :init
-  (setq-default gdb-many-windows t))
+  (setq gdb-many-windows nil
+		gdb-show-main t)
+  )
 
 ;;__________________________________________________________
 ;; Two options for diffs
@@ -287,7 +313,13 @@
   :commands (vdiff-files
 			 vdiff-files3
 			 vdiff-buffers
-			 vdiff-buffers3))
+			 vdiff-buffers3)
+  :bind (:map vdiff-mode-map
+			  ("C-c d v" . vdiff-hydra/body))
+  :config
+  (setq vdiff-auto-refine t)
+  (define-key vdiff-mode-map (kbd "C-c") vdiff-mode-prefix-map)
+  )
 
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
@@ -296,15 +328,20 @@
 ;;__________________________________________________________
 ;; Mocp and multi-term music player
 (use-package multi-term
-  :commands (multi-term-dedicated-open
-			 multi-term))
-
-(use-package sane-term
-  :bind (("C-x t" . sane-term)
-		 ("C-x T" . sane-term-create))
-  :init
-  (setq sane-term-shell-command "/bin/bash")
+  :bind (("C-x 4 t" . multi-term-dedicated-open)
+		 ("C-x 5 t" . multi-term)
+		 ("C-x t t" . multi-term-dedicated-toggle)
+		 ("C-x t k" . multi-term-dedicated-close))
+  :config
+  (setq ;;multi-term-program "/bin/bash"
+		multi-term-dedicated-select-after-open-p t)
   )
+
+;;__________________________________________________________
+;; Better shell (for ssh)
+(use-package better-shell
+  :bind ("C-x t b" . better-shell-shell))
+
 
 ;;__________________________________________________________
 ;; which-key
@@ -320,7 +357,13 @@
 	"C-c s" "sidebars"
 	"C-x r" "rectangle-register"
 	"C-x n" "narrow"
-	"C-x a" "abrev"))
+	"C-x a" "abbrev"))
+
+(use-package fancy-narrow
+  :bind (("C-x n N" . fancy-narrow-to-region)
+		 ("C-x n W" . fancy-widen))
+  :commands (fancy-narrow-to-region fancy-widen))
+
 
 ;;__________________________________________________________
 ;; Status bar (mode line in emacs) two options to chose
@@ -357,6 +400,10 @@
 ;;            "%m: %b: (l:%2l,c:%2C) %I(%2p)"
 ;;            ))
 
+;; (use-package feebleline
+;;   :bind (("C-c l" . feebleline-mode))
+;;   :config
+;;   (window-divider-mode t))
 
 
 ;;__________________________________________________________
@@ -461,28 +508,6 @@
 
 (set-cursor-color "white")		  ;; Set cursor and mouse colours
 
-;;__________________________________________________________
-;; Multiple Cursors
-(global-unset-key (kbd "C-c <down-mouse-1>"))
-(use-package multiple-cursors  ;; Multiple cursors package
-  :bind (("C-c m m" . mc/edit-lines)
-		 ("C-c m r" . mc/mark-all-in-region)
-		 ("C-c m i" . mc/mark-more-like-this-extended)
-		 ("C-c m a" . mc/mark-all-like-this)
-		 ("C-c m w" . mc/mark-all-words-like-this)
-		 ("C-c m C-f" . mc/mark-next-like-this-word)
-		 ("C-c m n" . mc/mark-next-like-this)
-		 ("C-c m #" . mc/insert-numbers)
-		 ("C-c m l" . mc/insert-letters)
-		 ("C-c m p" . mc/mark-previous-like-this)
-		 ("C-c m C-a" . mc/edit-beginnings-of-lines)
-		 ("C-c m C-e" . mc/edit-ends-of-lines)
-		 ("C-c m <mouse-1>" . mc/add-cursor-on-click))
-  :init
-  (which-key-add-key-based-replacements "C-c m" "multiple-cursors")
-  :config
-  (setq mc/always-run-for-all t)
-  )
 
 ;;__________________________________________________________
 ;; My program's mode hooks
@@ -509,6 +534,7 @@
 ;;__________________________________________________________
 ;; 80 Column rules
 (use-package fill-column-indicator
+  :hook (prog-mode . fci-mode)
   :bind ("C-c h f" . fci-mode)
   :commands fci-mode
   :config
@@ -523,14 +549,10 @@
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
-(use-package hl-line-mode :ensure nil
+(use-package hl-line :ensure nil
   :diminish
-  :bind ("C-c h l" . column-enforce-mode)
-  :commands column-enforce-mode
-  :config
-  (column-enforce-mode t)
-  (setq column-enforce-comments nil)
-  (set-face-attribute 'column-enforce-face nil :inherit nil :background (cdr (assoc 'brightblack my/colors))))
+  :bind ("C-c h l" . hl-line-mode)
+  :commands hl-line-mode)
 
 
 ;;__________________________________________________________
@@ -548,6 +570,7 @@
 ;; Lineas de Indent
 (use-package highlight-indent-guides
   :diminish
+  :hook (prog-mode . highlight-indent-guides-mode)
   :bind ("C-c h i" . highlight-indent-guides-mode)
   :commands (highlight-indent-guides-mode)
   :config
@@ -590,6 +613,7 @@
 
 (use-package highlight-numbers
   :hook (prog-mode . highlight-numbers-mode)
+  :bind ("C-c h n" . highlight-numbers-mode)
   :config
   (set-face-attribute 'highlight-numbers-number nil :foreground (cdr (assoc 'red my/colors))))
 
@@ -654,28 +678,29 @@
 
 ;;__________________________________________________________
 ;; LSP try for a while
-(defun my/lsp-mode-hook () "My lsp mode hook."
-	   (use-package lsp-mode
-		 :hook ((c++-mode . lsp)
-				(c-mode . lsp))
-		 :init
-		 (setq lsp-auto-configure nil
-			   lsp-prefer-flymake nil)
 
-		 :config
-		 (require 'lsp-clients)
-		 ;; (use-package lsp-ui
-		 ;;   :after flycheck
-		 ;;   :config
-		 ;;   (lsp-ui-mode)
-		 ;;   (use-package lsp-ui-flycheck
-		 ;; 	:config
-		 ;; 	(lsp-ui-flycheck-enable t)))
+(use-package lsp-mode
+  :commands lsp
+  :config
+  (setq lsp-prefer-flymake nil
+		lsp-eldoc-hook nil)
+  (require 'lsp-clients)
 
-		 (use-package company-lsp
-		   :after company
-		   :config
-		   (add-to-list (make-local-variable 'company-backends) 'company-lsp))))
+  (use-package lsp-ui
+	:config
+	(require 'lsp-ui-flycheck)
+	(define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+	(define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+	(setq lsp-ui-sideline-enable nil
+          lsp-ui-doc-enable nil
+          lsp-ui-flycheck-enable t
+          lsp-ui-imenu-enable t
+		  lsp-ui-sideline-ignore-duplicate t))
+
+  (use-package company-lsp
+	:after company
+	:config
+	(add-to-list (make-local-variable 'company-backends) 'company-lsp)))
 
 ;;__________________________________________________________
 ;; Irony config (C completions)
@@ -725,12 +750,13 @@ company-c-headers instead if irony"
 	   (when (and (member major-mode '(c++-mode c-mode arduino-mode))
 				  buffer-file-name)
 
-		 (if (string-match-p tramp-file-name-regexp buffer-file-name)
+		 (when (string-match-p tramp-file-name-regexp buffer-file-name)
 		 	 (use-package company-c-headers ;; company-c-headers
 			   :after company
 			   :config
 			   (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
-		   (my/lsp-mode-hook)))
+		   ;;(my/lsp-mode-hook)
+		   ))
 
 	   (use-package preproc-font-lock ;; Preprocessor
 		 :config
@@ -739,7 +765,7 @@ company-c-headers instead if irony"
 							 :inherit 'font-lock-preprocessor-face))
 
 	   (c-set-offset 'cpp-macro 0 nil)
-	   (message "Loaded my/c-mode common"))
+	   (message "Loaded my/c-mode-common"))
 
 (add-hook 'c-mode-common-hook 'my/c-mode-common-hook)
 
@@ -870,6 +896,7 @@ company-c-headers instead if irony"
 ;; lua language
 (use-package lua-mode
   :mode "\\.lua\\'"
+  :interpreter "lua"
   :config
   (use-package company-lua
 	:after company
@@ -959,11 +986,6 @@ company-c-headers instead if irony"
   (winum-mode))
 
 ;;__________________________________________________________
-;; Confirmation for to exit emacs
-(defalias 'yes-or-no-p 'y-or-n-p)	  ;; Reemplazar "yes" por "y" en el prompt
-(setq confirm-kill-emacs 'y-or-n-p)	  ;; Puede ser 'nil o 'y-or-n-p
-
-;;__________________________________________________________
 ;; Lines enabling gnuplot-mode
 (use-package gnuplot-mode
   :mode ("\\.gp\\'" "\\.gpl\\'" "\\.plt\\'"))
@@ -1035,10 +1057,11 @@ company-c-headers instead if irony"
   ;; 	:config
   ;; 	(flycheck-popup-tip-mode))
 
-  (use-package flycheck-color-mode-line
-	:after flycheck
-	:config
-	(flycheck-color-mode-line-mode)))
+  ;; (use-package flycheck-color-mode-line
+  ;; 	:after flycheck
+  ;; 	:config
+  ;; 	(flycheck-color-mode-line-mode))
+  )
 
 ;;__________________________________________________________
 ;; Function arguments show
@@ -1348,10 +1371,13 @@ company-c-headers instead if irony"
 
 (use-package swiper
   :defer t
-  :bind (("C-s" . swiper)
-		 ("C-r" . swiper)
-		 :map minibuffer-local-map ("C-r" . counsel-minibuffer-history)
-		 :map read-expression-map ("C-r" . counsel-minibuffer-history))
+  :bind (("C-c w" . swiper)
+		 :map swiper-map
+		 ("C-y" . yank)
+         ("M-%" . swiper-query-replace)
+         ("C-;" . swiper-avy)
+         ("C-c m" . swiper-mc)
+		 :map isearch-mode-map ("C-o" . swiper-from-isearch))
   :config
   (set-face-attribute 'swiper-line-face nil ;; segundo match
   					  :background (cdr (assoc 'brightblack my/colors)) :weight 'ultrabold)
@@ -1360,8 +1386,7 @@ company-c-headers instead if irony"
   (set-face-attribute 'swiper-match-face-2 nil ;; primer match
   					  :inherit nil :background (cdr (assoc 'blue my/colors)) :foreground nil :weight 'ultrabold)
   (set-face-attribute 'swiper-match-face-3 nil ;; segundo match
-  					  :inherit nil :background (cdr (assoc 'blue my/colors)) :foreground nil :weight 'ultrabold)
-  )
+  					  :inherit nil :background (cdr (assoc 'blue my/colors)) :foreground nil :weight 'ultrabold))
 
 (use-package imenu-anywhere
   :bind ("C-c i i" . ivy-imenu-anywhere)
@@ -1446,11 +1471,11 @@ company-c-headers instead if irony"
 										   :color red
 										   :foreign-keys warn)
 					"vi"
-					("/" search-forward)
-					("l" forward-char)
-					("k" next-line)
-					("j" backward-char)
-					("i" previous-line)
+					("/" search-forward "search")
+					("l" forward-char "->")
+					("k" next-line "down")
+					("j" backward-char "<-")
+					("i" previous-line "up")
 					("m" set-mark-command "mark")
 					("a" move-beginning-of-line "beg")
 					("e" move-end-of-line "end")
@@ -1468,6 +1493,8 @@ company-c-headers instead if irony"
 					("v" set-mark-command "mark")
 					("ESC" nil)
 					("C-g" nil)))
+
+
   (hydra-set-property 'hydra-vi :verbosity 1))
 
 ;;__________________________________________________________
@@ -1482,6 +1509,15 @@ company-c-headers instead if irony"
 ;; Magit
 (use-package magit
   :commands magit-status)
+
+(use-package gitattributes-mode
+  :defer 5)
+
+(use-package gitconfig-mode
+  :defer 5)
+
+(use-package gitignore-mode
+  :defer 5)
 
 ;;______________________________________
 ;; Git commit
@@ -1520,10 +1556,6 @@ company-c-headers instead if irony"
 				(read-shell-command "Shell command on buffer: " nil nil)))
   (shell-command-on-region (point-min) (point-max) command t t))
 
-;;__________________________________________________________
-;; Better shell (for ssh)
-(use-package better-shell
-  :bind ("C-c C-b" . better-shell-shell))
 ;;__________________________________________________________
 ;;; Google calendar (view only)
 
@@ -1583,34 +1615,31 @@ company-c-headers instead if irony"
 
 (use-package avy
   :bind (("C-; r" . avy-resume)
-		 ("C-; c" . avy-goto-char)
-		 ("C-; i" . avy-goto-char-in-line)
+		 ("C-; C-;" . avy-goto-char-in-line)
+		 ("C-; 1" . avy-goto-char)
 		 ("C-; 2" . avy-goto-char-2)
-		 ("C-; t" . avy-goto-char-timer)
-		 ("C-; l" . avy-goto-line)
-		 ("C-; ;" . avy-goto-word-or-subword-1)
-		 ("C-; m r" . avy-move-region)
-		 ("C-; m l" . avy-move-line)
-		 ("C-; k r" . avy-kill-region)
-		 ("C-; k l" . avy-kill-whole-line)
-		 ("C-; y r" . avy-kill-ring-save-region)
-		 ("C-; y l" . avy-kill-ring-save-whole-line)
-		 ("C-; w r" . avy-copy-region)
-		 ("C-; w l" . avy-copy-line)
+		 ("C-; c" . avy-goto-char-timer)
+		 ("C-; C-l" . avy-goto-line)
+		 ("C-; w" . avy-goto-word-or-subword-1)
+		 ("C-; W" . avy-goto-word-0)
+		 ("C-; C-w" . avy-move-region)
+		 ("C-; C-k" . avy-kill-region)
+		 ("C-; M-w" . avy-kill-ring-save-region)
+		 ("C-; i" . avy-copy-region)
 		 ("C-; p" . avy-prev)
 		 ("C-; n" . avy-next)
 		 ("C-; C-x" . avy-pop-mark)
-		 ("C-; e" . avy-goto-end-of-line))
+		 ("C-; C-e" . avy-goto-end-of-line)
+		 ("C-; C-n" . avy-goto-line-below)
+		 ("C-; C-p" . avy-goto-line-above)
+		 :map isearch-mode-map
+		 ("C-;" . avy-isearch)
+		 )
+  :commands swiper-avy
   :init
-  (which-key-add-key-based-replacements
-	"C-; m" "avy-move"
-	"C-; k" "avy-kill"
-	"C-; y" "avy-paste"
-	"C-; w" "avy-copy")
-
-  (use-package zzz-to-char
-  	:bind(("C-; k u" . zzz-up-to-char)
-  		  ("C-; k z" . zzz-to-char)))
+  (use-package avy-zap
+	:bind (("M-Z". avy-zap-up-to-char-dwim)
+		   ("M-z". avy-zap-to-char-dwim)))
 
   :config
   (setq avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
@@ -1618,11 +1647,14 @@ company-c-headers instead if irony"
 						(number-sequence ?1 ?9)
 						'(?0))
 		avy-style 'at							 ;; Propose only 1 letter
-		avy-background t
+		;;avy-background t
 		avy-all-windows nil						 ;; Only current window
-		avy-case-fold-search nil
-		avy-highlight-first t)
-  (set-face-attribute 'avy-lead-face nil :background (cdr (assoc 'black my/colors)) :foreground (cdr (assoc 'red my/colors))))
+		avy-case-fold-search nil                 ;; ignore case
+		avy-highlight-first t
+		avy-timeout-seconds 0.5)
+  (set-face-attribute 'avy-lead-face nil
+					  :background (cdr (assoc 'blue my/colors))
+					  :foreground (cdr (assoc 'red my/colors))))
 
 (use-package arduino-mode
   :mode "\\.ino\\'"
@@ -1636,26 +1668,60 @@ company-c-headers instead if irony"
 	:config
 	(flycheck-arduino-setup)))
 
+
+
+;;__________________________________________________________
+;; Multiple Cursors
+(global-unset-key (kbd "C-c <down-mouse-1>"))
+(use-package multiple-cursors  ;; Multiple cursors package
+  :bind (("C-c m m" . mc/edit-lines)
+		 ("C-c m r" . mc/mark-all-in-region)
+		 ("C-c m i" . mc/mark-more-like-this-extended)
+		 ("C-c m a" . mc/mark-all-like-this)
+		 ("C-c m w" . mc/mark-all-words-like-this)
+		 ("C-c m M-b" . mc/mark-previous-word-like-this)
+		 ("C-c m M-f" . mc/mark-next-like-this-word)
+		 ("C-c m p" . mc/mark-previous-like-this)
+		 ("C-c m n" . mc/mark-next-like-this)
+		 ("C-c m #" . mc/insert-numbers)
+		 ("C-c m l" . mc/insert-letters)
+		 ("C-c m C-a" . mc/edit-beginnings-of-lines)
+		 ("C-c m C-e" . mc/edit-ends-of-lines)
+		 ("C-c m M-p" . mc/mark-pop))
+  :init
+  (which-key-add-key-based-replacements "C-c m" "multiple-cursors")
+  :init
+  (setq mc/always-run-for-all t
+		mc/always-repeat-command t
+		mc/edit-lines-empty-lines 'ignore))
+
+
+;;__________________________________________________________
+;; Expand region
 (use-package expand-region
-  :bind (("C-c e e" . er/expand-region)
-		 ("C-c e w" . er/mark-word)
-		 ("C-c e c" . er/mark-comment)
-		 ("C-c e s" . er/c-mark-statement)
-		 ("C-c e i" . er/mark-inside-pairs)
-		 ("C-c e o" . er/mark-outside-pairs)
-		 ("C-c e t p" . er/mark-text-paragraph)
-		 ("C-c e t s" . er/mark-text-sentence)
-		 ("C-c e f" . er/mark-defun)
-		 ("C-c e m" . er/mark-email)
-		 ("C-c e u" . er/mark-url)
-		 ("C-c e \"" . er/mark-outside-quotes)
-		 ("C-c e '" . er/mark-inside-quotes)
-		 ("C-c e -" . er/contract-region)
-		 )
+  :after hydra
+  :bind ("C-c e" . hydra-er/body)
+  :hydra (hydra-er (:color red)
+				   "Expand region"
+				   ("e" er/expand-region "expand")
+				   ("w" er/mark-word "word")
+				   ("c" er/mark-comment "comment")
+				   ("S" er/c-mark-statement "c-stat")
+				   ("i" er/mark-inside-pairs "ipar")
+				   ("o" er/mark-outside-pairs "opar")
+				   ("p" er/mark-text-paragraph "parag")
+				   ("s" er/mark-text-sentence "sentence")
+				   ("f" er/mark-defun "funct")
+				   ("m" er/mark-email "mail")
+				   ("u" er/mark-url "url")
+				   ("\"" er/mark-outside-quotes "out \"")
+				   ("'" er/mark-inside-quotes "in \"")
+				   ("-" er/contract-region "contract"))
   :init
   (which-key-add-key-based-replacements "C-c e" "expand-region"))
 
-
+;;__________________________________________________________
+;; Web mode
 (use-package web-mode
   :mode ("\\.html\\'" "\\.php\\'")
   :init
@@ -1707,5 +1773,59 @@ company-c-headers instead if irony"
   ;; 						 "k" 'kill-buffer))
   )
 
+;; (use-package phi-search)
+;; (global-set-key (kbd "C-s") 'phi-search)
+;; (global-set-key (kbd "C-r") 'phi-search-backward)
+
+;; (defmacro def-pairs (pairs) "Define my pairs."
+
+;;   `(progn
+;;      ,@(loop for (key . val) in pairs
+;;              collect
+;;              `(defun ,(read (concat
+;;                              "my/insert-pairs-"
+;;                              (prin1-to-string key)
+;;                              "s"))
+;;                   (&optional arg)
+;;                 (interactive "p")
+;;                 (insert-pair arg ?\,key ?\,val)))))
+
+;; (def-pairs ( "(" . ")")
+;;             ("[" . "]")
+;;             ("{" . "}")
+;;             ("'" . "'")
+;;             ("\"" . "\"")
+;;             ("`" . "`"))
+
+;; (use-package wrap-region
+;;   :config
+;;   (wrap-region-global-mode))
+
+;; (use-package embrace
+;;   :bind ("C-c p" . embrace-commander))
+
+;; (defun insert-bra (&optional arg) "Insert brackets with (ARG)."
+;;   (interactive "P")
+;;   (insert-pair arg ?\[ ?\]))
+
+;; (defun insert-key (&optional arg) "Insert keys with (ARG)."
+;;   (interactive "P")
+;;   (insert-pair arg ?\{ ?\}))
+
+;; (defun insert-single (&optional arg) "Insert single quotes with (ARG)."
+;;   (interactive "P")
+;;   (insert-pair arg ?\' ?\'))
+
+;; (defun insert-quot (&optional arg) "Insert double quote with (ARG)."
+;;   (interactive "P")
+;;   (insert-pair arg ?\" ?\"))
+
+;; (global-set-key (kbd "C-c p (") 'insert-parentheses)
+;; (global-set-key (kbd "C-c p [") 'insert-bra)
+;; (global-set-key (kbd "C-c p {") 'insert-key)
+;; (global-set-key (kbd "C-c p '") 'insert-single)
+;; (global-set-key (kbd "C-c p \"") 'insert-quot)
+
 (provide 'init)
 ;;; init.el ends here
+
