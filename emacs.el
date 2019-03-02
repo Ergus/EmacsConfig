@@ -35,12 +35,6 @@
 ;;__________________________________________________________
 ;; Internal options
 
-(setq show-paren-delay 0
-	  blink-paren-function nil
-	  blink-matching-paren nil
-	  blink-matching-delay 0.05)
-(show-paren-mode t)				 ;; Highlight couple parentesis
-
 (setq-default auto-revert-verbose nil)   ;; not show message when file changes
 (global-auto-revert-mode t)		 ;; Autoload files changed in disk
 
@@ -53,17 +47,15 @@
 (tooltip-mode -1)			;; Tool tip in the echo
 (flymake-mode -1)
 
-(electric-pair-mode t)
-(savehist-mode t)				 ;; Historial
-(auto-compression-mode t)		 ;; Uncompress on the fly:
+(savehist-mode t)				     ;; Historial
+(auto-compression-mode t)		     ;; Uncompress on the fly:
 (global-display-line-numbers-mode t) ;; line numbers on the left
-(delete-selection-mode t)		 ;; Sobreescribe seleccion al pegar
-(size-indication-mode t)
-(transient-mark-mode t)
-(prefer-coding-system 'utf-8)
-(which-function-mode t)
-(column-number-mode t)
-(electric-indent-mode t)
+(size-indication-mode t)             ;; Muestra el el tamanno en modeline
+(delete-selection-mode t)		     ;; Sobreescribe seleccion al pegar
+(transient-mark-mode t)              ;; Muestra la seleccion
+(prefer-coding-system 'utf-8)        ;; Encoding
+(which-function-mode t)              ;; Muestra funcion en modeline
+(column-number-mode t)               ;; Numero de la columna
 
 (setq-default vc-follow-symlinks t	;; Open links not open
 			  line-number-mode t		;; Display line numbers
@@ -240,6 +232,15 @@
 ;;__________________________________________________________
 ;;__________________________________________________________
 
+(use-package paren :ensure nil
+  :init
+  (setq show-paren-delay 0
+		blink-matching-delay 0.05)
+  (show-paren-mode t)     ;; Highlight couple parentesis
+  (set-face-attribute 'show-paren-match nil :inherit nil
+					  :background (cdr (assoc 'brightblack my/colors)))  ;; resalta la linea actual
+  )
+
 ;;__________________________________________________________
 ;; ssh
 (use-package tramp :ensure nil
@@ -285,20 +286,14 @@
   (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
   (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook))
 
-
 ;;__________________________________________________________
 ;; cua rectangles
-
-;; (use-package cua-base
-;;   :config
-;;   (cua-selection-mode t))			 ;; Better rectangle selection
 
 (use-package gdb :ensure nil
   :commands gdb
   :init
   (setq gdb-many-windows nil
-		gdb-show-main t)
-  )
+		gdb-show-main t))
 
 ;;__________________________________________________________
 ;; Two options for diffs
@@ -324,8 +319,7 @@
 			  ("C-c d v" . vdiff-hydra/body))
   :config
   (setq vdiff-auto-refine t)
-  (define-key vdiff-mode-map (kbd "C-c") vdiff-mode-prefix-map)
-  )
+  (define-key vdiff-mode-map (kbd "C-c") vdiff-mode-prefix-map))
 
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
@@ -370,47 +364,6 @@
 
 
 ;;__________________________________________________________
-;; Status bar (mode line in emacs) two options to chose
-
-;; (use-package spaceline
-;; 	 :demand t
-;; 	 ;;:init
-;; 	 ;;(require 'spaceline-config)
-
-;; 	 :config
-;; 	 (if (display-graphic-p)
-;; 	  (setq powerline-default-separator 'arrow-fade)
-;; 	(setq powerline-default-separator 'utf-8))
-
-
-;; 	 (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
-;; 	 ;;(setq spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
-;; 	 (spaceline-emacs-theme)
-
-;; 	 (set-face-attribute 'mode-line nil :background myblue :foreground mywhite))
-
-;; (use-package smart-mode-line
-;;   :config
-;;   (use-package smart-mode-line-powerline-theme
-;; 	:config
-;; 	(setq sml/theme 'powerline)
-;; 	)
-;;   (setq sml/no-confirm-load-theme t
-;; 		sml/name-width 40)
-;;   (sml/setup))
-
-;; (setq-default mode-line-format
-;;           (list
-;;            "%m: %b: (l:%2l,c:%2C) %I(%2p)"
-;;            ))
-
-;; (use-package feebleline
-;;   :bind (("C-c l" . feebleline-mode))
-;;   :config
-;;   (window-divider-mode t))
-
-
-;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
 
 (use-package xclip
@@ -436,7 +389,6 @@
 
 (set-cursor-color "white")		  ;; Set cursor and mouse colours
 
-
 ;;__________________________________________________________
 ;; My program's mode hooks
 
@@ -457,19 +409,20 @@
 ;;   (clean-aindent-mode t)
 ;;   (setq clean-aindent-is-simple-indent t))
 
-;; (defun my/prog-mode-hook () "Some hooks only for prog mode."
-;; 	   ;;(electric-pair-mode t)			  ;; Autoannadir parentesis
-;; 	   (which-function-mode t)			  ;; Shows the function in spaceline
-;; 	   )
+(defun my/prog-mode-hook () "Some hooks only for prog mode."
+	   (electric-indent-mode t)
+	   (electric-pair-mode t)			  ;; Autoannadir parentesis
+	   (which-function-mode t)			  ;; Shows the function in spaceline
+	   (define-key global-map (kbd "RET") 'newline-and-indent)
+	   )
 
-;; (add-hook 'prog-mode-hook 'my/prog-mode-hook)
+(add-hook 'prog-mode-hook 'my/prog-mode-hook)
 
 ;;__________________________________________________________
 ;; 80 Column rules
 (use-package fill-column-indicator
   :hook (prog-mode . fci-mode)
   :bind ("C-c h f" . fci-mode)
-  :commands fci-mode
   :config
   (setq fci-rule-color "#7f7f7f7f7f7f"
 		fci-rule-character ?\u2502))
@@ -484,8 +437,7 @@
 ;; Mark column 80 when crossed
 (use-package hl-line :ensure nil
   :diminish
-  :bind ("C-c h l" . hl-line-mode)
-  :commands hl-line-mode)
+  :bind ("C-c h l" . hl-line-mode))
 
 
 ;;__________________________________________________________
@@ -493,33 +445,10 @@
 (use-package column-enforce-mode
   :diminish
   :bind ("C-c h c" . column-enforce-mode)
-  :commands column-enforce-mode
   :config
   (column-enforce-mode t)
   (setq column-enforce-comments nil)
   (set-face-attribute 'column-enforce-face nil :inherit nil :background (cdr (assoc 'brightblack my/colors))))
-
-;;__________________________________________________________
-;; Lineas de Indent
-;; (use-package highlight-indent-guides
-;;   :diminish
-;;   :hook (prog-mode . highlight-indent-guides-mode)
-;;   :bind ("C-c h i" . highlight-indent-guides-mode)
-;;   :commands (highlight-indent-guides-mode)
-;;   :config
-;;   (setq highlight-indent-guides-auto-enabled nil
-;; 		highlight-indent-guides-method 'character)
-;;   (set-face-attribute 'highlight-indent-guides-character-face nil :foreground "#242424"))
-
-;;__________________________________________________________
-;; Resalta parentesis entorno al cursor
-;; (use-package highlight-parentheses
-;;	 :diminish
-;;	 :hook (prog-mode . highlight-parentheses-mode)
-;;	 :config
-;;	 (set-face-attribute 'hl-paren-face nil :weight 'bold)
-;;	 (setq hl-paren-delay 0.05
-;;		hl-paren-colors	'("#00ff00" "#00ffff" "#ff0000" "#cd0000")))
 
 ;;__________________________________________________________
 ;; Resalta scopes entorno al cursor
@@ -582,32 +511,33 @@
 
 ;;__________________________________________________________
 ;; Indent with tabs align with spaces
-;; (use-package smart-tabs-mode
-;;   :hook c-mode-common
-;;   :config
-;;   (smart-tabs-insinuate 'c 'c++))
+(use-package smart-tabs-mode
+  :hook c-mode-common
+  :config
+  (smart-tabs-insinuate 'c 'c++))
 
 ;;__________________________________________________________
 ;; ycmd Mode
 
-;; (use-package ycmd
-;;	 :hook ((c-mode . ycmd-mode)
-;;		 (c++-mode . ycmd-mode))
-;;	 :config
-;;	 (setq ycmd-server-command '("python" "/home/ergo/gits/ycmd/ycmd"))
-;;	 (setq ycmd-global-config "/home/ergo/gits/ycmd/.ycm_extra_conf.py")
+(use-package ycmd
+  :disabled
+  :hook ((c-mode . ycmd-mode)
+		 (c++-mode . ycmd-mode))
+  :config
+  (setq ycmd-server-command '("python" "/home/ergo/gits/ycmd/ycmd"))
+  (setq ycmd-global-config "/home/ergo/gits/ycmd/.ycm_extra_conf.py")
 
-;;	 (use-package company-ycmd
-;;	:config
-;;	(company-ycmd-setup))
+  (use-package company-ycmd
+	:config
+	(company-ycmd-setup))
 
-;;	 (use-package flycheck-ycmd
-;;	:config
-;;	(flycheck-ycmd-setup))
+  (use-package flycheck-ycmd
+	:config
+	(flycheck-ycmd-setup))
 
-;;	 (use-package ycmd-eldoc
-;;	:config
-;;	(ycmd-eldoc-setup)))
+  (use-package ycmd-eldoc
+	:config
+	(ycmd-eldoc-setup)))
 
 ;;__________________________________________________________
 ;; LSP try for a while
@@ -679,6 +609,7 @@ company-c-headers instead if irony"
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
 
+	   (c-toggle-hungry-state t)
 	   (when (and (member major-mode '(c++-mode c-mode arduino-mode))
 				  buffer-file-name)
 
@@ -1183,7 +1114,8 @@ company-c-headers instead if irony"
 ;; Dired-mode settings (file manager)
 (use-package dired :ensure nil
   :commands dired
-  :bind (:map dired-mode-map
+  :bind (("C-x d" . dired)
+		 :map dired-mode-map
 			  ("RET" . dired-find-alternate-file)
 			  ("^" . (lambda () (interactive) (find-alternate-file ".."))))
   :config
@@ -1192,27 +1124,14 @@ company-c-headers instead if irony"
 		dired-dwim-target t)		 ;; Copy in split mode with p
   (put 'dired-find-alternate-file 'disabled nil)
 
-										;  ;; Open in the same buffer in dired mode
-										;  (define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
-										;  (define-key dired-mode-map (kbd "^") (lambda () (interactive)
-										;										 (find-alternate-file ".."))); was dired-up-directory
-  (use-package dired-x :ensure nil
-	:config
-	(setq dired-guess-shell-alist-user
-		  (list
-		   (list "\\.\\(ps\|ps.gz\|eps\|eps.gz\|pdf\|PDF\\)$" "evince")
-		   (list "\\.\\(rgb\|tiff\|tif\|xbm\|gif\|pgm\|ppm\|bmp\|tga\\)$" "eog ")
-		   (list "\\.\\(ppm\|gif\|png\|jpg\|JPG\\)$" "eog")
-		   (list "\\.\\(avi\|wav\|flv\|mov\|3gp\\)$" "vlc"))))
+  (require 'dired-x))
 
-  (use-package dired-sidebar
+(use-package dired-sidebar
 	:bind ("C-c s d" . dired-sidebar-toggle-sidebar)
-	:commands (dired-sidebar-toggle-sidebar)
 	:config
 	(setq ;;dired-sidebar-use-term-integration t
-	 ;;dired-sidebar-theme 'nerd
-	 dired-sidebar-subtree-line-prefix ".")))
-
+	 dired-sidebar-theme 'nerd
+	 dired-sidebar-subtree-line-prefix "."))
 ;;__________________________________________________________
 ;; projectile
 
@@ -1223,7 +1142,7 @@ company-c-headers instead if irony"
   (projectile-mode t)
 
   :custom
-  (projectile-completion-system 'ido)
+  (projectile-completion-system 'ivy)
   (projectile-file-exists-remote-cache-expire (* 10 60)))
 
 ;;__________________________________________________________
@@ -1432,14 +1351,6 @@ company-c-headers instead if irony"
   (hydra-set-property 'hydra-vi :verbosity 1))
 
 ;;__________________________________________________________
-;; Historical completion
-(use-package historian
-  :config
-  (use-package ivy-historian
-	:after ivy
-	:config (ivy-historian-mode t)))
-
-;;__________________________________________________________
 ;; Magit
 (use-package magit
   :commands magit-status)
@@ -1602,11 +1513,8 @@ company-c-headers instead if irony"
 	:config
 	(flycheck-arduino-setup)))
 
-
-
 ;;__________________________________________________________
 ;; Multiple Cursors
-
 
 (use-package iedit
   :bind ("C-." . iedit-mode)
@@ -1646,7 +1554,6 @@ company-c-headers instead if irony"
   (setq mc/always-run-for-all t
   		mc/always-repeat-command t
   		mc/edit-lines-empty-lines 'ignore))
-
 
 ;;__________________________________________________________
 ;; Expand region
@@ -1715,15 +1622,7 @@ company-c-headers instead if irony"
 
   (use-package evil-collection
 	:config
-	(evil-collection-init))
-
-  ;; (use-package evil-leader
-  ;; 	:config
-  ;; 	(global-evil-leader-mode)
-  ;; 	(evil-leader/set-key "e" 'find-file
-  ;; 						 "b" 'switch-to-buffer
-  ;; 						 "k" 'kill-buffer))
-  )
+	(evil-collection-init)))
 
 (provide 'init)
 ;;; init.el ends here
