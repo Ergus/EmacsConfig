@@ -35,21 +35,25 @@
 ;;__________________________________________________________
 ;; Internal options
 
-(setq show-paren-delay 0)
+(setq show-paren-delay 0
+	  blink-paren-function nil
+	  blink-matching-paren nil
+	  blink-matching-delay 0.05)
 (show-paren-mode t)				 ;; Highlight couple parentesis
 
 (setq-default auto-revert-verbose nil)   ;; not show message when file changes
 (global-auto-revert-mode t)		 ;; Autoload files changed in disk
 
+(setq-default font-lock-maximum-decoration t)
+(global-font-lock-mode t)	   ;; Use font-lock everywhere.
+
 (tool-bar-mode   -1)
 (menu-bar-mode   -1)
 (scroll-bar-mode -1)
-(electric-indent-mode -1)
 (tooltip-mode -1)			;; Tool tip in the echo
 (flymake-mode -1)
-(electric-pair-mode t)
 
-(global-font-lock-mode t)	   ;; Use font-lock everywhere.
+(electric-pair-mode t)
 (savehist-mode t)				 ;; Historial
 (auto-compression-mode t)		 ;; Uncompress on the fly:
 (global-display-line-numbers-mode t) ;; line numbers on the left
@@ -59,6 +63,7 @@
 (prefer-coding-system 'utf-8)
 (which-function-mode t)
 (column-number-mode t)
+(electric-indent-mode t)
 
 (setq-default vc-follow-symlinks t	;; Open links not open
 			  line-number-mode t		;; Display line numbers
@@ -69,34 +74,34 @@
 			  user-full-name "Jimmy Aguilar Mena"
 			  inhibit-startup-message t
 			  inhibit-startup-screen t
-			  tab-width 4				;; Tabulador a 4
-			  make-backup-files nil		;; Sin copias de seguridad
-			  auto-save-list-file-name	nil
-			  auto-save-default			nil
-			  create-lockfiles nil		;; No lock files, good for tramp
-			  visible-bell nil			;; Flash the screen (def)
-			  ;;scroll-preserve-screen-position nil ;; Cursor keeps screen position (default nil)
-			  ;;scroll-step 1			;; Scroll one by one (better conservatively)
+			  tab-width 4				       ;; Tabulador a 4
+			  indent-tabs-mode t               ;; Indent with tabs
+			  make-backup-files nil		       ;; Sin copias de seguridad
+			  auto-save-list-file-name nil
+			  auto-save-default	nil
+			  create-lockfiles nil			   ;; No lock files, good for tramp
+			  visible-bell nil			       ;; Flash the screen (def)
 			  scroll-conservatively 100000
-			  ;;scroll-margin 2			   ;; lines at top or button to scroll
+			  display-line-numbers-width 4	   ;; Minimum line number width
 			  fill-column 80				   ;; default is 70
 			  confirm-kill-processes	nil	   ;; no ask for confirm kill processes on exi
-			  font-lock-maximum-decoration t
 			  display-line-numbers-widen t	   ;; keep line numbers inside a narrow buffers
-			  display-line-numbers-width 4	   ;; Minimum line number width
+			  ;; scroll-step 1			       ;; Scroll one by one (better conservatively)
+			  ;; scroll-margin 2			   ;; lines at top or button to scroll			  visible-cursor nil
+			  ;; scroll-preserve-screen-position nil ;; Cursor keeps screen position (default nil)
 			  ;; split-width-threshold 160	   ;; Original value 240 ancho minimo limite para split vertical
-			  visible-cursor nil
-			  ;; split-width-threshold 180
 			  ;; kill-whole-line t
 			  ;; load-prefer-newer t
 			  read-key-delay 0.005
 			  mouse-scroll-delay 0
 			  recenter-redisplay nil
 			  isearch-allow-scroll t
+			  lazy-highlight-initial-delay 0
+			  search-nonincremental-instead nil
 			  )
 
 
-
+(put 'narrow-to-page 'disabled nil)
 (put 'narrow-to-region 'disabled nil)		   ;; Enable narrow commands
 (put 'upcase-region 'disabled nil)
 ;;__________________________________________________________
@@ -145,7 +150,9 @@
 (use-package paradox
   :commands (paradox-upgrade-packages paradox-list-packages)
   :config
-  (setq paradox-spinner-type 'progress-bar))
+  (setq paradox-spinner-type 'progress-bar
+		paradox-display-download-count t
+		paradox-display-star-count t))
 
 ;;__________________________________________________________
 ;; Config file not here to not track it
@@ -254,14 +261,13 @@
 		 ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
 
 
-(defun my/term-mode-hook () "My term mode hook"
+(defun my/term-mode-hook () "My term mode hook."
 	   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
   	   (setq-local mouse-yank-at-point t)
   	   (setq-local transient-mark-mode nil)
 	   (display-line-numbers-mode -1)
   	   (auto-fill-mode -1)
-  	   (setq tab-width 8 )
-	   )
+  	   (setq tab-width 8 ))
 
 (add-hook 'term-mode-hook 'my/term-mode-hook)
 
@@ -334,14 +340,12 @@
 		 ("C-x t k" . multi-term-dedicated-close))
   :config
   (setq ;;multi-term-program "/bin/bash"
-		multi-term-dedicated-select-after-open-p t)
-  )
+		multi-term-dedicated-select-after-open-p t))
 
 ;;__________________________________________________________
 ;; Better shell (for ssh)
 (use-package better-shell
   :bind ("C-x t b" . better-shell-shell))
-
 
 ;;__________________________________________________________
 ;; which-key
@@ -409,89 +413,13 @@
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
 
-(defun my/xclipboard () "Define my clipboard functions with xsel."
+(use-package xclip
+  :config
+  (xclip-mode 1))
 
-	   (defun my/xcopy (beg end &optional region) "Copies selection to x-clipboard and ."
-			  (interactive (list (mark) (point)
-								 (prefix-numeric-value current-prefix-arg)))
-
-			  (when (region-active-p)
-				(shell-command-on-region (region-beginning) (region-end) "xsel -i -b"))
-
-			  (copy-region-as-kill beg end region)
-
-			  (if (called-interactively-p 'interactive)
-				  (indicate-copied-region)))
-
-	   (defun my/xyank (&optional arg) "Pastes from x-clipboard."
-			  (interactive "*P")
-
-			  (setq yank-window-start (window-start))
-			  (setq this-command t)
-			  (push-mark)
-			  (insert-for-yank (shell-command-to-string "xsel -o -b"))
-			  (if (consp arg) ;; change mark and point if universal arg
-				  (goto-char (prog1 (mark t)
-							   (set-marker (mark-marker) (point) (current-buffer)))))
-			  (if (eq this-command t)
-				  (setq this-command 'my/xyank))
-			  nil)
-
-	   (defun my/xkill (beg end &optional region) "Copies selection to x-clipboard and ."
-			  (interactive (list (mark) (point)
-								 (prefix-numeric-value current-prefix-arg)))
-
-			  (when (use-region-p)
-				(shell-command-on-region (region-beginning) (region-end) "xsel -i -b"))
-
-			  (kill-region beg end region))
-
-	   (global-set-key (kbd "M-w") 'my/xcopy)
-	   (global-set-key (kbd "C-S-v") 'my/xpaste)
-	   (global-set-key (kbd "C-w") 'my/xkill)
-
-	   ;; =================== For Lorentz ======================
-	   (defun aberrant-copy () "Lorentz's aberrant copy."
-			  (interactive)
-			  (call-interactively 'mouse-set-region)
-			  (if (use-region-p)
-				  (progn
-					(shell-command-on-region
-					 (region-beginning) (region-end) "xsel -i -p")
-					(message "Copied region to PRIMARY!"))
-				(message "No region active; can't yank!")))
-
-	   (defun aberrant-paste () "Lorentz's aberrant paste."
-			  (interactive)
-			  (insert (shell-command-to-string "xsel -o -p")))
-
-	   (global-set-key [drag-mouse-1] 'aberrant-copy)
-	   (global-set-key [mouse-2] 'aberrant-paste)
-
-	   (use-package whole-line-or-region)
-
-	   (defun my/whole-line-or-region-xcopy (prefix)
-		 "Copy region or PREFIX whole lines."
-		 (interactive "p")
-		 (whole-line-or-region-call-with-region 'my/xcopy prefix t))
-
-	   (defun my/whole-line-or-region-xkill (prefix)
-		 "Copy region or PREFIX whole lines."
-		 (interactive "p")
-		 (whole-line-or-region-call-with-region 'my/xkill prefix t))
-
-	   (global-set-key (kbd "M-w") 'my/whole-line-or-region-xcopy)
-	   (global-set-key (kbd "C-w") 'my/whole-line-or-region-xkill)
-	   (global-set-key (kbd "C-y") 'whole-line-or-region-yank)
-	   )
-
-(unless (display-graphic-p)
-  (if (executable-find "xsel")
-	  (my/xclipboard)
-	(message "No xsel in your path, install it in your system!!!"))
-  ;;(define-key function-key-map "\eC-BackSpace"	 [C-backspace])
-  ;;(define-key function-key-map "\eC-S-BackSpace" [C-S-backspace])
-  )
+(use-package whole-line-or-region
+  :config
+  (whole-line-or-region-global-mode 1))
 
 ;;__________________________________________________________
 ;;	Seleccionar con el mouse
@@ -513,16 +441,21 @@
 ;; My program's mode hooks
 
 (use-package whitespace-mode :ensure nil
-  :hook prog-mode
-  :init
-  (setq whitespace-style '(face trailing)))
+  :preface
+  (defun my/whitespace-mode () "My whitespace mode."
+	(setq whitespace-style '(face tabs tab-mark trailing)
+		  whitespace-display-mappings	'((tab-mark 9 [?\u2502 9] [?\u2502 9])))
+	(custom-set-faces '(whitespace-tab ((t (:foreground "#444444")))))
+	(whitespace-mode 1))
+  :hook (prog-mode . my/whitespace-mode)
+  )
 
-(use-package clean-aindent-mode
-  :hook prog-mode
-  :bind ("RET" . newline-and-indent)
-  :config
-  (clean-aindent-mode t)
-  (setq clean-aindent-is-simple-indent t))
+;; (use-package clean-aindent-mode
+;;   :hook prog-mode
+;;   :bind ("RET" . newline-and-indent)
+;;   :config
+;;   (clean-aindent-mode t)
+;;   (setq clean-aindent-is-simple-indent t))
 
 ;; (defun my/prog-mode-hook () "Some hooks only for prog mode."
 ;; 	   ;;(electric-pair-mode t)			  ;; Autoannadir parentesis
@@ -568,15 +501,15 @@
 
 ;;__________________________________________________________
 ;; Lineas de Indent
-(use-package highlight-indent-guides
-  :diminish
-  :hook (prog-mode . highlight-indent-guides-mode)
-  :bind ("C-c h i" . highlight-indent-guides-mode)
-  :commands (highlight-indent-guides-mode)
-  :config
-  (setq highlight-indent-guides-auto-enabled nil
-		highlight-indent-guides-method 'character)
-  (set-face-attribute 'highlight-indent-guides-character-face nil :foreground "#242424"))
+;; (use-package highlight-indent-guides
+;;   :diminish
+;;   :hook (prog-mode . highlight-indent-guides-mode)
+;;   :bind ("C-c h i" . highlight-indent-guides-mode)
+;;   :commands (highlight-indent-guides-mode)
+;;   :config
+;;   (setq highlight-indent-guides-auto-enabled nil
+;; 		highlight-indent-guides-method 'character)
+;;   (set-face-attribute 'highlight-indent-guides-character-face nil :foreground "#242424"))
 
 ;;__________________________________________________________
 ;; Resalta parentesis entorno al cursor
@@ -634,14 +567,14 @@
 			  ("C-c f n" . flyspell-goto-next-error)
 			  )
   :config
-  (which-key-add-key-based-replacements "C-c f" "flyspell")
+  (which-key-add-key-based-replacements "C-c f" "flyspell"))
 
-  (use-package flyspell-correct-ido :ensure flyspell-correct
+(use-package flyspell-correct-ivy
 	:diminish
+	:after flyspell
 	:bind ("C-c f f" . flyspell-correct-wrapper)
 	:init
-	(setq flyspell-correct-interface 'flyspell-correct-ivy)))
-
+	(setq flyspell-correct-interface #'flyspell-correct-ivy))
 
 ;;__________________________________________________________
 ;; {c/c++}-mode
@@ -650,9 +583,9 @@
 ;;__________________________________________________________
 ;; Indent with tabs align with spaces
 ;; (use-package smart-tabs-mode
-;;	 :hook (prog-mode)
-;;	 :config
-;;	 (smart-tabs-insinuate 'c 'c++))
+;;   :hook c-mode-common
+;;   :config
+;;   (smart-tabs-insinuate 'c 'c++))
 
 ;;__________________________________________________________
 ;; ycmd Mode
@@ -742,8 +675,7 @@ company-c-headers instead if irony"
 			  '((java-mode . "java")
 				(awk-mode . "awk")
 				(other . "linux"))
-			  c-basic-offset 4		  ;; Default is set-from-style
-			  indent-tabs-mode t)
+			  c-basic-offset 4)
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
 
@@ -795,7 +727,9 @@ company-c-headers instead if irony"
 	   (c-set-offset 'inline-open 0)
 	   (c-set-offset 'inclass 'my/c++-lineup-inclass)
 
-	   (use-package modern-cpp-font-lock)
+	   (use-package modern-cpp-font-lock
+		 :config
+		 (modern-c++-font-lock-mode t))
 
 	   (message "Loaded my c++-mode"))
 
@@ -1050,18 +984,18 @@ company-c-headers instead if irony"
   :hook (prog-mode . flycheck-mode)
   :config
   (which-key-add-key-based-replacements "C-c !" "flycheck")
-  (setq-default flycheck-display-errors-delay 1)
+(setq-default flycheck-display-errors-delay 1))
 
-  ;; (use-package flycheck-popup-tip
-  ;; 	:after flycheck
-  ;; 	:config
-  ;; 	(flycheck-popup-tip-mode))
+;; (use-package flycheck-popup-tip
+;; 	:after flycheck
+;; 	:config
+;; 	(flycheck-popup-tip-mode))
 
-  ;; (use-package flycheck-color-mode-line
-  ;; 	:after flycheck
-  ;; 	:config
-  ;; 	(flycheck-color-mode-line-mode))
-  )
+;; (use-package flycheck-color-mode-line
+;; 	:after flycheck
+;; 	:config
+;; 	(flycheck-color-mode-line-mode))
+
 
 ;;__________________________________________________________
 ;; Function arguments show
@@ -1672,28 +1606,46 @@ company-c-headers instead if irony"
 
 ;;__________________________________________________________
 ;; Multiple Cursors
+
+
+(use-package iedit
+  :bind ("C-." . iedit-mode)
+  :config
+  (setq iedit-auto-recenter nil)
+  (define-key iedit-lib-keymap (kbd "C-c m '") 'iedit-toggle-unmatched-lines-visible))
+
 (global-unset-key (kbd "C-c <down-mouse-1>"))
 (use-package multiple-cursors  ;; Multiple cursors package
-  :bind (("C-c m m" . mc/edit-lines)
-		 ("C-c m r" . mc/mark-all-in-region)
-		 ("C-c m i" . mc/mark-more-like-this-extended)
+  :bind (("C-c m i" . hydra-mc/body)
+		 ("C-c m l" . mc/edit-lines)
 		 ("C-c m a" . mc/mark-all-like-this)
 		 ("C-c m w" . mc/mark-all-words-like-this)
-		 ("C-c m M-b" . mc/mark-previous-word-like-this)
-		 ("C-c m M-f" . mc/mark-next-like-this-word)
-		 ("C-c m p" . mc/mark-previous-like-this)
+
+		 ("C-c m r" . mc/mark-all-in-region)
+		 ("C-c m s" . mc/mark-all-in-region-regexp)
+		 ("C-c m e" . mc/mark-more-like-this-extended)
+
 		 ("C-c m n" . mc/mark-next-like-this)
+		 ("C-c m p" . mc/mark-previous-like-this)
+
+		 ("C-c m M-f" . mc/mark-next-like-this-word)
+		 ("C-c m M-b" . mc/mark-previous-word-like-this)
+
+		 ("C-c m M-p" . mc/mark-pop)
+
 		 ("C-c m #" . mc/insert-numbers)
-		 ("C-c m l" . mc/insert-letters)
+		 ("C-c m L" . mc/insert-letters)
+
 		 ("C-c m C-a" . mc/edit-beginnings-of-lines)
 		 ("C-c m C-e" . mc/edit-ends-of-lines)
-		 ("C-c m M-p" . mc/mark-pop))
+		 )
   :init
   (which-key-add-key-based-replacements "C-c m" "multiple-cursors")
-  :init
+
+  :config
   (setq mc/always-run-for-all t
-		mc/always-repeat-command t
-		mc/edit-lines-empty-lines 'ignore))
+  		mc/always-repeat-command t
+  		mc/edit-lines-empty-lines 'ignore))
 
 
 ;;__________________________________________________________
@@ -1701,7 +1653,7 @@ company-c-headers instead if irony"
 (use-package expand-region
   :after hydra
   :bind ("C-c e" . hydra-er/body)
-  :hydra (hydra-er (:color red)
+  :hydra (hydra-er (:color red :columns 4)
 				   "Expand region"
 				   ("e" er/expand-region "expand")
 				   ("w" er/mark-word "word")
@@ -1754,7 +1706,7 @@ company-c-headers instead if irony"
   :commands sudo-edit)
 
 (use-package evil
-  :commands evil-mode
+  :commands               evil-mode
   :init
   (setq evil-esc-delay 0.001
 		evil-want-keybinding nil)
@@ -1773,59 +1725,5 @@ company-c-headers instead if irony"
   ;; 						 "k" 'kill-buffer))
   )
 
-;; (use-package phi-search)
-;; (global-set-key (kbd "C-s") 'phi-search)
-;; (global-set-key (kbd "C-r") 'phi-search-backward)
-
-;; (defmacro def-pairs (pairs) "Define my pairs."
-
-;;   `(progn
-;;      ,@(loop for (key . val) in pairs
-;;              collect
-;;              `(defun ,(read (concat
-;;                              "my/insert-pairs-"
-;;                              (prin1-to-string key)
-;;                              "s"))
-;;                   (&optional arg)
-;;                 (interactive "p")
-;;                 (insert-pair arg ?\,key ?\,val)))))
-
-;; (def-pairs ( "(" . ")")
-;;             ("[" . "]")
-;;             ("{" . "}")
-;;             ("'" . "'")
-;;             ("\"" . "\"")
-;;             ("`" . "`"))
-
-;; (use-package wrap-region
-;;   :config
-;;   (wrap-region-global-mode))
-
-;; (use-package embrace
-;;   :bind ("C-c p" . embrace-commander))
-
-;; (defun insert-bra (&optional arg) "Insert brackets with (ARG)."
-;;   (interactive "P")
-;;   (insert-pair arg ?\[ ?\]))
-
-;; (defun insert-key (&optional arg) "Insert keys with (ARG)."
-;;   (interactive "P")
-;;   (insert-pair arg ?\{ ?\}))
-
-;; (defun insert-single (&optional arg) "Insert single quotes with (ARG)."
-;;   (interactive "P")
-;;   (insert-pair arg ?\' ?\'))
-
-;; (defun insert-quot (&optional arg) "Insert double quote with (ARG)."
-;;   (interactive "P")
-;;   (insert-pair arg ?\" ?\"))
-
-;; (global-set-key (kbd "C-c p (") 'insert-parentheses)
-;; (global-set-key (kbd "C-c p [") 'insert-bra)
-;; (global-set-key (kbd "C-c p {") 'insert-key)
-;; (global-set-key (kbd "C-c p '") 'insert-single)
-;; (global-set-key (kbd "C-c p \"") 'insert-quot)
-
 (provide 'init)
 ;;; init.el ends here
-
