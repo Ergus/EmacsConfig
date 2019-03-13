@@ -13,10 +13,12 @@
 ;;
 ;;; Code:
 
+
+
 ;; Package initialize occurs automatically, before `user-init-file' is
 ;; loaded, but after `early-init-file'. We handle package
 ;; initialization, so we must prevent Emacs from doing it early!
-(setq package-enable-at-startup nil)
+(setq-default package-enable-at-startup nil)
 
 ;;-------------------- Some tricks--------------------------
 

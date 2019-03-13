@@ -62,7 +62,7 @@
 			  column-number-mode t		;; Display column numbers
 			  tab-always-indent 't		;; make tab key do indent only
 			  initial-scratch-message ";; Welcome Jimmy!!"
-			  ring-bell-function 'ignore
+			  ring-bell-function #'ignore
 			  user-full-name "Jimmy Aguilar Mena"
 			  inhibit-startup-message t
 			  inhibit-startup-screen t
@@ -73,23 +73,35 @@
 			  auto-save-default	nil
 			  create-lockfiles nil			   ;; No lock files, good for tramp
 			  visible-bell nil			       ;; Flash the screen (def)
-			  scroll-conservatively 100000
+			  scroll-conservatively most-positive-fixnum
 			  display-line-numbers-width 4	   ;; Minimum line number width
 			  fill-column 80				   ;; default is 70
 			  confirm-kill-processes	nil	   ;; no ask for confirm kill processes on exi
 			  display-line-numbers-widen t	   ;; keep line numbers inside a narrow buffers
-			  ;; scroll-step 1			       ;; Scroll one by one (better conservatively)
-			  ;; scroll-margin 2			   ;; lines at top or button to scroll			  visible-cursor nil
-			  ;; scroll-preserve-screen-position nil ;; Cursor keeps screen position (default nil)
-			  ;; split-width-threshold 160	   ;; Original value 240 ancho minimo limite para split vertical
-			  ;; kill-whole-line t
-			  ;; load-prefer-newer t
 			  read-key-delay 0.005
 			  mouse-scroll-delay 0
 			  recenter-redisplay nil
 			  isearch-allow-scroll t
 			  lazy-highlight-initial-delay 0
 			  search-nonincremental-instead nil
+			  ;; scroll-step 1			       ;; Scroll one by one (better conservatively)
+			  ;; scroll-margin 2			   ;; lines at top or button to scroll			  visible-cursor nil
+			  ;; scroll-preserve-screen-position nil ;; Cursor keeps screen position (default nil)
+			  ;; split-width-threshold 160	   ;; Original value 240 ancho minimo limite para split vertical
+			  ;; kill-whole-line t
+			  ;; load-prefer-newer t
+			  mark-even-if-inactive            nil ;; no mark no region
+			  fast-but-imprecise-scrolling     t
+			  scroll-preserve-screen-position  t
+			  window-combination-resize        t
+			  scroll-margin                    1
+			  scroll-step                      1
+			  ;;show-trailing-whitespace t
+			  x-wait-for-event-timeout nil
+			  jit-lock-stealth-load                  60
+			  jit-lock-stealth-time                   4
+			  inhibit-default-init t
+			  term-suppress-hard-newline t
 			  )
 
 
@@ -226,10 +238,8 @@
 
 (my/colors)
 
-
 ;;__________________________________________________________
 ;;Packages options
-;;__________________________________________________________
 ;;__________________________________________________________
 
 (use-package paren :ensure nil
@@ -249,7 +259,8 @@
   (setq compilation-scroll-output 'first-error)
   (use-package tramp-term)
 
-  (setq tramp-default-method "ssh"
+  (setq tramp-default-method "rsync"
+		;;tramp-default-method "ssh"
 		;;tramp-change-syntax 'simplified
 		tramp-use-ssh-controlmaster-options nil
 		tramp-completion-reread-directory-timeout t
@@ -334,7 +345,7 @@
 		 ("C-x t k" . multi-term-dedicated-close))
   :config
   (setq ;;multi-term-program "/bin/bash"
-		multi-term-dedicated-select-after-open-p t))
+   multi-term-dedicated-select-after-open-p t))
 
 ;;__________________________________________________________
 ;; Better shell (for ssh)
@@ -395,10 +406,10 @@
 (use-package whitespace-mode :ensure nil
   :preface
   (defun my/whitespace-mode () "My whitespace mode."
-	(setq whitespace-style '(face tabs tab-mark trailing)
-		  whitespace-display-mappings	'((tab-mark 9 [?\u2502 9] [?\u2502 9])))
-	(custom-set-faces '(whitespace-tab ((t (:foreground "#444444")))))
-	(whitespace-mode 1))
+		 (setq whitespace-style '(face tabs tab-mark trailing)
+			   whitespace-display-mappings	'((tab-mark 9 [?\u2502 9] [?\u2502 9])))
+		 (custom-set-faces '(whitespace-tab ((t (:foreground "#444444")))))
+		 (whitespace-mode 1))
   :hook (prog-mode . my/whitespace-mode)
   )
 
@@ -429,6 +440,7 @@
 
 ;;__________________________________________________________
 ;; Undo tree
+
 (use-package undo-tree
   :diminish
   :init (global-undo-tree-mode))
@@ -499,11 +511,11 @@
   (which-key-add-key-based-replacements "C-c f" "flyspell"))
 
 (use-package flyspell-correct-ivy
-	:diminish
-	:after flyspell
-	:bind ("C-c f f" . flyspell-correct-wrapper)
-	:init
-	(setq flyspell-correct-interface #'flyspell-correct-ivy))
+  :diminish
+  :after flyspell
+  :bind ("C-c f f" . flyspell-correct-wrapper)
+  :init
+  (setq flyspell-correct-interface #'flyspell-correct-ivy))
 
 ;;__________________________________________________________
 ;; {c/c++}-mode
@@ -609,15 +621,15 @@ company-c-headers instead if irony"
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
 
-	   (c-toggle-hungry-state t)
+	   ;;(c-toggle-hungry-state t)
 	   (when (and (member major-mode '(c++-mode c-mode arduino-mode))
 				  buffer-file-name)
 
 		 (when (string-match-p tramp-file-name-regexp buffer-file-name)
-		 	 (use-package company-c-headers ;; company-c-headers
-			   :after company
-			   :config
-			   (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
+		   (use-package company-c-headers ;; company-c-headers
+			 :after company
+			 :config
+			 (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
 		   ;;(my/lsp-mode-hook)
 		   ))
 
@@ -892,7 +904,7 @@ company-c-headers instead if irony"
   (set-face-attribute 'company-scrollbar-bg nil	  ;; scroll bar face bg
 					  :background (cdr (assoc 'brightblack my/colors)))
   (set-face-attribute 'company-scrollbar-fg nil	  ;; scroll bar face fg
-   					  :background (cdr (assoc 'blue my/colors)))
+   				  :background (cdr (assoc 'blue my/colors)))
   )
 
 ;; (use-package yasnippet
@@ -915,7 +927,7 @@ company-c-headers instead if irony"
   :hook (prog-mode . flycheck-mode)
   :config
   (which-key-add-key-based-replacements "C-c !" "flycheck")
-(setq-default flycheck-display-errors-delay 1))
+  (setq-default flycheck-display-errors-delay 1))
 
 ;; (use-package flycheck-popup-tip
 ;; 	:after flycheck
@@ -931,10 +943,11 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; Function arguments show
 
-;; (use-package eldoc
-;;	 :diminish
-;;	 :config
-;;	 (eldoc-mode t))
+(use-package eldoc
+  :diminish
+  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . eldoc-mode)
+  :config
+  (eldoc-mode t))
 
 (use-package helpful
   :bind (("C-h e" . nil)
@@ -981,13 +994,6 @@ company-c-headers instead if irony"
   :defer 5
   :diminish)
 
-;; (use-package mail-mode
-;;   :mode ()
-;;   :config
-;;   (setq-local normal-auto-fill-function 'do-auto-fill)
-;;   (auto-fill-mode t)
-;;   (mail-abbrevs-setup))
-
 ;; Asocia buffers que empiecen con messaje mode
 (use-package message-mode :ensure nil
   :mode ("/neomut" "neomutt-Ergus-" "draft")
@@ -1019,16 +1025,11 @@ company-c-headers instead if irony"
   (setq LaTeX-babel-hyphen nil
 		TeX-auto-save t
 		TeX-parse-self t
-		;;LaTeX-biblatex-use-Biber t
-		;;TeX-save-query nil		;; don't prompt for saving the .tex file
-		;;TeX-newline-function 'reindent-then-newline-and-indent
-		;;TeX-source-correlate-method 'synctex
 		TeX-source-correlate-start-server t)
 
   (TeX-source-correlate-mode t)
   (setq-default TeX-master nil)
 
-  ;;(setq LaTeX-fill-break-at-separators (quote (\\\( \\\[ \\\])))
   (flyspell-mode 1)
   (visual-line-mode 1)
   (auto-fill-mode 1)
@@ -1116,22 +1117,22 @@ company-c-headers instead if irony"
   :commands dired
   :bind (("C-x d" . dired)
 		 :map dired-mode-map
-			  ("RET" . dired-find-alternate-file)
-			  ("^" . (lambda () (interactive) (find-alternate-file ".."))))
+		 ("RET" . dired-find-alternate-file)
+		 ("^" . (lambda () (interactive) (find-alternate-file ".."))))
   :config
   (setq dired-recursive-copies 'top	 ;; Always ask recursive copy
-		dired-recursive-deletes 'top ;; Always ask recursive delete
-		dired-dwim-target t)		 ;; Copy in split mode with p
+		dired-recursive-deletes 'top     ;; Always ask recursive delete
+		dired-dwim-target t)		     ;; Copy in split mode with p
   (put 'dired-find-alternate-file 'disabled nil)
 
   (require 'dired-x))
 
 (use-package dired-sidebar
-	:bind ("C-c s d" . dired-sidebar-toggle-sidebar)
-	:config
-	(setq ;;dired-sidebar-use-term-integration t
-	 dired-sidebar-theme 'nerd
-	 dired-sidebar-subtree-line-prefix "."))
+  :bind ("C-c s d" . dired-sidebar-toggle-sidebar)
+  :config
+  (setq ;;dired-sidebar-use-term-integration t
+   dired-sidebar-theme 'nerd
+   dired-sidebar-subtree-line-prefix "."))
 ;;__________________________________________________________
 ;; projectile
 
@@ -1170,7 +1171,6 @@ company-c-headers instead if irony"
 	(defun my/ibuffer-projectile-hook () "My ibuffer-projectile-hook."
 		   (ibuffer-projectile-set-filter-groups))
 	(add-hook 'ibuffer-hook 'my/ibuffer-projectile-hook)))
-
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
 (defun my/sidebar-toggle () "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
@@ -1213,6 +1213,7 @@ company-c-headers instead if irony"
 		ivy-display-style 'fancy
 		ivy-pulse-delay nil
 		ivy-height 10
+		ivy-format-function #'ivy-format-function-arrow
 		;;ivy-wrap t					 ;; cycle in minibuffer
 		enable-recursive-minibuffers t)
 
@@ -1284,10 +1285,8 @@ company-c-headers instead if irony"
 
 (use-package counsel-gtags
   :diminish
-  :hook (c-mode-common . counsel-gtags-mode)
-  :after counsel
+  :commands (counsel-gtags-mode)
   :bind (:map counsel-gtags-mode-map
-			  ("C-c g q" . counsel-gtags-find-definition)
 			  ("C-c g q" . counsel-gtags-find-definition)
 			  ("C-c g r" . counsel-gtags-find-reference)
 			  ("C-c g s" . counsel-gtags-find-symbol)
@@ -1322,7 +1321,8 @@ company-c-headers instead if irony"
 				  (defhydra hydra-vi (:pre (set-cursor-color "#e52b50")
 										   :post (set-cursor-color "#ffffff")
 										   :color red
-										   :foreign-keys warn)
+										   :foreign-keys warn
+										   :columns 8)
 					"vi"
 					("/" search-forward "search")
 					("l" forward-char "->")
@@ -1346,7 +1346,6 @@ company-c-headers instead if irony"
 					("v" set-mark-command "mark")
 					("ESC" nil)
 					("C-g" nil)))
-
 
   (hydra-set-property 'hydra-vi :verbosity 1))
 
@@ -1402,7 +1401,7 @@ company-c-headers instead if irony"
   (shell-command-on-region (point-min) (point-max) command t t))
 
 ;;__________________________________________________________
-;;; Google calendar (view only)
+;;; Org Mode (I don't use it)
 
 (use-package org
   :mode ("\\.org$" . org-mode)
@@ -1489,8 +1488,9 @@ company-c-headers instead if irony"
   :config
   (setq avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
 						(number-sequence ?A ?Z)
-						(number-sequence ?1 ?9)
-						'(?0))
+						;;(number-sequence ?1 ?9)
+						;;'(?0)
+						)
 		avy-style 'at							 ;; Propose only 1 letter
 		;;avy-background t
 		avy-all-windows nil						 ;; Only current window
@@ -1500,6 +1500,9 @@ company-c-headers instead if irony"
   (set-face-attribute 'avy-lead-face nil
 					  :background (cdr (assoc 'blue my/colors))
 					  :foreground (cdr (assoc 'red my/colors))))
+
+(use-package goto-line-preview
+  :bind ([remap goto-line] . goto-line-preview))
 
 (use-package arduino-mode
   :mode "\\.ino\\'"
@@ -1524,36 +1527,34 @@ company-c-headers instead if irony"
 
 (global-unset-key (kbd "C-c <down-mouse-1>"))
 (use-package multiple-cursors  ;; Multiple cursors package
-  :bind (("C-c m i" . hydra-mc/body)
-		 ("C-c m l" . mc/edit-lines)
-		 ("C-c m a" . mc/mark-all-like-this)
-		 ("C-c m w" . mc/mark-all-words-like-this)
+  :bind (("C-c m l" . mc/edit-lines)
+ 		 ("C-c m a" . mc/mark-all-like-this)
+ 		 ("C-c m w" . mc/mark-all-words-like-this)
 
-		 ("C-c m r" . mc/mark-all-in-region)
-		 ("C-c m s" . mc/mark-all-in-region-regexp)
-		 ("C-c m e" . mc/mark-more-like-this-extended)
+ 		 ("C-c m r" . mc/mark-all-in-region)
+ 		 ("C-c m s" . mc/mark-all-in-region-regexp)
+ 		 ("C-c m e" . mc/mark-more-like-this-extended)
 
-		 ("C-c m n" . mc/mark-next-like-this)
-		 ("C-c m p" . mc/mark-previous-like-this)
+ 		 ("C-c m n" . mc/mark-next-like-this)
+ 		 ("C-c m p" . mc/mark-previous-like-this)
 
-		 ("C-c m M-f" . mc/mark-next-like-this-word)
-		 ("C-c m M-b" . mc/mark-previous-word-like-this)
+ 		 ("C-c m M-f" . mc/mark-next-like-this-word)
+ 		 ("C-c m M-b" . mc/mark-previous-word-like-this)
 
-		 ("C-c m M-p" . mc/mark-pop)
+ 		 ("C-c m M-p" . mc/mark-pop)
 
-		 ("C-c m #" . mc/insert-numbers)
-		 ("C-c m L" . mc/insert-letters)
+ 		 ("C-c m #" . mc/insert-numbers)
+ 		 ("C-c m L" . mc/insert-letters)
 
-		 ("C-c m C-a" . mc/edit-beginnings-of-lines)
-		 ("C-c m C-e" . mc/edit-ends-of-lines)
-		 )
+ 		 ("C-c m C-a" . mc/edit-beginnings-of-lines)
+ 		 ("C-c m C-e" . mc/edit-ends-of-lines))
   :init
   (which-key-add-key-based-replacements "C-c m" "multiple-cursors")
 
   :config
   (setq mc/always-run-for-all t
-  		mc/always-repeat-command t
-  		mc/edit-lines-empty-lines 'ignore))
+   	mc/always-repeat-command t
+   	mc/edit-lines-empty-lines 'ignore))
 
 ;;__________________________________________________________
 ;; Expand region
