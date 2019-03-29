@@ -44,8 +44,8 @@
 (tool-bar-mode   -1)
 (menu-bar-mode   -1)
 (scroll-bar-mode -1)
-(tooltip-mode -1)			;; Tool tip in the echo
-(flymake-mode -1)
+(tooltip-mode    -1)			;; Tool tip in the echo
+(flymake-mode    -1)
 
 (savehist-mode t)				     ;; Historial
 (auto-compression-mode t)		     ;; Uncompress on the fly:
@@ -81,7 +81,6 @@
 			  read-key-delay 0.005
 			  mouse-scroll-delay 0
 			  recenter-redisplay nil
-			  isearch-allow-scroll t
 			  lazy-highlight-initial-delay 0
 			  search-nonincremental-instead nil
 			  ;; scroll-step 1			       ;; Scroll one by one (better conservatively)
@@ -96,14 +95,13 @@
 			  window-combination-resize        t
 			  scroll-margin                    1
 			  scroll-step                      1
-			  ;;show-trailing-whitespace t
 			  x-wait-for-event-timeout nil
-			  jit-lock-stealth-load                  60
-			  jit-lock-stealth-time                   4
-			  inhibit-default-init t
+			  jit-lock-stealth-load            60
+			  jit-lock-stealth-time            4
+			  inhibit-default-init t           ;; Avoid emacs default init
 			  term-suppress-hard-newline t
+			  echo-keystrokes 0.01             ;; muestra unfinished keybind in the echo area
 			  )
-
 
 (put 'narrow-to-page 'disabled nil)
 (put 'narrow-to-region 'disabled nil)		   ;; Enable narrow commands
@@ -157,6 +155,17 @@
   (setq paradox-spinner-type 'progress-bar
 		paradox-display-download-count t
 		paradox-display-star-count t))
+
+;;__________________________________________________________
+;; Isearch
+(use-package isearch :ensure nil
+  :defer t
+  :preface
+  (setq isearch-allow-scroll t)
+
+  :config
+  (setq isearch-lazy-count t))
+  ;;isearch-allow-scroll 'unlimited)
 
 ;;__________________________________________________________
 ;; Config file not here to not track it
@@ -256,7 +265,8 @@
 (use-package tramp :ensure nil
   :defer t
   :config
-  (setq compilation-scroll-output 'first-error)
+  (setq compilation-scroll-output 'first-error
+		tramp-auto-save-directory "~/.emacs.d/tramp-autosave-dir")
   (use-package tramp-term)
 
   (setq tramp-default-method "rsync"
@@ -264,7 +274,9 @@
 		;;tramp-change-syntax 'simplified
 		tramp-use-ssh-controlmaster-options nil
 		tramp-completion-reread-directory-timeout t
-		tramp-persistency-file-name "~/.emacs.d/tramp"))
+		tramp-persistency-file-name "~/.emacs.d/tramp")
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  )
 
 (use-package ssh-config-mode
   :mode (("/\\.ssh/config\\'" . ssh-config-mode)
@@ -332,6 +344,12 @@
   (setq vdiff-auto-refine t)
   (define-key vdiff-mode-map (kbd "C-c") vdiff-mode-prefix-map))
 
+(use-package man :ensure nil
+  :commands man
+  :config
+  (set-face-attribute 'Man-overstrike nil :inherit font-lock-type-face :bold t)
+  (set-face-attribute 'Man-underline nil :inherit font-lock-keyword-face :underline t))
+
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
 (use-package diminish)
@@ -358,13 +376,13 @@
   :defer 5
   :diminish
   :config
-  (setq which-key-separator ": "
-		which-key-idle-delay 0.8)
+  (setq which-key-separator ": ")
+		;which-key-idle-delay 2.0)
   (which-key-mode t)
   (which-key-add-key-based-replacements
 	"C-c h" "highlight"
 	"C-c s" "sidebars"
-	"C-x r" "rectangle-register"
+	"C-x r" "rectangle||register"
 	"C-x n" "narrow"
 	"C-x a" "abbrev"))
 
@@ -372,7 +390,6 @@
   :bind (("C-x n N" . fancy-narrow-to-region)
 		 ("C-x n W" . fancy-widen))
   :commands (fancy-narrow-to-region fancy-widen))
-
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
@@ -403,15 +420,15 @@
 ;;__________________________________________________________
 ;; My program's mode hooks
 
-(use-package whitespace-mode :ensure nil
-  :preface
-  (defun my/whitespace-mode () "My whitespace mode."
-		 (setq whitespace-style '(face tabs tab-mark trailing)
-			   whitespace-display-mappings	'((tab-mark 9 [?\u2502 9] [?\u2502 9])))
-		 (custom-set-faces '(whitespace-tab ((t (:foreground "#444444")))))
-		 (whitespace-mode 1))
-  :hook (prog-mode . my/whitespace-mode)
-  )
+;; (use-package whitespace-mode :ensure nil
+;;   :preface
+;;   (defun my/whitespace-mode () "My whitespace mode."
+;; 		 (setq whitespace-style '(face tabs tab-mark trailing)
+;; 			   whitespace-display-mappings	'((tab-mark 9 [?\u2502 9] [?\u2502 9])))
+;; 		 (custom-set-faces '(whitespace-tab ((t (:foreground "#444444")))))
+;; 		 (whitespace-mode 1))
+;;   :hook (prog-mode . my/whitespace-mode)
+;;   )
 
 ;; (use-package clean-aindent-mode
 ;;   :hook prog-mode
@@ -425,18 +442,21 @@
 	   (electric-pair-mode t)			  ;; Autoannadir parentesis
 	   (which-function-mode t)			  ;; Shows the function in spaceline
 	   (define-key global-map (kbd "RET") 'newline-and-indent)
+	   (global-display-fill-column-indicator-mode t)
+	   (set-face-attribute 'fill-column-face nil :foreground (cdr (assoc 'brightblack my/colors)))
+	   (setq show-trailing-whitespace t)
 	   )
 
 (add-hook 'prog-mode-hook 'my/prog-mode-hook)
 
 ;;__________________________________________________________
 ;; 80 Column rules
-(use-package fill-column-indicator
-  :hook (prog-mode . fci-mode)
-  :bind ("C-c h f" . fci-mode)
-  :config
-  (setq fci-rule-color "#7f7f7f7f7f7f"
-		fci-rule-character ?\u2502))
+;; (use-package fill-column-indicator
+;;   :hook (prog-mode . fci-mode)
+;;   :bind ("C-c h f" . fci-mode)
+;;   :config
+;;   (setq fci-rule-color "#7f7f7f7f7f7f"
+;; 		fci-rule-character ?\u2502))
 
 ;;__________________________________________________________
 ;; Undo tree
@@ -461,6 +481,16 @@
   (column-enforce-mode t)
   (setq column-enforce-comments nil)
   (set-face-attribute 'column-enforce-face nil :inherit nil :background (cdr (assoc 'brightblack my/colors))))
+
+(use-package highlight-indent-guides
+  :diminish
+  :hook (prog-mode . highlight-indent-guides-mode)
+  :bind ("C-c h i" . highlight-indent-guides-mode)
+  :commands (highlight-indent-guides-mode)
+  :config
+  (setq highlight-indent-guides-auto-enabled nil
+ 		highlight-indent-guides-method 'character)
+  (set-face-attribute 'highlight-indent-guides-character-face nil :foreground (cdr (assoc 'brightblack my/colors))))
 
 ;;__________________________________________________________
 ;; Resalta scopes entorno al cursor
@@ -862,6 +892,14 @@ company-c-headers instead if irony"
   :init
   (winum-mode))
 
+(use-package ace-window
+  :bind (("C-x o" . ace-window))
+  :custom
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :config
+  (setq aw-background nil
+		aw-ignore-current t))
+
 ;;__________________________________________________________
 ;; Lines enabling gnuplot-mode
 (use-package gnuplot-mode
@@ -958,7 +996,6 @@ company-c-headers instead if irony"
          ("C-h e k" . helpful-key)
          ("C-h e p" . helpful-at-point)
 		 ("C-h e v" . helpful-variable)))
-
 
 ;;__________________________________________________________
 ;; Chequeo de gramatica
@@ -1119,10 +1156,12 @@ company-c-headers instead if irony"
 		 :map dired-mode-map
 		 ("RET" . dired-find-alternate-file)
 		 ("^" . (lambda () (interactive) (find-alternate-file ".."))))
+  :custom
+  (dired-recursive-copies 'top)	     ;; Always ask recursive copy
+  (dired-recursive-deletes 'top)     ;; Always ask recursive delete
+  (dired-dwim-target t) 		     ;; Copy in split mode with p
+  (dired-auto-revert-buffer t)
   :config
-  (setq dired-recursive-copies 'top	 ;; Always ask recursive copy
-		dired-recursive-deletes 'top     ;; Always ask recursive delete
-		dired-dwim-target t)		     ;; Copy in split mode with p
   (put 'dired-find-alternate-file 'disabled nil)
 
   (require 'dired-x))
@@ -1137,8 +1176,9 @@ company-c-headers instead if irony"
 ;; projectile
 
 (use-package projectile
-  :bind (:map projectile-mode-map
-			  ("C-c p" . projectile-command-map))
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :init
+  (which-key-add-key-based-replacements "C-c p" "projectile")
   :config
   (projectile-mode t)
 
@@ -1151,13 +1191,12 @@ company-c-headers instead if irony"
 (use-package ibuffer :ensure nil
   :bind ("C-x C-b" . ibuffer)
   :init
-  (defalias 'list-buffers 'ibuffer) ; make ibuffer default
-  :config
-  (use-package ibuffer-sidebar
-	:bind ("C-c s b")
-	:commands (ibuffer-sidebar-toggle-sidebar))
+  (defalias 'list-buffers 'ibuffer)) ; make ibuffer default
 
-  (use-package ibuffer-tramp
+(use-package ibuffer-sidebar
+  :bind (("C-c s b" . ibuffer-sidebar-toggle-sidebar)))
+
+(use-package ibuffer-tramp
 	:hook tramp-mode
 	:config
 	(defun my/ibuffer-tramp-hook () "ibuffer tram hook"
@@ -1165,12 +1204,12 @@ company-c-headers instead if irony"
 		   (ibuffer-do-sort-by-alphabetic))
 	(add-hook 'ibuffer-hook 'my/ibuffer-tramp-hook))
 
-  (use-package ibuffer-projectile
+(use-package ibuffer-projectile
 	:after projectile
 	:config
 	(defun my/ibuffer-projectile-hook () "My ibuffer-projectile-hook."
 		   (ibuffer-projectile-set-filter-groups))
-	(add-hook 'ibuffer-hook 'my/ibuffer-projectile-hook)))
+	(add-hook 'ibuffer-hook 'my/ibuffer-projectile-hook))
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
 (defun my/sidebar-toggle () "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
@@ -1187,6 +1226,44 @@ company-c-headers instead if irony"
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
+
+(use-package hydra
+  :defer
+  :init
+  (which-key-add-key-based-replacements "C-c v" "hydra-vi")
+  :config
+  (global-set-key (kbd "C-c v")
+				  (defhydra hydra-vi (:pre (set-cursor-color "#e52b50")
+										   :post (set-cursor-color "#ffffff")
+										   :color red
+										   :foreign-keys warn
+										   :columns 8)
+					"vi"
+					("/" search-forward "search")
+					("l" forward-char "->")
+					("k" next-line "down")
+					("j" backward-char "<-")
+					("i" previous-line "up")
+					("m" set-mark-command "mark")
+					("a" move-beginning-of-line "beg")
+					("e" move-end-of-line "end")
+					("b" left-word "pWord")
+					("w" right-word "nWord")
+					("<" beginning-of-buffer "head")
+					(">" end-of-buffer "tail")
+					("^" back-to-indentation "indent")
+					("d" kill-region "kill")
+					("u" undo-tree-undo "undo")
+					("p" yank "paste")
+					("C-i" backward-paragraph "pPar")
+					("C-k" forward-paragraph "nPar")
+					("y" kill-ring-save "yank")
+					("v" set-mark-command "mark")
+					("ESC" nil)
+					("C-g" nil)))
+
+  (hydra-set-property 'hydra-vi :verbosity 1))
+
 (use-package headlong :defer t)
 
 (use-package ivy
@@ -1218,10 +1295,16 @@ company-c-headers instead if irony"
 		enable-recursive-minibuffers t)
 
   (ivy-mode t)
+  )
 
-  (use-package ivy-rich
-	:config
-	(ivy-rich-mode 1)))
+(use-package ivy-hydra
+  :after ivy)
+
+(use-package ivy-rich
+  :disabled
+  :after ivy
+  :config
+  (ivy-rich-mode 1))
 
 (use-package swiper
   :defer t
@@ -1273,31 +1356,68 @@ company-c-headers instead if irony"
          ("C-l" . counsel-info-lookup-symbol))
   :init
   (which-key-add-key-based-replacements "C-c c" "counsel")
+  :custom
+  (counsel-find-file-at-point t)
+  (counsel-find-file-ignore-regexp ".git"))
 
   :config
   (counsel-mode t)
-  (use-package amx)  ;; Complete history
 
-  (use-package counsel-projectile
-	:after projectile
-	:config
-	(counsel-projectile-mode t)))
+(use-package amx ;; Complete history
+  :after counsel)
+
+(use-package counsel-projectile
+  	:after (counsel projectile)
+  	:config
+  	(counsel-projectile-mode t))
 
 (use-package counsel-gtags
   :diminish
-  :commands (counsel-gtags-mode)
-  :bind (:map counsel-gtags-mode-map
-			  ("C-c g q" . counsel-gtags-find-definition)
-			  ("C-c g r" . counsel-gtags-find-reference)
-			  ("C-c g s" . counsel-gtags-find-symbol)
-			  ("C-c g p" . counsel-gtags-go-backward)
-			  ("C-c g n" . counsel-gtags-go-forward)
-			  ("C-c g c" . counsel-gtags-create-tags)
-			  ("C-c g u" . counsel-gtags-update-tags))
+  :bind (("C-c g" . counsel-gtags-mode)
+		 :map counsel-gtags-mode-map
+		 ("C-c g g" . counsel-gtags-dwim)
+		 ("C-c g d" . counsel-gtags-find-definition)
+		 ("C-c g r" . counsel-gtags-find-reference)
+		 ("C-c g s" . counsel-gtags-find-symbol)
+		 ("C-c g p" . counsel-gtags-go-backward)
+		 ("C-c g n" . counsel-gtags-go-forward)
+		 ("C-c g c" . counsel-gtags-create-tags)
+		 ("C-c g f" . counsel-gtags-find-file)
+		 ("C-c g u" . counsel-gtags-update-tags))
   :init
   (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
   :config
+  (global-set-key (kbd "C-c g") nil)
   (add-to-list (make-local-variable 'company-backends) 'company-gtags))
+
+
+;; -- Counsel etags
+(use-package counsel-etags
+  :hook (prog-mode . (lambda ()
+                       (add-hook 'after-save-hook
+                                 'counsel-etags-virtual-update-tags
+                                 'append
+                                 'local)))
+  :bind (("C-c t d" . counsel-etags-find-tag-at-point)
+		 ("C-c t p" . xref-pop-marker-stack)
+		 ("C-c t g" . counsel-etags-grep-symbol-at-point)
+		 ("C-c t f" . counsel-etags-find-tag))
+  :config
+  (setq tags-revert-without-query t) ;; Don't ask before rereading TAGS
+  (setq large-file-warning-threshold nil)   ;; Don't warn when TAGS files are large
+  )
+
+;; Don't ask before rereading the TAGS files if they have changed
+(setq tags-revert-without-query t)
+;; Don't warn when TAGS files are large
+(setq large-file-warning-threshold nil)
+;; Setup auto update now
+(add-hook 'prog-mode-hook
+  (lambda ()
+    (add-hook 'after-save-hook
+              'counsel-etags-virtual-update-tags 'append 'local)))
+
+
 
 (use-package dumb-jump
   :bind (("C-c j 4 n" . dumb-jump-go-other-window)
@@ -1312,47 +1432,12 @@ company-c-headers instead if irony"
   :config
   (setq dumb-jump-selector 'ivy))
 
-(use-package hydra
-  :defer
-  :init
-  (which-key-add-key-based-replacements "C-c v" "hydra-vi")
-  :config
-  (global-set-key (kbd "C-c v")
-				  (defhydra hydra-vi (:pre (set-cursor-color "#e52b50")
-										   :post (set-cursor-color "#ffffff")
-										   :color red
-										   :foreign-keys warn
-										   :columns 8)
-					"vi"
-					("/" search-forward "search")
-					("l" forward-char "->")
-					("k" next-line "down")
-					("j" backward-char "<-")
-					("i" previous-line "up")
-					("m" set-mark-command "mark")
-					("a" move-beginning-of-line "beg")
-					("e" move-end-of-line "end")
-					("b" left-word "pWord")
-					("w" right-word "nWord")
-					("<" beginning-of-buffer "head")
-					(">" end-of-buffer "tail")
-					("^" back-to-indentation "indent")
-					("d" kill-region "kill")
-					("u" undo-tree-undo "undo")
-					("p" yank "paste")
-					("C-i" backward-paragraph "pPar")
-					("C-k" forward-paragraph "nPar")
-					("y" kill-ring-save "yank")
-					("v" set-mark-command "mark")
-					("ESC" nil)
-					("C-g" nil)))
-
-  (hydra-set-property 'hydra-vi :verbosity 1))
-
 ;;__________________________________________________________
 ;; Magit
 (use-package magit
-  :commands magit-status)
+  :commands magit-status
+  :config
+  (setq magit-completing-read-function 'ivy-completing-read))
 
 (use-package gitattributes-mode
   :defer 5)
@@ -1443,16 +1528,13 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; for having tabs in top
 (use-package elscreen
-  :bind ("C-c t" . elscreen-start)
-  :init
-  (which-key-add-key-based-replacements	"C-c t" "elscreen")
+  :commands elscreen-start
   :config
-  (global-set-key (kbd "C-c t") nil)
+  (which-key-add-key-based-replacements	"C-c t" "elscreen")
   (setq elscreen-prefix-key (kbd "C-c t")
 		elscreen-tab-display-kill-screen nil
 		elscreen-tab-display-control nil
-		elscreen-display-screen-number nil)
-  )
+		elscreen-display-screen-number nil))
 
 ;;__________________________________________________________
 ;; evil mode
@@ -1583,15 +1665,18 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; Web mode
 (use-package web-mode
-  :mode ("\\.html\\'" "\\.php\\'")
-  :init
-  (setq web-mode-enable-current-element-highlight t
-		web-mode-enable-block-face t
-		web-mode-enable-auto-expanding t
-		web-mode-enable-current-column-highlight t
-		web-mode-comment-style 2)
-  :config
+  :mode ("\\.html?\\'" "\\.php\\'" "\\.phtml\\'" )
+  :custom
+  (web-mode-code-indent-offset 2)
+  (web-mode-markup-indent-offset 2)
+  (web-mode-css-indent-offset 2)
+  (web-mode-enable-auto-pairing t)
+  (web-mode-enable-css-colorization t)
+  (web-mode-enable-current-element-highlight t)
+  (web-mode-enable-current-column-highlight t)
+  (web-mode-enable-engine-detection t)
 
+  :config
   (use-package company-web
 	:config
 	(add-to-list (make-local-variable 'company-backends) '(company-web-html)))
@@ -1600,6 +1685,8 @@ company-c-headers instead if irony"
 		'(("php"	. "\\.phtml\\'")))
 
   (use-package web-mode-edit-element))
+
+
 
 (use-package nginx-mode
   :commands (nginx-mode)
