@@ -214,6 +214,8 @@
 
 (defun my/colors () "Define my color theme."
 
+	   (set-face-attribute 'default nil :family "Hack" :height 110)
+
 	   (set-background-color (cdr (assoc 'black my/colors)))
 	   (set-foreground-color (cdr (assoc 'white my/colors)))
 
