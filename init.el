@@ -9,29 +9,6 @@
 ;;; Commentary:
 ;;; Code:
 
-(defconst my/start-time (current-time))
-
-(defmacro mt (&rest body)
-  "Measure the time it takes to evaluate BODY."
-  `(let ((time (current-time)))
-     ,@body
-     (message "%.06f" (float-time (time-since time)))))
-
-
-(defvar file-name-handler-alist-old file-name-handler-alist)
-
-(setq file-name-handler-alist nil
-      message-log-max 16384
-      gc-cons-threshold 402653184       ;; Defer Garbage collection
-      gc-cons-percentage 1.0)
-
-(add-hook 'emacs-startup-hook
-          `(lambda ()
-             (setq file-name-handler-alist file-name-handler-alist-old
-                   gc-cons-threshold 800000
-                   gc-cons-percentage 0.1)
-			 (garbage-collect)) t)
-
 ;;__________________________________________________________
 ;; Internal options
 
@@ -39,25 +16,19 @@
 (global-auto-revert-mode t)		 ;; Autoload files changed in disk
 
 (setq-default font-lock-maximum-decoration t)
-(global-font-lock-mode t)	   ;; Use font-lock everywhere.
+(global-font-lock-mode t)	            ;; Use font-lock everywhere.
 
-(tool-bar-mode   -1)
-(menu-bar-mode   -1)
-(scroll-bar-mode -1)
-(tooltip-mode    -1)			;; Tool tip in the echo
-(flymake-mode    -1)
+(savehist-mode t)				     	;; Historial
+(auto-compression-mode t)		     	;; Uncompress on the fly:
+(global-display-line-numbers-mode t) 	;; line numbers on the left
+(size-indication-mode t)             	;; Muestra el el tamanno en modeline
+(delete-selection-mode t)		     	;; Sobreescribe seleccion al pegar
+(transient-mark-mode t)              	;; Muestra la seleccion
+(prefer-coding-system 'utf-8)        	;; Encoding
+(which-function-mode t)              	;; Muestra funcion en modeline
+(column-number-mode t)               	;; Numero de la columna
 
-(savehist-mode t)				     ;; Historial
-(auto-compression-mode t)		     ;; Uncompress on the fly:
-(global-display-line-numbers-mode t) ;; line numbers on the left
-(size-indication-mode t)             ;; Muestra el el tamanno en modeline
-(delete-selection-mode t)		     ;; Sobreescribe seleccion al pegar
-(transient-mark-mode t)              ;; Muestra la seleccion
-(prefer-coding-system 'utf-8)        ;; Encoding
-(which-function-mode t)              ;; Muestra funcion en modeline
-(column-number-mode t)               ;; Numero de la columna
-
-(setq-default vc-follow-symlinks t	;; Open links not open
+(setq-default vc-follow-symlinks t	    ;; Open links not open
 			  line-number-mode t		;; Display line numbers
 			  column-number-mode t		;; Display column numbers
 			  tab-always-indent 't		;; make tab key do indent only
@@ -66,18 +37,18 @@
 			  user-full-name "Jimmy Aguilar Mena"
 			  inhibit-startup-message t
 			  inhibit-startup-screen t
-			  tab-width 4				       ;; Tabulador a 4
-			  indent-tabs-mode t               ;; Indent with tabs
-			  make-backup-files nil		       ;; Sin copias de seguridad
+			  tab-width 4				     ;; Tabulador a 4
+			  indent-tabs-mode t             ;; Indent with tabs
+			  make-backup-files nil		     ;; Sin copias de seguridad
 			  auto-save-list-file-name nil
 			  auto-save-default	nil
-			  create-lockfiles nil			   ;; No lock files, good for tramp
-			  visible-bell nil			       ;; Flash the screen (def)
+			  create-lockfiles nil			 ;; No lock files, good for tramp
+			  visible-bell nil			     ;; Flash the screen (def)
 			  scroll-conservatively most-positive-fixnum
-			  display-line-numbers-width 4	   ;; Minimum line number width
-			  fill-column 80				   ;; default is 70
-			  confirm-kill-processes	nil	   ;; no ask for confirm kill processes on exi
-			  display-line-numbers-widen t	   ;; keep line numbers inside a narrow buffers
+			  display-line-numbers-width 4	 ;; Minimum line number width
+			  fill-column 80				 ;; default is 70
+			  confirm-kill-processes	nil	 ;; no ask for confirm kill processes on exi
+			  display-line-numbers-widen t	 ;; keep line numbers inside a narrow buffers
 			  read-key-delay 0.005
 			  mouse-scroll-delay 0
 			  recenter-redisplay nil
@@ -112,13 +83,6 @@
 (setq confirm-kill-emacs 'y-or-n-p)	  ;; Puede ser 'nil o 'y-or-n-p
 
 ;;__________________________________________________________
-;; For using Melpa and Elpa
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-						 ("melpa" . "https://melpa.org/packages/")))
-(setq package-quickstart t)
-(package-initialize)
-
-;;__________________________________________________________
 ;; use-package
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -131,10 +95,15 @@
   (require 'use-package)
 
   (if init-file-debug
-      (setq use-package-verbose t
-			use-package-expand-minimally nil
-			use-package-compute-statistics t
-			debug-on-error t)
+	  (progn
+		(setq use-package-verbose t
+			  use-package-expand-minimally nil
+			  use-package-compute-statistics t
+			  debug-on-error t)
+		(use-package benchmark-init
+		  :config
+		  (add-hook 'emacs-startup-hook 'benchmark-init/deactivate)))
+
 	(setq use-package-verbose nil
 		  use-package-expand-minimally t)))
 
@@ -142,9 +111,6 @@
 
 ;;__________________________________________________________
 ;; Benchmark-init
-(use-package benchmark-init
-  :config
-  (add-hook 'emacs-startup-hook 'benchmark-init/deactivate))
 
 (use-package diminish)                ;; if you use :diminish
 (use-package bind-key)                ;; if you use any :bind variant
@@ -160,11 +126,9 @@
 ;; Isearch
 (use-package isearch :ensure nil
   :defer t
-  :preface
-  (setq isearch-allow-scroll t)
-
-  :config
-  (setq isearch-lazy-count t))
+  :custom
+  (isearch-allow-scroll t)      ;; Permit scroll but not out of screen
+  (isearch-lazy-count t))
   ;;isearch-allow-scroll 'unlimited)
 
 ;;__________________________________________________________
@@ -256,7 +220,7 @@
 (use-package paren :ensure nil
   :init
   (setq show-paren-delay 0
-		blink-matching-delay 0.05)
+		blink-matching-delay 0.01)
   (show-paren-mode t)     ;; Highlight couple parentesis
   (set-face-attribute 'show-paren-match nil :inherit nil
 					  :background (cdr (assoc 'brightblack my/colors)))  ;; resalta la linea actual
@@ -306,7 +270,7 @@
     (setq gc-cons-threshold most-positive-fixnum))
 
   (defun my/minibuffer-exit-hook ()
-    (setq gc-cons-threshold 800000))
+    (setq gc-cons-threshold 1600000))
 
   (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
   (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook))
@@ -649,7 +613,7 @@ company-c-headers instead if irony"
 			  '((java-mode . "java")
 				(awk-mode . "awk")
 				(other . "linux"))
-			  c-basic-offset 4)
+			  c-basic-offset tab-width)
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
 
@@ -983,7 +947,7 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; Function arguments show
 
-(use-package eldoc
+(use-package eldoc :ensure nil
   :diminish
   :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . eldoc-mode)
   :config
@@ -1270,7 +1234,6 @@ company-c-headers instead if irony"
 
 (use-package ivy
   :diminish
-  :defer t
   :bind (("C-c i r" . ivy-resume)
 		 :map ivy-minibuffer-map
 		 ("TAB" . ivy-partial)
@@ -1279,7 +1242,8 @@ company-c-headers instead if irony"
 
   ;;(set-face-attribute 'minibuffer-prompt nil :foreground mycyan) ;; prompt minibuffer
   (set-face-attribute 'ivy-current-match nil
-  					  :inherit nil :background (cdr (assoc 'brightblack my/colors)) :foreground nil :weight 'ultrabold)
+  					  :inherit nil :background (cdr (assoc 'brightblack my/colors))
+					  :foreground (cdr (assoc 'white my/colors)) :weight 'ultrabold)
   (set-face-attribute 'ivy-minibuffer-match-face-1 nil ;; Espacio entre matches
   					  :inherit nil :background (cdr (assoc 'brightblue my/colors)) :foreground nil :weight 'ultrabold)
   (set-face-attribute 'ivy-minibuffer-match-face-2 nil ;; primer match
@@ -1302,14 +1266,7 @@ company-c-headers instead if irony"
 (use-package ivy-hydra
   :after ivy)
 
-(use-package ivy-rich
-  :disabled
-  :after ivy
-  :config
-  (ivy-rich-mode 1))
-
 (use-package swiper
-  :defer t
   :bind (("C-c w" . swiper)
 		 :map swiper-map
 		 ("C-y" . yank)
@@ -1360,10 +1317,10 @@ company-c-headers instead if irony"
   (which-key-add-key-based-replacements "C-c c" "counsel")
   :custom
   (counsel-find-file-at-point t)
-  (counsel-find-file-ignore-regexp ".git"))
+  (counsel-find-file-ignore-regexp ".git")
 
   :config
-  (counsel-mode t)
+  (counsel-mode t))
 
 (use-package amx ;; Complete history
   :after counsel)
@@ -1560,8 +1517,8 @@ company-c-headers instead if irony"
 		 ("C-; C-e" . avy-goto-end-of-line)
 		 ("C-; C-n" . avy-goto-line-below)
 		 ("C-; C-p" . avy-goto-line-above)
-		 :map isearch-mode-map
-		 ("C-;" . avy-isearch)
+		 :map isearch-mode-map ("C-;" . avy-isearch)
+		 :map swiper-map ("C-;" . swiper-avy)
 		 )
   :commands swiper-avy
   :init
