@@ -22,7 +22,7 @@
 ;; Internal options
 
 (setq-default auto-revert-verbose nil)	;; not show message when file changes
-(global-auto-revert-mode t)		;; Autoload files changed in disk
+(global-auto-revert-mode t)		        ;; Autoload files changed in disk
 
 ;;(setq-default font-lock-maximum-decoration t)
 ;;(global-font-lock-mode t)		;; Use font-lock everywhere.
@@ -30,14 +30,15 @@
 (setq display-line-numbers-widen t)     ;; keep line numbers inside a narrow
 (global-display-line-numbers-mode t)	;; line numbers on the left
 
-(savehist-mode t)			;; Historial
+(global-display-fill-column-indicator-mode t)
+
+(savehist-mode t)			    ;; Historial
 (auto-compression-mode t)		;; Uncompress on the fly
 
 (size-indication-mode t)		;; Muestra el el tamanno en modeline
 (delete-selection-mode t)		;; Sobreescribe seleccion al pegar
-(transient-mark-mode t)			;; Muestra la seleccion
-(prefer-coding-system 'utf-8)		;; Encoding
-(which-function-mode t)			;; Muestra funcion en modeline
+
+(prefer-coding-system 'utf-8)	;; Encoding
 (column-number-mode t)			;; Numero de la columna
 (line-number-mode t)			;; Numero de linea modeline
 
@@ -132,6 +133,8 @@
 
 ;;__________________________________________________________
 ;; Isearch
+
+
 (use-package isearch :ensure nil
   :defer t
   :custom
@@ -219,7 +222,7 @@
 
        (set-face-attribute 'line-number nil :foreground (cdr (assoc 'brightblack my/colors)))	      ;; numero de linea
        (set-face-attribute 'line-number-current-line nil :foreground (cdr (assoc 'green my/colors)))  ;; resalta la linea actual
-       )
+       (set-face-attribute 'fill-column-face nil :foreground (cdr (assoc 'brightblack my/colors))))
 
 (my/colors)
 
@@ -412,14 +415,11 @@
 ;;   (setq clean-aindent-is-simple-indent t))
 
 (defun my/prog-mode-hook () "Some hooks only for prog mode."
-       (electric-indent-mode t)
+       ;;(electric-indent-mode t)           ;; On by default
        (electric-pair-mode t)			  ;; Autoannadir parentesis
        (which-function-mode t)			  ;; Shows the function in spaceline
        (define-key global-map (kbd "RET") 'newline-and-indent)
-       (global-display-fill-column-indicator-mode t)
-       (set-face-attribute 'fill-column-face nil :foreground (cdr (assoc 'brightblack my/colors)))
-       (setq show-trailing-whitespace t)
-       )
+       (setq show-trailing-whitespace t))
 
 (add-hook 'prog-mode-hook 'my/prog-mode-hook)
 
@@ -445,7 +445,6 @@
   :diminish
   :bind ("C-c h l" . hl-line-mode))
 
-
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
 (use-package column-enforce-mode
@@ -454,7 +453,8 @@
   :config
   (column-enforce-mode t)
   (setq column-enforce-comments nil)
-  (set-face-attribute 'column-enforce-face nil :inherit nil :background (cdr (assoc 'brightblack my/colors))))
+  (set-face-attribute 'column-enforce-face nil
+		      :inherit nil :background (cdr (assoc 'brightblack my/colors))))
 
 (use-package highlight-indent-guides
   :diminish
@@ -464,7 +464,8 @@
   :config
   (setq highlight-indent-guides-auto-enabled nil
 	highlight-indent-guides-method 'character)
-  (set-face-attribute 'highlight-indent-guides-character-face nil :foreground (cdr (assoc 'brightblack my/colors))))
+  (set-face-attribute 'highlight-indent-guides-character-face nil
+		      :foreground (cdr (assoc 'brightblack my/colors))))
 
 ;;__________________________________________________________
 ;; Resalta scopes entorno al cursor
@@ -499,7 +500,7 @@
 ;; Flyspell (Orthography)
 (use-package flyspell :ensure nil
   :diminish
-  :hook (;;(prog-mode . flyspell-prog-mode)
+  :hook ((prog-mode . flyspell-prog-mode)
 	 (text-mode . flyspell-mode))
   :bind (:map flyspell-mode-map
 	      ("C-M-i" .  nil)
@@ -517,7 +518,9 @@
 (use-package flyspell-correct-ivy
   :diminish
   :after flyspell
-  :bind ("C-c f f" . flyspell-correct-wrapper)
+  :bind (("C-c f w" . flyspell-correct-wrapper)
+	 ("C-c f f" . flyspell-correct-at-point)
+	 ("C-c f C-n" . flyspell-correct-next))
   :init
   (setq flyspell-correct-interface #'flyspell-correct-ivy))
 
@@ -623,29 +626,27 @@ company-c-headers instead if irony"
 		(other . "linux")))
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
-
-       ;;(c-toggle-hungry-state t)
-       (when (and (member major-mode '(c++-mode c-mode arduino-mode))
-		  buffer-file-name)
-
-	 (when (string-match-p tramp-file-name-regexp buffer-file-name)
-	   (use-package company-c-headers ;; company-c-headers
-	     :after company
-	     :config
-	     (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
-	   ;;(my/lsp-mode-hook)
-	   ))
-
-       (use-package preproc-font-lock ;; Preprocessor
-	 :config
-	 (preproc-font-lock-mode 1)
-	 (set-face-attribute 'preproc-font-lock-preprocessor-background nil
-			     :inherit 'font-lock-preprocessor-face))
-
-       (c-set-offset 'cpp-macro 0 nil)
+       (c-set-offset 'cpp-macro 0)
+       (c-set-offset 'inline-open 0)
+       (c-set-offset 'access-label '-)
        (message "Loaded my/c-mode-common"))
 
 (add-hook 'c-mode-common-hook 'my/c-mode-common-hook)
+
+(use-package preproc-font-lock ;; Preprocessor
+  :hook (c-mode . preproc-font-lock-mode)
+  :config
+  (set-face-attribute 'preproc-font-lock-preprocessor-background nil
+		      :inherit 'font-lock-preprocessor-face))
+
+;; company-c-headers
+(use-package company-c-headers
+  :after company
+  :when (and (member major-mode '(c++-mode c-mode arduino-mode))
+	     buffer-file-name
+	     (string-match-p tramp-file-name-regexp buffer-file-name))
+  :config
+  (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
 
 (add-to-list 'auto-mode-alist '("\\.c\\'" . c-mode))
 (add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
@@ -657,29 +658,27 @@ company-c-headers instead if irony"
 ;; C++ mode
 
 (defun my/c++-mode-hook () "My C++-Mode hook function."
-       (setq flycheck-gcc-language-standard "c++17"
-	     flycheck-clang-language-standard "gnu++17")
 
-       (defun my/c++-lineup-inclass (langelem) "LANGELEM Offset struct vs class."
-	      (let ((inclass (assoc 'inclass c-syntactic-context)))
-		(save-excursion
-		  (goto-char (c-langelem-pos inclass))
-		  (if (or (looking-at "struct")
-			  (looking-at "typedef struct"))
-		      '+
-		    '++))))
+       ;; (defun my/c++-lineup-inclass (langelem)
+       ;; 	 "LANGELEM Offset struct vs class."
+       ;; 	 (let ((inclass (assoc 'inclass c-syntactic-context)))
+       ;; 	   (save-excursion
+       ;; 	     (goto-char (c-langelem-pos inclass))
+       ;; 	     (if (or (looking-at "struct")
+       ;; 		     (looking-at "typedef struct"))
+       ;; 		 '+
+       ;; 	       '++))))
 
-       (c-set-offset 'access-label '-)
-       (c-set-offset 'inline-open 0)
-       (c-set-offset 'inclass 'my/c++-lineup-inclass)
 
-       (use-package modern-cpp-font-lock
-	 :config
-	 (modern-c++-font-lock-mode t))
+       ;;(c-set-offset 'inclass 'my/c++-lineup-inclass)
 
        (message "Loaded my c++-mode"))
 
 (add-hook 'c++-mode-hook 'my/c++-mode-hook)
+
+(use-package modern-cpp-font-lock
+  :hook (c++-mode . modern-c++-font-lock-mode))
+
 
 ;; Even if the file extension is just .c or .h, assume it is a C++ file:
 (add-to-list 'auto-mode-alist '("\\.hpp\\'" . c++-mode))
@@ -877,15 +876,6 @@ company-c-headers instead if irony"
 (use-package gnuplot-mode
   :mode ("\\.gp\\'" "\\.gpl\\'" "\\.plt\\'"))
 
-;; __________________________________________________________
-;; Emacs lisp
-(use-package elisp :ensure nil
-  :preface
-  (defun my/elisp-mode-hook () "My elisp mode hook"
-	 (add-to-list
-	  (make-local-variable 'company-backends) 'company-elisp))
-  :hook (emacs-lisp-mode . my/elisp-mode-hook))
-
 ;;__________________________________________________________
 ;; Auto completamiento
 
@@ -929,6 +919,14 @@ company-c-headers instead if irony"
 ;;	(add-to-list 'company-backends 'company-yasnippet))
 
 
+;; __________________________________________________________
+;; Emacs lisp
+
+(defun my/elisp-mode-hook () "My elisp mode hook"
+       (add-to-list
+	(make-local-variable 'company-backends) 'company-elisp))
+(add-hook 'emacs-lisp-mode-hook 'my/elisp-mode-hook)
+
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
 (use-package flycheck
@@ -936,8 +934,10 @@ company-c-headers instead if irony"
   :if (< (buffer-size) 200000)
   :hook (prog-mode . flycheck-mode)
   :config
-  (which-key-add-key-based-replacements "C-c !" "flycheck")
-  (setq-default flycheck-display-errors-delay 1))
+  (setq flycheck-gcc-language-standard "c++17"
+	flycheck-clang-language-standard "c++17"
+	flycheck-display-errors-delay 1)
+  (which-key-add-key-based-replacements "C-c !" "flycheck"))
 
 ;; (use-package flycheck-popup-tip
 ;;	:after flycheck
@@ -1093,32 +1093,39 @@ company-c-headers instead if irony"
 
 ;;__________________________________________________________
 ;; Python mode
-(use-package python-mode
-  :mode ("\\.py" . python-mode)
+;; (use-package python-mode
+;;   :mode ("\\.py" . python-mode)
+;;   :interpreter ("python" . python-mode))
+
+;; (use-package company-jedi             ;;; company-mode completion back-end for Python JEDI
+;;   :hook (python-mode . jedi:setup)
+;;   :custom
+;;   (jedi:server-args '("--sys-path" "/usr/lib/python3.7/site-packages"))
+;;   :config
+;;   (add-to-list (make-local-variable 'company-backends) 'company-jedi))
+
+(use-package flycheck-pycheckers
+  :after (flycheck company-jedi)
+  :hook (python-mode . flycheck-pycheckers-setup)
+  :init
+  (setq flycheck-pycheckers-checkers '(pylint flake8 mypy3)))
+
+(use-package elpy
+  :hook ((python-mode . elpy-mode)
+	 (pyvenv-post-activate-hooks . elpy-rpc--disconnect)
+	 (inferior-python-mode-hook . elpy-shell--enable-output-filter))
   :config
-  (use-package company-jedi
-    :after company
-    :config
-    (add-to-list (make-local-variable 'company-backends) 'company-jedi))
-
-  (use-package elpy
-    :config
-    (setq python-shell-interpreter "jupyter"
-	  python-shell-interpreter-args "console --simple-prompt"
-	  python-shell-prompt-detect-failure-warning nil
-	  elpy-rpc-python-command "python3"
-	  python-check-command "flake8"
-	  )
-    (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")
-    (elpy-enable)
-
-    )
-
-  (use-package flycheck-pycheckers
-    :after flycheck
-    :config
-    (setq flycheck-pycheckers-checkers '(pylint flake8 mypy3))
-    (flycheck-pycheckers-setup)))
+  (elpy-modules-global-init)
+  (setq python-shell-interpreter "ipython"
+	python-shell-interpreter-args "console --simple-prompt"
+	python-shell-prompt-detect-failure-warning nil
+	elpy-rpc-python-command "python3"
+	python-check-command "pyflakes"
+	flycheck-python-flake8-executable "flake8")
+  (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")
+  
+  (define-key inferior-python-mode-map (kbd "C-c C-z") 'elpy-shell-switch-to-buffer)
+  )
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
@@ -1199,41 +1206,7 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
 
-(use-package hydra
-  :init
-  (which-key-add-key-based-replacements "C-c v" "hydra-vi")
-  :config
-  (global-set-key (kbd "C-c v")
-		  (defhydra hydra-vi (:pre (set-cursor-color "#e52b50")
-					   :post (set-cursor-color "#ffffff")
-					   :color red
-					   :foreign-keys warn
-					   :columns 8)
-		    "vi"
-		    ("/" search-forward "search")
-		    ("l" forward-char "->")
-		    ("k" next-line "down")
-		    ("j" backward-char "<-")
-		    ("i" previous-line "up")
-		    ("m" set-mark-command "mark")
-		    ("a" move-beginning-of-line "beg")
-		    ("e" move-end-of-line "end")
-		    ("b" left-word "pWord")
-		    ("w" right-word "nWord")
-		    ("<" beginning-of-buffer "head")
-		    (">" end-of-buffer "tail")
-		    ("^" back-to-indentation "indent")
-		    ("d" kill-region "kill")
-		    ("u" undo-tree-undo "undo")
-		    ("p" yank "paste")
-		    ("C-i" backward-paragraph "pPar")
-		    ("C-k" forward-paragraph "nPar")
-		    ("y" kill-ring-save "yank")
-		    ("v" set-mark-command "mark")
-		    ("ESC" nil)
-		    ("C-g" nil)))
-
-  (hydra-set-property 'hydra-vi :verbosity 1))
+(use-package hydra :defer t)
 
 (use-package headlong :defer t)
 
@@ -1412,6 +1385,7 @@ company-c-headers instead if irony"
 
 ;;__________________________________________________________
 ;; Magit
+
 (use-package magit
   :commands magit-status
   :config
@@ -1536,11 +1510,6 @@ company-c-headers instead if irony"
 	 ("C-; C-n" . avy-goto-line-below)
 	 ("C-; C-p" . avy-goto-line-above)
 	 :map isearch-mode-map ("C-;" . avy-isearch))
-  :init
-  (use-package avy-zap
-    :bind (("M-Z". avy-zap-up-to-char-dwim)
-	   ("M-z". avy-zap-to-char-dwim)))
-
   :config
   (setq avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
 			(number-sequence ?A ?Z)
@@ -1556,6 +1525,12 @@ company-c-headers instead if irony"
   (set-face-attribute 'avy-lead-face nil
 		      :background (cdr (assoc 'blue my/colors))
 		      :foreground (cdr (assoc 'red my/colors))))
+
+
+(use-package avy-zap
+  :bind (("M-Z". zzz-up-to-char)
+	 ("M-z". zzz-to-char)))
+
 
 (use-package goto-line-preview
   :bind ([remap goto-line] . goto-line-preview))
