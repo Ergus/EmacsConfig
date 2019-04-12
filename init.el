@@ -92,6 +92,30 @@
 (defalias 'yes-or-no-p 'y-or-n-p) ;; Reemplazar "yes" por "y" en el prompt
 
 ;;__________________________________________________________
+;; Config file not here to not track it
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+(unless (file-exists-p custom-file)
+  (write-region "" nil custom-file))
+
+(load custom-file)
+
+;; Personal Lisp dir
+(defvar mylisp-dir (expand-file-name "lisp" user-emacs-directory))
+
+(unless (file-exists-p mylisp-dir)
+  (make-directory mylisp-dir)
+  (message "Creating %s" mylisp-dir))
+
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+
+;; System Lisp dir
+(defvar syslisp-dir "/usr/share/emacs/site-lisp")
+
+(when (file-exists-p syslisp-dir)
+  (add-to-list 'load-path syslisp-dir))
+
+;;__________________________________________________________
 ;; use-package
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -143,31 +167,6 @@
   (isearch-allow-scroll t)	;; Permit scroll can be 'unlimited
   (isearch-lazy-count t)
   )
-
-;;__________________________________________________________
-;; Config file not here to not track it
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-
-(unless (file-exists-p custom-file)
-  (write-region "" nil custom-file))
-
-(load custom-file)
-
-;; Personal Lisp dir
-(defvar mylisp-dir (expand-file-name "lisp" user-emacs-directory))
-
-(unless (file-exists-p mylisp-dir)
-  (make-directory mylisp-dir)
-  (message "Creating %s" mylisp-dir))
-
-(add-to-list 'load-path "~/.emacs.d/lisp/")
-
-;; System Lisp dir
-(defvar syslisp-dir "/usr/share/emacs/site-lisp")
-
-(when (file-exists-p syslisp-dir)
-  (add-to-list 'load-path syslisp-dir))
-
 ;;__________________________________________________________
 ;;	The Colors (I want to change this for a real theme, there are maaaaany)
 
@@ -230,14 +229,13 @@
 ;;Packages options
 ;;__________________________________________________________
 
-(use-package paren :ensure nil
-  :init
-  (setq show-paren-delay 0
-	blink-matching-delay 0.01)
-  (show-paren-mode t)	  ;; Highlight couple parentesis
-  (set-face-attribute 'show-paren-match nil :inherit nil
-		      :background (cdr (assoc 'brightblack my/colors)))
-  )
+;;__________________________________________________________
+;; Show paren mode
+(setq show-paren-delay 0
+      blink-matching-delay 0.01)
+(show-paren-mode t)	  ;; Highlight couple parentesis
+(set-face-attribute 'show-paren-match nil :inherit nil
+		    :background (cdr (assoc 'brightblack my/colors)))
 
 ;;__________________________________________________________
 ;; ssh
@@ -275,16 +273,16 @@
 ;;__________________________________________________________
 ;; minibuffers
 
-(use-package minibuffer :ensure nil
-  :config
-  (defun my/minibuffer-setup-hook ()
-    (setq gc-cons-threshold most-positive-fixnum))
+(setq minibuffer-eldef-shorten-default t)
 
-  (defun my/minibuffer-exit-hook ()
-    (setq gc-cons-threshold 800000))
+(defun my/minibuffer-setup-hook ()
+  (setq gc-cons-threshold most-positive-fixnum))
 
-  (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
-  (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook))
+(defun my/minibuffer-exit-hook ()
+  (setq gc-cons-threshold 800000))
+
+(add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
+(add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
 
 ;;__________________________________________________________
 ;; cua rectangles
@@ -415,7 +413,7 @@
 ;;   (setq clean-aindent-is-simple-indent t))
 
 (defun my/prog-mode-hook () "Some hooks only for prog mode."
-       ;;(electric-indent-mode t)           ;; On by default
+       ;;(electric-indent-mode t)	    ;; On by default
        (electric-pair-mode t)			  ;; Autoannadir parentesis
        (which-function-mode t)			  ;; Shows the function in spaceline
        (define-key global-map (kbd "RET") 'newline-and-indent)
@@ -520,7 +518,8 @@
   :after flyspell
   :bind (("C-c f w" . flyspell-correct-wrapper)
 	 ("C-c f f" . flyspell-correct-at-point)
-	 ("C-c f C-n" . flyspell-correct-next))
+	 ("C-c f C-n" . flyspell-correct-next)
+	 ("C-c f C-p" . flyspell-correct-previous))
   :init
   (setq flyspell-correct-interface #'flyspell-correct-ivy))
 
@@ -859,17 +858,17 @@ company-c-headers instead if irony"
   (winner-mode t))
 
 ;; winum (windows number) for spaceline
-(use-package winum
-  :bind (("C-x w 1" . winum-select-window-1)
-	 ("C-x w 2" . winum-select-window-2)
-	 ("C-x w 3" . winum-select-window-3)
-	 ("C-x w 4" . winum-select-window-4)
-	 ("C-x w 5" . winum-select-window-5)
-	 ("C-x w 6" . winum-select-window-6)
-	 ("C-x w 7" . winum-select-window-7)
-	 ("C-x w 8" . winum-select-window-8))
-  :init
-  (winum-mode))
+;; (use-package winum
+;;   :bind (("C-x w 1" . winum-select-window-1)
+;;	 ("C-x w 2" . winum-select-window-2)
+;;	 ("C-x w 3" . winum-select-window-3)
+;;	 ("C-x w 4" . winum-select-window-4)
+;;	 ("C-x w 5" . winum-select-window-5)
+;;	 ("C-x w 6" . winum-select-window-6)
+;;	 ("C-x w 7" . winum-select-window-7)
+;;	 ("C-x w 8" . winum-select-window-8))
+;;   :init
+;;   (winum-mode))
 
 ;;__________________________________________________________
 ;; Lines enabling gnuplot-mode
@@ -1433,9 +1432,11 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; path
 (defun shell-command-on-buffer (command)
+  "Execute shell COMMAND on buffer overwriting it."
   (interactive (list
 		(read-shell-command "Shell command on buffer: " nil nil)))
-  (shell-command-on-region (point-min) (point-max) command t t))
+  (save-excursion
+    (shell-command-on-region (point-min) (point-max) command t t)))
 
 ;;__________________________________________________________
 ;;; Org Mode (I don't use it)
@@ -1496,7 +1497,7 @@ company-c-headers instead if irony"
 	 ("C-; 1" . avy-goto-char)
 	 ("C-; 2" . avy-goto-char-2)
 	 ("C-; c" . avy-goto-char-timer)
-	 ("C-; C-l" . avy-goto-line)
+	 ("C-; C-a" . avy-goto-line)
 	 ("C-; w" . avy-goto-word-or-subword-1)
 	 ("C-; W" . avy-goto-word-0)
 	 ("C-; C-w" . avy-move-region)
