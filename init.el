@@ -11,6 +11,8 @@
 
 ;;__________________________________________________________
 ;; For using Melpa and Elpa
+
+;; Measure time from one file to the other
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
 			 ("melpa" . "https://melpa.org/packages/")))
 
@@ -22,12 +24,12 @@
 ;; Internal options
 
 (setq-default auto-revert-verbose nil)	;; not show message when file changes
-(global-auto-revert-mode t)		        ;; Autoload files changed in disk
+(global-auto-revert-mode t)			;; Autoload files changed in disk
 
 ;;(setq-default font-lock-maximum-decoration t)
 ;;(global-font-lock-mode t)		;; Use font-lock everywhere.
 
-(setq display-line-numbers-widen t)     ;; keep line numbers inside a narrow
+(setq display-line-numbers-widen t)	;; keep line numbers inside a narrow
 (global-display-line-numbers-mode t)	;; line numbers on the left
 
 (global-display-fill-column-indicator-mode t)
@@ -39,6 +41,10 @@
 (delete-selection-mode t)		;; Sobreescribe seleccion al pegar
 
 (prefer-coding-system 'utf-8)	;; Encoding
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+
 (column-number-mode t)			;; Numero de la columna
 (line-number-mode t)			;; Numero de linea modeline
 
@@ -63,6 +69,7 @@
 	      mouse-scroll-delay 0
 	      recenter-redisplay nil
 	      line-move-visual nil
+	      backward-delete-char-untabify-method nil ;; Don't untabify on backward delete
 
 	      ;; split-width-threshold 160  ;; Limite para split vertical
 	      ;; kill-whole-line t
@@ -82,11 +89,9 @@
 	      term-suppress-hard-newline t  ;; Text can resize
 	      echo-keystrokes 0.005	    ;; Muestra binds in echo area
 	      confirm-kill-emacs nil
+	      disabled-command-function nil
 	      )
 
-(put 'narrow-to-page 'disabled nil)
-(put 'narrow-to-region 'disabled nil)	    ;; Enable narrow commands
-(put 'upcase-region 'disabled nil)
 ;;__________________________________________________________
 ;; Confirmation for to exit emacs
 (defalias 'yes-or-no-p 'y-or-n-p) ;; Reemplazar "yes" por "y" en el prompt
@@ -127,7 +132,7 @@
 
   (require 'use-package)
 
-  (if init-file-debug
+   (if init-file-debug
       (progn
 	(setq use-package-verbose t
 	      use-package-expand-minimally nil
@@ -135,7 +140,7 @@
 	      debug-on-error t)
 	(use-package benchmark-init
 	  :config
-	  (add-hook 'emacs-startup-hook 'benchmark-init/deactivate)))
+	  (add-hook 'window-setup-hook 'benchmark-init/deactivate t)))
 
     (setq use-package-verbose nil
 	  use-package-expand-minimally t)))
@@ -158,15 +163,24 @@
 ;;__________________________________________________________
 ;; Isearch
 
-
 (use-package isearch :ensure nil
   :defer t
   :custom
   (search-nonincremental-instead nil)
   (lazy-highlight-initial-delay 0)
   (isearch-allow-scroll t)	;; Permit scroll can be 'unlimited
-  (isearch-lazy-count t)
-  )
+  (isearch-lazy-count t))
+
+(use-package phi-search
+  :defer t)
+
+(use-package phi-search-mc
+  :after multiple-cursors
+  :config
+  (phi-search-mc/setup-keys)
+  (add-hook 'isearch-mode-mode #'phi-search-from-isearch-mc/setup-keys))
+
+
 ;;__________________________________________________________
 ;;	The Colors (I want to change this for a real theme, there are maaaaany)
 
@@ -244,7 +258,6 @@
   :config
   (setq compilation-scroll-output 'first-error
 	tramp-auto-save-directory "~/.emacs.d/tramp-autosave-dir")
-  (use-package tramp-term)
 
   (setq tramp-default-method "rsync"
 	;;tramp-default-method "ssh"
@@ -253,6 +266,10 @@
 	tramp-completion-reread-directory-timeout t
 	tramp-persistency-file-name "~/.emacs.d/tramp")
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+
+(use-package tramp-term
+  :after tramp
+  :commands tramp-term)
 
 (use-package ssh-config-mode
   :mode (("/\\.ssh/config\\'" . ssh-config-mode)
@@ -398,10 +415,10 @@
 ;; (use-package whitespace-mode :ensure nil
 ;;   :preface
 ;;   (defun my/whitespace-mode () "My whitespace mode."
-;;		 (setq whitespace-style '(face tabs tab-mark trailing)
-;;			   whitespace-display-mappings	'((tab-mark 9 [?\u2502 9] [?\u2502 9])))
-;;		 (custom-set-faces '(whitespace-tab ((t (:foreground "#444444")))))
-;;		 (whitespace-mode 1))
+;; 	 (setq whitespace-style '(face tabs tab-mark trailing)
+;; 	       whitespace-display-mappings	'((tab-mark 9 [?\u2502 9] [?\u2502 9])))
+;; 	 (custom-set-faces '(whitespace-tab ((t (:foreground "#444444")))))
+;; 	 (whitespace-mode 1))
 ;;   :hook (prog-mode . my/whitespace-mode)
 ;;   )
 
@@ -449,7 +466,7 @@
   :diminish
   :bind ("C-c h c" . column-enforce-mode)
   :config
-  (column-enforce-mode t)
+  ;;(column-enforce-mode t)
   (setq column-enforce-comments nil)
   (set-face-attribute 'column-enforce-face nil
 		      :inherit nil :background (cdr (assoc 'brightblack my/colors))))
@@ -483,12 +500,15 @@
   (set-face-attribute 'highlight-blocks-depth-9-face nil :background "#7f7f7f"))
 
 (use-package highlight-escape-sequences
+  :disabled
+  :diminish
   :hook (prog-mode . hes-mode)
   :config
   (set-face-attribute 'hes-escape-backslash-face nil :foreground (cdr (assoc 'magenta my/colors)))
   (set-face-attribute 'hes-escape-sequence-face nil :foreground (cdr (assoc 'magenta my/colors))))
 
 (use-package highlight-numbers
+  :diminish
   :hook (prog-mode . highlight-numbers-mode)
   :bind ("C-c h n" . highlight-numbers-mode)
   :config
@@ -526,13 +546,6 @@
 ;;__________________________________________________________
 ;; {c/c++}-mode
 ;;__________________________________________________________
-
-;;__________________________________________________________
-;; Indent with tabs align with spaces
-(use-package smart-tabs-mode
-  :hook c-mode-common
-  :config
-  (smart-tabs-insinuate 'c 'c++))
 
 ;;__________________________________________________________
 ;; ycmd Mode
@@ -619,15 +632,53 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
 
+(defun ms-space-for-alignment ()
+  "Make the current line use tabs for indentation and spaces for alignment.
+
+It is intended to be called from the hook
+`c-special-indent-hook'.  It assumes that `indent-tabs-mode' is
+non-nil and probably assumes that `c-basic-offset' is the same as
+`tab-width'."
+  (save-excursion
+    (let* ((indent-pos (progn (back-to-indentation) (point)))
+	   (indent-col (current-column))
+	   (syn-elt (car c-syntactic-context))
+	   (syn-sym (c-langelem-sym syn-elt)))
+      (when (memq syn-sym '(arglist-cont-nonempty
+			    stream-op
+			    template-args-cont)) ;; <==============
+	(let* ((syn-anchor (c-langelem-pos syn-elt))
+	       (anchor-col (progn (goto-char syn-anchor)
+				  (back-to-indentation)
+				  (current-column))))
+	  ;;
+	  (goto-char indent-pos)
+	  (delete-horizontal-space)
+	  (insert-char ?\t (/ anchor-col tab-width))
+	  (insert-char ?\  (- indent-col (current-column)))))))
+  (when (= (current-column) 0)
+    (back-to-indentation))
+  )
+
+(c-add-style "mylinux"
+	     '("linux"
+	       ;;(tab-width . 4)
+	       ;;(c-basic-offset . 4)
+	       (fill-column . 80)
+	       (c-offsets-alist (inline-open . 0)
+				(cpp-macro . 0)
+				;;(access-label '-)
+				)))
+
 (setq-default c-default-style
 	      '((java-mode . "java")
 		(awk-mode . "awk")
-		(other . "linux")))
+		(other . "mylinux")))
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
-       (c-set-offset 'cpp-macro 0)
-       (c-set-offset 'inline-open 0)
-       (c-set-offset 'access-label '-)
+       (when (and indent-tabs-mode
+		  (= c-basic-offset tab-width))
+	 (add-hook 'c-special-indent-hook 'ms-space-for-alignment nil t))
        (message "Loaded my/c-mode-common"))
 
 (add-hook 'c-mode-common-hook 'my/c-mode-common-hook)
@@ -648,42 +699,11 @@ company-c-headers instead if irony"
   (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
 
 (add-to-list 'auto-mode-alist '("\\.c\\'" . c-mode))
-(add-to-list 'auto-mode-alist '("\\.h\\'" . c-mode))
-
-;;__________________________________________________________
-;; Agrega doble indentation a clases y simple a structs (para private y public)
 
 ;;__________________________________________________________
 ;; C++ mode
-
-(defun my/c++-mode-hook () "My C++-Mode hook function."
-
-       ;; (defun my/c++-lineup-inclass (langelem)
-       ;; 	 "LANGELEM Offset struct vs class."
-       ;; 	 (let ((inclass (assoc 'inclass c-syntactic-context)))
-       ;; 	   (save-excursion
-       ;; 	     (goto-char (c-langelem-pos inclass))
-       ;; 	     (if (or (looking-at "struct")
-       ;; 		     (looking-at "typedef struct"))
-       ;; 		 '+
-       ;; 	       '++))))
-
-
-       ;;(c-set-offset 'inclass 'my/c++-lineup-inclass)
-
-       (message "Loaded my c++-mode"))
-
-(add-hook 'c++-mode-hook 'my/c++-mode-hook)
-
 (use-package modern-cpp-font-lock
   :hook (c++-mode . modern-c++-font-lock-mode))
-
-
-;; Even if the file extension is just .c or .h, assume it is a C++ file:
-(add-to-list 'auto-mode-alist '("\\.hpp\\'" . c++-mode))
-(add-to-list 'auto-mode-alist '("\\.cc\\'" . c++-mode))
-(add-to-list 'auto-mode-alist '("\\.cpp\\'" . c++-mode))
-(add-to-list 'auto-mode-alist '("\\.cxx\\'" . c++-mode))
 
 ;;__________________________________________________________
 ;; Cuda
@@ -710,9 +730,10 @@ company-c-headers instead if irony"
 (use-package rst-mode :ensure nil
   :mode "\\.rst\\'"
   :config
-  (use-package sphinx-mode
-    :hook rst-mode)
   (flyspell-mode t))
+
+(use-package sphinx-mode
+    :hook rst-mode)
 
 ;;__________________________________________________________
 ;; Makefile
@@ -724,30 +745,31 @@ company-c-headers instead if irony"
 (use-package ruby-mode :ensure nil
   :mode ("\\.rb\\'" "\\.rjs\\'" "\\Rakefile\\'" "\\Gemfile\\'")
   :config
-  (use-package ruby-tools)
-  (use-package ruby-electric
-    :hook ruby-electric-mode)
   (setq-default ruby-indent-level 2))
+
+(use-package ruby-tools
+  :hook (ruby-mode . ruby-tools-mode))
+
+(use-package ruby-electric
+  :hook (ruby-mode . ruby-electric-mode))
 
 ;;__________________________________________________________
 ;; Julia Mode
 (use-package julia-mode
-  :mode "\\.jl\\'"
-  :config
-  (use-package flycheck-julia
-    :after flycheck
-    :config
-    (flycheck-julia-setup)))
+  :mode "\\.jl\\'")
+
+(use-package flycheck-julia
+  :after flycheck
+  :hook (julia-mode . flycheck-julia-setup))
 
 ;;__________________________________________________________
 ;; Rust Mode
 (use-package rust-mode
-  :mode "\\.rs\\'"
-  :config
-  (use-package flycheck-rust
-    :after flycheck
-    :config
-    (flycheck-rust-setup)))
+  :mode "\\.rs\\'")
+
+(use-package flycheck-rust
+  :after flycheck
+  :hook (rust-mode . flycheck-rust-setup))
 
 ;;__________________________________________________________
 ;; Ocaml Mode
@@ -774,12 +796,14 @@ company-c-headers instead if irony"
 ;; lua language
 (use-package lua-mode
   :mode "\\.lua\\'"
-  :interpreter "lua"
-  :config
-  (use-package company-lua
+  :interpreter "lua")
+
+(use-package company-lua
     :after company
-    :config
-    (add-to-list (make-local-variable 'company-backends) 'company-lua)))
+    :preface
+    (defun my/company-lua ()
+      (add-to-list (make-local-variable 'company-backends) 'company-lua))
+    :hook (lua-mode . my/company-lua))
 
 ;;__________________________________________________________
 ;; systemd mode
@@ -921,9 +945,11 @@ company-c-headers instead if irony"
 ;; __________________________________________________________
 ;; Emacs lisp
 
-(defun my/elisp-mode-hook () "My elisp mode hook"
-       (add-to-list
-	(make-local-variable 'company-backends) 'company-elisp))
+(defun my/elisp-mode-hook ()
+  "My elisp mode hook."
+  (add-to-list
+   (make-local-variable 'company-backends) 'company-elisp))
+
 (add-hook 'emacs-lisp-mode-hook 'my/elisp-mode-hook)
 
 ;;__________________________________________________________
@@ -937,16 +963,6 @@ company-c-headers instead if irony"
 	flycheck-clang-language-standard "c++17"
 	flycheck-display-errors-delay 1)
   (which-key-add-key-based-replacements "C-c !" "flycheck"))
-
-;; (use-package flycheck-popup-tip
-;;	:after flycheck
-;;	:config
-;;	(flycheck-popup-tip-mode))
-
-;; (use-package flycheck-color-mode-line
-;;	:after flycheck
-;;	:config
-;;	(flycheck-color-mode-line-mode))
 
 
 ;;__________________________________________________________
@@ -1010,75 +1026,78 @@ company-c-headers instead if irony"
   :config
   (auto-fill-mode t)
   (mail-abbrevs-setup)
-  (flyspell-mode t)
+  (flyspell-mode t))
 
-  (use-package notmuch-address :ensure notmuch
-    :init
-    (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
-    ;;(setq notmuch-init-file "~/almacen/mail/notmuch-config")
-    :config
-    (setq notmuch-address-command "~/gits/notmuch-addrlookup-c/notmuch-addrlookup"))
-
-  (use-package notmuch-company :ensure notmuch
-    :config
-    (add-to-list (make-local-variable 'company-backends) 'notmuch-company)))
-
+(use-package notmuch
+  :preface
+  (defun my/notmuch ()
+    (require 'notmuch-address)
+    (setq notmuch-address-command "~/gits/notmuch-addrlookup-c/notmuch-addrlookup")
+    (require 'notmuch-company)
+    (add-to-list (make-local-variable 'company-backends) 'notmuch-company))
+  :init
+  (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
+  :hook (message-mode . my/notmuch)
+  )
 
 ;;__________________________________________________________
 ;; Latex mode
 
-(use-package auctex
+(use-package tex :ensure auctex
   :mode ("\\.tex\\'" . TeX-latex-mode)
-  :config
-  (setq LaTeX-babel-hyphen nil
+  :init
+  (setq TeX-source-correlate-start-server t
 	TeX-auto-save t
-	TeX-parse-self t
-	TeX-source-correlate-start-server t)
+	TeX-parse-self t)
+  :config
+  (setq LaTeX-babel-hyphen nil)
 
   (TeX-source-correlate-mode t)
-  (setq-default TeX-master nil)
+  (setq-default TeX-master nil) ;; Multidocument
 
   (flyspell-mode 1)
   (visual-line-mode 1)
   (auto-fill-mode 1)
 
-  (use-package reftex  ;; Reftex for cross references
-    :config
-    (add-hook 'LaTeX-mode-hook #'turn-on-reftex)   ; with AUCTeX LaTeX mode
-
-    (reftex-isearch-minor-mode)
-    (setq reftex-plug-into-AUCTeX t
-	  reftex-cite-prompt-optional-args t   ; Prompt for empty optional arguments in cite
-	  reftex-cite-format 'biblatex
-	  reftex-plug-into-AUCTeX t
-	  reftex-insert-label-flags '(t t)
-	  reftex-save-parse-info t
-	  reftex-enable-partial-scans t
-	  reftex-use-multiple-selection-buffers t)
-
-    (use-package company-reftex
-      :after company
-      :config
-      (add-to-list (make-local-variable 'company-backends)
-		   '(company-reftex-labels company-reftex-citations))))
-
-  (use-package company-math
-    :after company
-    :config
-    (add-to-list (make-local-variable 'company-backends)
-		 '(company-math-symbols-latex company-latex-commands)))
-
-  (use-package company-auctex
-    :after company
-    :config
-    (company-auctex-init))
-
   (add-to-list 'TeX-command-list
-	       '("Makeglossaries" "makeglossaries %s" TeX-run-command nil
-		 (latex-mode)
-		 :help "Run makeglossaries script, which will choose xindy or makeindex") t)
-
+  	       '("Makeglossaries" "makeglossaries %s" TeX-run-command nil
+  		 (latex-mode)
+  		 :help "Run makeglossaries, will choose xindy or makeindex") t)
   (flyspell-buffer))
+
+(use-package company-math
+  :after (company tex)
+  :config
+  (add-to-list 'company-backends
+	       '(company-math-symbols-latex company-latex-commands)))
+
+(use-package company-auctex
+  :after (company-math tex)
+  :config
+  (add-to-list 'company-backends 'company-auctex-labels)
+  (add-to-list 'company-backends 'company-auctex-bibs)
+  (add-to-list 'company-backends
+	       '(company-auctex-macros company-auctex-symbols company-auctex-environments)))
+
+(use-package reftex :ensure nil ;; Reftex for cross references
+  :after tex
+  :config
+  (reftex-isearch-minor-mode)
+  (setq reftex-plug-into-AUCTeX t
+	reftex-cite-prompt-optional-args t   ; Prompt for empty optional arguments in cite
+	reftex-cite-format 'biblatex
+	reftex-plug-into-AUCTeX t
+	reftex-insert-label-flags '(t t)
+	reftex-save-parse-info t
+	reftex-enable-partial-scans t
+	reftex-use-multiple-selection-buffers t))
+
+
+(use-package company-reftex
+  :after (company reftex)
+  :config
+  (add-to-list 'company-backends
+	       '(company-reftex-labels company-reftex-citations)))
 
 ;;__________________________________________________________
 ;;bibtex mode set use biblatex
@@ -1096,35 +1115,34 @@ company-c-headers instead if irony"
 ;;   :mode ("\\.py" . python-mode)
 ;;   :interpreter ("python" . python-mode))
 
-;; (use-package company-jedi             ;;; company-mode completion back-end for Python JEDI
+;; (use-package company-jedi		 ;;; company-mode completion back-end for Python JEDI
 ;;   :hook (python-mode . jedi:setup)
 ;;   :custom
 ;;   (jedi:server-args '("--sys-path" "/usr/lib/python3.7/site-packages"))
 ;;   :config
 ;;   (add-to-list (make-local-variable 'company-backends) 'company-jedi))
 
-(use-package flycheck-pycheckers
-  :after (flycheck company-jedi)
-  :hook (python-mode . flycheck-pycheckers-setup)
-  :init
-  (setq flycheck-pycheckers-checkers '(pylint flake8 mypy3)))
+;; (use-package flycheck-pycheckers
+;;   :after (flycheck company-jedi)
+;;   :hook (python-mode . flycheck-pycheckers-setup)
+;;   :init
+;;   (setq flycheck-pycheckers-checkers '(pylint flake8 mypy3)))
 
 (use-package elpy
-  :hook ((python-mode . elpy-mode)
-	 (pyvenv-post-activate-hooks . elpy-rpc--disconnect)
-	 (inferior-python-mode-hook . elpy-shell--enable-output-filter))
+  :defer
+  :init
+  (defun enable-elpy-once ()
+    (elpy-enable)
+    (advice-remove 'python-mode 'enable-elpy-once))
+  (advice-add 'python-mode :before 'enable-elpy-once)
   :config
-  (elpy-modules-global-init)
-  (setq python-shell-interpreter "ipython"
+  (setq python-shell-interpreter "jupyter"
 	python-shell-interpreter-args "console --simple-prompt"
 	python-shell-prompt-detect-failure-warning nil
 	elpy-rpc-python-command "python3"
 	python-check-command "pyflakes"
 	flycheck-python-flake8-executable "flake8")
-  (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter")
-  
-  (define-key inferior-python-mode-map (kbd "C-c C-z") 'elpy-shell-switch-to-buffer)
-  )
+  (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
@@ -1157,12 +1175,11 @@ company-c-headers instead if irony"
   :bind-keymap ("C-c p" . projectile-command-map)
   :init
   (which-key-add-key-based-replacements "C-c p" "projectile")
-  :config
-  (projectile-mode t)
-
   :custom
   (projectile-completion-system 'ivy)
-  (projectile-file-exists-remote-cache-expire (* 10 60)))
+  (projectile-file-exists-remote-cache-expire (* 10 60))
+  :config
+  (projectile-mode t))
 
 ;;__________________________________________________________
 ;; ibuffer
@@ -1216,8 +1233,9 @@ company-c-headers instead if irony"
 	 :map ivy-minibuffer-map
 	 ("TAB" . ivy-partial)
 	 ("RET" . ivy-alt-done))
+  :init
+  (which-key-add-key-based-replacements "C-c i" "ivy")
   :config
-
   (set-face-attribute 'ivy-current-match nil
 		      :inherit nil :background (cdr (assoc 'brightblack my/colors))
 		      :foreground (cdr (assoc 'white my/colors)) :weight 'ultrabold)
@@ -1237,21 +1255,21 @@ company-c-headers instead if irony"
 	;;ivy-wrap t					 ;; cycle in minibuffer
 	enable-recursive-minibuffers t)
 
-  (ivy-mode t)
-  )
+  (ivy-mode t))
 
 (use-package ivy-hydra
-  :after ivy)
+  :after (ivy hydra))
 
 (use-package swiper
   :bind (("C-c w" . swiper)
-	 ;;("C-s" . swiper-isearch)
+	 ("C-c C-s" . swiper-isearch)
 	 :map swiper-map
 	 ("C-y" . yank)
 	 ("M-%" . swiper-query-replace)
 	 ("C-;" . swiper-avy)
 	 ("C-c m" . swiper-mc)
-	 :map isearch-mode-map ("C-o" . swiper-from-isearch))
+	 :map isearch-mode-map
+	 ("C-o" . swiper-from-isearch))
   :config
   (set-face-attribute 'swiper-line-face nil ;; segundo match
 		      :background (cdr (assoc 'brightblack my/colors)) :weight 'ultrabold)
@@ -1260,16 +1278,12 @@ company-c-headers instead if irony"
   (set-face-attribute 'swiper-match-face-2 nil ;; primer match
 		      :inherit nil :background (cdr (assoc 'brightblue my/colors)) :foreground nil :weight 'ultrabold)
   (set-face-attribute 'swiper-match-face-3 nil ;; segundo match
-		      :inherit nil :background (cdr (assoc 'brightblue my/colors)) :foreground nil :weight 'ultrabold)
-  )
+		      :inherit nil :background (cdr (assoc 'brightblue my/colors)) :foreground nil :weight 'ultrabold))
 
 (use-package imenu-anywhere
   :bind ("C-c i i" . ivy-imenu-anywhere)
   :init
   (setq imenu-auto-rescan t))
-
-(use-package wgrep
-  :defer 5)
 
 (use-package imenu-list
   :bind ("C-c s i" . imenu-list-smart-toggle)
@@ -1282,12 +1296,15 @@ company-c-headers instead if irony"
 	 ("C-x C-f" . counsel-find-file)
 	 ("C-c c a" . counsel-ag)
 	 ("C-c c i" . counsel-imenu)
-	 ("C-c c g" . counsel-grep)
+	 ("C-c c C-s" . counsel-grep)
+	 ("C-c c r" . counsel-rg)	      ;; like git grep
 	 ("C-c c t" . counsel-git)
-	 ("C-c c r" . counsel-rg)	     ; like git grep
 	 ("C-c c r" . counsel-git-grep)
 	 ("C-c c l" . counsel-locate)
-	 :map help-map				  ; help-map
+	 ("C-c c L" . counsel-find-library)   ;; Search lisp libraries
+	 ("C-c c C" . counsel-compile)        ;; Compile
+	 ("C-c c R" . counsel-recentf)
+	 :map help-map			      ;; help-map
 	 ("f" . counsel-describe-function)
 	 ("v" . counsel-describe-variable)
 	 ("C-l" . counsel-info-lookup-symbol))
@@ -1357,18 +1374,6 @@ company-c-headers instead if irony"
   (setq large-file-warning-threshold nil)   ;; Don't warn when TAGS files are large
   )
 
-;; Don't ask before rereading the TAGS files if they have changed
-(setq tags-revert-without-query t)
-;; Don't warn when TAGS files are large
-(setq large-file-warning-threshold nil)
-;; Setup auto update now
-(add-hook 'prog-mode-hook
-	  (lambda ()
-	    (add-hook 'after-save-hook
-		      'counsel-etags-virtual-update-tags 'append 'local)))
-
-
-
 (use-package dumb-jump
   :bind (("C-c j 4 n" . dumb-jump-go-other-window)
 	 ("C-c j 4 x" . dumb-jump-go-prefer-external-other-window)
@@ -1391,18 +1396,18 @@ company-c-headers instead if irony"
   (setq magit-completing-read-function 'ivy-completing-read))
 
 (use-package gitattributes-mode
-  :defer 5)
+  :mode "\\.gitattributes\\'")
 
 (use-package gitconfig-mode
-  :defer 5)
+  :mode "\\.gitconfig\\'")
 
 (use-package gitignore-mode
-  :defer 5)
+  :mode "\\.gitignore\\'")
 
 ;;______________________________________
 ;; Git commit
 (use-package git-commit
-  :mode ("COMMIT_EDITMSG" . global-git-commit-mode)
+  :mode ("COMMIT_EDITMSG" . git-commit-mode)
   :config
   (setq git-commit-summary-max-length 50
 	fill-column 72)
@@ -1416,13 +1421,23 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; CMake
 (use-package cmake-mode
-  :mode ("/CMakeLists\\.txt\\'" "\\.cmake\\'")
-  :after company
+  :mode ("CMakeLists\\.txt\\'" "\\.cmake\(.in\)?\\'")
   :config
-  (use-package cmake-font-lock
-    :config
-    (add-hook 'cmake-mode-hook 'cmake-font-lock-activate))
-  (add-to-list (make-local-variable 'company-backends) 'company-cmake))
+  (add-to-list 'company-backends 'company-cmake))
+
+(use-package cmake-font-lock
+  :preface
+  (defun my/cmake-font-lock ()
+    (cmake-font-lock-setup)
+    (font-lock-refresh-defaults))
+  :init
+  (add-hook 'cmake-mode-hook #'my/cmake-font-lock t)
+  ;;(add-hook 'cmake-mode-hook #'cmake-font-lock-activate)
+  )
+
+(use-package eldoc-cmake
+  :after company
+  :hook (cmake-mode . eldoc-cmake-enable))
 
 ;;__________________________________________________________
 ;; Cobol
@@ -1510,7 +1525,8 @@ company-c-headers instead if irony"
 	 ("C-; C-e" . avy-goto-end-of-line)
 	 ("C-; C-n" . avy-goto-line-below)
 	 ("C-; C-p" . avy-goto-line-above)
-	 :map isearch-mode-map ("C-;" . avy-isearch))
+	 :map isearch-mode-map
+	 ("C-;" . avy-isearch))
   :config
   (setq avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
 			(number-sequence ?A ?Z)
@@ -1529,24 +1545,26 @@ company-c-headers instead if irony"
 
 
 (use-package avy-zap
-  :bind (("M-Z". zzz-up-to-char)
-	 ("M-z". zzz-to-char)))
+  :bind (("M-Z". avy-zap-up-to-char-dwim)
+	 ("M-z". avy-zap-to-char-dwim)))
 
 
 (use-package goto-line-preview
   :bind ([remap goto-line] . goto-line-preview))
 
-(use-package arduino-mode
-  :mode "\\.ino\\'"
-  :config
-  (use-package company-arduino
-    :config
-    (company-arduino-turn-on))
+;;__________________________________________________________
+;; Arduino Mode
 
-  (use-package flycheck-arduino :ensure arduino-mode
-    :after flycheck
-    :config
-    (flycheck-arduino-setup)))
+(use-package arduino-mode
+  :mode "\\.ino\\'")
+
+(use-package company-arduino
+  :after company
+  :hook (arduino-mode . company-arduino-turn-on))
+
+(use-package flycheck-arduino :ensure arduino-mode
+  :after flycheck
+  :hook (arduino-mode . flycheck-arduino-setup))
 
 ;;__________________________________________________________
 ;; Multiple Cursors
@@ -1615,7 +1633,7 @@ company-c-headers instead if irony"
 ;;__________________________________________________________
 ;; Web mode
 (use-package web-mode
-  :mode ("\\.html?\\'" "\\.php\\'" "\\.phtml\\'" )
+  :mode ("\\.html\\'" "\\.php\\'" "\\.phtml\\'" )
   :custom
   (web-mode-code-indent-offset 2)
   (web-mode-markup-indent-offset 2)
@@ -1627,22 +1645,27 @@ company-c-headers instead if irony"
   (web-mode-enable-engine-detection t)
 
   :config
-  (use-package company-web
-    :config
-    (add-to-list (make-local-variable 'company-backends) '(company-web-html)))
-
   (setq web-mode-engines-alist
-	'(("php"	. "\\.phtml\\'")))
+	'(("php" . "\\.phtml\\'"))))
 
-  (use-package web-mode-edit-element))
+(use-package company-web
+  :preface
+  (defun my/company-web ()
+    (add-to-list (make-local-variable 'company-backends) '(company-web-html)))
+  :hook (web-mode . my/company-web))
 
+(use-package web-mode-edit-element
+  :hook (web-mode . web-mode-edit-element-minor-mode))
 
-
+;;__________________________________________________________
+;; nginx mode
 (use-package nginx-mode
-  :commands (nginx-mode)
-  :config
-  (use-package company-nginx
-    :hook nginx-mode))
+  :mode ("sites-\\(?:available\\|enabled\\)\\'" "nginx\\.config\\'"))
+
+(use-package company-nginx
+  :hook (nginx-mode . company-nginx-keywords))
+
+;;__________________________________________________________
 
 (use-package json-mode
   :mode "\\.json\\'")
@@ -1651,7 +1674,8 @@ company-c-headers instead if irony"
   :commands sudo-edit)
 
 (use-package evil
-  :commands		  evil-mode
+  :disabled
+  :commands evil-mode
   :init
   (setq evil-esc-delay 0.001
 	evil-want-keybinding nil)
