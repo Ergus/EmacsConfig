@@ -245,8 +245,8 @@
 
 ;;__________________________________________________________
 ;; Show paren mode
-(setq show-paren-delay 0
-      blink-matching-delay 0.01)
+(setq-default show-paren-delay 0
+	      blink-matching-paren nil)
 (show-paren-mode t)	  ;; Highlight couple parentesis
 (set-face-attribute 'show-paren-match nil :inherit nil
 		    :background (cdr (assoc 'brightblack my/colors)))
@@ -256,15 +256,14 @@
 (use-package tramp :ensure nil
   :defer t
   :config
-  (setq compilation-scroll-output 'first-error
-	tramp-auto-save-directory "~/.emacs.d/tramp-autosave-dir")
-
-  (setq tramp-default-method "rsync"
-	;;tramp-default-method "ssh"
-	;;tramp-change-syntax 'simplified
-	tramp-use-ssh-controlmaster-options nil
-	tramp-completion-reread-directory-timeout t
-	tramp-persistency-file-name "~/.emacs.d/tramp")
+  (setq-default compilation-scroll-output 'first-error
+		tramp-auto-save-directory "~/.emacs.d/tramp-autosave-dir"
+		tramp-default-method "rsync"
+		;;tramp-default-method "ssh"
+		;;tramp-change-syntax 'simplified
+		tramp-use-ssh-controlmaster-options nil
+		tramp-completion-reread-directory-timeout t
+		tramp-persistency-file-name "~/.emacs.d/tramp")
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 (use-package tramp-term
@@ -666,7 +665,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	       ;;(c-basic-offset . 4)
 	       (fill-column . 80)
 	       (c-offsets-alist (inline-open . 0)
+				(c-comment-intro . 0)
 				(cpp-macro . 0)
+				;;(innamespace . [0])
 				;;(access-label '-)
 				)))
 
@@ -1292,14 +1293,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package counsel
   :diminish
-  :bind (("M-x" . counsel-M-x)
-	 ("C-x C-f" . counsel-find-file)
+  :bind (("C-x b" . counsel-switch-buffer)
+	 ("C-x 4 b" . counsel-switch-buffer-other-window)
 	 ("C-c c a" . counsel-ag)
+	 ("C-c c b" . counsel-ibuffer)
+	 ("C-c c d" . counsel-dired)
 	 ("C-c c i" . counsel-imenu)
+	 ("C-c c j" . counsel-file-jump)
 	 ("C-c c C-s" . counsel-grep)
 	 ("C-c c r" . counsel-rg)	      ;; like git grep
-	 ("C-c c t" . counsel-git)
-	 ("C-c c r" . counsel-git-grep)
+	 ("C-c c g" . counsel-git)
+	 ("C-c c <f2>" . counsel-linux-app)
+	 ("C-c c G" . counsel-git-grep)
 	 ("C-c c l" . counsel-locate)
 	 ("C-c c L" . counsel-find-library)   ;; Search lisp libraries
 	 ("C-c c C" . counsel-compile)        ;; Compile
@@ -1457,10 +1462,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;; Org Mode (I don't use it)
 
 (use-package org
-  :mode ("\\.org$" . org-mode)
-  :config
-  (use-package org-bullets
-    :hook (org-mode . org-bullets-mode)))
+ :mode ("\\.org\\'" . org-mode))
+
+;; (use-package org-bullets
+;;    :hook (org-mode . org-bullets-mode))
 
 ;;__________________________________________________________
 ;;; Google calendar (view only)
@@ -1508,37 +1513,38 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package avy
   :bind (("C-; r" . avy-resume)
-	 ("C-; C-;" . avy-goto-char-in-line)
+	 ("C-; C-;" . avy-goto-char-timer)
 	 ("C-; 1" . avy-goto-char)
 	 ("C-; 2" . avy-goto-char-2)
-	 ("C-; c" . avy-goto-char-timer)
-	 ("C-; C-a" . avy-goto-line)
+	 ("C-; ;" . avy-goto-char-in-line)
 	 ("C-; w" . avy-goto-word-or-subword-1)
 	 ("C-; W" . avy-goto-word-0)
+	 ("C-; M-b" . avy-goto-word-0-above)
+	 ("C-; M-f" . avy-goto-word-0-below)
+	 ("C-; p" . avy-prev)
+	 ("C-; n" . avy-next)
+	 ("C-; s" . avy-goto-symbol-1)
+	 ("C-; C-a" . avy-goto-line)
+	 ("C-; C-e" . avy-goto-end-of-line)
+	 ("C-; C-n" . avy-goto-line-below)
+	 ("C-; C-p" . avy-goto-line-above)
 	 ("C-; C-w" . avy-move-region)
 	 ("C-; C-k" . avy-kill-region)
 	 ("C-; M-w" . avy-kill-ring-save-region)
 	 ("C-; i" . avy-copy-region)
-	 ("C-; p" . avy-prev)
-	 ("C-; n" . avy-next)
-	 ("C-; C-x" . avy-pop-mark)
-	 ("C-; C-e" . avy-goto-end-of-line)
-	 ("C-; C-n" . avy-goto-line-below)
-	 ("C-; C-p" . avy-goto-line-above)
 	 :map isearch-mode-map
 	 ("C-;" . avy-isearch))
   :config
   (setq avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
-			(number-sequence ?A ?Z)
-			;;(number-sequence ?1 ?9)
-			;;'(?0)
+	;;		(number-sequence ?A ?Z)
 			)
-	avy-style 'at							 ;; Propose only 1 letter
+	avy-style 'at			         ;; Propose only 1 letter
 	;;avy-background t
-	avy-all-windows nil						 ;; Only current window
+	avy-all-windows nil			 ;; Only current window
 	avy-case-fold-search nil		 ;; ignore case
 	avy-highlight-first t
-	avy-timeout-seconds 0.5)
+	;;avy-timeout-seconds 0.5
+	)
   (set-face-attribute 'avy-lead-face nil
 		      :background (cdr (assoc 'blue my/colors))
 		      :foreground (cdr (assoc 'red my/colors))))
@@ -1665,6 +1671,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package company-nginx
   :hook (nginx-mode . company-nginx-keywords))
 
+(use-package lice
+  :defer t)
+
 ;;__________________________________________________________
 
 (use-package json-mode
@@ -1680,11 +1689,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq evil-esc-delay 0.001
 	evil-want-keybinding nil)
   :config
-  (setq show-paren-when-point-inside-paren t)	 ;; show parent even when over)
+  (setq show-paren-when-point-inside-paren t))	 ;; show parent even when over))
 
-  (use-package evil-collection
-    :config
-    (evil-collection-init)))
+(use-package evil-collection
+  :hook (evil-mode .  evil-collection-init))
 
 (provide 'init)
 ;;; init.el ends here
