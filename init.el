@@ -120,6 +120,10 @@
 (when (file-exists-p syslisp-dir)
   (add-to-list 'load-path syslisp-dir))
 
+;; Next file is in my lisp directory. it only defines mu4e config and
+;; a variable for the gmail calendar.
+(require 'configmail)
+
 ;;__________________________________________________________
 ;; use-package
 (unless (package-installed-p 'use-package)
@@ -353,8 +357,9 @@
 	 ("C-x t t" . multi-term-dedicated-toggle)
 	 ("C-x t k" . multi-term-dedicated-close))
   :config
-  (setq ;;multi-term-program "/bin/bash"
-   multi-term-dedicated-select-after-open-p t))
+  (setq multi-term-dedicated-window-height 24
+	;;multi-term-program "/bin/bash"
+	multi-term-dedicated-select-after-open-p t))
 
 ;;__________________________________________________________
 ;; Better shell (for ssh)
@@ -549,25 +554,25 @@
 ;;__________________________________________________________
 ;; ycmd Mode
 
-(use-package ycmd
-  :disabled
-  :hook ((c-mode . ycmd-mode)
-	 (c++-mode . ycmd-mode))
-  :config
-  (setq ycmd-server-command '("python" "/home/ergo/gits/ycmd/ycmd"))
-  (setq ycmd-global-config "/home/ergo/gits/ycmd/.ycm_extra_conf.py")
+;; (use-package ycmd
+;;   :disabled
+;;   :hook ((c-mode . ycmd-mode)
+;; 	 (c++-mode . ycmd-mode))
+;;   :config
+;;   (setq ycmd-server-command '("python" "/home/ergo/gits/ycmd/ycmd"))
+;;   (setq ycmd-global-config "/home/ergo/gits/ycmd/.ycm_extra_conf.py")
 
-  (use-package company-ycmd
-    :config
-    (company-ycmd-setup))
+;;   (use-package company-ycmd
+;;     :config
+;;     (company-ycmd-setup))
 
-  (use-package flycheck-ycmd
-    :config
-    (flycheck-ycmd-setup))
+;;   (use-package flycheck-ycmd
+;;     :config
+;;     (flycheck-ycmd-setup))
 
-  (use-package ycmd-eldoc
-    :config
-    (ycmd-eldoc-setup)))
+;;   (use-package ycmd-eldoc
+;;     :config
+;;     (ycmd-eldoc-setup)))
 
 ;;__________________________________________________________
 ;; LSP try for a while
@@ -991,7 +996,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :config
   (setq langtool-default-language "en")
-  (setq langtool-language-tool-jar "~/gits/languagetool/languagetool-standalone/target/LanguageTool-4.3-SNAPSHOT/LanguageTool-4.3-SNAPSHOT/languagetool-commandline.jar"))
+  (setq langtool-language-tool-jar "~/gits/languagetool/languagetool-standalone/target/LanguageTool-4.6-SNAPSHOT/LanguageTool-4.6-SNAPSHOT/languagetool-commandline.jar"))
 
 ;;__________________________________________________________
 ;; EMMS mode.
@@ -1016,7 +1021,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Email mode for mutt
 ;;__________________________________________________________
 (use-package abbrev :ensure nil
-  :defer 5
   :diminish)
 
 ;; Asocia buffers que empiecen con messaje mode
@@ -1038,8 +1042,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (add-to-list (make-local-variable 'company-backends) 'notmuch-company))
   :init
   (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
-  :hook (message-mode . my/notmuch)
-  )
+  :hook (message-mode . my/notmuch))
 
 ;;__________________________________________________________
 ;; Latex mode
@@ -1229,7 +1232,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package ivy
   :diminish
-  :defer 5
+  :defer 2
   :bind (("C-c i r" . ivy-resume)
 	 :map ivy-minibuffer-map
 	 ("TAB" . ivy-partial)
@@ -1471,7 +1474,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;; Google calendar (view only)
 
 (use-package calfw
-  :commands (my/calendar)
+  :commands my/calendar
   :config
   (use-package calfw-org)
   (use-package calfw-ical)
@@ -1484,7 +1487,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (cfw:open-calendar-buffer
      :contents-sources
      (list
-      (cfw:open-ical-calendar my/gmailcal "Red"))))
+      (cfw:ical-create-source "gcal" my/gmailcal "Red"))))
   (setq cfw:org-overwrite-default-keybinding t))
 
 ;;__________________________________________________________
