@@ -122,7 +122,8 @@
 
 ;; Next file is in my lisp directory. it only defines mu4e config and
 ;; a variable for the gmail calendar.
-(require 'configmail)
+(unless (require 'configmail "configmail.el" t)
+  (message "No mail config file found: ignored"))
 
 ;;__________________________________________________________
 ;; use-package
@@ -1469,26 +1470,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;; (use-package org-bullets
 ;;    :hook (org-mode . org-bullets-mode))
-
-;;__________________________________________________________
-;;; Google calendar (view only)
-
-(use-package calfw
-  :commands my/calendar
-  :config
-  (use-package calfw-org)
-  (use-package calfw-ical)
-  (use-package calfw-gcal)
-
-  (setq cfw:org-overwrite-default-keybinding t)
-
-  (defun my/calendar ()
-    (interactive)
-    (cfw:open-calendar-buffer
-     :contents-sources
-     (list
-      (cfw:ical-create-source "gcal" my/gmailcal "Red"))))
-  (setq cfw:org-overwrite-default-keybinding t))
 
 ;;__________________________________________________________
 ;; Move current line up and down Shift+arrow
