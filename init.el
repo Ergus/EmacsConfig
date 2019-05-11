@@ -34,19 +34,21 @@
 
 (global-display-fill-column-indicator-mode t)
 
-(savehist-mode t)			    ;; Historial
+(savehist-mode t)			;; Historial
 (auto-compression-mode t)		;; Uncompress on the fly
 
 (size-indication-mode t)		;; Muestra el el tamanno en modeline
 (delete-selection-mode t)		;; Sobreescribe seleccion al pegar
 
-(prefer-coding-system 'utf-8)	;; Encoding
+(prefer-coding-system 'utf-8)	        ;; Encoding
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 
 (column-number-mode t)			;; Numero de la columna
 (line-number-mode t)			;; Numero de linea modeline
+
+(save-place-mode 1)                     ;; Remember point in files
 
 (setq-default vc-follow-symlinks t	    ;; Open links not open
 	      ;;tab-always-indent complete  ;; make tab key do indent only
@@ -55,12 +57,10 @@
 	      user-full-name "Jimmy Aguilar Mena"
 	      inhibit-startup-message t
 	      inhibit-startup-screen t
-	      ;;tab-width 4		      ;; Tabulador a 4
-	      ;;indent-tabs-mode t	      ;; Indent with tabs
+	      ;;tab-width 4		    ;; Tabulador a 4
+	      ;;indent-tabs-mode t	    ;; Indent with tabs
 	      ;;fill-column 80		    ;; default is 70
 	      make-backup-files nil	    ;; Sin copias de seguridad
-	      auto-save-list-file-name nil
-	      auto-save-default nil
 	      create-lockfiles nil	    ;; No lock files, good for tramp
 	      visible-bell nil		    ;; Flash the screen (def)
 	      display-line-numbers-width 4  ;; Minimum line number width
@@ -88,12 +88,14 @@
 	      inhibit-default-init t	    ;; Avoid emacs default init
 	      term-suppress-hard-newline t  ;; Text can resize
 	      echo-keystrokes 0.005	    ;; Muestra binds in echo area
-	      confirm-kill-emacs nil
+	      confirm-kill-emacs nil        ;; No confirm exit emacs
 	      disabled-command-function nil
+	      auto-save-default nil         ;; No autosave
+	      auto-save-list-file-name nil
 	      )
 
 ;;__________________________________________________________
-;; Confirmation for to exit emacs
+;; I don't want confirm exit, not write yes-not either
 (defalias 'yes-or-no-p 'y-or-n-p) ;; Reemplazar "yes" por "y" en el prompt
 
 ;;__________________________________________________________
@@ -171,10 +173,13 @@
 (use-package isearch :ensure nil
   :defer t
   :custom
-  (search-nonincremental-instead nil)
+  (search-nonincremental-instead nil) ;; No incremental if enter with empty
   (lazy-highlight-initial-delay 0)
-  (isearch-allow-scroll t)	;; Permit scroll can be 'unlimited
-  (isearch-lazy-count t))
+  (isearch-allow-scroll t)	      ;; Permit scroll can be 'unlimited
+  (isearch-lazy-count t)
+  ;;(search-exit-option 'edit)          ;; Control or meta keys edit search
+  (isearch-yank-on-move 'shift)       ;; Copy text from buffer with meta
+  )
 
 (use-package phi-search
   :defer t)
@@ -236,11 +241,11 @@
        (set-face-attribute 'isearch nil :background (cdr (assoc 'blue my/colors))
 			   :foreground (cdr (assoc 'white my/colors)) :weight 'ultrabold)	      ;; Search
 
-       (set-face-attribute 'region nil :inherit nil :background (cdr (assoc 'brightblack my/colors))) ;; Seleccion
+       (set-face-attribute 'region nil :background (cdr (assoc 'blue my/colors))) ;; Seleccion
 
        (set-face-attribute 'line-number nil :foreground (cdr (assoc 'brightblack my/colors)))	      ;; numero de linea
        (set-face-attribute 'line-number-current-line nil :foreground (cdr (assoc 'green my/colors)))  ;; resalta la linea actual
-       (set-face-attribute 'fill-column-face nil :foreground (cdr (assoc 'brightblack my/colors))))
+       (set-face-attribute 'fill-column-indicator nil :foreground (cdr (assoc 'brightblack my/colors))))
 
 (my/colors)
 
@@ -455,9 +460,12 @@
 ;;__________________________________________________________
 ;; Undo tree
 
-(use-package undo-tree
-  :diminish
-  :init (global-undo-tree-mode))
+;; (use-package undo-tree
+;;   :diminish
+;;   :init (global-undo-tree-mode))
+
+(use-package undo-propose
+  :commands undo-propose)
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
@@ -671,7 +679,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	       ;;(c-basic-offset . 4)
 	       (fill-column . 80)
 	       (c-offsets-alist (inline-open . 0)
-				(c-comment-intro . 0)
+				(comment-intro . 0)
 				(cpp-macro . 0)
 				;;(innamespace . [0])
 				;;(access-label '-)
@@ -914,17 +922,19 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (:map company-mode-map ("C-c RET" . company-other-backend)
 	      :map company-active-map ("C-c RET" . company-other-backend))
   :init (add-hook 'after-init-hook 'global-company-mode)
+  :custom
+  (company-idle-delay 1.0)	 ;; no delay for autocomplete
+  (company-minimum-prefix-length 2)
+  (company-selection-wrap-around t)
+  (company-tng-configure-default)
+  ;;company-tooltip-limit 20
+  ;;company-show-numbers t
+  (company-backends '(company-semantic
+		     company-capf		 ;; completion at point
+		     company-files	 ;; company files
+		     (company-dabbrev-code company-gtags company-keywords)
+		     company-dabbrev))
   :config
-  (setq company-idle-delay 1.0	 ;; no delay for autocomplete
-	company-minimum-prefix-length 2
-	;;company-tooltip-limit 20
-	;;company-show-numbers t
-	company-backends '(company-semantic
-			   company-capf		 ;; completion at point
-			   company-files	 ;; company files
-			   (company-dabbrev-code company-gtags company-keywords)
-			   company-dabbrev))
-
   (set-face-attribute 'company-tooltip nil		  ;; dialog face
 		      :background (cdr (assoc 'brightblack my/colors)) :foreground (cdr (assoc 'white my/colors)))
   (set-face-attribute 'company-tooltip-common nil ;; common part face
@@ -954,8 +964,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (defun my/elisp-mode-hook ()
   "My elisp mode hook."
-  (add-to-list
-   (make-local-variable 'company-backends) 'company-elisp))
+  (with-eval-after-load "company"
+    (add-to-list 'company-backends 'company-elisp)))
 
 (add-hook 'emacs-lisp-mode-hook 'my/elisp-mode-hook)
 
@@ -1266,13 +1276,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :after (ivy hydra))
 
 (use-package swiper
-  :bind (("C-c w" . swiper)
-	 ("C-c C-s" . swiper-isearch)
+  :bind (("C-c w" . swiper-isearch)
 	 :map swiper-map
 	 ("C-y" . yank)
 	 ("M-%" . swiper-query-replace)
 	 ("C-;" . swiper-avy)
 	 ("C-c m" . swiper-mc)
+	 ("C-r" . ivy-previous-line-or-history)
 	 :map isearch-mode-map
 	 ("C-o" . swiper-from-isearch))
   :config
@@ -1400,8 +1410,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Magit
 
 (use-package magit
-  :commands magit-status
-  :config
+  :commands (magit-status
+	     magit-log-all
+	     magit-log)
+  :init
   (setq magit-completing-read-function 'ivy-completing-read))
 
 (use-package gitattributes-mode
@@ -1560,7 +1572,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Multiple Cursors
 
 (use-package iedit
-  :bind ("C-." . iedit-mode)
+  :bind ("C-c m i" . iedit-mode)
   :config
   (setq iedit-auto-recenter nil)
   (define-key iedit-lib-keymap (kbd "C-c m '") 'iedit-toggle-unmatched-lines-visible))
@@ -1677,6 +1689,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package evil-collection
   :hook (evil-mode .  evil-collection-init))
+
+(use-package slime
+  :commands slime
+  :init
+  (setq inferior-lisp-program "sbcl"
+        slime-contribs '(slime-fancy)))
 
 (provide 'init)
 ;;; init.el ends here
