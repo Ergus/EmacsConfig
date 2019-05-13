@@ -1,5 +1,5 @@
 ;;; init.el --- Emacs Initialization and Configuration
-;; Copyright (C) 2018 Jimmy Aguilar Mena
+;; Copyright (C) 2018-2019 Jimmy Aguilar Mena
 
 ;; Author: Jimmy Aguilar Mena
 ;; Version: 0.1
@@ -157,6 +157,12 @@
 ;;__________________________________________________________
 ;; Benchmark-init
 
+;; (use-package ergoemacs-mode
+;;   :init
+;;   (setq ergoemacs-theme nil)
+;;   (setq ergoemacs-keyboard-layout "us")
+;;   (ergoemacs-mode 1))
+
 (use-package diminish)		      ;; if you use :diminish
 (use-package bind-key)		      ;; if you use any :bind variant
 
@@ -166,7 +172,6 @@
   (setq paradox-spinner-type 'progress-bar
 	paradox-display-download-count t
 	paradox-display-star-count t))
-
 ;;__________________________________________________________
 ;; Isearch
 
@@ -235,17 +240,20 @@
        (set-face-attribute 'highlight nil :background (cdr (assoc 'brightblack my/colors)) :foreground nil)
 
        (set-face-attribute 'secondary-selection nil :background (cdr (assoc 'brightblue my/colors))
-			   :foreground (cdr (assoc 'blue my/colors)) :weight 'bold)
+			   :foreground (cdr (assoc 'white my/colors)) :weight 'bold)
 
        ;; search C-s, resalta lo que encuentra
        (set-face-attribute 'isearch nil :background (cdr (assoc 'blue my/colors))
 			   :foreground (cdr (assoc 'white my/colors)) :weight 'ultrabold)	      ;; Search
 
-       (set-face-attribute 'region nil :background (cdr (assoc 'blue my/colors))) ;; Seleccion
+       (set-face-attribute 'lazy-highlight nil :background (cdr (assoc 'brightblue my/colors)))
+
+       (set-face-attribute 'region nil :background (cdr (assoc 'brightblue my/colors)))               ;; Seleccion
 
        (set-face-attribute 'line-number nil :foreground (cdr (assoc 'brightblack my/colors)))	      ;; numero de linea
        (set-face-attribute 'line-number-current-line nil :foreground (cdr (assoc 'green my/colors)))  ;; resalta la linea actual
-       (set-face-attribute 'fill-column-indicator nil :foreground (cdr (assoc 'brightblack my/colors))))
+       (set-face-attribute 'fill-column-indicator nil :foreground (cdr (assoc 'brightblack my/colors)))
+       )
 
 (my/colors)
 
@@ -375,10 +383,13 @@
 ;;__________________________________________________________
 ;; which-key
 (use-package which-key
-  :defer 2
+  :defer 1
   :diminish
   :config
-  (setq which-key-separator ": ")
+  (setq which-key-idle-delay 0.4
+	which-key-use-C-h-commands nil
+	which-key-echo-keystrokes echo-keystrokes
+	which-key-separator ": ")
 					;which-key-idle-delay 2.0)
   (which-key-mode t)
   (which-key-add-key-based-replacements
@@ -390,8 +401,9 @@
 
 (use-package fancy-narrow
   :bind (("C-x n N" . fancy-narrow-to-region)
-	 ("C-x n W" . fancy-widen))
-  :commands (fancy-narrow-to-region fancy-widen))
+	 ("C-x n D" . fancy-narrow-to-defun)
+	 ("C-x n P" . fancy-narrow-to-page)
+	 ("C-x n W" . fancy-widen)))
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
@@ -587,27 +599,35 @@
 ;; LSP try for a while
 
 (use-package lsp-mode
+  :diminish lsp
   :commands lsp
+  :custom
+  (lsp-enable-snippet nil)
+  (lsp-prefer-flymake nil)
+  (lsp-eldoc-hook nil))
+
+(use-package lsp-ui
+  :diminish
+  :commands lsp-ui-mode
+  :after lsp flycheck
+  :custom
+  (lsp-ui-sideline-enable nil)
+  (lsp-ui-doc-enable nil)
+  (lsp-ui-flycheck-enable t)
+  (lsp-ui-imenu-enable t)
+  (lsp-ui-sideline-ignore-duplicate t)
   :config
-  (setq lsp-prefer-flymake nil
-	lsp-eldoc-hook nil)
-  (require 'lsp-clients)
+  (require 'lsp-ui-flycheck)
+  (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+  (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+  )
 
-  (use-package lsp-ui
-    :config
-    (require 'lsp-ui-flycheck)
-    (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-    (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-    (setq lsp-ui-sideline-enable nil
-	  lsp-ui-doc-enable nil
-	  lsp-ui-flycheck-enable t
-	  lsp-ui-imenu-enable t
-	  lsp-ui-sideline-ignore-duplicate t))
-
-  (use-package company-lsp
-    :after company
-    :config
-    (add-to-list (make-local-variable 'company-backends) 'company-lsp)))
+(use-package company-lsp
+  :diminish lsp
+  :commands company-lsp
+  :after company lsp
+  :config
+  (add-to-list 'company-backends 'company-lsp))
 
 ;;__________________________________________________________
 ;; Irony config (C completions)
@@ -919,8 +939,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package company
   :diminish
-  :bind (:map company-mode-map ("C-c RET" . company-other-backend)
-	      :map company-active-map ("C-c RET" . company-other-backend))
+  :bind (:map company-active-map
+	      ("C-n" . company-select-next-or-abort)
+	      ("C-p" . company-select-previous-or-abort))
   :init (add-hook 'after-init-hook 'global-company-mode)
   :custom
   (company-idle-delay 1.0)	 ;; no delay for autocomplete
@@ -935,6 +956,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		     (company-dabbrev-code company-gtags company-keywords)
 		     company-dabbrev))
   :config
+  (define-key company-active-map (kbd "<C-return>") 'company-other-backend)
+  (define-key company-mode-map (kbd "<C-return>") 'company-other-backend)
+
   (set-face-attribute 'company-tooltip nil		  ;; dialog face
 		      :background (cdr (assoc 'brightblack my/colors)) :foreground (cdr (assoc 'white my/colors)))
   (set-face-attribute 'company-tooltip-common nil ;; common part face
@@ -944,20 +968,29 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (set-face-attribute 'company-scrollbar-bg nil	  ;; scroll bar face bg
 		      :background (cdr (assoc 'brightblack my/colors)))
   (set-face-attribute 'company-scrollbar-fg nil	  ;; scroll bar face fg
-		      :background (cdr (assoc 'blue my/colors)))
+		      :background (cdr (assoc 'blue my/colors))))
+
+(use-package yasnippet                  ; Snippets
+  :diminish
+  :bind (("C-c y i" . yas-insert-snippet)
+	 ("C-c y n" . yas-new-snippet)
+	 ("C-c y f" . yas-visit-snippet-file)
+	 ("C-c y TAB" . yas-expand)
+	 :map yas-minor-mode-map
+	 ("TAB" . nil))
+  :init
+  (which-key-add-key-based-replacements "C-c y" "yasnippet")
+  :config
+  (setq yas-verbosity 1                 ; No need to be so verbose
+	yas-wrap-around-region t)
+
+  ;; (yas-reload-all)
+  ;; (yas-minor-mode 1)
+  (yas-global-mode 1)
   )
 
-;; (use-package yasnippet
-;;	:diminish
-;;	:hook (prog-mode . yas-minor-mode)
-;;	:bind (:map yas-minor-mode-map ("TAB" . nil)
-;;				("C-c & TAB" . yas-maybe-expand))
-;;	:init
-;;	(which-key-add-key-based-replacements "C-c &" "yasnippet")
-;;	:config
-;;	(use-package yasnippet-snippets)
-;;	(add-to-list 'company-backends 'company-yasnippet))
-
+(use-package yasnippet-snippets
+  :after yasnippet)
 
 ;; __________________________________________________________
 ;; Emacs lisp
@@ -1243,7 +1276,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package ivy
   :diminish
-  :defer 2
+  :defer 1
   :bind (("C-c i r" . ivy-resume)
 	 :map ivy-minibuffer-map
 	 ("TAB" . ivy-partial)
@@ -1251,21 +1284,19 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (which-key-add-key-based-replacements "C-c i" "ivy")
   :config
-  (set-face-attribute 'ivy-current-match nil
-		      :inherit nil :background (cdr (assoc 'brightblack my/colors))
-		      :foreground (cdr (assoc 'white my/colors)) :weight 'ultrabold)
-  (set-face-attribute 'ivy-minibuffer-match-face-1 nil ;; Espacio entre matches
-		      :inherit nil :background (cdr (assoc 'brightblack my/colors)) :foreground nil :weight 'ultrabold)
-  (set-face-attribute 'ivy-minibuffer-match-face-2 nil ;; primer match
-		      :background (cdr (assoc 'brightblue my/colors)) :foreground nil :weight 'ultrabold)
-  (set-face-attribute 'ivy-minibuffer-match-face-3 nil ;; segundo match
-		      :inherit nil :background (cdr (assoc 'brightblue my/colors)) :foreground nil :weight 'ultrabold)
+  (copy-face 'highlight 'ivy-current-match)  ;; Linea seleccionada
+
+  (set-face-attribute 'ivy-minibuffer-match-face-1 nil     ;; espacio entre matches
+   		      :inherit nil :background nil :foreground nil :underline t)
+  (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-2)
+  (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-3)
+  (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-4)
 
   (setq ivy-use-virtual-buffers t
 	ivy-count-format "(%d/%d) "
 	ivy-display-style 'fancy
 	ivy-pulse-delay nil
-	ivy-height 10
+	;;ivy-height 10
 	ivy-format-function #'ivy-format-function-arrow
 	;;ivy-wrap t					 ;; cycle in minibuffer
 	enable-recursive-minibuffers t)
@@ -1276,6 +1307,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :after (ivy hydra))
 
 (use-package swiper
+  :preface
   :bind (("C-c w" . swiper-isearch)
 	 :map swiper-map
 	 ("C-y" . yank)
@@ -1286,14 +1318,21 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 :map isearch-mode-map
 	 ("C-o" . swiper-from-isearch))
   :config
-  (set-face-attribute 'swiper-line-face nil ;; segundo match
-		      :background (cdr (assoc 'brightblack my/colors)) :weight 'ultrabold)
-  (set-face-attribute 'swiper-match-face-1 nil ;; Espacio entre matches
-		      :inherit nil :background (cdr (assoc 'brightblack my/colors)) :foreground nil :weight 'ultrabold)
-  (set-face-attribute 'swiper-match-face-2 nil ;; primer match
-		      :inherit nil :background (cdr (assoc 'brightblue my/colors)) :foreground nil :weight 'ultrabold)
-  (set-face-attribute 'swiper-match-face-3 nil ;; segundo match
-		      :inherit nil :background (cdr (assoc 'brightblue my/colors)) :foreground nil :weight 'ultrabold))
+  (copy-face 'isearch 'swiper-isearch-current-match)
+
+  (copy-face 'highlight 'swiper-line-face)         ;; linea minibuffer
+
+  (set-face-attribute 'swiper-match-face-1 nil     ;; linea en minibuffer
+   		      :inherit nil :background nil :underline t)
+
+  (copy-face 'isearch 'swiper-match-face-2) ;; primer match
+  (copy-face 'isearch 'swiper-match-face-3) ;; segundo match
+  (copy-face 'isearch 'swiper-match-face-4) ;; tercer match
+
+  (copy-face 'lazy-highlight 'swiper-background-match-face-2)
+  (copy-face 'lazy-highlight 'swiper-background-match-face-3)
+  (copy-face 'lazy-highlight 'swiper-background-match-face-4)
+  )
 
 (use-package imenu-anywhere
   :bind ("C-c i i" . ivy-imenu-anywhere)
@@ -1331,8 +1370,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (which-key-add-key-based-replacements "C-c c" "counsel")
   :custom
-  (counsel-find-file-at-point t)
-
+  (counsel-find-file-at-point t)       ;; Select file at point
+  (counsel-preselect-current-file t)   ;; Select current file in list
   :config
   (counsel-mode t))
 
