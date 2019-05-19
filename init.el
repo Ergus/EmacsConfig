@@ -246,7 +246,7 @@
        (set-face-attribute 'isearch nil :background (cdr (assq 'blue my/colors))
 			   :foreground (cdr (assq 'white my/colors)) :weight 'ultrabold)	      ;; Search
 
-       (set-face-attribute 'lazy-highlight nil :background (cdr (assq 'brightblack my/colors)))
+       (set-face-attribute 'lazy-highlight nil :background (cdr (assq 'brightblue my/colors)))
 
        (set-face-attribute 'region nil :background (cdr (assq 'brightblue my/colors)))               ;; Seleccion
 
@@ -1732,7 +1732,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (evil-mode 1)
   ;; Modeline color
   (setq original-background (face-attribute 'mode-line :background)
-	normal-state-background (cdr (assq 'brightblue my/colors))
+	normal-state-background (cdr (assq 'brightblack my/colors))
 	visual-state-background (cdr (assq 'green my/colors)))
 
   (add-hook 'evil-normal-state-entry-hook
