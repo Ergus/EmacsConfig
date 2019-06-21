@@ -29,7 +29,7 @@
 ;;(setq-default font-lock-maximum-decoration t)
 ;;(global-font-lock-mode t)		;; Use font-lock everywhere.
 
-(setq display-line-numbers-widen t)	;; keep line numbers inside a narrow
+(setq-default display-line-numbers-widen t)	;; keep line numbers inside a narrow
 (global-display-line-numbers-mode t)	;; line numbers on the left
 
 (global-display-fill-column-indicator-mode t)
@@ -219,7 +219,7 @@
 
 (defun my/colors () "Define my color theme."
 
-       (set-face-attribute 'default nil :family "Hack" :height 110)
+       (set-face-attribute 'default nil :family "Hack" :height 105)
 
        (set-background-color (cdr (assq 'black my/colors)))
        (set-foreground-color (cdr (assq 'white my/colors)))
@@ -552,6 +552,7 @@
 	 (text-mode . flyspell-mode))
   :bind (:map flyspell-mode-map
 	      ("C-M-i" .  nil)
+	      ("C-'" .	nil)
 	      ("C-;" .	nil)
 	      ("C-," .	nil)
 	      ("C-." .	nil)
@@ -941,18 +942,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Auto completamiento
-
 (use-package company
   :diminish
   :bind (:map company-active-map
 	      ("C-n" . company-select-next-or-abort)
 	      ("C-p" . company-select-previous-or-abort))
-  :init (add-hook 'after-init-hook 'global-company-mode)
+  :hook (after-init . global-company-mode)
   :custom
   (company-idle-delay 1.0)	 ;; no delay for autocomplete
   (company-minimum-prefix-length 2)
-  (company-selection-wrap-around t)
-  (company-tng-configure-default)
+  (company-selection-wrap-around nil)
+  (company-show-numbers t)
   ;;company-tooltip-limit 20
   ;;company-show-numbers t
   (company-backends '(company-semantic
@@ -961,11 +961,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		     (company-dabbrev-code company-gtags company-keywords)
 		     company-dabbrev))
   :config
+  (company-tng-configure-default)
   (define-key company-active-map (kbd "<C-return>") 'company-other-backend)
   (define-key company-mode-map (kbd "<C-return>") 'company-other-backend)
-
   (set-face-attribute 'company-tooltip nil		  ;; dialog face
-		      :background (cdr (assq 'brightblack my/colors)) :foreground (cdr (assq 'white my/colors)))
+		      :background (cdr (assq 'brightblack my/colors))
+		      :foreground (cdr (assq 'white my/colors)))
   (set-face-attribute 'company-tooltip-common nil ;; common part face
 		      :inherit 'company-tooltip :foreground (cdr (assq 'green my/colors)))
   (set-face-attribute 'company-tooltip-selection nil ;; selection face
@@ -1302,9 +1303,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	ivy-display-style 'fancy
 	ivy-pulse-delay nil
 	;;ivy-height 10
-	ivy-format-function #'ivy-format-function-arrow
 	;;ivy-wrap t					 ;; cycle in minibuffer
 	enable-recursive-minibuffers t)
+
+  ;; Highlight with arrows by default.
+  (add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
 
   (ivy-mode t))
 
@@ -1317,7 +1320,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 :map swiper-map
 	 ("C-y" . yank)
 	 ("M-%" . swiper-query-replace)
-	 ("C-;" . swiper-avy)
+	 ("C-," . swiper-avy)
 	 ("C-c m" . swiper-mc)
 	 ("C-r" . ivy-previous-line-or-history)
 	 ("C-o" . swiper-isearch-toggle)
@@ -1368,6 +1371,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-c c L" . counsel-find-library)   ;; Search lisp libraries
 	 ("C-c c C" . counsel-compile)        ;; Compile
 	 ("C-c c R" . counsel-recentf)
+	 ("C-c c C-r" . counsel-register)
 	 :map help-map			      ;; help-map
 	 ("f" . counsel-describe-function)
 	 ("v" . counsel-describe-variable)
@@ -1553,33 +1557,33 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; evil mode
 
 (use-package avy
-  :bind (("C-; r" . avy-resume)
-	 ("C-; C-;" . avy-goto-char-timer)
-	 ("C-; 1" . avy-goto-char)
-	 ("C-; 2" . avy-goto-char-2)
-	 ("C-; ;" . avy-goto-char-in-line)
-	 ("C-; w" . avy-goto-word-or-subword-1)
-	 ("C-; W" . avy-goto-word-0)
-	 ("C-; M-b" . avy-goto-word-0-above)
-	 ("C-; M-f" . avy-goto-word-0-below)
-	 ("C-; p" . avy-prev)
-	 ("C-; n" . avy-next)
-	 ("C-; s" . avy-goto-symbol-1)
-	 ("C-; C-a" . avy-goto-line)
-	 ("C-; C-e" . avy-goto-end-of-line)
-	 ("C-; C-n" . avy-goto-line-below)
-	 ("C-; C-p" . avy-goto-line-above)
-	 ("C-; C-w" . avy-move-region)
-	 ("C-; C-k" . avy-kill-region)
-	 ("C-; M-w" . avy-kill-ring-save-region)
-	 ("C-; i" . avy-copy-region)
+  :bind (("C-' r" . avy-resume)
+	 ("C-' C-'" . avy-goto-char-timer)
+	 ("C-' 1" . avy-goto-char)
+	 ("C-' 2" . avy-goto-char-2)
+	 ("C-' '" . avy-goto-char-in-line)
+	 ("C-' w" . avy-goto-word-or-subword-1)
+	 ("C-' W" . avy-goto-word-0)
+	 ("C-' M-b" . avy-goto-word-0-above)
+	 ("C-' M-f" . avy-goto-word-0-below)
+	 ("C-' p" . avy-prev)
+	 ("C-' n" . avy-next)
+	 ("C-' s" . avy-goto-symbol-1)
+	 ("C-' C-a" . avy-goto-line)
+	 ("C-' C-e" . avy-goto-end-of-line)
+	 ("C-' C-n" . avy-goto-line-below)
+	 ("C-' C-p" . avy-goto-line-above)
+	 ("C-' C-w" . avy-move-region)
+	 ("C-' C-k" . avy-kill-region)
+	 ("C-' M-w" . avy-kill-ring-save-region)
+	 ("C-' i" . avy-copy-region)
 	 :map isearch-mode-map
-	 ("C-;" . avy-isearch))
+	 ("C-'" . avy-isearch))
   :config
   (setq avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
 	;;		(number-sequence ?A ?Z)
 			)
-	avy-style 'at			         ;; Propose only 1 letter
+	avy-style 'at-full		         ;; Propose only 1 letter
 	;;avy-background t
 	avy-all-windows nil			 ;; Only current window
 	avy-case-fold-search nil		 ;; ignore case
@@ -1713,7 +1717,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (nginx-mode . company-nginx-keywords))
 
 (use-package lice
-  :defer t)
+  :commands lice)
 
 ;;__________________________________________________________
 
@@ -1724,6 +1728,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :commands sudo-edit)
 
 (use-package evil
+  :disabled
   :init
   (setq-default evil-esc-delay 0.001
 		evil-want-keybinding nil)
@@ -1746,14 +1751,27 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      (set-face-attribute 'mode-line nil :background visual-state-background))))
 
 (use-package evil-collection
+  :disabled
   :custom (evil-collection-setup-minibuffer t)
   :hook (evil-mode .  evil-collection-init))
+
+(use-package composable
+  :defer 2
+  :config
+  (composable-mode)       ; Activates the default keybindings
+  (composable-mark-mode)) ; Use composable with C-SPC
 
 (use-package slime
   :commands slime
   :init
   (setq inferior-lisp-program "sbcl"
         slime-contribs '(slime-fancy)))
+
+(use-package objed
+  :commands objed-mode)
+
+(use-package e2ansi
+  :defer t)
 
 (provide 'init)
 ;;; init.el ends here

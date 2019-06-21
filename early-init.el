@@ -44,7 +44,6 @@
 (flymake-mode    -1)
 
 ;;(setq-default package-enable-at-startup nil)
-
 ;;-------------------- Some tricks--------------------------
 
 (provide 'early-init)
