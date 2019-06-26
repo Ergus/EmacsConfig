@@ -13,12 +13,11 @@
 ;; For using Melpa and Elpa
 
 ;; Measure time from one file to the other
+
 (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
 			 ("melpa" . "https://melpa.org/packages/")))
 
 (setq package-quickstart t)
-
-;;(package-initialize)
 
 ;;__________________________________________________________
 ;; Internal options
@@ -74,7 +73,7 @@
 	      ;; split-width-threshold 160  ;; Limite para split vertical
 	      ;; kill-whole-line t
 	      ;; load-prefer-newer t
-	      mark-even-if-inactive nil	    ;; no mark no region
+	      ;; mark-even-if-inactive nil	    ;; no mark no region
 	      fast-but-imprecise-scrolling t
 	      scroll-error-top-bottom t	    ;; Move cursor before error scroll
 	      scroll-preserve-screen-position t	  ;; Cursor keeps screen pos
@@ -194,7 +193,6 @@
   :config
   (phi-search-mc/setup-keys)
   (add-hook 'isearch-mode-mode #'phi-search-from-isearch-mc/setup-keys))
-
 
 ;;__________________________________________________________
 ;;	The Colors (I want to change this for a real theme, there are maaaaany)
@@ -434,7 +432,8 @@
 
 (global-set-key [drag-mouse-2] 'mouse-yank-at-click)
 
-(set-cursor-color "white")		  ;; Set cursor and mouse colours
+(set-cursor-color "white")
+
 
 ;;__________________________________________________________
 ;; My program's mode hooks
@@ -461,7 +460,17 @@
        (electric-pair-mode t)			  ;; Autoannadir parentesis
        (which-function-mode t)			  ;; Shows the function in spaceline
        (define-key global-map (kbd "RET") 'newline-and-indent)
-       (setq show-trailing-whitespace t))
+       (setq show-trailing-whitespace t)
+
+       (defun smart-beginning-of-line ()
+	 "Move point to first non-whitespace character or beginning-of-line."
+	 (interactive)
+	 (let ((oldpos (point)))
+	   (back-to-indentation)
+	   (and (= oldpos (point))
+		(beginning-of-line))))
+
+       (global-set-key (kbd "C-a") 'smart-beginning-of-line))
 
 (add-hook 'prog-mode-hook 'my/prog-mode-hook)
 
@@ -638,35 +647,35 @@
 ;;__________________________________________________________
 ;; Irony config (C completions)
 
-(defun my/irony-mode-hook () "My irony-mode Hook.
+;; (defun my/irony-mode-hook () "My irony-mode Hook.
 
-This is in the hook for c-common mode.	If the file is remote it loads
-company-c-headers instead if irony"
-       (use-package irony
-	 :diminish
-	 :config
-	 (irony-mode)
-	 (irony-cdb-autosetup-compile-options)
+;; This is in the hook for c-common mode.	If the file is remote it loads
+;; company-c-headers instead if irony"
+;;        (use-package irony
+;; 	 :diminish
+;; 	 :config
+;; 	 (irony-mode)
+;; 	 (irony-cdb-autosetup-compile-options)
 
-	 (use-package company-irony
-	   :config
-	   (use-package company-irony-c-headers)
+;; 	 (use-package company-irony
+;; 	   :config
+;; 	   (use-package company-irony-c-headers)
 
-	   (add-to-list (make-local-variable 'company-backends)
-			'(company-irony-c-headers company-irony)))
+;; 	   (add-to-list (make-local-variable 'company-backends)
+;; 			'(company-irony-c-headers company-irony)))
 
-	 (define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
-	 (define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
+;; 	 (define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
+;; 	 (define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
 
-	 (use-package flycheck-irony
-	   :after flycheck
-	   :config
-	   (flycheck-irony-setup))
+;; 	 (use-package flycheck-irony
+;; 	   :after flycheck
+;; 	   :config
+;; 	   (flycheck-irony-setup))
 
-	 (use-package irony-eldoc
-	   :if eldoc-mode
-	   :config
-	   (irony-eldoc))))
+;; 	 (use-package irony-eldoc
+;; 	   :if eldoc-mode
+;; 	   :config
+;; 	   (irony-eldoc))))
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
@@ -762,16 +771,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
 	 ("\\.md\\'" . markdown-mode)
-	 ("\\.markdown\\'" . markdown-mode))
-  :config
-  (flyspell-mode t))
+	 ("\\.markdown\\'" . markdown-mode)))
 
 ;;__________________________________________________________
 ;; Restructured text
 (use-package rst-mode :ensure nil
-  :mode "\\.rst\\'"
-  :config
-  (flyspell-mode t))
+  :mode "\\.rst\\'")
 
 (use-package sphinx-mode
     :hook rst-mode)
@@ -1424,7 +1429,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (which-key-add-key-based-replacements "C-c o" "counsel-etags"))
 
-;; Counsel etags
+;;Counsel etags
 (use-package counsel-etags
   :hook (prog-mode . (lambda ()
 		       (add-hook 'after-save-hook
