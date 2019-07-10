@@ -65,7 +65,6 @@
 	      display-line-numbers-width 4  ;; Minimum line number width
 	      confirm-kill-processes nil    ;; no ask kill processes on exit
 	      read-key-delay 0.005
-	      mouse-scroll-delay 0
 	      recenter-redisplay nil
 	      line-move-visual nil
 	      backward-delete-char-untabify-method nil ;; Don't untabify on backward delete
@@ -79,7 +78,7 @@
 	      scroll-preserve-screen-position t	  ;; Cursor keeps screen pos
 	      scroll-margin 1		    ;; Margen al borde
 	      scroll-step 1		    ;; Scroll step (better conservatively)
-	      scroll-conservatively most-positive-fixnum
+	      scroll-conservatively 1000
 	      window-combination-resize t   ;; Windows resize proportional
 	      x-wait-for-event-timeout nil  ;; Espera por eventos en X
 	      jit-lock-stealth-load 60
@@ -384,8 +383,14 @@
 (use-package better-shell
   :bind ("C-x t b" . better-shell-shell))
 
+(use-package bang
+  :bind ("M-!" . bang))
+
 ;;__________________________________________________________
 ;; which-key
+
+
+
 (use-package which-key
   :defer 1
   :diminish
@@ -425,7 +430,11 @@
   :config
   (xterm-mouse-mode t)			  ;; mover el cursor al click
   (defun track-mouse (e))
-  (setq-default mouse-sel-mode t) ;; Mouse selection
+  (setq-default mouse-sel-mode t ;; Mouse selection
+		mouse-scroll-delay 0
+		mouse-wheel-scroll-amount '(5 ((shift) . 1) ((control)))
+		mouse-wheel-progressive-speed nil
+		)
   (set-mouse-color "white")		  ;; Flechita del mouse en blanco
   (mouse-wheel-mode t)			  ;; scrolling con el mouse
   )
@@ -434,7 +443,24 @@
 
 (set-cursor-color "white")
 
+(defun my/scroll-up-command (&optional arg)
+  (interactive "^P")
+  (if arg
+      (scroll-up-command arg)
+    (scroll-up-command 1)))
 
+(defun my/scroll-down-command (&optional arg)
+  (interactive "^P")
+  (if arg
+      (scroll-down-command arg)
+    (scroll-down-command 1)))
+
+(defun gcm-scroll-up ()
+  (interactive)
+  (scroll-down 1))
+
+(global-set-key [remap scroll-up-command] 'my/scroll-up-command)
+(global-set-key [remap scroll-down-command] 'my/scroll-down-command)
 ;;__________________________________________________________
 ;; My program's mode hooks
 
@@ -459,7 +485,9 @@
        ;;(electric-indent-mode t)	    ;; On by default
        (electric-pair-mode t)			  ;; Autoannadir parentesis
        (which-function-mode t)			  ;; Shows the function in spaceline
-       (define-key global-map (kbd "RET") 'newline-and-indent)
+
+       ;;(define-key global-map (kbd "RET") 'newline-and-indent)
+       (electric-indent-local-mode t)
        (setq show-trailing-whitespace t)
 
        (defun smart-beginning-of-line ()
@@ -472,7 +500,7 @@
 
        (global-set-key (kbd "C-a") 'smart-beginning-of-line))
 
-(add-hook 'prog-mode-hook 'my/prog-mode-hook)
+(add-hook 'prog-mode-hook #'my/prog-mode-hook)
 
 ;;__________________________________________________________
 ;; 80 Column rules
@@ -511,6 +539,7 @@
 		      :inherit nil :background (cdr (assq 'brightblack my/colors))))
 
 (use-package highlight-indent-guides
+  :disabled
   :diminish
   :hook (prog-mode . highlight-indent-guides-mode)
   :bind ("C-c h i" . highlight-indent-guides-mode)
@@ -615,34 +644,32 @@
 
 (use-package lsp-mode
   :diminish lsp
-  :commands lsp
+  :hook ((c-mode . lsp-deferred)
+	 (c++-mode . lsp-deferred))
+  :commands (lsp lsp-deferred)
   :custom
   (lsp-enable-snippet nil)
-  (lsp-prefer-flymake nil)
-  (lsp-eldoc-hook nil))
+  (lsp-eldoc-hook nil)
+  )
 
 (use-package lsp-ui
   :diminish
-  :commands lsp-ui-mode
-  :after lsp flycheck
+  :after lsp
   :custom
   (lsp-ui-sideline-enable nil)
   (lsp-ui-doc-enable nil)
-  (lsp-ui-flycheck-enable t)
-  (lsp-ui-imenu-enable t)
-  (lsp-ui-sideline-ignore-duplicate t)
   :config
-  (require 'lsp-ui-flycheck)
   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
   (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
   )
 
-(use-package company-lsp
-  :diminish lsp
-  :commands company-lsp
-  :after company lsp
-  :config
-  (add-to-list 'company-backends 'company-lsp))
+;; (use-package company-lsp
+;;   :diminish lsp
+;;   :commands company-lsp
+;;   :after company lsp
+;;   :config
+;;   (add-to-list 'company-backends 'company-lsp))
+
 
 ;;__________________________________________________________
 ;; Irony config (C completions)
@@ -1015,16 +1042,20 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
-(use-package flycheck
-  :diminish
-  :if (< (buffer-size) 200000)
-  :hook (prog-mode . flycheck-mode)
-  :config
-  (setq flycheck-gcc-language-standard "c++17"
-	flycheck-clang-language-standard "c++17"
-	flycheck-display-errors-delay 1)
-  (which-key-add-key-based-replacements "C-c !" "flycheck"))
+;; (use-package flycheck
+;;   :diminish
+;;   :if (< (buffer-size) 200000)
+;;   :hook (prog-mode . flycheck-mode)
+;;   :config
+;;   (setq flycheck-gcc-language-standard "c++17"
+;; 	flycheck-clang-language-standard "c++17"
+;; 	flycheck-display-errors-delay 1.0)
+;;   (which-key-add-key-based-replacements "C-c !" "flycheck"))
 
+(use-package flymake-mode :ensure nil
+  :hook (prog-mode . flymake-mode)
+  :custom
+  (flymake-no-changes-timeout 1.0))
 
 ;;__________________________________________________________
 ;; Function arguments show
@@ -1036,14 +1067,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (eldoc-mode t))
 
 (use-package helpful
-  :bind (("C-h e" . nil)
-	 ("C-h e f" . helpful-function)
-	 ("C-h e c" . helpful-command)
-	 ("C-h e m" . helpful-macro)
-	 ("C-h e l" . helpful-callable)
-	 ("C-h e k" . helpful-key)
-	 ("C-h e p" . helpful-at-point)
-	 ("C-h e v" . helpful-variable)))
+  :bind (("<f1> e" . nil)
+	 ("<f1> e f" . helpful-function)
+	 ("<f1> e c" . helpful-command)
+	 ("<f1> e m" . helpful-macro)
+	 ("<f1> e l" . helpful-callable)
+	 ("<f1> e k" . helpful-key)
+	 ("<f1> e p" . helpful-at-point)
+	 ("<f1> e v" . helpful-variable)))
 
 ;;__________________________________________________________
 ;; Chequeo de gramatica
@@ -1200,7 +1231,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	python-shell-prompt-detect-failure-warning nil
 	elpy-rpc-python-command "python3"
 	python-check-command "pyflakes"
-	flycheck-python-flake8-executable "flake8")
+	flycheck-python-flake8-executable "flake8"
+	)
   (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
 
 ;;__________________________________________________________
@@ -1761,6 +1793,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (evil-mode .  evil-collection-init))
 
 (use-package composable
+  :diminish
   :defer 2
   :config
   (composable-mode)       ; Activates the default keybindings
