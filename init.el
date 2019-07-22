@@ -376,6 +376,7 @@
   :config
   (setq multi-term-dedicated-window-height 24
 	;;multi-term-program "/bin/bash"
+	multi-term-program-switches "--login"
 	multi-term-dedicated-select-after-open-p t))
 
 ;;__________________________________________________________
@@ -644,8 +645,8 @@
 
 (use-package lsp-mode
   :diminish lsp
-  :hook ((c-mode . lsp-deferred)
-	 (c++-mode . lsp-deferred))
+  ;; :hook ((c-mode . lsp-deferred)
+  ;; 	 (c++-mode . lsp-deferred))
   :commands (lsp lsp-deferred)
   :custom
   (lsp-enable-snippet nil)
