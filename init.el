@@ -23,7 +23,7 @@
 ;; Internal options
 
 (setq-default auto-revert-verbose nil)	;; not show message when file changes
-(global-auto-revert-mode t)			;; Autoload files changed in disk
+(global-auto-revert-mode t)		;; Autoload files changed in disk
 
 ;;(setq-default font-lock-maximum-decoration t)
 ;;(global-font-lock-mode t)		;; Use font-lock everywhere.
@@ -64,8 +64,9 @@
 	      visible-bell nil		    ;; Flash the screen (def)
 	      display-line-numbers-width 4  ;; Minimum line number width
 	      confirm-kill-processes nil    ;; no ask kill processes on exit
-	      read-key-delay 0.005
+	      read-key-delay 0.01
 	      recenter-redisplay nil
+	      ;;recenter-positions '(top middle bottom)
 	      line-move-visual nil
 	      backward-delete-char-untabify-method nil ;; Don't untabify on backward delete
 
@@ -73,6 +74,7 @@
 	      ;; kill-whole-line t
 	      ;; load-prefer-newer t
 	      ;; mark-even-if-inactive nil	    ;; no mark no region
+	      next-screen-context-lines 5           ;; Lines of continuity when scrolling
 	      fast-but-imprecise-scrolling t
 	      scroll-error-top-bottom t	    ;; Move cursor before error scroll
 	      scroll-preserve-screen-position t	  ;; Cursor keeps screen pos
@@ -85,13 +87,22 @@
 	      jit-lock-stealth-time 4
 	      inhibit-default-init t	    ;; Avoid emacs default init
 	      term-suppress-hard-newline t  ;; Text can resize
-	      echo-keystrokes 0.005	    ;; Muestra binds in echo area
+	      echo-keystrokes 0.01	    ;; Muestra binds in echo area
 	      confirm-kill-emacs nil        ;; No confirm exit emacs
 	      disabled-command-function nil
 	      auto-save-default nil         ;; No autosave
 	      auto-save-list-file-name nil
+	      ;; minibuffer interaction
+	      enable-recursive-minibuffers t
+	      minibuffer-message-timeout 1
+	      read-quoted-char-radix 16     ;; Read number of chars with C-q
+	      kill-buffer-query-functions nil
+
+	      eval-expression-print-length nil
+	      eval-expression-print-level nil
 	      )
 
+(minibuffer-depth-indicate-mode 1)
 ;;__________________________________________________________
 ;; I don't want confirm exit, not write yes-not either
 (defalias 'yes-or-no-p 'y-or-n-p) ;; Reemplazar "yes" por "y" en el prompt
@@ -225,12 +236,12 @@
        (set-face-foreground 'font-lock-comment-face (cdr (assq 'cyan my/colors)))		;; Comentarios
        (set-face-foreground 'font-lock-doc-face (cdr (assq 'brightcyan my/colors)))		;; Documentation
 
-       (set-face-foreground 'font-lock-string-face (cdr (assq 'red my/colors)))		;; Strings
+       (set-face-foreground 'font-lock-string-face (cdr (assq 'red my/colors)))		        ;; Strings
        (set-face-foreground 'font-lock-function-name-face (cdr (assq 'white my/colors)))	;; Funciones
        (set-face-foreground 'font-lock-variable-name-face (cdr (assq 'white my/colors)))	;; Variables
        (set-face-foreground 'font-lock-constant-face (cdr (assq 'magenta my/colors)))		;; Constates y Clases
 
-       (set-face-foreground 'font-lock-type-face (cdr (assq 'green my/colors)))		;; Tipos (int, float)
+       (set-face-foreground 'font-lock-type-face (cdr (assq 'green my/colors)))		        ;; Tipos (int, float)
        (set-face-foreground 'font-lock-keyword-face (cdr (assq 'yellow my/colors)))		;; Keywords (for, if)
        (set-face-foreground 'font-lock-builtin-face (cdr (assq 'green my/colors)))		;; Keywords (for, if)
 
@@ -241,11 +252,11 @@
 
        ;; search C-s, resalta lo que encuentra
        (set-face-attribute 'isearch nil :background (cdr (assq 'blue my/colors))
-			   :foreground (cdr (assq 'white my/colors)) :weight 'ultrabold)	      ;; Search
+			   :foreground (cdr (assq 'white my/colors)) :weight 'ultrabold)	;; Search
 
        (set-face-attribute 'lazy-highlight nil :background (cdr (assq 'brightblue my/colors)))
 
-       (set-face-attribute 'region nil :background (cdr (assq 'brightblue my/colors)))               ;; Seleccion
+       (set-face-attribute 'region nil :background (cdr (assq 'brightblue my/colors)))          ;; Seleccion
 
        (set-face-attribute 'mode-line-inactive nil :background (cdr (assq 'brightblack my/colors))
 			   :foreground (cdr (assq 'white my/colors)))
@@ -310,13 +321,14 @@
 ;;__________________________________________________________
 ;; minibuffers
 
-(setq minibuffer-eldef-shorten-default t)
+;; (setq minibuffer-eldef-shorten-default t)
 
 (defun my/minibuffer-setup-hook ()
   (setq gc-cons-threshold most-positive-fixnum))
 
 (defun my/minibuffer-exit-hook ()
-  (setq gc-cons-threshold 800000))
+  (setq gc-cons-threshold 800000)
+  (garbage-collect))
 
 (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
@@ -389,8 +401,6 @@
 
 ;;__________________________________________________________
 ;; which-key
-
-
 
 (use-package which-key
   :defer 1
@@ -1236,6 +1246,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	)
   (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
 
+(use-package ein)
+
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
 (use-package dired :ensure nil
@@ -1270,6 +1282,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :custom
   (projectile-completion-system 'ivy)
   (projectile-file-exists-remote-cache-expire (* 10 60))
+  (projectile-enable-caching nil)
+  (projectile-verbose nil)
+  (projectile-do-log nil)
   :config
   (projectile-mode t))
 
@@ -1321,7 +1336,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package ivy
   :diminish
   :defer 1
-  :bind (("C-c i r" . ivy-resume)
+  :bind (("C-c C-r" . ivy-resume)
 	 :map ivy-minibuffer-map
 	 ("TAB" . ivy-partial)
 	 ("RET" . ivy-alt-done))
@@ -1340,9 +1355,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	ivy-count-format "(%d/%d) "
 	ivy-display-style 'fancy
 	ivy-pulse-delay nil
+	ivy-use-selectable-prompt t
+	hippie-expand-verbose nil
 	;;ivy-height 10
 	;;ivy-wrap t					 ;; cycle in minibuffer
-	enable-recursive-minibuffers t)
+	)
 
   ;; Highlight with arrows by default.
   (add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
@@ -1354,7 +1371,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package swiper
   :preface
-  :bind (("C-c w" . swiper-isearch)
+  :bind (("C-s" . swiper-isearch)
+	 ("C-r" . swiper-isearch-backward)
 	 :map swiper-map
 	 ("C-y" . yank)
 	 ("M-%" . swiper-query-replace)
@@ -1426,6 +1444,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package amx ;; Complete history
   :after counsel)
 
+(use-package recentf :ensure nil
+  :commands recentf-mode
+  :after counsel
+  :config
+  (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
+                          "[0-9a-f]\\{32\\}-[0-9a-f]\\{32\\}\\.org"
+                          ".*png$" ".*cache$"))
+  (setq recentf-max-saved-items 600))
+
 (use-package counsel-projectile
   :after (counsel projectile)
   :config
@@ -1433,6 +1460,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package counsel-gtags
   :diminish
+  :load-path "~/gits/emacs-counsel-gtags/"
   :bind (("C-c g g" . counsel-gtags-dwim)
 	 ("C-c g d" . counsel-gtags-find-definition)
 	 ("C-c g r" . counsel-gtags-find-reference)
@@ -1554,12 +1582,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; path
-(defun shell-command-on-buffer (command)
+(defun shell-command-on-buffer (start end command)
   "Execute shell COMMAND on buffer overwriting it."
-  (interactive (list
-		(read-shell-command "Shell command on buffer: " nil nil)))
+  (interactive (let (string)
+		 (setq string (read-shell-command "Shell command on buffer: "))
+		 (if (use-region-p)
+		   (list (region-beginning) (region-end) string)
+		 (list (point-min) (point-max) string))))
   (save-excursion
-    (shell-command-on-region (point-min) (point-max) command t t)))
+    (shell-command-on-region start end command t t)))
 
 ;;__________________________________________________________
 ;;; Org Mode (I don't use it)
@@ -1757,6 +1788,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package lice
   :commands lice)
 
+(use-package lorem-ipsum :defer t)
 ;;__________________________________________________________
 
 (use-package json-mode
@@ -1795,7 +1827,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package composable
   :diminish
-  :defer 2
+  :after which-key
+  :load-path "~/gits/composable.el/"
+  :custom
+  (composable-copy-active-region-highlight nil)
   :config
   (composable-mode)       ; Activates the default keybindings
   (composable-mark-mode)) ; Use composable with C-SPC
