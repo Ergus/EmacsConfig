@@ -381,10 +381,10 @@
 ;;__________________________________________________________
 ;; Mocp and multi-term music player
 (use-package multi-term
-  :bind (("C-x 4 t" . multi-term-dedicated-open)
-	 ("C-x 5 t" . multi-term)
-	 ("C-x t t" . multi-term-dedicated-toggle)
-	 ("C-x t k" . multi-term-dedicated-close))
+  :bind (("C-c 4 t" . multi-term-dedicated-open)
+	 ("C-c 5 t" . multi-term)
+	 ("C-c t t" . multi-term-dedicated-toggle)
+	 ("C-c t k" . multi-term-dedicated-close))
   :config
   (setq multi-term-dedicated-window-height 24
 	;;multi-term-program "/bin/bash"
@@ -394,7 +394,7 @@
 ;;__________________________________________________________
 ;; Better shell (for ssh)
 (use-package better-shell
-  :bind ("C-x t b" . better-shell-shell))
+  :bind ("C-c t b" . better-shell-shell))
 
 (use-package bang
   :bind ("M-!" . bang))
