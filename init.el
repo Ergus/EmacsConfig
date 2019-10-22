@@ -1602,13 +1602,23 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Move current line up and down Shift+arrow
-(use-package move-text
-  :bind(("C-M-<up>" . move-text-up)
-	("C-M-<down>" . move-text-down)
-	("C-M-<left>" . (lambda () (interactive) (transpose-words -1)))
-	("C-M-<right>" . (lambda () (interactive) (transpose-words 1)))
-	("M-<left>" . (lambda () (interactive) (transpose-chars -1)))
-	("M-<right>" . (lambda () (interactive) (transpose-chars 1)))))
+;; (use-package move-text
+;;   :bind(("C-M-<up>" . move-text-up)
+;; 	("C-M-<down>" . move-text-down)
+;; 	("C-M-<left>" . (lambda () (interactive) (transpose-words -1)))
+;; 	("C-M-<right>" . (lambda () (interactive) (transpose-words 1)))
+;; 	("M-<left>" . (lambda () (interactive) (transpose-chars -1)))
+;; 	("M-<right>" . (lambda () (interactive) (transpose-chars 1)))))
+
+(use-package move-dup
+  :bind (("M-<up>" .  md-move-lines-up)
+	 ("M-<down>" . md-move-lines-down)
+	 ("C-M-<up>" . md-duplicate-up)
+	 ("C-M-<down>" . md-duplicate-down)
+	 ("C-M-<left>" . (lambda () (interactive) (transpose-words -1)))
+	 ("C-M-<right>" . (lambda () (interactive) (transpose-words 1)))
+	 ("M-<left>" . (lambda () (interactive) (transpose-chars -1)))
+	 ("M-<right>" . (lambda () (interactive) (transpose-chars 1)))))
 
 ;;__________________________________________________________
 ;; for having tabs in top
