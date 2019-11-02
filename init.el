@@ -794,6 +794,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package modern-cpp-font-lock
   :hook (c++-mode . modern-c++-font-lock-mode))
 
+
+;;__________________________________________________________
+;; sh mode
+
+(defvaralias 'sh-basic-offset 'tab-width)
+(defun my/sh-mode-hook () "My term mode hook."
+       (setq-local indent-tabs-mode t))
+
+(add-hook 'sh-mode-hook 'my/sh-mode-hook)
+
 ;;__________________________________________________________
 ;; Cuda
 (use-package cuda-mode
