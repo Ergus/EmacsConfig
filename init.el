@@ -247,8 +247,7 @@
 
        (set-face-attribute 'highlight nil :background (cdr (assq 'brightblack my/colors)) :foreground nil)
 
-       (set-face-attribute 'secondary-selection nil :background (cdr (assq 'brightblue my/colors))
-			   :foreground (cdr (assq 'white my/colors)) :weight 'bold)
+       (set-face-attribute 'secondary-selection nil :background (cdr (assq 'brightblue my/colors)))
 
        ;; search C-s, resalta lo que encuentra
        (set-face-attribute 'isearch nil :background (cdr (assq 'blue my/colors))
@@ -267,6 +266,17 @@
        (set-face-attribute 'line-number nil :foreground (cdr (assq 'brightblack my/colors)))	      ;; numero de linea
        (set-face-attribute 'line-number-current-line nil :foreground (cdr (assq 'green my/colors)))  ;; resalta la linea actual
        (set-face-attribute 'fill-column-indicator nil :foreground (cdr (assq 'brightblack my/colors)))
+
+       (set-face-attribute 'tab-bar nil
+			   :background (cdr (assq 'black my/colors)) :foreground (cdr (assq 'white my/colors))
+			   :inverse-video nil)
+
+       (set-face-attribute 'tab-bar-tab nil
+			   :weight 'ultra-bold :underline t)
+
+       (set-face-attribute 'tab-bar-tab-inactive nil
+			   :background (cdr (assq 'black my/colors)) :foreground (cdr (assq 'brightwhite my/colors))
+			   :weight 'normal :underline nil)
        )
 
 (my/colors)
