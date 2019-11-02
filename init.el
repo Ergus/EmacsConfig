@@ -1699,8 +1699,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("M-z". avy-zap-to-char-dwim)))
 
 
-(use-package goto-line-preview
-  :bind ([remap goto-line] . goto-line-preview))
+;; (use-package goto-line-preview
+;;   :bind ([remap goto-line] . goto-line-preview))
 
 ;;__________________________________________________________
 ;; Arduino Mode
