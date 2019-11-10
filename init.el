@@ -345,7 +345,7 @@
 (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
 
 ;;__________________________________________________________
-;; cua rectangles
+;; gdb rectangles
 
 (use-package gdb :ensure nil
   :commands gdb
@@ -933,11 +933,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; javascript-mode
-(use-package js2-mode
-  :mode ("\\.js\\'")
-  :config
-  (add-to-list 'interpreter-mode-alist '("node" . js2-mode))
-  (add-hook 'js-mode-hook 'js2-minor-mode))
+(use-package js-mode :ensure nil
+  :mode ("\\.js\\'"))
 
 ;;__________________________________________________________
 ;; xml-mode
@@ -1355,6 +1352,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package headlong :defer t)
 
+(use-package flx :defer t)
+
 (use-package ivy
   :diminish
   :defer 1
@@ -1383,9 +1382,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	)
 
   ;; Highlight with arrows by default.
-  (add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
+  (ivy-mode t)
 
-  (ivy-mode t))
+  (add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
+  (add-to-list 'ivy-re-builders-alist '(t . ivy--regex-fuzzy))
+  )
 
 (use-package ivy-hydra
   :after (ivy hydra))
@@ -1404,6 +1405,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 :map isearch-mode-map
 	 ("C-o" . swiper-isearch-toggle))
   :config
+  (add-to-list 'ivy-re-builders-alist '(swiper . ivy--regex-plus))
+  (add-to-list 'ivy-re-builders-alist '(swiper-isearch . ivy--regex-plus))
+  (add-to-list 'ivy-re-builders-alist '(swiper-isearch-backward . ivy--regex-plus))
+
   (copy-face 'isearch 'swiper-isearch-current-match)
 
   (copy-face 'highlight 'swiper-line-face)         ;; linea minibuffer
@@ -1460,7 +1465,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (counsel-find-file-at-point t)       ;; Select file at point
   (counsel-preselect-current-file t)   ;; Select current file in list
   :config
-  (counsel-mode t))
+  (counsel-mode t)
+  (add-to-list 'ivy-re-builders-alist '(counsel-rg . ivy--regex-plus))
+  (add-to-list 'ivy-re-builders-alist '(counsel-ag . ivy--regex-plus))
+
+  )
 
 (use-package amx ;; Complete history
   :after counsel)
