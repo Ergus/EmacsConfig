@@ -1277,7 +1277,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :custom
   (dired-recursive-copies 'top)	     ;; Always ask recursive copy
   (dired-recursive-deletes 'top)     ;; Always ask recursive delete
-  (dired-dwim-target t)			     ;; Copy in split mode with p
+  (dired-dwim-target t)		     ;; Copy in split mode with p
   (dired-auto-revert-buffer t)
   :config
   (put 'dired-find-alternate-file 'disabled nil)
@@ -1351,15 +1351,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package headlong :defer t)
 
-(use-package flx :defer t)
+;;(use-package flx :defer t)
 
 (use-package ivy
   :diminish
-  :defer 1
+  :defer 0.5
   :bind (("C-c C-r" . ivy-resume)
-	 ;:map ivy-minibuffer-map
-	 ;("TAB" . ivy-partial)
-	 ;("RET" . ivy-alt-done)
+	 :map ivy-minibuffer-map
+	 ("TAB" . ivy-partial)
+	 ("RET" . ivy-alt-done)
 	 )
   :init
   (which-key-add-key-based-replacements "C-c i" "ivy")
@@ -1385,7 +1385,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-mode t)
 
   (add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
-  (add-to-list 'ivy-re-builders-alist '(t . ivy--regex-fuzzy))
+  ;; (add-to-list 'ivy-re-builders-alist '(t . ivy--regex-fuzzy))
   )
 
 (use-package ivy-hydra
@@ -1405,9 +1405,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 :map isearch-mode-map
 	 ("C-o" . swiper-isearch-toggle))
   :config
-  (add-to-list 'ivy-re-builders-alist '(swiper . ivy--regex-plus))
-  (add-to-list 'ivy-re-builders-alist '(swiper-isearch . ivy--regex-plus))
-  (add-to-list 'ivy-re-builders-alist '(swiper-isearch-backward . ivy--regex-plus))
+  ;; (add-to-list 'ivy-re-builders-alist '(swiper . ivy--regex-plus))
+  ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch . ivy--regex-plus))
+  ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch-backward . ivy--regex-plus))
 
   (copy-face 'isearch 'swiper-isearch-current-match)
 
@@ -1466,8 +1466,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (counsel-preselect-current-file t)   ;; Select current file in list
   :config
   (counsel-mode t)
-  (add-to-list 'ivy-re-builders-alist '(counsel-rg . ivy--regex-plus))
-  (add-to-list 'ivy-re-builders-alist '(counsel-ag . ivy--regex-plus))
+  ;; (add-to-list 'ivy-re-builders-alist '(counsel-rg . ivy--regex-plus))
+  ;; (add-to-list 'ivy-re-builders-alist '(counsel-ag . ivy--regex-plus))
 
   )
 
