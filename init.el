@@ -1653,14 +1653,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; for having tabs in top
-(use-package elscreen
-  :commands elscreen-start
-  :config
-  (which-key-add-key-based-replacements "C-c t" "elscreen")
-  (setq elscreen-prefix-key (kbd "C-c t")
-	elscreen-tab-display-kill-screen nil
-	elscreen-tab-display-control nil
-	elscreen-display-screen-number nil))
+;; (use-package elscreen
+;;   :commands elscreen-start
+;;   :config
+;;   (which-key-add-key-based-replacements "C-c t" "elscreen")
+;;   (setq elscreen-prefix-key (kbd "C-c t")
+;; 	elscreen-tab-display-kill-screen nil
+;; 	elscreen-tab-display-control nil
+;; 	elscreen-display-screen-number nil))
 
 ;;__________________________________________________________
 ;; evil mode
