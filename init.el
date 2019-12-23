@@ -25,10 +25,10 @@
 (setq-default auto-revert-verbose nil)	;; not show message when file changes
 (global-auto-revert-mode t)		;; Autoload files changed in disk
 
-;;(setq-default font-lock-maximum-decoration t)
-;;(global-font-lock-mode t)		;; Use font-lock everywhere.
+(setq-default font-lock-maximum-decoration t)
+(global-font-lock-mode t)		;; Use font-lock everywhere.
 
-(setq-default display-line-numbers-widen t)	;; keep line numbers inside a narrow
+;; (setq-default display-line-numbers-widen t)	;; keep line numbers inside a narrow
 (global-display-line-numbers-mode t)	;; line numbers on the left
 
 (global-display-fill-column-indicator-mode t)
@@ -450,7 +450,6 @@
 (use-package mouse :ensure nil
   :unless (display-graphic-p)
   :config
-  (set-cursor-color "white")
   (xterm-mouse-mode t)			  ;; mover el cursor al click
   (defun track-mouse (e))
   (setq-default mouse-sel-mode t ;; Mouse selection
@@ -458,6 +457,7 @@
 		mouse-wheel-scroll-amount '(5 ((shift) . 1) ((control)))
 		mouse-wheel-progressive-speed nil
 		)
+  (set-cursor-color "white")
   (set-mouse-color "white")		  ;; Flechita del mouse en blanco
   (mouse-wheel-mode t)			  ;; scrolling con el mouse
   )
@@ -1427,7 +1427,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch-backward . ivy--regex-plus))
 
   (copy-face 'isearch 'swiper-isearch-current-match)
-
   (copy-face 'highlight 'swiper-line-face)         ;; linea minibuffer
 
   (set-face-attribute 'swiper-match-face-1 nil     ;; linea en minibuffer
@@ -1642,7 +1641,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;;; Org Mode (I don't use it)
 
-(use-package org
+(use-package org :ensure nil
  :mode ("\\.org\\'" . org-mode))
 
 ;; (use-package org-bullets
