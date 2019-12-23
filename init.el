@@ -1240,9 +1240,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Python mode
-;; (use-package python-mode
-;;   :mode ("\\.py" . python-mode)
-;;   :interpreter ("python" . python-mode))
+
+(use-package python-mode :ensure nil
+  :mode "\\.py\\'"
+  :interpreter "python"
+  :bind (:map python-mode-map
+              ("C-c C-z" . python-shell))
+  :init
+  (setq python-shell-interpreter "ipython"
+      python-shell-interpreter-args "-i --simple-prompt")
+  )
 
 ;; (use-package company-jedi		 ;;; company-mode completion back-end for Python JEDI
 ;;   :hook (python-mode . jedi:setup)
@@ -1257,22 +1264,22 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   :init
 ;;   (setq flycheck-pycheckers-checkers '(pylint flake8 mypy3)))
 
-(use-package elpy
-  :defer
-  :init
-  (defun enable-elpy-once ()
-    (elpy-enable)
-    (advice-remove 'python-mode 'enable-elpy-once))
-  (advice-add 'python-mode :before 'enable-elpy-once)
-  :config
-  (setq python-shell-interpreter "jupyter"
-	python-shell-interpreter-args "console --simple-prompt"
-	python-shell-prompt-detect-failure-warning nil
-	elpy-rpc-python-command "python3"
-	python-check-command "pyflakes"
-	flycheck-python-flake8-executable "flake8"
-	)
-  (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
+;; (use-package elpy
+;;   :defer
+;;   :init
+;;   (defun enable-elpy-once ()
+;;     (elpy-enable)
+;;     (advice-remove 'python-mode 'enable-elpy-once))
+;;   (advice-add 'python-mode :before 'enable-elpy-once)
+;;   :config
+;;   (setq python-shell-interpreter "jupyter"
+;; 	python-shell-interpreter-args "console --simple-prompt"
+;; 	python-shell-prompt-detect-failure-warning nil
+;; 	elpy-rpc-python-command "python3"
+;; 	python-check-command "pyflakes"
+;; 	flycheck-python-flake8-executable "flake8"
+;; 	)
+;;   (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
 
 (use-package ein)
 
