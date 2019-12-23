@@ -1809,21 +1809,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Web mode
-(use-package web-mode
-  :mode ("\\.html\\'" "\\.php\\'" "\\.phtml\\'" )
-  :custom
-  (web-mode-code-indent-offset 2)
-  (web-mode-markup-indent-offset 2)
-  (web-mode-css-indent-offset 2)
-  (web-mode-enable-auto-pairing t)
-  (web-mode-enable-css-colorization t)
-  (web-mode-enable-current-element-highlight t)
-  (web-mode-enable-current-column-highlight t)
-  (web-mode-enable-engine-detection t)
 
-  :config
-  (setq web-mode-engines-alist
-	'(("php" . "\\.phtml\\'"))))
+(use-package php-mode
+  :mode ("\\.php\\'"))
+
+(use-package web-mode
+  :mode ("\\.phtml\\'" "\\.html\\'"
+	 "\\.tpl\\.php\\'" "\\.[agj]sp\\'"
+	 "\\.as[cp]x\\'" "\\.erb\\'" "\\.djhtml\\'"))
 
 (use-package company-web
   :preface
@@ -1831,8 +1824,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (add-to-list (make-local-variable 'company-backends) '(company-web-html)))
   :hook (web-mode . my/company-web))
 
-(use-package web-mode-edit-element
-  :hook (web-mode . web-mode-edit-element-minor-mode))
+;; (use-package web-mode-edit-element
+;;   :hook (web-mode . web-mode-edit-element-minor-mode))
 
 ;;__________________________________________________________
 ;; nginx mode
