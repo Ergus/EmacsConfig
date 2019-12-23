@@ -97,6 +97,7 @@
 	      minibuffer-message-timeout 1
 	      read-quoted-char-radix 16     ;; Read number of chars with C-q
 	      kill-buffer-query-functions nil
+	      kill-do-not-save-duplicates t
 
 	      eval-expression-print-length nil
 	      eval-expression-print-level nil
@@ -765,30 +766,32 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (back-to-indentation))
   )
 
-(c-add-style "mylinux"
-	     '("linux"
-	       ;;(tab-width . 4)
-	       ;;(c-basic-offset . 4)
-	       (fill-column . 80)
-	       (c-offsets-alist (inline-open . 0)
-				(comment-intro . 0)
-				(cpp-macro . 0)
-				;;(innamespace . [0])
-				;;(access-label '-)
-				)))
+;; (c-add-style "mylinux"
+;; 	     '("linux"
+;; 	       ;;(tab-width . 4)
+;; 	       ;;(c-basic-offset . 4)
+;; 	       (fill-column . 80)
+;; 	       (c-offsets-alist (inline-open . 0)
+;; 				(comment-intro . 0)
+;; 				(cpp-macro . 0)
+;; 				(arglist-cont-nonempty . +)
+;; 				;;(innamespace . [0])
+;; 				;;(access-label '-)
+;; 				)))
 
 (setq-default c-default-style
 	      '((java-mode . "java")
 		(awk-mode . "awk")
-		(other . "mylinux")))
+		(other . "linux")))
 
-(defun my/c-mode-common-hook () "My hook for C and C++."
-       (when (and indent-tabs-mode
-		  (= c-basic-offset tab-width))
-	 (add-hook 'c-special-indent-hook 'ms-space-for-alignment nil t))
-       (message "Loaded my/c-mode-common"))
+;; (defun my/c-mode-common-hook () "My hook for C and C++."
+;;        (when (and (string= c-indentation-style "mylinux")
+;; 		  indent-tabs-mode
+;; 		  (= c-basic-offset tab-width))
+;; 	 (add-hook 'c-special-indent-hook 'ms-space-for-alignment nil t))
+;;        (message "Loaded my/c-mode-common"))
 
-(add-hook 'c-mode-common-hook 'my/c-mode-common-hook)
+;; (add-hook 'c-mode-common-hook 'my/c-mode-common-hook)
 
 (use-package preproc-font-lock ;; Preprocessor
   :hook (c-mode . preproc-font-lock-mode)
