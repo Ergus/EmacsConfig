@@ -229,53 +229,51 @@
 
        (set-face-attribute 'default nil :family "Hack" :height 105)
 
-       (set-background-color (cdr (assq 'black my/colors)))
-       (set-foreground-color (cdr (assq 'white my/colors)))
+       (set-background-color (alist-get 'black my/colors))
+       (set-foreground-color (alist-get 'white my/colors))
 
-       (set-face-foreground 'font-lock-preprocessor-face (cdr (assq 'magenta my/colors)))	;; Preprocessor
-       (set-face-foreground 'font-lock-comment-face (cdr (assq 'cyan my/colors)))		;; Comentarios
-       (set-face-foreground 'font-lock-doc-face (cdr (assq 'brightcyan my/colors)))		;; Documentation
+       (set-face-foreground 'font-lock-preprocessor-face (alist-get 'magenta my/colors))	;; Preprocessor
+       (set-face-foreground 'font-lock-comment-face (alist-get 'cyan my/colors))		;; Comentarios
+       (set-face-foreground 'font-lock-doc-face (alist-get 'brightcyan my/colors))		;; Documentation
 
-       (set-face-foreground 'font-lock-string-face (cdr (assq 'red my/colors)))		        ;; Strings
-       (set-face-foreground 'font-lock-function-name-face (cdr (assq 'white my/colors)))	;; Funciones
-       (set-face-foreground 'font-lock-variable-name-face (cdr (assq 'white my/colors)))	;; Variables
-       (set-face-foreground 'font-lock-constant-face (cdr (assq 'magenta my/colors)))		;; Constates y Clases
+       (set-face-foreground 'font-lock-string-face (alist-get 'red my/colors))		        ;; Strings
+       (set-face-foreground 'font-lock-function-name-face (alist-get 'white my/colors))	        ;; Funciones
+       (set-face-foreground 'font-lock-variable-name-face (alist-get 'white my/colors))	;; Variables
+       (set-face-foreground 'font-lock-constant-face (alist-get 'magenta my/colors))		;; Constates y Clases
 
-       (set-face-foreground 'font-lock-type-face (cdr (assq 'green my/colors)))		        ;; Tipos (int, float)
-       (set-face-foreground 'font-lock-keyword-face (cdr (assq 'yellow my/colors)))		;; Keywords (for, if)
-       (set-face-foreground 'font-lock-builtin-face (cdr (assq 'green my/colors)))		;; Keywords (for, if)
+       (set-face-foreground 'font-lock-type-face (alist-get 'green my/colors))		        ;; Tipos (int, float)
+       (set-face-foreground 'font-lock-keyword-face (alist-get 'yellow my/colors))		;; Keywords (for, if)
+       (set-face-foreground 'font-lock-builtin-face (alist-get 'green my/colors))		;; Keywords (for, if)
 
-       (set-face-attribute 'highlight nil :background (cdr (assq 'brightblack my/colors)) :foreground nil)
-
-       (set-face-attribute 'secondary-selection nil :background (cdr (assq 'brightblue my/colors)))
+       (set-face-attribute 'highlight nil :background (alist-get 'brightblack my/colors) :foreground nil)
+       (set-face-attribute 'secondary-selection nil :background (alist-get 'brightblue my/colors))
 
        ;; search C-s, resalta lo que encuentra
-       (set-face-attribute 'isearch nil :background (cdr (assq 'blue my/colors))
-			   :foreground (cdr (assq 'white my/colors)) :weight 'ultrabold)	;; Search
+       (set-face-attribute 'isearch nil :background (alist-get 'blue my/colors)
+			   :foreground (alist-get 'white my/colors) :weight 'ultrabold)	;; Search
 
-       (set-face-attribute 'lazy-highlight nil :background (cdr (assq 'brightblue my/colors)))
+       (set-face-attribute 'lazy-highlight nil :background (alist-get 'brightblue my/colors))
 
-       (set-face-attribute 'region nil :background (cdr (assq 'brightblue my/colors)))          ;; Seleccion
+       (set-face-attribute 'region nil :background (alist-get 'brightblue my/colors))          ;; Seleccion
 
-       (set-face-attribute 'mode-line-inactive nil :background (cdr (assq 'brightblack my/colors))
-			   :foreground (cdr (assq 'white my/colors)))
+       (set-face-attribute 'mode-line-inactive nil :background (alist-get 'brightblack my/colors)
+			   :foreground (alist-get 'white my/colors))
 
-       (set-face-attribute 'mode-line nil :background (cdr (assq 'blue my/colors))
-			   :foreground (cdr (assq 'white my/colors)))
+       (set-face-attribute 'mode-line nil :background (alist-get 'blue my/colors)
+			   :foreground (alist-get 'white my/colors))
 
-       (set-face-attribute 'line-number nil :foreground (cdr (assq 'brightblack my/colors)))	      ;; numero de linea
-       (set-face-attribute 'line-number-current-line nil :foreground (cdr (assq 'green my/colors)))  ;; resalta la linea actual
-       (set-face-attribute 'fill-column-indicator nil :foreground (cdr (assq 'brightblack my/colors)))
+       (set-face-attribute 'line-number nil :foreground (alist-get 'brightblack my/colors))	      ;; numero de linea
+       (set-face-attribute 'line-number-current-line nil :foreground (alist-get 'green my/colors))  ;; resalta la linea actual
+       (set-face-attribute 'fill-column-indicator nil :foreground (alist-get 'brightblack my/colors))
 
        (set-face-attribute 'tab-bar nil
-			   :background (cdr (assq 'black my/colors)) :foreground (cdr (assq 'white my/colors))
+			   :background (alist-get 'black my/colors) :foreground (alist-get 'white my/colors)
 			   :inverse-video nil)
 
-       (set-face-attribute 'tab-bar-tab nil
-			   :weight 'ultra-bold :underline t)
+       (set-face-attribute 'tab-bar-tab nil :weight 'ultra-bold :underline t)
 
        (set-face-attribute 'tab-bar-tab-inactive nil
-			   :background (cdr (assq 'black my/colors)) :foreground (cdr (assq 'brightwhite my/colors))
+			   :background (alist-get 'black my/colors) :foreground (alist-get 'brightwhite my/colors)
 			   :weight 'normal :underline nil)
        )
 
@@ -291,7 +289,7 @@
 	      blink-matching-paren nil)
 (show-paren-mode t)	  ;; Highlight couple parentesis
 (set-face-attribute 'show-paren-match nil :inherit nil
-		    :background (cdr (assq 'brightblue my/colors)))
+		    :background (alist-get 'brightblue my/colors))
 
 ;;__________________________________________________________
 ;; ssh
@@ -559,7 +557,7 @@
   ;;(column-enforce-mode t)
   (setq column-enforce-comments nil)
   (set-face-attribute 'column-enforce-face nil
-		      :inherit nil :background (cdr (assq 'brightblack my/colors))))
+		      :inherit nil :background (alist-get 'brightblack my/colors)))
 
 (use-package highlight-indent-guides
   :disabled
@@ -571,7 +569,7 @@
   (setq highlight-indent-guides-auto-enabled nil
 	highlight-indent-guides-method 'character)
   (set-face-attribute 'highlight-indent-guides-character-face nil
-		      :foreground (cdr (assq 'brightblack my/colors))))
+		      :foreground (alist-get 'brightblack my/colors)))
 
 ;;__________________________________________________________
 ;; Resalta scopes entorno al cursor
@@ -595,15 +593,15 @@
   :diminish
   :hook (prog-mode . hes-mode)
   :config
-  (set-face-attribute 'hes-escape-backslash-face nil :foreground (cdr (assq 'magenta my/colors)))
-  (set-face-attribute 'hes-escape-sequence-face nil :foreground (cdr (assq 'magenta my/colors))))
+  (set-face-attribute 'hes-escape-backslash-face nil :foreground (alist-get 'magenta my/colors))
+  (set-face-attribute 'hes-escape-sequence-face nil :foreground (alist-get 'magenta my/colors)))
 
 (use-package highlight-numbers
   :diminish
   :hook (prog-mode . highlight-numbers-mode)
   :bind ("C-c h n" . highlight-numbers-mode)
   :config
-  (set-face-attribute 'highlight-numbers-number nil :foreground (cdr (assq 'red my/colors))))
+  (set-face-attribute 'highlight-numbers-number nil :foreground (alist-get 'red my/colors)))
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
@@ -1026,16 +1024,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (define-key company-active-map (kbd "<C-return>") 'company-other-backend)
   (define-key company-mode-map (kbd "<C-return>") 'company-other-backend)
   (set-face-attribute 'company-tooltip nil		  ;; dialog face
-		      :background (cdr (assq 'brightblack my/colors))
-		      :foreground (cdr (assq 'white my/colors)))
+		      :background (alist-get 'brightblack my/colors)
+		      :foreground (alist-get 'white my/colors))
   (set-face-attribute 'company-tooltip-common nil ;; common part face
-		      :inherit 'company-tooltip :foreground (cdr (assq 'green my/colors)))
+		      :inherit 'company-tooltip :foreground (alist-get 'green my/colors))
   (set-face-attribute 'company-tooltip-selection nil ;; selection face
-		      :background (cdr (assq 'blue my/colors)) :weight 'ultra-bold)
+		      :background (alist-get 'blue my/colors) :weight 'ultra-bold)
   (set-face-attribute 'company-scrollbar-bg nil	  ;; scroll bar face bg
-		      :background (cdr (assq 'brightblack my/colors)))
+		      :background (alist-get 'brightblack my/colors))
   (set-face-attribute 'company-scrollbar-fg nil	  ;; scroll bar face fg
-		      :background (cdr (assq 'blue my/colors))))
+		      :background (alist-get 'blue my/colors)))
 
 (use-package yasnippet                  ; Snippets
   :diminish
@@ -1700,8 +1698,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	;;avy-timeout-seconds 0.5
 	)
   (set-face-attribute 'avy-lead-face nil
-		      :background (cdr (assq 'blue my/colors))
-		      :foreground (cdr (assq 'red my/colors))))
+		      :background (alist-get 'blue my/colors)
+		      :foreground (alist-get 'red my/colors)))
 
 
 (use-package avy-zap
@@ -1847,8 +1845,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (evil-mode 1)
   ;; Modeline color
   (setq original-background (face-attribute 'mode-line :background)
-	normal-state-background (cdr (assq 'brightblack my/colors))
-	visual-state-background (cdr (assq 'green my/colors)))
+	normal-state-background (alist-get 'brightblack my/colors)
+	visual-state-background (alist-get 'green my/colors))
 
   (add-hook 'evil-normal-state-entry-hook
 	    (lambda ()
