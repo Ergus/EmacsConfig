@@ -684,13 +684,22 @@
   (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
   )
 
-;; (use-package company-lsp
-;;   :diminish lsp
-;;   :commands company-lsp
-;;   :after company lsp
-;;   :config
-;;   (add-to-list 'company-backends 'company-lsp))
+(use-package company-lsp
+  :diminish
+  :after company lsp
+  :config
+  (add-to-list 'company-backends 'company-lsp))
 
+(use-package lsp-treemacs
+  :diminish
+  :after lsp company
+  :config
+  (lsp-metals-treeview-enable t)
+  (setq lsp-metals-treeview-show-when-views-received t))
+
+(use-package lsp-ivy
+  :diminish
+  :after lsp ivy)
 
 ;;__________________________________________________________
 ;; Irony config (C completions)
