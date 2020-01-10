@@ -766,18 +766,19 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (back-to-indentation))
   )
 
-;; (c-add-style "mylinux"
-;; 	     '("linux"
-;; 	       ;;(tab-width . 4)
-;; 	       ;;(c-basic-offset . 4)
-;; 	       (fill-column . 80)
-;; 	       (c-offsets-alist (inline-open . 0)
-;; 				(comment-intro . 0)
-;; 				(cpp-macro . 0)
-;; 				(arglist-cont-nonempty . +)
-;; 				;;(innamespace . [0])
-;; 				;;(access-label '-)
-;; 				)))
+(c-add-style "mylinux"
+	     '("linux"
+	       (tab-width . 4)
+	       (c-basic-offset . 4)
+	       (indent-tabs-mode . t)
+	       (fill-column . 80)
+	       (c-offsets-alist (inline-open . 0)
+				(comment-intro . 0)
+				(cpp-macro . 0)
+				;;(arglist-cont-nonempty . +)
+				;;(innamespace . [0])
+				;;(access-label '-)
+				)))
 
 (setq-default c-default-style
 	      '((java-mode . "java")
