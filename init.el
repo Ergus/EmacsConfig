@@ -413,19 +413,23 @@
 ;; which-key
 
 (use-package which-key
-  :defer 1
+;;  :defer 1
+  :bind (("C-h b" . which-key-show-top-level)
+         ("C-h m" . which-key-show-major-mode))
   :diminish
+  :custom
+  ;;(which-key-idle-delay 0.4)
+  (which-key-use-C-h-commands nil)
+  ;;(which-key-echo-keystrokes echo-keystrokes)
+  (which-key-separator ": ") ;which-key-idle-delay 2.0)
   :config
-  (setq which-key-idle-delay 0.4
-	which-key-use-C-h-commands nil
-	which-key-echo-keystrokes echo-keystrokes
-	which-key-separator ": ") ;which-key-idle-delay 2.0)
   (which-key-mode t)
   (which-key-add-key-based-replacements
     "C-c h" "highlight"
     "C-c s" "sidebars"
     "C-x r" "rectangle||register"
     "C-x n" "narrow"
+    "C-x n" "tabs"
     "C-x a" "abbrev"))
 
 (use-package fancy-narrow
@@ -464,7 +468,6 @@
 
 (global-set-key [drag-mouse-2] 'mouse-yank-at-click)
 
-
 (defun my/scroll-up-command (&optional arg)
   (interactive "^P")
   (if arg
@@ -476,10 +479,6 @@
   (if arg
       (scroll-down-command arg)
     (scroll-down-command 1)))
-
-(defun gcm-scroll-up ()
-  (interactive)
-  (scroll-down 1))
 
 (global-set-key [remap scroll-up-command] 'my/scroll-up-command)
 (global-set-key [remap scroll-down-command] 'my/scroll-down-command)
@@ -1491,14 +1490,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package amx ;; Complete history
   :after counsel)
 
-(use-package recentf :ensure nil
-  :commands recentf-mode
-  :after counsel
-  :config
-  (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
-                          "[0-9a-f]\\{32\\}-[0-9a-f]\\{32\\}\\.org"
-                          ".*png$" ".*cache$"))
-  (setq recentf-max-saved-items 600))
+;; (use-package recentf :ensure nil
+;;   :commands recentf-mode
+;;   :after counsel
+;;   :config
+;;   (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
+;;                           "[0-9a-f]\\{32\\}-[0-9a-f]\\{32\\}\\.org"
+;;                           ".*png$" ".*cache$"))
+;;   (setq recentf-max-saved-items 600))
 
 (use-package counsel-projectile
   :after (counsel projectile)
@@ -1720,11 +1719,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		      :background (alist-get 'blue my/colors)
 		      :foreground (alist-get 'red my/colors)))
 
-
 (use-package avy-zap
   :bind (("M-Z". avy-zap-up-to-char-dwim)
 	 ("M-z". avy-zap-to-char-dwim)))
-
 
 ;; (use-package goto-line-preview
 ;;   :bind ([remap goto-line] . goto-line-preview))
