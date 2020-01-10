@@ -1453,7 +1453,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package counsel
   :diminish
-  :bind (("C-x b" . counsel-switch-buffer)
+  :bind (("M-x" . counsel-M-x)
+	 ("C-x b" . counsel-switch-buffer)
 	 ("C-x 4 b" . counsel-switch-buffer-other-window)
 	 ("C-c c a" . counsel-ag)
 	 ("C-c c b" . counsel-ibuffer)
