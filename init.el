@@ -782,7 +782,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (setq-default c-default-style
 	      '((java-mode . "java")
 		(awk-mode . "awk")
-		(other . "linux")))
+		(other . "mylinux")))
 
 ;; (defun my/c-mode-common-hook () "My hook for C and C++."
 ;;        (when (and (string= c-indentation-style "mylinux")
