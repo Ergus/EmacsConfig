@@ -539,8 +539,15 @@
 ;;   :diminish
 ;;   :init (global-undo-tree-mode))
 
-(use-package undo-propose
-  :commands undo-propose)
+;; (use-package undo-propose
+;;   :commands undo-propose)
+
+;; Saner undo/redo
+(use-package undo-fu
+  :custom
+  (undo-fu-allow-undo-in-region t)
+  :bind (([remap undo] . undo-fu-only-undo)
+         ("C-M-_" . undo-fu-only-redo)))
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
