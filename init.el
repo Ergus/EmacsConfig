@@ -101,6 +101,7 @@
 
 	      eval-expression-print-length nil
 	      eval-expression-print-level nil
+	      enable-remote-dir-locals t    ;; Open remote dir locals.
 	      )
 
 (minibuffer-depth-indicate-mode 1)
