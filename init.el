@@ -747,8 +747,9 @@
 
 ;;====================
 
-(defvar use-ms-space-for-alignment t
+(defvar c-ms-space-for-alignment t
   "Control ms-space-for-alignment.")
+(make-variable-buffer-local 'c-ms-space-for-alignment)
 
 (defun ms-space-for-alignment ()
   "Make the current line use tabs for indentation and spaces for alignment.
@@ -757,27 +758,38 @@ It is intended to be called from the hook
 `c-special-indent-hook'.  It assumes that `indent-tabs-mode' is
 non-nil and probably assumes that `c-basic-offset' is the same as
 `tab-width'."
-  (when use-ms-space-for-alignment ;; this extra check is to disable it in dir-locals
-    (save-excursion
-      (let* ((indent-pos (progn (back-to-indentation) (point)))
-	     (indent-col (current-column))
-	     (syn-elt (car c-syntactic-context))
-	     (syn-sym (c-langelem-sym syn-elt)))
-	(when (memq syn-sym '(arglist-cont-nonempty
-			      stream-op
-			      template-args-cont)) ;; <==============
-	  (let* ((syn-anchor (c-langelem-pos syn-elt))
-		 (anchor-col (progn (goto-char syn-anchor)
-				    (back-to-indentation)
-				    (current-column))))
-	    ;;
-	    (goto-char indent-pos)
-	    (delete-horizontal-space)
-	    (insert-char ?\t (/ anchor-col tab-width))
-	    (insert-char ?\  (- indent-col (current-column)))))))
-    (when (= (current-column) 0)
-      (back-to-indentation))
-    ))
+  (save-excursion
+    (let* ((indent-pos (progn (back-to-indentation) (point)))
+	   (indent-col (current-column))
+	   (syn-elt (car c-syntactic-context))
+	   (syn-sym (c-langelem-sym syn-elt)))
+      (when (memq syn-sym '(arglist-cont-nonempty
+			    stream-op
+			    template-args-cont)) ;; <==============
+	(let* ((syn-anchor (c-langelem-pos syn-elt))
+	       (anchor-col (progn (goto-char syn-anchor)
+				  (back-to-indentation)
+				  (current-column))))
+	  ;;
+	  (goto-char indent-pos)
+	  (delete-horizontal-space)
+	  (insert-char ?\t (/ anchor-col tab-width))
+	  (insert-char ?\  (- indent-col (current-column)))))))
+  (when (= (current-column) 0)
+    (back-to-indentation))
+  )
+
+(defun c-toggle-ms-space-for-alignment (&optional arg)
+  "Toggle align with spaces."
+  (interactive "P")
+  (setq c-ms-space-for-alignment
+	(c-calculate-state arg c-ms-space-for-alignment))
+  (if c-ms-space-for-alignment
+      (when (and c-ms-space-for-alignment
+		 indent-tabs-mode
+		 (= c-basic-offset tab-width))
+	(add-hook 'c-special-indent-hook #'ms-space-for-alignment nil t))
+    (remove-hook 'c-special-indent-hook #'ms-space-for-alignment t)))
 
 ;;====================
 
@@ -801,10 +813,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (defun my/c-mode-common-hook () "My hook for C and C++."
        (c-toggle-auto-newline 1)
        (c-toggle-cpp-indent-to-body 1)
-       (when (and use-ms-space-for-alignment
-		  indent-tabs-mode
-		  (= c-basic-offset tab-width))
-	 (add-hook 'c-special-indent-hook #'ms-space-for-alignment nil t))
+       (c-toggle-ms-space-for-alignment 1)
        (message "Loaded my/c-mode-common"))
 
 (add-hook 'c-mode-common-hook #'my/c-mode-common-hook)
