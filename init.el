@@ -442,7 +442,12 @@
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
 
+;; (use-package clipetty
+;;   :unless (display-graphic-p)
+;;   :hook (after-init . global-clipetty-mode))
+
 (use-package xclip
+  :unless (display-graphic-p)
   :config
   (xclip-mode 1))
 
@@ -832,6 +837,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	     (string-match-p tramp-file-name-regexp buffer-file-name))
   :config
   (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
+
+(use-package clang-format
+  :commands clang-format-region)
 
 ;;__________________________________________________________
 ;; C++ mode
