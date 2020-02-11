@@ -1348,6 +1348,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package projectile
   :bind-keymap ("C-c p" . projectile-command-map)
+  :defer t
   :init
   (which-key-add-key-based-replacements "C-c p" "projectile")
   :custom
@@ -1358,6 +1359,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (projectile-do-log nil)
   :config
   (projectile-mode t))
+
+;; Uncomment the projectile section is comment this.
+(use-package counsel-projectile
+  :after counsel
+  :config
+  (counsel-projectile-mode t))
 
 ;;__________________________________________________________
 ;; ibuffer
@@ -1378,10 +1385,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (add-hook 'ibuffer-hook 'my/ibuffer-tramp-hook))
 
 (use-package ibuffer-projectile
-  :after projectile
+  :after ibuffer
   :config
   (defun my/ibuffer-projectile-hook () "My ibuffer-projectile-hook."
-	 (ibuffer-projectile-set-filter-groups))
+	 (ibuffer-projectile-set-filter-groups)
+	 (unless (eq ibuffer-sorting-mode 'alphabetic)
+           (ibuffer-do-sort-by-alphabetic)))
   (add-hook 'ibuffer-hook 'my/ibuffer-projectile-hook))
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
@@ -1535,11 +1544,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;                           "[0-9a-f]\\{32\\}-[0-9a-f]\\{32\\}\\.org"
 ;;                           ".*png$" ".*cache$"))
 ;;   (setq recentf-max-saved-items 600))
-
-(use-package counsel-projectile
-  :after (counsel projectile)
-  :config
-  (counsel-projectile-mode t))
 
 (use-package counsel-gtags
   :diminish
