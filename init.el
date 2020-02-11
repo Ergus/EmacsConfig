@@ -1332,6 +1332,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (put 'dired-find-alternate-file 'disabled nil)
 
+  (set-face-attribute 'dired-directory nil	;; Dired directory colors
+		      :foreground (alist-get 'cyan my/colors))
+
   (require 'dired-x))
 
 (use-package dired-sidebar
