@@ -998,17 +998,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; splitting
 
 ;; Move split keybindings
-(use-package windmove :ensure nil
-  :bind (("C-x <left>" . windmove-left)
-	 ("C-x <right>" . windmove-right)
-	 ("C-x <up>" . windmove-up)
-	 ("C-x <down>" . windmove-down))
-  :init
-  (which-key-add-key-based-replacements "C-x w" "windmove winner")
-  ;;:config
-  ;;(windmove-default-keybindings 'meta)  ;; Move between panes S-arrow
-  ;;(setq windmove-wrap-around t)		  ;; Cyclic bound mode
-  )
+;; (use-package windmove :ensure nil
+;;   :bind (("C-x <left>" . windmove-left)
+;; 	 ("C-x <right>" . windmove-right)
+;; 	 ("C-x <up>" . windmove-up)
+;; 	 ("C-x <down>" . windmove-down))
+;;   :init
+;;   (which-key-add-key-based-replacements "C-x w" "windmove winner")
+;;   ;;:config
+;;   ;;(windmove-default-keybindings 'meta)  ;; Move between panes S-arrow
+;;   ;;(setq windmove-wrap-around t)		  ;; Cyclic bound mode
+;;   )
 
 (use-package ace-window
   :bind ([remap other-window] . ace-window)
