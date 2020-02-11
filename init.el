@@ -1628,9 +1628,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package git-commit
   :mode ("COMMIT_EDITMSG" . git-commit-mode)
   :config
-  (setq git-commit-summary-max-length 50
-	fill-column 72)
-  (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell))
+  (defun my/git-commit-setup-hook ()
+    (setq-local git-commit-summary-max-length 68
+		fill-column 72)
+    (git-commit-turn-on-flyspell))
+  (add-hook 'git-commit-setup-hook #'my/git-commit-setup-hook))
 
 ;;__________________________________________________________
 ;; Ensamblador nasm
