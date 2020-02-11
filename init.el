@@ -1434,11 +1434,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-3)
   (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-4)
 
-  (setq ivy-use-virtual-buffers t
+  (setq ivy-use-virtual-buffers nil
 	ivy-count-format "(%d/%d) "
 	ivy-display-style 'fancy
 	ivy-pulse-delay nil
 	ivy-use-selectable-prompt t
+	ivy-read-action-function #'ivy-hydra-read-action ;; Depends of ivy-hydra
 	;;ivy-height 10
 	;;ivy-wrap t					 ;; cycle in minibuffer
 	)
@@ -1450,8 +1451,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   ;; (add-to-list 'ivy-re-builders-alist '(t . ivy--regex-fuzzy))
   )
 
-(use-package ivy-hydra
-  :after (ivy hydra))
+(use-package ivy-hydra :defer t) ;; Dependency from ivy to use ivy-hydra-read-action
 
 (use-package swiper
   :preface
@@ -1528,17 +1528,32 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (counsel-preselect-current-file t)   ;; Select current file in list
   :config
   (counsel-mode t)
+
+  (ivy-add-actions
+   'counsel-find-file
+   '(("4" find-file-other-frame "other frame")
+     ("b" counsel-find-file-cd-bookmark-action "cd bookmark")
+     ("x" counsel-find-file-extern "open externally")
+     ("d" delete-file "delete")
+     ("r" counsel-find-file-as-root "open as root")))
+
+  ;; set actions when running C-x b
+  ;; replace "frame" with window to open in new window
+  (ivy-add-actions
+   'counsel-switch-buffer
+   '(("4" switch-to-buffer-other-frame "other frame")
+     ("k" kill-buffer "kill")
+     ("r" ivy--rename-buffer-action "rename")))
+
   ;; (add-to-list 'ivy-re-builders-alist '(counsel-rg . ivy--regex-plus))
   ;; (add-to-list 'ivy-re-builders-alist '(counsel-ag . ivy--regex-plus))
-
   )
 
 (use-package amx ;; Complete history
   :after counsel)
 
 ;; (use-package recentf :ensure nil
-;;   :commands recentf-mode
-;;   :after counsel
+;;   :defer t
 ;;   :config
 ;;   (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
 ;;                           "[0-9a-f]\\{32\\}-[0-9a-f]\\{32\\}\\.org"
