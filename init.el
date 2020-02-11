@@ -1631,7 +1631,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	     magit-log-all
 	     magit-log)
   :init
-  (setq magit-completing-read-function 'ivy-completing-read))
+  (setq magit-completing-read-function 'ivy-completing-read)
+  :config
+  (defun my/magit-pre-display-buffer-hook ()
+    (when (eq major-mode 'magit-log-mode)
+      (setq-local show-trailing-whitespace nil)))
+
+  (add-hook 'magit-pre-display-buffer-hook 'my/magit-pre-display-buffer-hook)
+  (add-hook 'after-save-hook 'magit-after-save-refresh-status t))
 
 (use-package gitattributes-mode
   :mode "\\.gitattributes\\'")
