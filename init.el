@@ -804,6 +804,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	       (c-basic-offset . 4)
 	       (indent-tabs-mode . t)
 	       (fill-column . 80)
+	       (c-hanging-semi&comma-criteria . (c-semi&comma-no-newlines-before-nonblanks
+						 c-semi&comma-inside-parenlist))
 	       (c-offsets-alist (inline-open . 0)
 				(comment-intro . 0)
 				;;(innamespace . [0])
