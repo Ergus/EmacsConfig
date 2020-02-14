@@ -1139,14 +1139,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (eldoc-mode t))
 
 (use-package helpful
-  :bind (("<f1> e" . nil)
-	 ("<f1> e f" . helpful-function)
-	 ("<f1> e c" . helpful-command)
-	 ("<f1> e m" . helpful-macro)
-	 ("<f1> e l" . helpful-callable)
-	 ("<f1> e k" . helpful-key)
-	 ("<f1> e p" . helpful-at-point)
-	 ("<f1> e v" . helpful-variable)))
+  :bind (("C-h F" . helpful-function)
+	 ("C-h C" . helpful-command)
+	 ("C-h M" . helpful-macro)
+	 ("C-h L" . helpful-callable)
+	 ("C-h K" . helpful-key)
+	 ("C-h P" . helpful-at-point)
+	 ("C-h V" . helpful-variable)))
 
 ;;__________________________________________________________
 ;; Chequeo de gramatica
@@ -1421,8 +1420,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (("C-c C-r" . ivy-resume)
 	 :map ivy-minibuffer-map
 	 ("TAB" . ivy-partial)
-	 ("RET" . ivy-alt-done)
-	 )
+	 ("RET" . ivy-alt-done))
   :init
   (which-key-add-key-based-replacements "C-c i" "ivy")
   :config
