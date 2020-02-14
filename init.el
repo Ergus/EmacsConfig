@@ -515,7 +515,7 @@
 
        ;;(define-key global-map (kbd "RET") 'newline-and-indent)
        (electric-indent-local-mode t)
-       (setq show-trailing-whitespace t)
+       (setq-local show-trailing-whitespace t)
 
        (defun smart-beginning-of-line ()
 	 "Move point to first non-whitespace character or beginning-of-line."
