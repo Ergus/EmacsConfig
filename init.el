@@ -433,11 +433,11 @@
     "C-x n" "tabs"
     "C-x a" "abbrev"))
 
-(use-package fancy-narrow
-  :bind (("C-x n N" . fancy-narrow-to-region)
-	 ("C-x n D" . fancy-narrow-to-defun)
-	 ("C-x n P" . fancy-narrow-to-page)
-	 ("C-x n W" . fancy-widen)))
+;; (use-package fancy-narrow
+;;   :bind (("C-x n N" . fancy-narrow-to-region)
+;; 	 ("C-x n D" . fancy-narrow-to-defun)
+;; 	 ("C-x n P" . fancy-narrow-to-page)
+;; 	 ("C-x n W" . fancy-widen)))
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
@@ -1847,27 +1847,27 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Expand region
-(use-package expand-region
-  :bind ("C-c e" . hydra-er/body)
-  :hydra (hydra-er (:color red :columns 4)
-		   "Expand region"
-		   ("e" er/expand-region "expand")
-		   ("w" er/mark-word "word")
-		   ("c" er/mark-comment "comment")
-		   ("S" er/c-mark-statement "c-stat")
-		   ("i" er/mark-inside-pairs "ipar")
-		   ("o" er/mark-outside-pairs "opar")
-		   ("p" er/mark-text-paragraph "parag")
-		   ("s" er/mark-text-sentence "sentence")
-		   ("f" er/mark-defun "funct")
-		   ("m" er/mark-email "mail")
-		   ("u" er/mark-url "url")
-		   ("\"" er/mark-outside-quotes "out \"")
-		   ("'" er/mark-inside-quotes "in \"")
-		   ("-" er/contract-region "contract")
-		   ("ESC" nil "exit"))
-  :init
-  (which-key-add-key-based-replacements "C-c e" "expand-region"))
+;; (use-package expand-region
+;;   :bind ("C-c e" . hydra-er/body)
+;;   :hydra (hydra-er (:color red :columns 4)
+;; 		   "Expand region"
+;; 		   ("e" er/expand-region "expand")
+;; 		   ("w" er/mark-word "word")
+;; 		   ("c" er/mark-comment "comment")
+;; 		   ("S" er/c-mark-statement "c-stat")
+;; 		   ("i" er/mark-inside-pairs "ipar")
+;; 		   ("o" er/mark-outside-pairs "opar")
+;; 		   ("p" er/mark-text-paragraph "parag")
+;; 		   ("s" er/mark-text-sentence "sentence")
+;; 		   ("f" er/mark-defun "funct")
+;; 		   ("m" er/mark-email "mail")
+;; 		   ("u" er/mark-url "url")
+;; 		   ("\"" er/mark-outside-quotes "out \"")
+;; 		   ("'" er/mark-inside-quotes "in \"")
+;; 		   ("-" er/contract-region "contract")
+;; 		   ("ESC" nil "exit"))
+;;   :init
+;;   (which-key-add-key-based-replacements "C-c e" "expand-region"))
 
 ;;__________________________________________________________
 ;; Web mode
