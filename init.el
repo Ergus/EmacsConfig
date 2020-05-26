@@ -286,9 +286,6 @@
        (set-face-attribute 'tab-bar-tab-inactive nil
 			   :background (alist-get 'black my/colors) :foreground (alist-get 'brightwhite my/colors)
 			   :weight 'normal :underline nil)
-
-       (set-face-attribute 'which-func nil
-			   :background nil :foreground (alist-get 'white my/colors))
        )
 
 (my/colors)
@@ -531,10 +528,17 @@
 ;;   (clean-aindent-mode t)
 ;;   (setq clean-aindent-is-simple-indent t))
 
+
+(use-package which-func :ensure nil
+  :diminish
+  :hook (prog-mode . which-function-mode) ;; Shows the function in spaceline
+  :config
+  (set-face-attribute 'which-func nil
+		      :background nil :foreground (alist-get 'white my/colors)))
+
 (defun my/prog-mode-hook () "Some hooks only for prog mode."
        ;;(electric-indent-mode t)	    ;; On by default
        (electric-pair-mode t)			  ;; Autoannadir parentesis
-       (which-function-mode t)			  ;; Shows the function in spaceline
 
        ;;(define-key global-map (kbd "RET") 'newline-and-indent)
        (electric-indent-local-mode t)
