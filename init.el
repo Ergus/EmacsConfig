@@ -286,6 +286,9 @@
        (set-face-attribute 'tab-bar-tab-inactive nil
 			   :background (alist-get 'black my/colors) :foreground (alist-get 'brightwhite my/colors)
 			   :weight 'normal :underline nil)
+
+       (set-face-attribute 'which-func nil
+			   :background nil :foreground (alist-get 'white my/colors))
        )
 
 (my/colors)
@@ -1711,6 +1714,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		 (list (point-min) (point-max) string))))
   (save-excursion
     (shell-command-on-region start end command t t)))
+
+(defun filename-to-clipboard ()
+  "Put the current file name on the clipboard"
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (with-temp-buffer
+        (insert filename)
+        (clipboard-kill-region (point-min) (point-max)))
+      (message filename))))
 
 ;;__________________________________________________________
 ;;; Org Mode (I don't use it)
