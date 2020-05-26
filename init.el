@@ -119,6 +119,33 @@
 (defalias 'yes-or-no-p 'y-or-n-p) ;; Reemplazar "yes" por "y" en el prompt
 
 ;;__________________________________________________________
+;; use-package
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-and-compile
+  (setq use-package-always-ensure t
+	use-package-enable-imenu-support t)
+
+  (require 'use-package)
+
+   (if init-file-debug
+      (progn
+	(setq use-package-verbose t
+	      use-package-expand-minimally nil
+	      use-package-compute-statistics t
+	      debug-on-error t)
+	(use-package benchmark-init
+	  :config
+	  (add-hook 'window-setup-hook 'benchmark-init/deactivate t)))
+
+    (setq use-package-verbose nil
+	  use-package-expand-minimally t)))
+
+(use-package use-package-hydra)
+
+;;__________________________________________________________
 ;; Config file not here to not track it
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
@@ -146,33 +173,6 @@
 ;; a variable for the gmail calendar.
 (unless (require 'configmail "configmail.el" t)
   (message "No mail config file found: ignored"))
-
-;;__________________________________________________________
-;; use-package
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(eval-and-compile
-  (setq use-package-always-ensure t
-	use-package-enable-imenu-support t)
-
-  (require 'use-package)
-
-   (if init-file-debug
-      (progn
-	(setq use-package-verbose t
-	      use-package-expand-minimally nil
-	      use-package-compute-statistics t
-	      debug-on-error t)
-	(use-package benchmark-init
-	  :config
-	  (add-hook 'window-setup-hook 'benchmark-init/deactivate t)))
-
-    (setq use-package-verbose nil
-	  use-package-expand-minimally t)))
-
-(use-package use-package-hydra)
 
 ;;__________________________________________________________
 ;; Benchmark-init
