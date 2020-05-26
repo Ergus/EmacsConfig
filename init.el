@@ -1810,6 +1810,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-' i" . avy-copy-region)
 	 :map isearch-mode-map
 	 ("C-'" . avy-isearch))
+  :init
+  (which-key-add-key-based-replacements "C-'" "avy")
   :config
   (setq avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
 	;;		(number-sequence ?A ?Z)
