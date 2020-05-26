@@ -537,11 +537,11 @@
 		      :background nil :foreground (alist-get 'white my/colors)))
 
 (defun my/prog-mode-hook () "Some hooks only for prog mode."
-       ;;(electric-indent-mode t)	    ;; On by default
-       (electric-pair-mode t)			  ;; Autoannadir parentesis
+       ;;(electric-indent-mode t)	    		;; On by default
+       (electric-pair-mode t)			;; Autoannadir parentesis
 
        ;;(define-key global-map (kbd "RET") 'newline-and-indent)
-       (electric-indent-local-mode t)
+       ;;(electric-indent-local-mode t)         ;; Shouldn't be need
        (setq-local show-trailing-whitespace t)
 
        (defun smart-beginning-of-line ()
