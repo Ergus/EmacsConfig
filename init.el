@@ -1378,6 +1378,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package projectile
   :bind-keymap ("C-c p" . projectile-command-map)
   :defer t
+  :diminish
   :init
   (which-key-add-key-based-replacements "C-c p" "projectile")
   :custom
