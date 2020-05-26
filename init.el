@@ -414,6 +414,17 @@
 	multi-term-program-switches "--login"
 	multi-term-dedicated-select-after-open-p t))
 
+;;(use-package vterm)
+;;(use-package multi-vterm)
+
+;; (use-package eshell-toggle :ensure t
+;;   :custom
+;;   (eshell-toggle-size-fraction 3)
+;;   (eshell-toggle-run-command nil)
+;;   (eshell-toggle-init-function #'eshell-toggle-init-ansi-term)
+;;   :bind
+;;   ("C-c t t" . eshell-toggle))
+
 ;;__________________________________________________________
 ;; Better shell (for ssh)
 (use-package better-shell
