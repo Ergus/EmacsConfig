@@ -102,11 +102,11 @@
 	      auto-save-default nil         ;; No autosave
 	      auto-save-list-file-name nil
 	      ;; minibuffer interaction
-	      enable-recursive-minibuffers t
+	      ;; enable-recursive-minibuffers t
 	      minibuffer-message-timeout 1
 	      read-quoted-char-radix 16     ;; Read number of chars with C-q
 	      kill-buffer-query-functions nil
-	      kill-do-not-save-duplicates t
+	      kill-do-not-save-duplicates t ;; duplicate kill ring entries
 
 	      eval-expression-print-length nil
 	      eval-expression-print-level nil
@@ -409,7 +409,7 @@
 	 ("C-c t t" . multi-term-dedicated-toggle)
 	 ("C-c t k" . multi-term-dedicated-close))
   :config
-  (setq multi-term-dedicated-window-height 24
+  (setq ;;multi-term-dedicated-window-height 24
 	;;multi-term-program "/bin/bash"
 	multi-term-program-switches "--login"
 	multi-term-dedicated-select-after-open-p t))
