@@ -25,8 +25,8 @@
 (setq-default auto-revert-verbose nil)	;; not show message when file changes
 (global-auto-revert-mode t)		;; Autoload files changed in disk
 
-(setq-default font-lock-maximum-decoration t)
-(global-font-lock-mode t)		;; Use font-lock everywhere.
+;; (setq-default font-lock-maximum-decoration t)
+;; (global-font-lock-mode t)		;; Use font-lock everywhere.
 
 ;; (setq-default display-line-numbers-widen t)	;; keep line numbers inside a narrow
 (global-display-line-numbers-mode t)	;; line numbers on the left
@@ -48,6 +48,15 @@
 (line-number-mode t)			;; Numero de linea modeline
 
 (save-place-mode 1)                     ;; Remember point in files
+
+;; Modeline
+;; (display-battery-mode t)
+
+;; (setq-default display-time-24hr-format t
+;; 	      display-time-day-and-date t
+;; 	      display-time-default-load-average nil)
+;; (display-time-mode t)
+
 
 (setq-default vc-follow-symlinks t	    ;; Open links not open
 	      ;;tab-always-indent complete  ;; make tab key do indent only
