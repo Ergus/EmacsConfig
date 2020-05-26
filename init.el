@@ -1107,12 +1107,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package yasnippet                  ; Snippets
   :diminish
-  :bind (("C-c y i" . yas-insert-snippet)
-	 ("C-c y n" . yas-new-snippet)
-	 ("C-c y f" . yas-visit-snippet-file)
-	 ("C-c y TAB" . yas-expand)
-	 :map yas-minor-mode-map
-	 ("TAB" . nil))
+  :bind (("C-c y d" . yas-load-directory)
+         ("C-c y i" . yas-insert-snippet)
+         ("C-c y f" . yas-visit-snippet-file)
+         ("C-c y n" . yas-new-snippet)
+         ("C-c y t" . yas-tryout-snippet)
+         ("C-c y l" . yas-describe-tables)
+         ("C-c y g" . yas/global-mode)
+         ("C-c y m" . yas/minor-mode)
+         ("C-c y r" . yas-reload-all)
+         ("C-c y x" . yas-expand)
+	 :map yas-keymap
+         ("C-i" . yas-next-field-or-maybe-expand))
   :init
   (which-key-add-key-based-replacements "C-c y" "yasnippet")
   :config
@@ -1121,8 +1127,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   ;; (yas-reload-all)
   ;; (yas-minor-mode 1)
-  (yas-global-mode 1)
-  )
+  (yas-global-mode 1))
 
 (use-package yasnippet-snippets
   :after yasnippet)
