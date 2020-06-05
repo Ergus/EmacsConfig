@@ -1705,14 +1705,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (add-to-list 'company-backends 'company-cmake))
 
 (use-package cmake-font-lock
+  :defer t
   :preface
   (defun my/cmake-font-lock ()
-    (cmake-font-lock-setup)
-    (font-lock-refresh-defaults))
-  :init
-  (add-hook 'cmake-mode-hook #'my/cmake-font-lock t)
-  ;;(add-hook 'cmake-mode-hook #'cmake-font-lock-activate)
-  )
+    (let ((auto-refresh-defaults (boundp 'font-lock-keywords)))
+      (cmake-font-lock-activate)
+      (when auto-refresh-defaults
+	(font-lock-refresh-defaults))))
+  :hook (cmake-mode . my/cmake-font-lock))
 
 (use-package eldoc-cmake
   :after company
