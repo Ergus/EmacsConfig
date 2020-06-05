@@ -434,7 +434,6 @@
 ;; which-key
 
 (use-package which-key
-;;  :defer 1
   :bind (("C-h b" . which-key-show-top-level)
          ("C-h m" . which-key-show-major-mode))
   :diminish
@@ -450,7 +449,7 @@
     "C-c s" "sidebars"
     "C-x r" "rectangle||register"
     "C-x n" "narrow"
-    "C-x n" "tabs"
+    "C-x t" "tabs"
     "C-x a" "abbrev"))
 
 ;; (use-package fancy-narrow
@@ -1047,10 +1046,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;; Undo redo split
 (use-package winner-mode :ensure nil
-  :defer 5
   :bind (("C-x w u" . winner-undo)
 	 ("C-x w r" . winner-redo))
+  :defer 3
   :init
+  (which-key-add-key-based-replacements "C-x w" "winner")
   (setq winner-dont-bind-my-keys t)
   (winner-mode t))
 
@@ -1383,7 +1383,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :diminish
   :init
-  (which-key-add-key-based-replacements "C-c p" "projectile")
+  (which-key-add-key-based-replacements
+    "C-c p" "projectile"
+    "C-c p x" "projectile-run"
+    "C-c p s" "projectile-search")
   :custom
   (projectile-completion-system 'ivy)
   (projectile-file-exists-remote-cache-expire (* 10 60))
