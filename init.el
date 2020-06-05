@@ -1468,7 +1468,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (setq ivy-use-virtual-buffers nil
 	ivy-count-format "(%d/%d) "
-	ivy-display-style 'fancy
 	ivy-pulse-delay nil
 	ivy-use-selectable-prompt t
 	ivy-read-action-function #'ivy-hydra-read-action ;; Depends of ivy-hydra
