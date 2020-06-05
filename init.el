@@ -1406,28 +1406,26 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; ibuffer
 (use-package ibuffer :ensure nil
   :bind ([list-buffers] . ibuffer)
+  :preface
+  (defun my/ibuffer-hook ()
+    (unless (eq ibuffer-sorting-mode 'alphabetic)
+      (ibuffer-do-sort-by-alphabetic)))
   :init
-  (defalias 'list-buffers 'ibuffer)) ; make ibuffer default
+  (defalias 'list-buffers 'ibuffer)
+  :config
+  ;;(add-to-list 'ibuffer-never-show-regexps "^\\*")
+  (add-hook 'ibuffer-hook #'my/ibuffer-hook)) ; make ibuffer default
 
 (use-package ibuffer-sidebar
   :bind (("C-c s b" . ibuffer-sidebar-toggle-sidebar)))
 
 (use-package ibuffer-tramp
-  :hook tramp-mode
-  :config
-  (defun my/ibuffer-tramp-hook () "ibuffer tram hook"
-	 (ibuffer-tramp-set-filter-groups-by-tramp-connection)
-	 (ibuffer-do-sort-by-alphabetic))
-  (add-hook 'ibuffer-hook 'my/ibuffer-tramp-hook))
+  :after tramp
+  :commands ibuffer-tramp-set-filter-groups-by-tramp-connection)
 
 (use-package ibuffer-projectile
-  :after ibuffer
-  :config
-  (defun my/ibuffer-projectile-hook () "My ibuffer-projectile-hook."
-	 (ibuffer-projectile-set-filter-groups)
-	 (unless (eq ibuffer-sorting-mode 'alphabetic)
-           (ibuffer-do-sort-by-alphabetic)))
-  (add-hook 'ibuffer-hook 'my/ibuffer-projectile-hook))
+  :after projectile
+  :hook (ibuffer . ibuffer-projectile-set-filter-groups))
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
 (defun my/sidebar-toggle () "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
