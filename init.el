@@ -586,6 +586,9 @@
   :bind (([remap undo] . undo-fu-only-undo)
          ("C-M-_" . undo-fu-only-redo)))
 
+(use-package string-inflection
+  :bind ("C-c <right>" . string-inflection-all-cycle))
+
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
 (use-package hl-line :ensure nil
