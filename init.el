@@ -604,11 +604,8 @@
 		      :inherit nil :background (alist-get 'brightblack my/colors)))
 
 (use-package highlight-indent-guides
-  :disabled
   :diminish
-  :hook (prog-mode . highlight-indent-guides-mode)
   :bind ("C-c h i" . highlight-indent-guides-mode)
-  :commands (highlight-indent-guides-mode)
   :config
   (setq highlight-indent-guides-auto-enabled nil
 	highlight-indent-guides-method 'character)
@@ -633,16 +630,15 @@
   (set-face-attribute 'highlight-blocks-depth-9-face nil :background "#7f7f7f"))
 
 (use-package highlight-escape-sequences
-  :disabled
   :diminish
-  :hook (prog-mode . hes-mode)
+  :bind ("C-c h s" . hes-mode)
   :config
   (set-face-attribute 'hes-escape-backslash-face nil :foreground (alist-get 'magenta my/colors))
   (set-face-attribute 'hes-escape-sequence-face nil :foreground (alist-get 'magenta my/colors)))
 
 (use-package highlight-numbers
   :diminish
-  :hook (prog-mode . highlight-numbers-mode)
+  ;;:hook (prog-mode . highlight-numbers-mode)
   :bind ("C-c h n" . highlight-numbers-mode)
   :config
   (set-face-attribute 'highlight-numbers-number nil :foreground (alist-get 'red my/colors)))
