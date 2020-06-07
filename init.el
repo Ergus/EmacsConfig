@@ -424,6 +424,9 @@
 ;;   :bind
 ;;   ("C-c t t" . eshell-toggle))
 
+(use-package emamux
+  :commands emamux:send-command)
+
 ;;__________________________________________________________
 ;; Better shell (for ssh)
 (use-package better-shell
