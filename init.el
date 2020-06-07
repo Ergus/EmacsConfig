@@ -532,6 +532,7 @@
 ;;   (clean-aindent-mode t)
 ;;   (setq clean-aindent-is-simple-indent t))
 
+;; (setq-default mode-line-format nil)
 
 (use-package which-func :ensure nil
   :diminish
@@ -597,14 +598,13 @@
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
-(use-package column-enforce-mode
-  :diminish
-  :bind ("C-c h c" . column-enforce-mode)
-  :config
-  ;;(column-enforce-mode t)
-  (setq column-enforce-comments nil)
-  (set-face-attribute 'column-enforce-face nil
-		      :inherit nil :background (alist-get 'brightblack my/colors)))
+;; (use-package column-enforce-mode
+;;   :diminish
+;;   :bind ("C-c h c" . column-enforce-mode)
+;;   :config
+;;   (setq column-enforce-comments nil)
+;;   (set-face-attribute 'column-enforce-face nil
+;; 		      :inherit nil :background (alist-get 'brightblack my/colors)))
 
 (use-package highlight-indent-guides
   :diminish
