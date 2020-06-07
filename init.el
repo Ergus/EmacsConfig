@@ -120,7 +120,9 @@
 
 ;;__________________________________________________________
 ;; use-package
-(unless (package-installed-p 'use-package)
+(unless (and (fboundp 'package-installed-p)
+	     (package-installed-p 'use-package))
+  (package-initialize)
   (package-refresh-contents)
   (package-install 'use-package))
 
