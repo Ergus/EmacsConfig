@@ -581,11 +581,15 @@
 ;;   :commands undo-propose)
 
 ;; Saner undo/redo
-(use-package undo-fu
-  :custom
-  (undo-fu-allow-undo-in-region t)
-  :bind (([remap undo] . undo-fu-only-undo)
-         ("C-M-_" . undo-fu-only-redo)))
+;; (use-package undo-fu
+;;   :custom
+;;   (undo-fu-allow-undo-in-region t)
+;;   :bind (([remap undo] . undo-fu-only-undo)
+;;          ("C-M-_" . undo-fu-only-redo)))
+
+
+(global-set-key [remap undo] 'undo-only)
+(global-set-key (kbd "C-M-_") 'undo-redo)
 
 (use-package string-inflection
   :bind ("C-c <right>" . string-inflection-all-cycle))
@@ -1044,7 +1048,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package ace-window
   :bind ([remap other-window] . ace-window)
   :custom
-  (aw-background nil)
+  ;;(aw-background nil)
   (aw-ignore-current t)
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
@@ -1057,6 +1061,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (which-key-add-key-based-replacements "C-x w" "winner")
   (setq winner-dont-bind-my-keys t)
   (winner-mode t))
+
+
 
 ;; winum (windows number) for spaceline
 ;; (use-package winum
