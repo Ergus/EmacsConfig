@@ -416,13 +416,18 @@
 ;;(use-package vterm)
 ;;(use-package multi-vterm)
 
-;; (use-package eshell-toggle :ensure t
-;;   :custom
-;;   (eshell-toggle-size-fraction 3)
-;;   (eshell-toggle-run-command nil)
-;;   (eshell-toggle-init-function #'eshell-toggle-init-ansi-term)
-;;   :bind
-;;   ("C-c t t" . eshell-toggle))
+;; (use-package eshell
+
+(use-package eshell-toggle
+  :custom
+  (eshell-toggle-size-fraction 3)
+  (eshell-toggle-use-projectile-root t)
+  (eshell-toggle-run-command nil)
+  (eshell-toggle-init-function #'eshell-toggle-init-eshell)
+  ;;(eshell-toggle-init-function #'eshell-toggle-init-tmux)
+  ;;(eshell-toggle-init-function #'eshell-toggle-init-ansi-term)
+  :bind ("C-c e e" . eshell-toggle)
+  )
 
 (use-package emamux
   :commands emamux:send-command)
