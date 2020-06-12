@@ -881,7 +881,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package modern-cpp-font-lock
   :hook (c++-mode . modern-c++-font-lock-mode))
 
-
 ;;__________________________________________________________
 ;; sh mode
 
@@ -1020,7 +1019,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Completion
-(add-to-list 'completion-styles 'flex)
+;; (add-to-list 'completion-styles 'flex)
 ;; '(completion-ignored-extensions
 ;;   (quote ("CVS/" ".o" "~" ".bin" ".lbin" ".fasl" ".ufsl" ".a" ".ln" ".blg" ".bbl"
 ;; 	  ".elc" ".lof" ".glo" ".idx" ".lot" ".dvi" ".fmt" ".tfm" ".class" ".fas"
@@ -1390,6 +1389,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package projectile
   :diminish
+  :commands projectile-project-name
   :bind-keymap ("C-c p" . projectile-command-map)
   :init
   (which-key-add-key-based-replacements
@@ -1456,7 +1456,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package headlong :defer t)
 
-;;(use-package flx :defer t)
+(use-package flx :defer t)
 
 (use-package ivy
   :diminish
@@ -1480,7 +1480,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	ivy-count-format "(%d/%d) "
 	ivy-pulse-delay nil
 	ivy-use-selectable-prompt t
+	ivy-initial-inputs-alist nil
 	ivy-read-action-function #'ivy-hydra-read-action ;; Depends of ivy-hydra
+	ivy-re-builders-alist '((swiper . ivy--regex-plus)
+				(t      . ivy--regex-fuzzy))
 	;;ivy-height 10
 	;;ivy-wrap t					 ;; cycle in minibuffer
 	)
@@ -1489,7 +1492,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-mode t)
 
   (add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
-  ;; (add-to-list 'ivy-re-builders-alist '(t . ivy--regex-fuzzy))
   )
 
 (use-package ivy-hydra :defer t) ;; Dependency from ivy to use ivy-hydra-read-action
@@ -1784,17 +1786,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-M-<right>" . (lambda () (interactive) (transpose-words 1)))
 	 ("M-<left>" . (lambda () (interactive) (transpose-chars -1)))
 	 ("M-<right>" . (lambda () (interactive) (transpose-chars 1)))))
-
-;;__________________________________________________________
-;; for having tabs in top
-;; (use-package elscreen
-;;   :commands elscreen-start
-;;   :config
-;;   (which-key-add-key-based-replacements "C-c t" "elscreen")
-;;   (setq elscreen-prefix-key (kbd "C-c t")
-;; 	elscreen-tab-display-kill-screen nil
-;; 	elscreen-tab-display-control nil
-;; 	elscreen-display-screen-number nil))
 
 ;;__________________________________________________________
 ;; evil mode
