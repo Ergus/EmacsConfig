@@ -1191,7 +1191,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package flymake-mode :ensure nil
   :hook (prog-mode . flymake-mode)
   :custom
-  (flymake-no-changes-timeout 1.0))
+  (flymake-no-changes-timeout 2.0))
 
 ;;__________________________________________________________
 ;; Function arguments show
@@ -1512,7 +1512,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-mode t)
 
   (add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
-  (add-to-list 'ivy-re-builders-alist '(t . ivy--regex-fuzzy))
   )
 
 (use-package ivy-hydra :defer t) ;; Dependency from ivy to use ivy-hydra-read-action
@@ -1531,10 +1530,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 :map isearch-mode-map
 	 ("C-o" . swiper-isearch-toggle))
   :config
-  ;; (add-to-list 'ivy-re-builders-alist '(swiper . ivy--regex-plus))
-  ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch . ivy--regex-plus))
-  ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch-backward . ivy--regex-plus))
-
   (copy-face 'isearch 'swiper-isearch-current-match)
   (copy-face 'highlight 'swiper-line-face)         ;; linea minibuffer
 
@@ -1549,9 +1544,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (copy-face 'lazy-highlight 'swiper-background-match-face-3)
   (copy-face 'lazy-highlight 'swiper-background-match-face-4)
 
-  (add-to-list 'ivy-re-builders-alist '(swiper . ivy--regex-plus))
-  (add-to-list 'ivy-re-builders-alist '(swiper-isearch . ivy--regex-plus))
-  (add-to-list 'ivy-re-builders-alist '(swiper-isearch-backward . ivy--regex-plus))
+  ;; (add-to-list 'ivy-re-builders-alist '(swiper . ivy--regex-plus))
+  ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch . ivy--regex-plus))
+  ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch-backward . ivy--regex-plus))
   )
 
 (use-package imenu-anywhere
@@ -1615,6 +1610,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   ;; (add-to-list 'ivy-re-builders-alist '(counsel-rg . ivy--regex-plus))
   ;; (add-to-list 'ivy-re-builders-alist '(counsel-ag . ivy--regex-plus))
+  (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
   )
 
 (use-package amx ;; Complete history
