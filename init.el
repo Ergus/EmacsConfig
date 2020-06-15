@@ -329,17 +329,6 @@
 	 ("/known_hosts\\'" . ssh-known-hosts-mode)
 	 ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
 
-
-(defun my/term-mode-hook () "My term mode hook."
-       (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
-       (setq-local mouse-yank-at-point t)
-       (setq-local transient-mark-mode nil)
-       (display-line-numbers-mode -1)
-       (display-fill-column-indicator-mode -1)
-       (auto-fill-mode -1))
-
-(add-hook 'term-mode-hook 'my/term-mode-hook)
-
 ;;__________________________________________________________
 ;; minibuffers
 
@@ -401,22 +390,50 @@
 (use-package diminish)
 
 ;;__________________________________________________________
-;; Mocp and multi-term music player
+;; terms
+
+(use-package term-mode :ensure nil
+  :preface
+  (defun my/term-mode-hook () "My term mode hook."
+	 (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
+	 (setq-local mouse-yank-at-point t)
+	 (setq-local transient-mark-mode nil)
+	 (display-line-numbers-mode -1)
+	 (display-fill-column-indicator-mode -1)
+	 (auto-fill-mode -1))
+  :hook (term-mode . my/term-mode-hook)
+  :init
+  (which-key-add-key-based-replacements "C-c t" "term"))
+
 (use-package multi-term
   :bind (("C-c 4 t" . multi-term-dedicated-open)
 	 ("C-c 5 t" . multi-term)
 	 ("C-c t t" . multi-term-dedicated-toggle)
-	 ("C-c t k" . multi-term-dedicated-close))
+	 ("C-c 0 t" . multi-term-dedicated-close))
   :config
   (setq ;;multi-term-dedicated-window-height 24
 	;;multi-term-program "/bin/bash"
 	multi-term-program-switches "--login"
 	multi-term-dedicated-select-after-open-p t))
 
-;;(use-package vterm)
-;;(use-package multi-vterm)
+(use-package vterm
+  :defer t
+  :preface
+  (defun my/vterm-mode-hook ()
+    (display-fill-column-indicator-mode -1)
+    (auto-fill-mode -1))
+  :hook (vterm-mode . my/vterm-mode-hook))
 
-;; (use-package eshell
+(use-package multi-vterm
+  :bind (("C-c 4 v" . multi-vterm-dedicated-open)
+	 ("C-c 5 v" . multi-vterm)
+	 ("C-c t v" . multi-vterm-dedicated-toggle)
+	 ("C-c 0 v" . multi-term-dedicated-close)))
+
+;; (use-package vterm-toggle
+;;   :bind (("C-c t v" . vterm-toggle)
+;; 	 :map vterm-mode-map (("C-M-n" . vterm-toggle-forward)
+;;			      ("C-M-p" . vterm-toggle-backward))))
 
 (use-package eshell-toggle
   :custom
@@ -426,7 +443,7 @@
   (eshell-toggle-init-function #'eshell-toggle-init-eshell)
   ;;(eshell-toggle-init-function #'eshell-toggle-init-tmux)
   ;;(eshell-toggle-init-function #'eshell-toggle-init-ansi-term)
-  :bind ("C-c e e" . eshell-toggle)
+  :bind ("C-c t e" . eshell-toggle)
   )
 
 (use-package emamux
@@ -1650,14 +1667,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 				 'counsel-etags-virtual-update-tags
 				 'append
 				 'local)))
-  :bind (("C-c t d" . counsel-etags-find-tag-at-point)
-	 ("C-c t p" . xref-pop-marker-stack)
-	 ("C-c t g" . counsel-etags-grep-symbol-at-point)
-	 ("C-c t f" . counsel-etags-find-tag))
+  :bind (("C-c e d" . counsel-etags-find-tag-at-point)
+	 ("C-c e p" . xref-pop-marker-stack)
+	 ("C-c e g" . counsel-etags-grep-symbol-at-point)
+	 ("C-c e f" . counsel-etags-find-tag))
   :init
-  (which-key-add-key-based-replacements "C-c t" "counsel-etags")
+  (which-key-add-key-based-replacements "C-c e" "counsel-etags")
   :config
-  (setq tags-revert-without-query t) ;; Don't ask before rereading TAGS
+  (setq tags-revert-without-query t)        ;; Don't ask before rereading TAGS
   (setq large-file-warning-threshold nil)   ;; Don't warn when TAGS files are large
   )
 
