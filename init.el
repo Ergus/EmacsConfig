@@ -943,8 +943,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Restructured text
-(use-package rst-mode :ensure nil
-  :mode "\\.rst\\'")
+;; (use-package rst-mode :ensure nil
+;;   :mode "\\.rst\\'")
 
 (use-package sphinx-mode
     :hook rst-mode)
