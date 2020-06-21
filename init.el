@@ -403,6 +403,7 @@
 ;; terms
 
 (use-package term-mode :ensure nil
+  :defer t
   :preface
   (defun my/term-mode-hook () "My term mode hook."
 	 (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
