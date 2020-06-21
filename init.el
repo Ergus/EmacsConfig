@@ -279,15 +279,6 @@
        (set-face-attribute 'line-number-current-line nil :foreground (alist-get 'green my/colors))  ;; resalta la linea actual
        (set-face-attribute 'fill-column-indicator nil :foreground (alist-get 'brightblack my/colors))
 
-       (set-face-attribute 'tab-bar nil
-			   :background (alist-get 'black my/colors) :foreground (alist-get 'white my/colors)
-			   :inverse-video nil)
-
-       (set-face-attribute 'tab-bar-tab nil :weight 'ultra-bold :underline t)
-
-       (set-face-attribute 'tab-bar-tab-inactive nil
-			   :background (alist-get 'black my/colors) :foreground (alist-get 'brightwhite my/colors)
-			   :weight 'normal :underline nil)
        )
 
 (my/colors)
@@ -328,6 +319,25 @@
 	 ("/sshd?_config\\'" . ssh-config-mode)
 	 ("/known_hosts\\'" . ssh-known-hosts-mode)
 	 ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
+
+;;__________________________________________________________
+;; tab-bar
+
+(use-package tab-bar :ensure nil
+  :defer t
+  :custom
+  (tab-bar-show 1)
+  :config
+  (set-face-attribute 'tab-bar nil
+		      :background (alist-get 'black my/colors) :foreground (alist-get 'white my/colors)
+		      :inverse-video nil)
+
+  (set-face-attribute 'tab-bar-tab nil :weight 'ultra-bold :underline t)
+
+  (set-face-attribute 'tab-bar-tab-inactive nil
+		      :background (alist-get 'black my/colors) :foreground (alist-get 'brightwhite my/colors)
+		      :weight 'normal :underline nil)
+  )
 
 ;;__________________________________________________________
 ;; minibuffers
