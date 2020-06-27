@@ -1242,8 +1242,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq emms-player-list '(emms-player-mpg321
 			   emms-player-ogg123
 			   emms-player-vlc
-			   emms-player-vlc-playlist))
-  (setq emms-playlist-buffer-name "*Music*"
+			   emms-player-vlc-playlist)
+	emms-playlist-buffer-name "*Music*"
 	emms-playing-time 1
 	emms-source-file-default-directory "~/almacen/Musica/"
 	emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
