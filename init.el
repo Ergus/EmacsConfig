@@ -102,7 +102,6 @@
 	      auto-save-default nil         ;; No autosave
 	      auto-save-list-file-name nil
 	      ;; minibuffer interaction
-	      ;; enable-recursive-minibuffers t
 	      minibuffer-message-timeout 1
 	      read-quoted-char-radix 16     ;; Read number of chars with C-q
 	      kill-buffer-query-functions nil
@@ -113,7 +112,11 @@
 	      enable-remote-dir-locals t    ;; Open remote dir locals.
 	      )
 
-(minibuffer-depth-indicate-mode 1)
+
+;; These two must be enabled/disabled together
+;; (setq enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
+;; (minibuffer-depth-indicate-mode 1)    ;; Mostrar nivel de nesting en minibuffer
+
 ;;__________________________________________________________
 ;; I don't want confirm exit, not write yes-not either
 (defalias 'yes-or-no-p 'y-or-n-p) ;; Reemplazar "yes" por "y" en el prompt
