@@ -141,12 +141,16 @@
 	      use-package-expand-minimally nil
 	      use-package-compute-statistics t
 	      debug-on-error t)
-	(use-package benchmark-init
-	  :config
-	  (add-hook 'window-setup-hook 'benchmark-init/deactivate t)))
+	)
 
     (setq use-package-verbose nil
 	  use-package-expand-minimally t)))
+
+
+(use-package benchmark-init
+  :if init-file-debug
+  :config
+  (add-hook 'window-setup-hook 'benchmark-init/deactivate t))
 
 (use-package use-package-hydra)
 
