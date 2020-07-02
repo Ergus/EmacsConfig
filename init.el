@@ -10,16 +10,6 @@
 ;;; Code:
 
 ;;__________________________________________________________
-;; For using Melpa and Elpa
-
-;; Measure time from one file to the other
-
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-			 ("melpa" . "https://melpa.org/packages/")))
-
-(setq package-quickstart t)
-
-;;__________________________________________________________
 ;; Internal options
 
 (setq-default auto-revert-verbose nil)	;; not show message when file changes
@@ -110,6 +100,7 @@
 	      eval-expression-print-length nil
 	      eval-expression-print-level nil
 	      enable-remote-dir-locals t    ;; Open remote dir locals.
+	      ;; suggest-key-bindings t     ;; Ivy ya hace lo que esta opcion
 	      )
 
 
@@ -123,6 +114,11 @@
 
 ;;__________________________________________________________
 ;; use-package
+
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/") ;; Using Melpa and Elpa
+			 ("melpa" . "https://melpa.org/packages/"))
+      package-quickstart t)
+
 (unless (and (fboundp 'package-installed-p)
 	     (package-installed-p 'use-package))
   (package-initialize)
@@ -140,8 +136,7 @@
 	(setq use-package-verbose t
 	      use-package-expand-minimally nil
 	      use-package-compute-statistics t
-	      debug-on-error t)
-	)
+	      debug-on-error t))
 
     (setq use-package-verbose nil
 	  use-package-expand-minimally t)))
@@ -252,40 +247,61 @@
        (set-background-color (alist-get 'black my/colors))
        (set-foreground-color (alist-get 'white my/colors))
 
-       (set-face-foreground 'font-lock-preprocessor-face (alist-get 'magenta my/colors))	;; Preprocessor
-       (set-face-foreground 'font-lock-comment-face (alist-get 'cyan my/colors))		;; Comentarios
-       (set-face-foreground 'font-lock-doc-face (alist-get 'brightcyan my/colors))		;; Documentation
+       (set-face-attribute 'font-lock-preprocessor-face nil
+			   :foreground (alist-get 'magenta my/colors))	;; Preprocessor
+       (set-face-attribute 'font-lock-comment-face nil
+			   :foreground (alist-get 'cyan my/colors))	;; Comentarios
+       (set-face-attribute 'font-lock-doc-face nil
+			   :foreground (alist-get 'brightcyan my/colors)) ;; Documentation
 
-       (set-face-foreground 'font-lock-string-face (alist-get 'red my/colors))		        ;; Strings
-       (set-face-foreground 'font-lock-function-name-face (alist-get 'white my/colors))	        ;; Funciones
-       (set-face-foreground 'font-lock-variable-name-face (alist-get 'white my/colors))	;; Variables
-       (set-face-foreground 'font-lock-constant-face (alist-get 'magenta my/colors))		;; Constates y Clases
+       (set-face-attribute 'font-lock-string-face nil
+			   :foreground (alist-get 'red my/colors))	;; Strings
+       (set-face-attribute 'font-lock-function-name-face nil
+			   :foreground (alist-get 'white my/colors))	;; Funciones
+       (set-face-attribute 'font-lock-variable-name-face nil
+			   :foreground (alist-get 'white my/colors))	;; Variables
+       (set-face-attribute 'font-lock-constant-face nil
+			   :foreground (alist-get 'magenta my/colors))	;; Constates y Clases
 
-       (set-face-foreground 'font-lock-type-face (alist-get 'green my/colors))		        ;; Tipos (int, float)
-       (set-face-foreground 'font-lock-keyword-face (alist-get 'yellow my/colors))		;; Keywords (for, if)
-       (set-face-foreground 'font-lock-builtin-face (alist-get 'green my/colors))		;; Keywords (for, if)
+       (set-face-attribute 'font-lock-type-face nil
+			   :foreground (alist-get 'green my/colors))	;; Tipos (int, float)
+       (set-face-attribute 'font-lock-keyword-face nil
+			   :foreground (alist-get 'yellow my/colors))	;; Keywords (for, if)
+       (set-face-attribute 'font-lock-builtin-face nil
+			   :foreground (alist-get 'green my/colors))	;; Keywords (for, if)
 
-       (set-face-attribute 'highlight nil :background (alist-get 'brightblack my/colors) :foreground nil)
-       (set-face-attribute 'secondary-selection nil :background (alist-get 'brightblue my/colors))
+       (set-face-attribute 'highlight nil
+			   :background (alist-get 'brightblack my/colors)
+			   :foreground nil)
+       (set-face-attribute 'secondary-selection nil
+			   :background (alist-get 'brightblue my/colors))
 
        ;; search C-s, resalta lo que encuentra
-       (set-face-attribute 'isearch nil :background (alist-get 'blue my/colors)
-			   :foreground (alist-get 'white my/colors) :weight 'ultrabold)	;; Search
+       (set-face-attribute 'isearch nil
+			   :background (alist-get 'blue my/colors)
+			   :foreground (alist-get 'white my/colors)
+			   :weight 'ultrabold)	;; Search
 
-       (set-face-attribute 'lazy-highlight nil :background (alist-get 'brightblue my/colors))
+       (set-face-attribute 'lazy-highlight nil
+			   :background (alist-get 'brightblue my/colors))
 
-       (set-face-attribute 'region nil :background (alist-get 'brightblue my/colors))          ;; Seleccion
+       (set-face-attribute 'region nil
+			   :background (alist-get 'brightblue my/colors))
 
-       (set-face-attribute 'mode-line-inactive nil :background (alist-get 'brightblack my/colors)
+       (set-face-attribute 'mode-line-inactive nil
+			   :background (alist-get 'brightblack my/colors)
 			   :foreground (alist-get 'white my/colors))
 
-       (set-face-attribute 'mode-line nil :background (alist-get 'blue my/colors)
+       (set-face-attribute 'mode-line nil
+			   :background (alist-get 'blue my/colors)
 			   :foreground (alist-get 'white my/colors))
 
-       (set-face-attribute 'line-number nil :foreground (alist-get 'brightblack my/colors))	      ;; numero de linea
-       (set-face-attribute 'line-number-current-line nil :foreground (alist-get 'green my/colors))  ;; resalta la linea actual
-       (set-face-attribute 'fill-column-indicator nil :foreground (alist-get 'brightblack my/colors))
-
+       (set-face-attribute 'line-number nil
+			   :foreground (alist-get 'brightblack my/colors))
+       (set-face-attribute 'line-number-current-line nil
+			   :foreground (alist-get 'green my/colors))
+       (set-face-attribute 'fill-column-indicator nil
+			   :foreground (alist-get 'brightblack my/colors))
        )
 
 (my/colors)
@@ -299,7 +315,8 @@
 (setq-default show-paren-delay 0
 	      blink-matching-paren nil)
 (show-paren-mode t)	  ;; Highlight couple parentesis
-(set-face-attribute 'show-paren-match nil :inherit nil
+(set-face-attribute 'show-paren-match nil
+		    :inherit nil
 		    :background (alist-get 'brightblue my/colors))
 
 ;;__________________________________________________________
@@ -336,13 +353,17 @@
   (tab-bar-show 1)
   :config
   (set-face-attribute 'tab-bar nil
-		      :background (alist-get 'black my/colors) :foreground (alist-get 'white my/colors)
+		      :background (alist-get 'black my/colors)
+		      :foreground (alist-get 'white my/colors)
 		      :inverse-video nil)
 
-  (set-face-attribute 'tab-bar-tab nil :weight 'ultra-bold :underline t)
+  (set-face-attribute 'tab-bar-tab nil
+		      :weight 'ultra-bold
+		      :underline t)
 
   (set-face-attribute 'tab-bar-tab-inactive nil
-		      :background (alist-get 'black my/colors) :foreground (alist-get 'brightwhite my/colors)
+		      :background (alist-get 'black my/colors)
+		      :foreground (alist-get 'brightwhite my/colors)
 		      :weight 'normal :underline nil)
   )
 
@@ -399,8 +420,12 @@
 (use-package man :ensure nil
   :commands man
   :config
-  (set-face-attribute 'Man-overstrike nil :inherit font-lock-type-face :bold t)
-  (set-face-attribute 'Man-underline nil :inherit font-lock-keyword-face :underline t))
+  (set-face-attribute 'Man-overstrike nil
+		      :inherit font-lock-type-face
+		      :bold t)
+  (set-face-attribute 'Man-underline nil
+		      :inherit font-lock-keyword-face
+		      :underline t))
 
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
@@ -579,7 +604,8 @@
   :hook (prog-mode . which-function-mode) ;; Shows the function in spaceline
   :config
   (set-face-attribute 'which-func nil
-		      :background nil :foreground (alist-get 'white my/colors)))
+		      :background nil
+		      :foreground (alist-get 'white my/colors)))
 
 (defun my/prog-mode-hook () "Some hooks only for prog mode."
        ;;(electric-indent-mode t)	    		;; On by default
@@ -680,15 +706,18 @@
   :diminish
   :bind ("C-c h s" . hes-mode)
   :config
-  (set-face-attribute 'hes-escape-backslash-face nil :foreground (alist-get 'magenta my/colors))
-  (set-face-attribute 'hes-escape-sequence-face nil :foreground (alist-get 'magenta my/colors)))
+  (set-face-attribute 'hes-escape-backslash-face nil
+		      :foreground (alist-get 'magenta my/colors))
+  (set-face-attribute 'hes-escape-sequence-face nil
+		      :foreground (alist-get 'magenta my/colors)))
 
 (use-package highlight-numbers
   :diminish
   ;;:hook (prog-mode . highlight-numbers-mode)
   :bind ("C-c h n" . highlight-numbers-mode)
   :config
-  (set-face-attribute 'highlight-numbers-number nil :foreground (alist-get 'red my/colors)))
+  (set-face-attribute 'highlight-numbers-number nil
+		      :foreground (alist-get 'red my/colors)))
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
@@ -1149,9 +1178,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		      :background (alist-get 'brightblack my/colors)
 		      :foreground (alist-get 'white my/colors))
   (set-face-attribute 'company-tooltip-common nil ;; common part face
-		      :inherit 'company-tooltip :foreground (alist-get 'green my/colors))
+		      :inherit 'company-tooltip
+		      :foreground (alist-get 'green my/colors))
   (set-face-attribute 'company-tooltip-selection nil ;; selection face
-		      :background (alist-get 'blue my/colors) :weight 'ultra-bold)
+		      :background (alist-get 'blue my/colors)
+		      :weight 'ultra-bold)
   (set-face-attribute 'company-scrollbar-bg nil	  ;; scroll bar face bg
 		      :background (alist-get 'brightblack my/colors))
   (set-face-attribute 'company-scrollbar-fg nil	  ;; scroll bar face fg
@@ -1511,7 +1542,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (copy-face 'highlight 'ivy-current-match)  ;; Linea seleccionada
 
   (set-face-attribute 'ivy-minibuffer-match-face-1 nil     ;; espacio entre matches
-   		      :inherit nil :background nil :foreground nil :underline t)
+		      :inherit nil :background nil
+		      :foreground nil :underline t)
   (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-2)
   (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-3)
   (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-4)
