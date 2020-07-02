@@ -1114,7 +1114,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   )
 
 (use-package ace-window
-  :bind ([remap other-window] . ace-window)
+  :bind (([remap other-window] . ace-window)
+	 ("C-x <left>" . windmove-left)
+	 ("C-x <right>" . windmove-right)
+	 ("C-x <up>" . windmove-up)
+	 ("C-x <down>" . windmove-down))
   :custom
   ;;(aw-background nil)
   (aw-ignore-current t)
