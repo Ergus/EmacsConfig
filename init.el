@@ -1113,12 +1113,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   ;;(setq windmove-wrap-around t)		  ;; Cyclic bound mode
 ;;   )
 
-(use-package ace-window
-  :bind (([remap other-window] . ace-window)
-	 ("C-x <left>" . windmove-left)
+(use-package windmove :ensure nil
+  :bind (("C-x <left>" . windmove-left)
 	 ("C-x <right>" . windmove-right)
 	 ("C-x <up>" . windmove-up)
-	 ("C-x <down>" . windmove-down))
+	 ("C-x <down>" . windmove-down)))
+
+(use-package ace-window
+  :bind ([remap other-window] . ace-window)
   :custom
   ;;(aw-background nil)
   (aw-ignore-current t)
