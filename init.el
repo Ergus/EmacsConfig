@@ -928,7 +928,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (add-hook 'c-mode-common-hook #'my/c-mode-common-hook)
 
 (use-package preproc-font-lock ;; Preprocessor
-  :hook (c-mode . preproc-font-lock-mode)
+  :hook (c-mode-common . preproc-font-lock-mode)
   :config
   (set-face-attribute 'preproc-font-lock-preprocessor-background nil
 		      :inherit 'font-lock-preprocessor-face))
