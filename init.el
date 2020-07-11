@@ -908,6 +908,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	       (indent-tabs-mode . t)
 	       (fill-column . 80)
 	       (c-hanging-semi&comma-criteria . nil)
+	       (c-cleanup-list empty-defun-braces ;; {}
+			       brace-else-brace   ;; } else {
+			       brace-elseif-brace ;; } else if {
+			       defun-close-semi)  ;; };
+	       (c-hanging-braces-alist (brace-list-open)
+				       (brace-entry-open)
+				       (substatement-open after)
+				       (block-close . c-snug-do-while)
+				       (arglist-cont-nonempty)
+				       (class-open . (after)))
 	       (c-offsets-alist (inline-open . 0)
 				(comment-intro . 0)
 				;;(innamespace . [0])
