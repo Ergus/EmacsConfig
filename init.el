@@ -901,23 +901,29 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;====================
 
+(defun my/c-semi&comma ()
+  (assq 'class-close c-syntactic-context)
+  )
+
 (c-add-style "mylinux"
 	     '("linux"
 	       (tab-width . 4)
 	       (c-basic-offset . 4)
 	       (indent-tabs-mode . t)
 	       (fill-column . 80)
-	       (c-hanging-semi&comma-criteria . nil)
+	       (c-hanging-semi&comma-criteria my/c-semi&comma)
 	       (c-cleanup-list empty-defun-braces ;; {}
 			       brace-else-brace   ;; } else {
 			       brace-elseif-brace ;; } else if {
-			       defun-close-semi)  ;; };
+			       ;;defun-close-semi ;; };
+			       )
 	       (c-hanging-braces-alist (brace-list-open)
 				       (brace-entry-open)
 				       (substatement-open after)
 				       (block-close . c-snug-do-while)
 				       (arglist-cont-nonempty)
-				       (class-open . (after)))
+				       (class-open . (after))
+				       (class-close . (before)))
 	       (c-offsets-alist (inline-open . 0)
 				(comment-intro . 0)
 				;;(innamespace . [0])
@@ -997,8 +1003,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Makefile
-(use-package makefile-mode :ensure nil
-  :mode (".*Makefile.*" "\\.mak"))
+;; (use-package makefile-mode :ensure nil
+;;   :mode (".*Makefile.*" "\\.mak"))
 
 ;;__________________________________________________________
 ;; ruby-mode
