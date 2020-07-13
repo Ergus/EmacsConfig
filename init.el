@@ -190,8 +190,7 @@
 (use-package diminish)		      ;; if you use :diminish
 (use-package bind-key)		      ;; if you use any :bind variant
 
-(use-package paradox
-  :commands (paradox-upgrade-packages paradox-list-packages)
+(use-package paradox :defer t
   :config
   (setq paradox-spinner-type 'progress-bar
 	paradox-display-download-count t
@@ -385,20 +384,15 @@
 ;;__________________________________________________________
 ;; gdb rectangles
 
-(use-package gdb :ensure nil
-  :commands gdb
+(use-package gdb :ensure nil :defer t
   :init
   (setq gdb-many-windows nil
 	gdb-show-main t))
 
 ;;__________________________________________________________
 ;; Two options for diffs
-(use-package ediff :ensure nil
-  :commands (ediff
-	     ediff-files
-	     ediff-files3
-	     ediff-buffers
-	     ediff-buffers3)
+(use-package ediff :ensure nil :defer t
+
   :config
   (setq ediff-window-setup-function 'ediff-setup-windows-plain
 	ediff-split-window-function 'split-window-horizontally)
@@ -406,11 +400,7 @@
     (add-hook 'ediff-after-quit-hook-internal #'winner-undo)))
 
 ;; more like vimdiff
-(use-package vdiff
-  :commands (vdiff-files
-	     vdiff-files3
-	     vdiff-buffers
-	     vdiff-buffers3)
+(use-package vdiff :defer t
   :bind (:map vdiff-mode-map
 	      ("C-c d v" . vdiff-hydra/body))
   :config
@@ -489,8 +479,7 @@
   :bind ("C-c t e" . eshell-toggle)
   )
 
-(use-package emamux
-  :commands emamux:send-command)
+(use-package emamux :defer t)
 
 ;;__________________________________________________________
 ;; Better shell (for ssh)
@@ -543,6 +532,8 @@
 ;; (use-package whole-line-or-region
 ;;   :config
 ;;   (whole-line-or-region-global-mode 1))
+
+(use-package multi-line :defer t)
 
 ;;__________________________________________________________
 ;;	Seleccionar con el mouse
@@ -691,7 +682,6 @@
   :diminish
   :bind (("C-c h b" . highlight-blocks-now)
 	 ("C-c h B" . highlight-blocks-mode))
-  :commands (highlight-blocks-now highlight-blocks-mode)
   :config
   (set-face-attribute 'highlight-blocks-depth-2-face nil :background "#262626") ;; gray15
   (set-face-attribute 'highlight-blocks-depth-3-face nil :background "#333333") ;; gray20
@@ -1808,10 +1798,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Magit
 
-(use-package magit
-  :commands (magit-status
-	     magit-log-all
-	     magit-log)
+(use-package magit :defer t
   :init
   (setq magit-completing-read-function 'ivy-completing-read)
   :config
@@ -2082,8 +2069,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package company-nginx
   :hook (nginx-mode . company-nginx-keywords))
 
-(use-package lice
-  :commands lice)
+(use-package lice :defer t)
 
 (use-package lorem-ipsum :defer t)
 ;;__________________________________________________________
@@ -2091,8 +2077,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package json-mode
   :mode "\\.json\\'")
 
-(use-package sudo-edit
-  :commands sudo-edit)
+(use-package sudo-edit :defer t)
 
 (use-package evil
   :disabled
@@ -2132,8 +2117,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (composable-mode)       ; Activates the default keybindings
   (composable-mark-mode)) ; Use composable with C-SPC
 
-(use-package slime
-  :commands slime
+(use-package slime :defer t
   :init
   (setq inferior-lisp-program "sbcl"
         slime-contribs '(slime-fancy)))
