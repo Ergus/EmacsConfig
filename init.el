@@ -1870,11 +1870,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; path
 (defun shell-command-on-buffer (start end command)
   "Execute shell COMMAND on buffer overwriting it."
-  (interactive (let (string)
-		 (setq string (read-shell-command "Shell command on buffer: "))
+  (interactive (let ((string (read-shell-command "Shell command on buffer: ")))
 		 (if (use-region-p)
-		   (list (region-beginning) (region-end) string)
-		 (list (point-min) (point-max) string))))
+		     (list (region-beginning) (region-end) string)
+		   (list (point-min) (point-max) string))))
   (save-excursion
     (shell-command-on-region start end command t t)))
 
