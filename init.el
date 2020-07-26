@@ -1123,7 +1123,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (("C-x <left>" . windmove-left)
 	 ("C-x <right>" . windmove-right)
 	 ("C-x <up>" . windmove-up)
-	 ("C-x <down>" . windmove-down)))
+	 ("C-x <down>" . windmove-down)
+	 ("C-x <M-left>" . windmove-swap-states-left)
+	 ("C-x <M-right>" . windmove-swap-states-right)
+	 ("C-x <M-up>" . windmove-swap-states-up)
+	 ("C-x <M-down>" . windmove-swap-states-down)))
 
 (use-package ace-window
   :bind ([remap other-window] . ace-window)
