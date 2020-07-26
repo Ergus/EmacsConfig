@@ -1239,20 +1239,22 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
-;; (use-package flycheck
-;;   :diminish
-;;   :if (< (buffer-size) 200000)
-;;   :hook (prog-mode . flycheck-mode)
-;;   :config
-;;   (setq flycheck-gcc-language-standard "c++17"
-;; 	flycheck-clang-language-standard "c++17"
-;; 	flycheck-display-errors-delay 1.0)
-;;   (which-key-add-key-based-replacements "C-c !" "flycheck"))
+(use-package flycheck
+  :diminish
+  :if (< (buffer-size) 200000)
+  :defer t
+  ;;:hook (prog-mode . flycheck-mode)
+  :config
+  (setq flycheck-gcc-language-standard "c++17"
+	flycheck-clang-language-standard "c++17"
+	flycheck-display-errors-delay 1.0)
+  (which-key-add-key-based-replacements "C-c !" "flycheck"))
 
-(use-package flymake-mode :ensure nil
-  :hook (prog-mode . flymake-mode)
-  :custom
-  (flymake-no-changes-timeout 2.0))
+;; (use-package flymake-mode :ensure nil
+;;   :hook (prog-mode . flymake-mode)
+;;   ;;:custom
+;;   ;;(flymake-no-changes-timeout 1.0)
+;;   )
 
 ;;__________________________________________________________
 ;; Function arguments show
