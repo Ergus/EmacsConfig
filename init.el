@@ -1196,8 +1196,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      ("C-p" . company-select-previous-or-abort))
   :hook (prog-mode . company-mode)
   :custom
-  (company-idle-delay 1.0)	 ;; no delay for autocomplete
-  ;;(company-minimum-prefix-length 2)
+  ;;(company-idle-delay 1.0)	 ;; no delay for autocomplete
+  (company-minimum-prefix-length 2)
   (company-selection-wrap-around nil)
   (company-show-numbers t)
   ;;company-tooltip-limit 20
