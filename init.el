@@ -1269,6 +1269,22 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :if (< (buffer-size) 200000)
   ;;:defer t
   :hook (prog-mode . flycheck-mode)
+  :bind ("C-c a" . hydra-fc/body)
+  :init
+  (which-key-add-key-based-replacements "C-c a" "hydra/flycheck")
+  :hydra (hydra-fc (:color red :columns 4 :pre (hl-line-mode t)
+			   :post (hl-line-mode -1))
+		   "flycheck"
+		   ("b" flycheck-buffer "check-buffer")
+		   ("c" flycheck-compile "compile")
+		   ("d" flycheck-display-error-at-point "display-error")
+		   ("e" flycheck-explain-error-at-point "explain-error")
+		   ("l" flycheck-list-errors "list-errors")
+		   ("n" flycheck-next-error "next-error")
+		   ("p" flycheck-previous-error "previous-error")
+		   ("s" flycheck-select-checker "select-checker")
+		   ("v" flycheck-verify-setup "verify-setup")
+		   ("ESC" nil "exit"))
   :config
   (cond
    ((eq major-mode 'c-mode)
