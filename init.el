@@ -771,42 +771,41 @@
 
 (use-package lsp-mode
   :diminish lsp
-  ;; :hook ((c-mode . lsp-deferred)
-  ;; 	 (c++-mode . lsp-deferred))
-  :bind ("C-c l" . lsp)
+  :bind-keymap ("C-c l" . lsp-command-map)
   :config
-  (setq lsp-enable-snippet nil
+  (setq lsp-keymap-prefix "C-c l"
+	lsp-enable-snippet nil
 	lsp-eldoc-hook nil
 	lsp-enable-indentation nil
+	lsp-prefer-capf t
+	read-process-output-max (* 1024 1024) ;; 1mb
 	;; lsp-diagnostic-package t ;; prefer flymake
 	lsp-clients-clangd-executable (locate-file "clangd" exec-path '("" "-8" "-7" "-6") 1))
-  )
+  (lsp)
+  (lsp-enable-which-key-integration))
 
 (use-package lsp-ui
   :diminish
-  :defer t
-  :bind (:map lsp-mode-map
+  :bind (:map lsp-command-map
 	      ;; peek commands
-	      ("C-c l d" . lsp-ui-peek-find-definitions)
-	      ("C-c l r" . lsp-ui-peek-find-references)
-	      ("C-c l i" . lsp-ui-peek-find-implementation)
-	      ;;("C-c l s" . lsp-ui-peek-find-workspace-symbol)
-	      ("C-c l c" . lsp-ui-peek-find-custom)
+	      ("u d" . lsp-ui-peek-find-definitions)
+	      ("u r" . lsp-ui-peek-find-references)
+	      ("u i" . lsp-ui-peek-find-implementation)
+	      ;;("s" . lsp-ui-peek-find-workspace-symbol)
+	      ("u c" . lsp-ui-peek-find-custom)
 	      ;; imenu
-	      ("C-c l i" . lsp-ui-imenu)
+	      ("u m" . lsp-ui-imenu)
 	      ;; flycheck
-	      ("C-c l f" . lsp-ui-flycheck-list)
+	      ("u f" . lsp-ui-flycheck-list)
 	      ;; lsp-ui
-	      ("C-c l n" . lsp-ui-find-next-reference)
-	      ("C-c l p" . lsp-ui-find-prev-reference)
-	      )
+	      ("u n" . lsp-ui-find-next-reference)
+	      ("u p" . lsp-ui-find-prev-reference))
   :config
-  (which-key-add-key-based-replacements "C-c l" "lsp")
-
   (setq lsp-ui-sideline-delay 1.0
 	;;lsp-ui-sideline-enable t
-	lsp-ui-doc-enable nil
-	))
+	lsp-ui-doc-enable nil)
+  (which-key-add-key-based-replacements "C-c l u" "lsp-ui")
+  )
 
 ;; (use-package company-lsp
 ;;   :diminish
@@ -825,7 +824,7 @@
   :diminish
   :after lsp-mode
   :bind (:map lsp-mode-map
-	      ("C-c l s" . lsp-ivy-workspace-symbol)))
+	      ("C-c l i" . lsp-ivy-workspace-symbol)))
 
 ;;__________________________________________________________
 ;; Irony config (C completions)
