@@ -1633,6 +1633,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package ivy-hydra :defer t) ;; Dependency from ivy to use ivy-hydra-read-action
 
+(use-package ivy-xref
+  :init
+  (setq xref-show-definitions-function #'ivy-xref-show-defs
+	xref-show-xrefs-function #'ivy-xref-show-xrefs)
+  :bind (("C-c x d" . xref-find-definitions)
+	 ("C-c x a" . xref-find-apropos)
+	 ("C-c x u" . xref-pop-marker-stack) ;; go back
+	 ("C-c x r" . xref-find-references)
+	 ("C-c x TAB" . completion-at-point)))
+
 (use-package swiper
   :preface
   :bind (("C-s" . swiper-isearch)
