@@ -126,20 +126,20 @@
   (package-install 'use-package))
 
 (eval-and-compile
-  (setq use-package-always-ensure t
-	use-package-enable-imenu-support t)
-
   (require 'use-package)
 
    (if init-file-debug
-      (progn
-	(setq use-package-verbose t
-	      use-package-expand-minimally nil
-	      use-package-compute-statistics t
-	      debug-on-error t))
+       (setq use-package-always-ensure t
+	     use-package-enable-imenu-support t
+	     use-package-verbose t
+	     use-package-expand-minimally nil
+	     use-package-compute-statistics t
+	     debug-on-error t)
 
-    (setq use-package-verbose nil
-	  use-package-expand-minimally t)))
+     (setq use-package-always-ensure nil
+	   use-package-enable-imenu-support nil
+	   use-package-verbose nil
+	   use-package-expand-minimally t)))
 
 
 (use-package benchmark-init
@@ -442,8 +442,6 @@
     "C-x n" "narrow"
     "C-x t" "tabs"
     "C-x a" "abbrev"))
-
-
 ;;__________________________________________________________
 ;; terms
 
