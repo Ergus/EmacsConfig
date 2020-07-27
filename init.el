@@ -1686,6 +1686,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package ivy-xref
   :init
+  (which-key-add-key-based-replacements "C-c x" "xref")
   (setq xref-show-definitions-function #'ivy-xref-show-defs
 	xref-show-xrefs-function #'ivy-xref-show-xrefs)
   :bind (("C-c x d" . xref-find-definitions)
@@ -1833,7 +1834,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-c o f" . ggtags-find-file)
 	 ("C-c o u" . ggtags-update-tags))
   :init
-  (which-key-add-key-based-replacements "C-c o" "counsel-etags"))
+  (which-key-add-key-based-replacements "C-c o" "ggtags"))
 
 ;;Counsel etags
 (use-package counsel-etags
