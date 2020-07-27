@@ -1267,8 +1267,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package flycheck
   :diminish
   :if (< (buffer-size) 200000)
-  :defer t
-  ;;:hook (prog-mode . flycheck-mode)
+  ;;:defer t
+  :hook (prog-mode . flycheck-mode)
   :config
   (cond
    ((eq major-mode 'c-mode)
