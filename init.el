@@ -1196,14 +1196,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (:map company-active-map
 	      ("C-n" . company-select-next-or-abort)
 	      ("C-p" . company-select-previous-or-abort))
-  :hook (after-init . global-company-mode)
+  :hook (prog-mode . company-mode)
   :custom
   (company-idle-delay 1.0)	 ;; no delay for autocomplete
-  (company-minimum-prefix-length 2)
+  ;;(company-minimum-prefix-length 2)
   (company-selection-wrap-around nil)
   (company-show-numbers t)
   ;;company-tooltip-limit 20
-  ;;company-show-numbers t
   (company-backends '(company-semantic
 		     company-capf		 ;; completion at point
 		     company-files	 ;; company files
@@ -1272,9 +1271,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   ;;:hook (prog-mode . flycheck-mode)
   :config
-  (setq flycheck-gcc-language-standard "c++17"
-	flycheck-clang-language-standard "c++17"
-	flycheck-display-errors-delay 1.0)
+  (cond
+   ((eq major-mode 'c-mode)
+    (setq flycheck-gcc-language-standard "c17"
+	  flycheck-clang-language-standard "c17"))
+   ((eq major-mode 'c++-mode)
+    (setq flycheck-gcc-language-standard "c++17"
+	  flycheck-clang-language-standard "c++17")))
+
+  (setq flycheck-display-errors-delay 1.0)
   (which-key-add-key-based-replacements "C-c !" "flycheck"))
 
 ;; (use-package flymake-mode :ensure nil
