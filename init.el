@@ -768,45 +768,65 @@
 ;;     (ycmd-eldoc-setup)))
 
 ;;__________________________________________________________
-;; LSP try for a while
+;; LSP try for a whil
 
 (use-package lsp-mode
   :diminish lsp
   ;; :hook ((c-mode . lsp-deferred)
   ;; 	 (c++-mode . lsp-deferred))
-  :commands (lsp lsp-deferred)
-  :custom
-  (lsp-enable-snippet nil)
-  (lsp-eldoc-hook nil)
+  :bind ("C-c l" . lsp)
+  :config
+  (setq lsp-enable-snippet nil
+	lsp-eldoc-hook nil
+	lsp-enable-indentation nil
+	;; lsp-diagnostic-package t ;; prefer flymake
+	lsp-clients-clangd-executable (locate-file "clangd" exec-path '("" "-8" "-7" "-6") 1))
   )
 
 (use-package lsp-ui
   :diminish
-  :after lsp
-  :custom
-  (lsp-ui-sideline-enable nil)
-  (lsp-ui-doc-enable nil)
+  :defer t
+  :bind (:map lsp-mode-map
+	      ;; peek commands
+	      ("C-c l d" . lsp-ui-peek-find-definitions)
+	      ("C-c l r" . lsp-ui-peek-find-references)
+	      ("C-c l i" . lsp-ui-peek-find-implementation)
+	      ;;("C-c l s" . lsp-ui-peek-find-workspace-symbol)
+	      ("C-c l c" . lsp-ui-peek-find-custom)
+	      ;; imenu
+	      ("C-c l i" . lsp-ui-imenu)
+	      ;; flycheck
+	      ("C-c l f" . lsp-ui-flycheck-list)
+	      ;; lsp-ui
+	      ("C-c l n" . lsp-ui-find-next-reference)
+	      ("C-c l p" . lsp-ui-find-prev-reference)
+	      )
   :config
-  (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-  (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-  )
+  (which-key-add-key-based-replacements "C-c l" "lsp")
 
-(use-package company-lsp
-  :diminish
-  :after company lsp
-  :config
-  (add-to-list 'company-backends 'company-lsp))
+  (setq lsp-ui-sideline-delay 1.0
+	;;lsp-ui-sideline-enable t
+	lsp-ui-doc-enable nil
+	))
+
+;; (use-package company-lsp
+;;   :diminish
+;;   :after lsp-mode company
+;;   :config
+;;   (add-to-list 'company-backends 'company-lsp))
 
 (use-package lsp-treemacs
   :diminish
-  :after lsp company
+  :after lsp-mode
   :config
-  (lsp-metals-treeview-enable t)
-  (setq lsp-metals-treeview-show-when-views-received t))
+  (setq lsp-metals-treeview-enable t
+	lsp-metals-treeview-show-when-views-received t))
 
 (use-package lsp-ivy
   :diminish
-  :after lsp ivy)
+  :after lsp-mode
+  :bind (:map lsp-mode-map
+	      ("C-c l s" . lsp-ivy-workspace-symbol)))
 
 ;;__________________________________________________________
 ;; Irony config (C completions)
