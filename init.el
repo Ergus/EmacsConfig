@@ -1687,6 +1687,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :preface
   :bind (("C-s" . swiper-isearch)
 	 ("C-r" . swiper-isearch-backward)
+	 ("M-s ." . swiper-isearch-thing-at-point)
 	 :map swiper-map
 	 ("C-y" . yank)
 	 ("M-%" . swiper-query-replace)
