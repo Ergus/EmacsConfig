@@ -422,6 +422,29 @@
 (use-package diminish)
 
 ;;__________________________________________________________
+;; which-key
+
+(use-package which-key
+  :bind (("C-h b" . which-key-show-top-level)
+         ("C-h m" . which-key-show-major-mode))
+  :diminish
+  :custom
+  ;;(which-key-idle-delay 0.4)
+  (which-key-use-C-h-commands nil)
+  ;;(which-key-echo-keystrokes echo-keystrokes)
+  (which-key-separator ": ") ;which-key-idle-delay 2.0)
+  :config
+  (which-key-mode t)
+  (which-key-add-key-based-replacements
+    "C-c h" "highlight"
+    "C-c s" "sidebars"
+    "C-x r" "rectangle||register"
+    "C-x n" "narrow"
+    "C-x t" "tabs"
+    "C-x a" "abbrev"))
+
+
+;;__________________________________________________________
 ;; terms
 
 (use-package term-mode :ensure nil
@@ -488,28 +511,6 @@
 
 (use-package bang
   :bind ("M-!" . bang))
-
-;;__________________________________________________________
-;; which-key
-
-(use-package which-key
-  :bind (("C-h b" . which-key-show-top-level)
-         ("C-h m" . which-key-show-major-mode))
-  :diminish
-  :custom
-  ;;(which-key-idle-delay 0.4)
-  (which-key-use-C-h-commands nil)
-  ;;(which-key-echo-keystrokes echo-keystrokes)
-  (which-key-separator ": ") ;which-key-idle-delay 2.0)
-  :config
-  (which-key-mode t)
-  (which-key-add-key-based-replacements
-    "C-c h" "highlight"
-    "C-c s" "sidebars"
-    "C-x r" "rectangle||register"
-    "C-x n" "narrow"
-    "C-x t" "tabs"
-    "C-x a" "abbrev"))
 
 ;; (use-package fancy-narrow
 ;;   :bind (("C-x n N" . fancy-narrow-to-region)
