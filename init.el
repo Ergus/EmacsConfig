@@ -385,9 +385,9 @@
 ;; gdb rectangles
 
 (use-package gdb :ensure nil :defer t
-  :init
-  (setq gdb-many-windows nil
-	gdb-show-main t))
+  :custom
+  (gdb-many-windows nil)
+  (gdb-show-main t))
 
 ;;__________________________________________________________
 ;; Two options for diffs
