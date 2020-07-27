@@ -1842,7 +1842,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 				 'counsel-etags-virtual-update-tags
 				 'append
 				 'local)))
-  :bind (("C-c e d" . counsel-etags-find-tag-at-point)
+  :bind (("C-c e ." . counsel-etags-find-tag-at-point)
+	 ("C-c e l" . counsel-etags-list-tag-in-current-file)
 	 ("C-c e p" . xref-pop-marker-stack)
 	 ("C-c e g" . counsel-etags-grep-symbol-at-point)
 	 ("C-c e f" . counsel-etags-find-tag))
