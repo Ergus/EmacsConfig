@@ -1036,7 +1036,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode "\\.jl\\'")
 
 (use-package flycheck-julia
-  :after flycheck
   :hook (julia-mode . flycheck-julia-setup))
 
 ;;__________________________________________________________
