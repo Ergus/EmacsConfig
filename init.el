@@ -1636,10 +1636,23 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package flx :defer t)
 
+(defun ivy-highlight-thing-at-point ()
+  "Highlight thing at point or region."
+  (interactive)
+  (require 'hi-lock)
+  (let ((thing (ivy-thing-at-point))
+	(face (hi-lock-read-face-name)))
+    (or (facep face) (setq face 'hi-yellow))
+    (unless hi-lock-mode (hi-lock-mode 1))
+    (when (use-region-p)
+      (deactivate-mark))
+    (hi-lock-set-pattern (regexp-quote thing) face)))
+
 (use-package ivy
   :diminish
   :defer 0.5
   :bind (("C-c C-r" . ivy-resume)
+	 ("M-s h ." . ivy-highlight-thing-at-point)
 	 :map ivy-minibuffer-map
 	 ("TAB" . ivy-partial)
 	 ("RET" . ivy-alt-done))
@@ -1794,7 +1807,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package counsel-gtags
   :diminish
-  :load-path "~/gits/emacs-counsel-gtags/"
+  ;;:load-path "~/gits/emacs-counsel-gtags/"
   :bind (("C-c g g" . counsel-gtags-dwim)
 	 ("C-c g d" . counsel-gtags-find-definition)
 	 ("C-c g r" . counsel-gtags-find-reference)
