@@ -39,6 +39,8 @@
 
 (save-place-mode 1)                     ;; Remember point in files
 
+(global-visual-line-mode t)
+
 ;; Modeline
 ;; (display-battery-mode t)
 
@@ -66,7 +68,7 @@
 	      read-key-delay 0.01
 	      recenter-redisplay nil
 	      ;;recenter-positions '(top middle bottom)
-	      line-move-visual nil
+	      ;; line-move-visual nil       ;; move cursor visual lines
 	      backward-delete-char-untabify-method nil ;; Don't untabify on backward delete
 
 	      ;; split-width-threshold 160  ;; Limite para split vertical
