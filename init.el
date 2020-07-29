@@ -775,16 +775,26 @@
   :diminish lsp
   :bind-keymap ("C-c l" . lsp-command-map)
   :config
-  (setq lsp-keymap-prefix "C-c l"
-	lsp-enable-snippet nil
-	lsp-eldoc-hook nil
-	lsp-enable-indentation nil
-	lsp-prefer-capf t
-	read-process-output-max (* 1024 1024) ;; 1mb
-	;; lsp-diagnostic-package t ;; prefer flymake
-	lsp-clients-clangd-executable (locate-file "clangd" exec-path '("" "-8" "-7" "-6") 1))
+  (setq-default lsp-keymap-prefix "C-c l"
+		lsp-enable-snippet nil
+		lsp-eldoc-hook nil
+		lsp-enable-indentation nil
+		lsp-prefer-capf t
+		read-process-output-max (* 1024 1024) ;; 1mb
+		;; lsp-diagnostic-package t ;; prefer flymake
+		lsp-clients-clangd-executable (locate-file "clangd" exec-path '("" "-8" "-7" "-6") 1))
+
+  ;; This before calling lsp
+  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+
   (lsp)
-  (lsp-enable-which-key-integration))
+  ;; TODO: extend this for more languages
+  (when (memq major-mode '(c-mode c++-mode))
+    (add-hook 'c-mode-common-hook #'lsp-deferred))
+
+  (when (eq major-mode 'python-mode)
+    (add-hook 'python-mode-hook #'lsp-deferred))
+  )
 
 (use-package lsp-ui
   :diminish
@@ -803,9 +813,9 @@
 	      ("u n" . lsp-ui-find-next-reference)
 	      ("u p" . lsp-ui-find-prev-reference))
   :config
-  (setq lsp-ui-sideline-delay 1.0
-	;;lsp-ui-sideline-enable t
-	lsp-ui-doc-enable nil)
+  (setq-default ;;lsp-ui-sideline-delay 1.0
+		lsp-ui-sideline-enable nil
+		lsp-ui-doc-enable nil)
   (which-key-add-key-based-replacements "C-c l u" "lsp-ui")
   )
 
@@ -819,8 +829,8 @@
   :diminish
   :after lsp-mode
   :config
-  (setq lsp-metals-treeview-enable t
-	lsp-metals-treeview-show-when-views-received t))
+  (setq-default lsp-metals-treeview-enable t
+		lsp-metals-treeview-show-when-views-received t))
 
 (use-package lsp-ivy
   :diminish
@@ -1495,13 +1505,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package python-mode :ensure nil
   :mode "\\.py\\'"
-  :interpreter "python"
+  :interpreter "python3"
   :bind (:map python-mode-map
               ("C-c C-z" . python-shell))
   :init
-  (setq python-shell-interpreter "ipython"
-      python-shell-interpreter-args "-i --simple-prompt")
-  )
+  (setq python-shell-interpreter "ipython3"
+	python-shell-interpreter-args "-i --simple-prompt"
+	python-shell-prompt-detect-failure-warning nil
+	python-check-command "pyflakes"
+	flycheck-python-flake8-executable "flake8"))
 
 ;; (use-package company-jedi		 ;;; company-mode completion back-end for Python JEDI
 ;;   :hook (python-mode . jedi:setup)
@@ -1517,23 +1529,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   (setq flycheck-pycheckers-checkers '(pylint flake8 mypy3)))
 
 ;; (use-package elpy
-;;   :defer
+;;   :defer t
 ;;   :init
-;;   (defun enable-elpy-once ()
-;;     (elpy-enable)
-;;     (advice-remove 'python-mode 'enable-elpy-once))
-;;   (advice-add 'python-mode :before 'enable-elpy-once)
+;;   (advice-add 'python-mode :before 'elpy-enable)
 ;;   :config
-;;   (setq python-shell-interpreter "jupyter"
-;; 	python-shell-interpreter-args "console --simple-prompt"
-;; 	python-shell-prompt-detect-failure-warning nil
-;; 	elpy-rpc-python-command "python3"
+;;   (setq elpy-rpc-python-command "python3"
 ;; 	python-check-command "pyflakes"
-;; 	flycheck-python-flake8-executable "flake8"
-;; 	)
+;; 	flycheck-python-flake8-executable "flake8")
 ;;   (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
 
-(use-package ein)
+(use-package ein :defer t)
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
