@@ -318,7 +318,7 @@
 (show-paren-mode t)	  ;; Highlight couple parentesis
 (set-face-attribute 'show-paren-match nil
 		    :inherit nil
-		    :background (alist-get 'brightblue my/colors))
+		    :background (alist-get 'brightblack my/colors))
 
 ;;__________________________________________________________
 ;; ssh
