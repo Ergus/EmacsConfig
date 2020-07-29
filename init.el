@@ -350,8 +350,8 @@
 
 (use-package tab-bar :ensure nil
   :defer t
-  :custom
-  (tab-bar-show 1)
+  ;; :custom
+  ;; (tab-bar-show 1)
   :config
   (set-face-attribute 'tab-bar nil
 		      :background (alist-get 'black my/colors)
