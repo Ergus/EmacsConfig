@@ -774,6 +774,8 @@
 (use-package lsp-mode
   :diminish lsp
   :bind-keymap ("C-c l" . lsp-command-map)
+  :init
+  (which-key-add-key-based-replacements "C-c l" "lsp")
   :config
   (setq-default lsp-keymap-prefix "C-c l"
 		lsp-enable-snippet nil
