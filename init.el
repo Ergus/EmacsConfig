@@ -1352,10 +1352,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package emms
   :defer t
   :config
-  (require 'emms-player-simple)
-  (require 'emms-source-file)
-  (require 'emms-source-playlist)
-  (require 'emms-player-vlc)
+  (require 'emms-setup)
+  (emms-all)
+  ;;(emms-minimalistic)
   (setq emms-player-list '(emms-player-mpg321
 			   emms-player-ogg123
 			   emms-player-vlc
@@ -1364,7 +1363,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	emms-playing-time 1
 	emms-source-file-default-directory "~/almacen/Musica/"
 	emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
-	emms-stream-info-backend 'vlc))
+	emms-stream-info-backend 'vlc)
+  )
 
 ;;__________________________________________________________
 ;; Email mode for mutt
