@@ -1720,7 +1720,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("M-%" . swiper-query-replace)
 	 ("C-," . swiper-avy)
 	 ("C-c m" . swiper-mc)
-	 ("C-r" . ivy-previous-line-or-history)
+	 ;;("C-r" . ivy-previous-line-or-history)
 	 ("C-o" . swiper-isearch-toggle)
 	 :map isearch-mode-map
 	 ("C-o" . swiper-isearch-toggle))
