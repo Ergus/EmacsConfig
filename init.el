@@ -1872,17 +1872,22 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   )
 
 (use-package dumb-jump
-  :bind (("C-c j 4 n" . dumb-jump-go-other-window)
-	 ("C-c j 4 x" . dumb-jump-go-prefer-external-other-window)
-	 ("C-c j n" . dumb-jump-go)
-	 ("C-c j i" . dumb-jump-go-prompt)
-	 ("C-c j x" . dumb-jump-go-prefer-external)
-	 ("C-c j p" . dumb-jump-back)
-	 ("C-c j q" . dumb-jump-quick-look))
+  :bind ("C-c j" . hydra-dj/body)
   :init
-  (which-key-add-key-based-replacements "C-c j" "dumb-jump")
+  (which-key-add-key-based-replacements "C-c j" "hydra/dumb-jump")
+  :hydra (hydra-dj (:color blue :columns 3)
+		   "Dumb Jump"
+		   ("j" dumb-jump-go "Go")
+		   ("o" dumb-jump-go-other-window "Other window")
+		   ("e" dumb-jump-go-prefer-external "Go external")
+		   ("x" dumb-jump-go-prefer-external-other-window
+		    "Go external other window")
+		   ("i" dumb-jump-go-prompt "Prompt")
+		   ("l" dumb-jump-quick-look "Quick look")
+		   ("b" dumb-jump-back "Back"))
   :config
-  (setq dumb-jump-selector 'ivy))
+  (setq dumb-jump-selector 'ivy)
+  (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 ;;__________________________________________________________
 ;; Magit
