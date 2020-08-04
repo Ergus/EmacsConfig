@@ -394,7 +394,6 @@
 ;;__________________________________________________________
 ;; Two options for diffs
 (use-package ediff :ensure nil :defer t
-
   :config
   (setq ediff-window-setup-function 'ediff-setup-windows-plain
 	ediff-split-window-function 'split-window-horizontally)
@@ -418,6 +417,20 @@
   (set-face-attribute 'Man-underline nil
 		      :inherit font-lock-keyword-face
 		      :underline t))
+
+(use-package smerge-mode
+  :ensure nil
+  :hook (smerge-mode . hydra-smerge/body)
+  :hydra (hydra-smerge
+	  (:color pink :hint nil :post (smerge-auto-leave))
+	  "smerge"
+	  ("n" smerge-next "next")
+	  ("p" smerge-prev "prev")
+	  ("b" smerge-keep-base "base")
+	  ("u" smerge-keep-upper "upper")
+	  ("l" smerge-keep-lower "lower")
+	  ("a" smerge-keep-all "all")
+	  ("q" nil "cancel" :color blue)))
 
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
@@ -614,6 +627,13 @@
 		(beginning-of-line))))
 
        (global-set-key (kbd "C-a") 'smart-beginning-of-line))
+
+(use-package beginend
+  :demand
+  :diminish beginend-global-mode
+  :config
+  (dolist (mode beginend-modes) (diminish (cdr mode)))
+  (beginend-global-mode 1))
 
 (add-hook 'prog-mode-hook #'my/prog-mode-hook)
 
@@ -1281,11 +1301,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :if (< (buffer-size) 200000)
   ;;:defer t
   :hook (prog-mode . flycheck-mode)
-  :bind ("C-c a" . hydra-fc/body)
+  :bind ("C-c a" . hydra-flycheck/body)
   :init
   (which-key-add-key-based-replacements "C-c a" "hydra/flycheck")
-  :hydra (hydra-fc (:color red :columns 4 :pre (hl-line-mode t)
-			   :post (hl-line-mode -1))
+  :hydra (hydra-flycheck (:color red :columns 4
+				 :pre (hl-line-mode t)
+				 :post (hl-line-mode -1))
 		   "flycheck"
 		   ("b" flycheck-buffer "check-buffer")
 		   ("c" flycheck-compile "compile")
@@ -1575,6 +1596,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq ;;dired-sidebar-use-term-integration t
    dired-sidebar-theme 'nerd
    dired-sidebar-subtree-line-prefix "."))
+
+(use-package dired-du
+  :commands dired-du-mode)
+
 ;;__________________________________________________________
 ;; projectile
 
@@ -1610,6 +1635,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (defun my/ibuffer-hook ()
     (unless (eq ibuffer-sorting-mode 'alphabetic)
       (ibuffer-do-sort-by-alphabetic)))
+  :hook (ibuffer-mode . hl-line-mode)
   :init
   (defalias 'list-buffers 'ibuffer)
   :config
@@ -1872,19 +1898,19 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   )
 
 (use-package dumb-jump
-  :bind ("C-c j" . hydra-dj/body)
+  :bind ("C-c j" . hydra-dumb-jump/body)
   :init
   (which-key-add-key-based-replacements "C-c j" "hydra/dumb-jump")
-  :hydra (hydra-dj (:color blue :columns 3)
-		   "Dumb Jump"
-		   ("j" dumb-jump-go "Go")
-		   ("o" dumb-jump-go-other-window "Other window")
-		   ("e" dumb-jump-go-prefer-external "Go external")
-		   ("x" dumb-jump-go-prefer-external-other-window
-		    "Go external other window")
-		   ("i" dumb-jump-go-prompt "Prompt")
-		   ("l" dumb-jump-quick-look "Quick look")
-		   ("b" dumb-jump-back "Back"))
+  :hydra (hydra-dumb-jump (:color blue :columns 3)
+			  "Dumb Jump"
+			  ("j" dumb-jump-go "Go")
+			  ("o" dumb-jump-go-other-window "Other window")
+			  ("e" dumb-jump-go-prefer-external "Go external")
+			  ("x" dumb-jump-go-prefer-external-other-window
+			   "Go external other window")
+			  ("i" dumb-jump-go-prompt "Prompt")
+			  ("l" dumb-jump-quick-look "Quick look")
+			  ("b" dumb-jump-back "Back"))
   :config
   (setq dumb-jump-selector 'ivy)
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
