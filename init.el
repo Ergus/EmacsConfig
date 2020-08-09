@@ -37,6 +37,7 @@
 (column-number-mode t)			;; Numero de la columna
 (line-number-mode t)			;; Numero de linea modeline
 
+(setq-default save-place-forget-unreadable-files t)
 (save-place-mode 1)                     ;; Remember point in files
 
 (global-visual-line-mode t)
@@ -420,9 +421,15 @@
 
 (use-package smerge-mode
   :ensure nil
-  :hook (smerge-mode . hydra-smerge/body)
+  :preface
+  (defun my/smerge-mode ()
+    (when smerge-mode
+      (hydra-smerge/body)))
+  :hook ((vc-find-file magit-diff-visit-file) . my/smerge-mode)
   :hydra (hydra-smerge
-	  (:color pink :hint nil :post (smerge-auto-leave))
+	  (:color pink :hint nil
+		  :pre (smerge-mode 1)
+		  :post (smerge-auto-leave))
 	  "smerge"
 	  ("n" smerge-next "next")
 	  ("p" smerge-prev "prev")
@@ -1034,7 +1041,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
 	 ("\\.md\\'" . markdown-mode)
-	 ("\\.markdown\\'" . markdown-mode)))
+	 ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
 
 ;;__________________________________________________________
 ;; Restructured text
@@ -1369,7 +1377,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq langtool-language-tool-jar "~/gits/languagetool/languagetool-standalone/target/LanguageTool-4.6-SNAPSHOT/LanguageTool-4.6-SNAPSHOT/languagetool-commandline.jar"))
 
 ;;__________________________________________________________
-;; EMMS mode.
+;; Music players
 (use-package emms
   :defer t
   :config
@@ -1384,8 +1392,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	emms-playing-time 1
 	emms-source-file-default-directory "~/almacen/Musica/"
 	emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
-	emms-stream-info-backend 'vlc)
-  )
+	emms-stream-info-backend 'vlc))
+
 
 ;;__________________________________________________________
 ;; Email mode for mutt
@@ -1880,11 +1888,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;Counsel etags
 (use-package counsel-etags
-  :hook (prog-mode . (lambda ()
-		       (add-hook 'after-save-hook
-				 'counsel-etags-virtual-update-tags
-				 'append
-				 'local)))
+  :preface
+  (defun my/counsel-etags-hook ()
+    (add-hook 'after-save-hook
+	      'counsel-etags-virtual-update-tags 'append 'local))
+  :hook (prog-mode . my/counsel-etags-hook)
   :bind (("C-c e ." . counsel-etags-find-tag-at-point)
 	 ("C-c e l" . counsel-etags-list-tag-in-current-file)
 	 ("C-c e p" . xref-pop-marker-stack)
@@ -1918,7 +1926,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Magit
 
-(use-package magit :defer t
+(use-package magit
+  :defer t
   :init
   (setq magit-completing-read-function 'ivy-completing-read)
   :config
