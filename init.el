@@ -1208,7 +1208,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq winner-dont-bind-my-keys t)
   (winner-mode t))
 
-
+(use-package auto-dim-other-buffers
+  :ensure
+  :commands auto-dim-other-buffers-mode
+  :config
+  (setq auto-dim-other-buffers-dim-on-switch-to-minibuffer nil)
+  (setq auto-dim-other-buffers-dim-on-focus-out t))
 
 ;; winum (windows number) for spaceline
 ;; (use-package winum
@@ -1394,6 +1399,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
 	emms-stream-info-backend 'vlc))
 
+(use-package bongo
+  :defer t
+  :init
+  (setq bongo-default-directory "~/almacen/Musica/"
+	bongo-confirm-flush-playlist nil
+	bongo-insert-whole-directory-trees nil))
 
 ;;__________________________________________________________
 ;; Email mode for mutt
