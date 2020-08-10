@@ -193,7 +193,8 @@
 (use-package diminish)		      ;; if you use :diminish
 (use-package bind-key)		      ;; if you use any :bind variant
 
-(use-package paradox :defer t
+(use-package paradox
+  :defer t
   :config
   (setq paradox-spinner-type 'progress-bar
 	paradox-display-download-count t
@@ -387,14 +388,16 @@
 ;;__________________________________________________________
 ;; gdb rectangles
 
-(use-package gdb :ensure nil :defer t
+(use-package gdb :ensure nil
+  :defer t
   :custom
   (gdb-many-windows nil)
   (gdb-show-main t))
 
 ;;__________________________________________________________
 ;; Two options for diffs
-(use-package ediff :ensure nil :defer t
+(use-package ediff :ensure nil
+  :defer t
   :config
   (setq ediff-window-setup-function 'ediff-setup-windows-plain
 	ediff-split-window-function 'split-window-horizontally)
@@ -402,7 +405,8 @@
     (add-hook 'ediff-after-quit-hook-internal #'winner-undo)))
 
 ;; more like vimdiff
-(use-package vdiff :defer t
+(use-package vdiff
+  :defer t
   :bind (:map vdiff-mode-map
 	      ("C-c d v" . vdiff-hydra/body))
   :config
@@ -1708,7 +1712,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package ivy
   :diminish
-  :defer 0.5
+  :defer t
   :bind (("C-c C-r" . ivy-resume)
 	 ("M-s h ." . ivy-highlight-thing-at-point)
 	 :map ivy-minibuffer-map
@@ -1738,9 +1742,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   ;; Highlight with arrows by default.
   (ivy-mode t)
+  (add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow)))
 
-  (add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
-  )
+(use-package ivy-avy
+  :after ivy)
 
 (use-package ivy-hydra :defer t) ;; Dependency from ivy to use ivy-hydra-read-action
 
@@ -1824,7 +1829,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("f" . counsel-describe-function)
 	 ("v" . counsel-describe-variable)
 	 ("C-l" . counsel-info-lookup-symbol))
-  :defer 2
+  :defer 1
   :init
   (which-key-add-key-based-replacements "C-c c" "counsel")
   :custom
@@ -1853,6 +1858,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   ;; (add-to-list 'ivy-re-builders-alist '(counsel-ag . ivy--regex-plus))
   (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
   )
+
+;; (use-package prescient
+;;   :defer t
+;;   :config
+;;   (prescient-persist-mode))
+
+;; (use-package ivy-prescient
+;;   :after ivy
+;;   :config
+;;   (ivy-prescient-mode 1))
 
 (use-package amx ;; Complete history
   :after counsel)
