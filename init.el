@@ -184,12 +184,6 @@
 ;;__________________________________________________________
 ;; Benchmark-init
 
-;; (use-package ergoemacs-mode
-;;   :init
-;;   (setq ergoemacs-theme nil)
-;;   (setq ergoemacs-keyboard-layout "us")
-;;   (ergoemacs-mode 1))
-
 (use-package diminish)		      ;; if you use :diminish
 (use-package bind-key)		      ;; if you use any :bind variant
 
@@ -373,14 +367,15 @@
 ;;__________________________________________________________
 ;; minibuffers
 
-;; (setq minibuffer-eldef-shorten-default t)
+(setq minibuffer-eldef-shorten-default t)
 
 (defun my/minibuffer-setup-hook ()
   (setq gc-cons-threshold most-positive-fixnum))
 
 (defun my/minibuffer-exit-hook ()
   (setq gc-cons-threshold 800000)
-  (garbage-collect))
+  ;;(garbage-collect)
+  )
 
 (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
@@ -536,27 +531,13 @@
 (use-package bang
   :bind ("M-!" . bang))
 
-;; (use-package fancy-narrow
-;;   :bind (("C-x n N" . fancy-narrow-to-region)
-;; 	 ("C-x n D" . fancy-narrow-to-defun)
-;; 	 ("C-x n P" . fancy-narrow-to-page)
-;; 	 ("C-x n W" . fancy-widen)))
-
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
-
-;; (use-package clipetty
-;;   :unless (display-graphic-p)
-;;   :hook (after-init . global-clipetty-mode))
 
 (use-package xclip
   :unless (display-graphic-p)
   :config
   (xclip-mode 1))
-
-;; (use-package whole-line-or-region
-;;   :config
-;;   (whole-line-or-region-global-mode 1))
 
 ;;__________________________________________________________
 ;;	Seleccionar con el mouse
@@ -594,25 +575,6 @@
 ;;__________________________________________________________
 ;; My program's mode hooks
 
-;; (use-package whitespace-mode :ensure nil
-;;   :preface
-;;   (defun my/whitespace-mode () "My whitespace mode."
-;; 	 (setq whitespace-style '(face tabs tab-mark trailing)
-;; 	       whitespace-display-mappings	'((tab-mark 9 [?\u2502 9] [?\u2502 9])))
-;; 	 (custom-set-faces '(whitespace-tab ((t (:foreground "#444444")))))
-;; 	 (whitespace-mode 1))
-;;   :hook (prog-mode . my/whitespace-mode)
-;;   )
-
-;; (use-package clean-aindent-mode
-;;   :hook prog-mode
-;;   :bind ("RET" . newline-and-indent)
-;;   :config
-;;   (clean-aindent-mode t)
-;;   (setq clean-aindent-is-simple-indent t))
-
-;; (setq-default mode-line-format nil)
-
 (use-package which-func :ensure nil
   :diminish
   :hook (prog-mode . which-function-mode) ;; Shows the function in spaceline
@@ -649,31 +611,7 @@
 (add-hook 'prog-mode-hook #'my/prog-mode-hook)
 
 ;;__________________________________________________________
-;; 80 Column rules
-;; (use-package fill-column-indicator
-;;   :hook (prog-mode . fci-mode)
-;;   :bind ("C-c h f" . fci-mode)
-;;   :config
-;;   (setq fci-rule-color "#7f7f7f7f7f7f"
-;;		fci-rule-character ?\u2502))
-
-;;__________________________________________________________
 ;; Undo tree
-
-;; (use-package undo-tree
-;;   :diminish
-;;   :init (global-undo-tree-mode))
-
-;; (use-package undo-propose
-;;   :commands undo-propose)
-
-;; Saner undo/redo
-;; (use-package undo-fu
-;;   :custom
-;;   (undo-fu-allow-undo-in-region t)
-;;   :bind (([remap undo] . undo-fu-only-undo)
-;;          ("C-M-_" . undo-fu-only-redo)))
-
 
 (global-set-key [remap undo] 'undo-only)
 (global-set-key (kbd "C-M-_") 'undo-redo)
@@ -689,13 +627,6 @@
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
-;; (use-package column-enforce-mode
-;;   :diminish
-;;   :bind ("C-c h c" . column-enforce-mode)
-;;   :config
-;;   (setq column-enforce-comments nil)
-;;   (set-face-attribute 'column-enforce-face nil
-;; 		      :inherit nil :background (alist-get 'brightblack my/colors)))
 
 (use-package highlight-indent-guides
   :diminish
@@ -730,9 +661,6 @@
 		      :foreground (alist-get 'magenta my/colors))
   (set-face-attribute 'hes-escape-sequence-face nil
 		      :foreground (alist-get 'magenta my/colors)))
-
-;; (use-package idle-highlight-mode
-;;   :hook prog-mode)
 
 (use-package highlight-numbers
   :diminish
@@ -777,30 +705,10 @@
 ;;__________________________________________________________
 
 ;;__________________________________________________________
-;; ycmd Mode
-
-;; (use-package ycmd
-;;   :disabled
-;;   :hook ((c-mode . ycmd-mode)
-;; 	 (c++-mode . ycmd-mode))
-;;   :config
-;;   (setq ycmd-server-command '("python" "/home/ergo/gits/ycmd/ycmd"))
-;;   (setq ycmd-global-config "/home/ergo/gits/ycmd/.ycm_extra_conf.py")
-
-;;   (use-package company-ycmd
-;;     :config
-;;     (company-ycmd-setup))
-
-;;   (use-package flycheck-ycmd
-;;     :config
-;;     (flycheck-ycmd-setup))
-
-;;   (use-package ycmd-eldoc
-;;     :config
-;;     (ycmd-eldoc-setup)))
-
-;;__________________________________________________________
 ;; LSP try for a whil
+
+(use-package eglot
+  :defer t)
 
 (use-package lsp-mode
   :diminish lsp
@@ -849,14 +757,7 @@
   (setq-default ;;lsp-ui-sideline-delay 1.0
 		lsp-ui-sideline-enable nil
 		lsp-ui-doc-enable nil)
-  (which-key-add-key-based-replacements "C-c l u" "lsp-ui")
-  )
-
-;; (use-package company-lsp
-;;   :diminish
-;;   :after lsp-mode company
-;;   :config
-;;   (add-to-list 'company-backends 'company-lsp))
+  (which-key-add-key-based-replacements "C-c l u" "lsp-ui"))
 
 (use-package lsp-treemacs
   :diminish
@@ -871,43 +772,9 @@
   :bind (:map lsp-mode-map
 	      ("C-c l i" . lsp-ivy-workspace-symbol)))
 
-;;__________________________________________________________
-;; Irony config (C completions)
-
-;; (defun my/irony-mode-hook () "My irony-mode Hook.
-
-;; This is in the hook for c-common mode.	If the file is remote it loads
-;; company-c-headers instead if irony"
-;;        (use-package irony
-;; 	 :diminish
-;; 	 :config
-;; 	 (irony-mode)
-;; 	 (irony-cdb-autosetup-compile-options)
-
-;; 	 (use-package company-irony
-;; 	   :config
-;; 	   (use-package company-irony-c-headers)
-
-;; 	   (add-to-list (make-local-variable 'company-backends)
-;; 			'(company-irony-c-headers company-irony)))
-
-;; 	 (define-key irony-mode-map [remap completion-at-point] 'counsel-irony)
-;; 	 (define-key irony-mode-map [remap complete-symbol] 'counsel-irony)
-
-;; 	 (use-package flycheck-irony
-;; 	   :after flycheck
-;; 	   :config
-;; 	   (flycheck-irony-setup))
-
-;; 	 (use-package irony-eldoc
-;; 	   :if eldoc-mode
-;; 	   :config
-;; 	   (irony-eldoc))))
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
-
-;;====================
 
 (defvar c-ms-space-for-alignment t
   "Control ms-space-for-alignment.")
@@ -1050,16 +917,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Restructured text
-;; (use-package rst-mode :ensure nil
-;;   :mode "\\.rst\\'")
-
 (use-package sphinx-mode
     :hook rst-mode)
-
-;;__________________________________________________________
-;; Makefile
-;; (use-package makefile-mode :ensure nil
-;;   :mode (".*Makefile.*" "\\.mak"))
 
 ;;__________________________________________________________
 ;; ruby-mode
@@ -1086,9 +945,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Rust Mode
 (use-package rust-mode
   :mode "\\.rs\\'")
-
-;; (use-package flymake-rust
-;;   :hook (rust-mode . flymake-rust-load))
 
 (use-package flycheck-rust
   :hook (rust-mode . flycheck-rust-setup))
@@ -1172,19 +1028,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; splitting
 
-;; Move split keybindings
-;; (use-package windmove :ensure nil
-;;   :bind (("C-x <left>" . windmove-left)
-;; 	 ("C-x <right>" . windmove-right)
-;; 	 ("C-x <up>" . windmove-up)
-;; 	 ("C-x <down>" . windmove-down))
-;;   :init
-;;   (which-key-add-key-based-replacements "C-x w" "windmove winner")
-;;   ;;:config
-;;   ;;(windmove-default-keybindings 'meta)  ;; Move between panes S-arrow
-;;   ;;(setq windmove-wrap-around t)		  ;; Cyclic bound mode
-;;   )
-
 (use-package windmove :ensure nil
   :bind (("C-x <left>" . windmove-left)
 	 ("C-x <right>" . windmove-right)
@@ -1192,8 +1035,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-x <down>" . windmove-down)
 	 ("C-x <M-left>" . windmove-swap-states-left)
 	 ("C-x <M-right>" . windmove-swap-states-right)
-	 ("C-x <M-up>" . windmove-swap-states-up)
-	 ("C-x <M-down>" . windmove-swap-states-down)))
+	 ("C-x <M-up>" . windmove-swap-states-up)))
 
 (use-package ace-window
   :bind ([remap other-window] . ace-window)
@@ -1218,19 +1060,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (setq auto-dim-other-buffers-dim-on-switch-to-minibuffer nil)
   (setq auto-dim-other-buffers-dim-on-focus-out t))
-
-;; winum (windows number) for spaceline
-;; (use-package winum
-;;   :bind (("C-x w 1" . winum-select-window-1)
-;;	 ("C-x w 2" . winum-select-window-2)
-;;	 ("C-x w 3" . winum-select-window-3)
-;;	 ("C-x w 4" . winum-select-window-4)
-;;	 ("C-x w 5" . winum-select-window-5)
-;;	 ("C-x w 6" . winum-select-window-6)
-;;	 ("C-x w 7" . winum-select-window-7)
-;;	 ("C-x w 8" . winum-select-window-8))
-;;   :init
-;;   (winum-mode))
 
 ;;__________________________________________________________
 ;; Lines enabling gnuplot-mode
@@ -1609,9 +1438,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (put 'dired-find-alternate-file 'disabled nil)
 
   (set-face-attribute 'dired-directory nil	;; Dired directory colors
-		      :foreground (alist-get 'cyan my/colors))
+		      :foreground (alist-get 'cyan my/colors)))
 
-  (require 'dired-x))
+(use-package dired-x :ensure nil
+  :hook (dired))
 
 (use-package dired-sidebar
   :bind ("C-c s d" . dired-sidebar-toggle-sidebar)
@@ -1859,16 +1689,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
   )
 
-;; (use-package prescient
-;;   :defer t
-;;   :config
-;;   (prescient-persist-mode))
-
-;; (use-package ivy-prescient
-;;   :after ivy
-;;   :config
-;;   (ivy-prescient-mode 1))
-
 (use-package amx ;; Complete history
   :after counsel)
 
@@ -1882,16 +1702,20 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package counsel-gtags
   :diminish
-  ;;:load-path "~/gits/emacs-counsel-gtags/"
-  :bind (("C-c g g" . counsel-gtags-dwim)
-	 ("C-c g d" . counsel-gtags-find-definition)
-	 ("C-c g r" . counsel-gtags-find-reference)
-	 ("C-c g s" . counsel-gtags-find-symbol)
-	 ("C-c g p" . counsel-gtags-go-backward)
-	 ("C-c g n" . counsel-gtags-go-forward)
-	 ("C-c g c" . counsel-gtags-create-tags)
-	 ("C-c g f" . counsel-gtags-find-file)
-	 ("C-c g u" . counsel-gtags-update-tags))
+  :bind ("C-c g" . hydra-counsel-gtags/body)
+  :hydra (hydra-counsel-gtags (:color red :columns 3)
+			      "Counsel gtags"
+			      ("g" counsel-gtags-dwim "dwim")
+			      ("d" counsel-gtags-find-definition "Definition")
+			      ("r" counsel-gtags-find-reference "Reference")
+			      ("s" counsel-gtags-find-symbol "Symbol")
+			      ("n" counsel-gtags-go-forward "Go forward")
+			      ("p" counsel-gtags-go-backward "Go back")
+			      ("f" counsel-gtags-find-file "Find file")
+			      ("c" counsel-gtags-create-tags "Create" :color blue)
+			      ("u" counsel-gtags-update-tags "Update"  :color blue)
+			      ("q" nil "cancel"))
+
   :init
   (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
   :config
@@ -1911,6 +1735,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-c o u" . ggtags-update-tags))
   :init
   (which-key-add-key-based-replacements "C-c o" "ggtags"))
+
 
 ;;Counsel etags
 (use-package counsel-etags
@@ -2044,9 +1869,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package org :ensure nil
  :mode ("\\.org\\'" . org-mode))
 
-;; (use-package org-bullets
-;;    :hook (org-mode . org-bullets-mode))
-
 ;;__________________________________________________________
 ;; Move current line up and down Shift+arrow
 ;; (use-package move-text
@@ -2058,10 +1880,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; 	("M-<right>" . (lambda () (interactive) (transpose-chars 1)))))
 
 (use-package move-dup
-  :bind (("M-<up>" .  md-move-lines-up)
-	 ("M-<down>" . md-move-lines-down)
-	 ("C-M-<up>" . md-duplicate-up)
-	 ("C-M-<down>" . md-duplicate-down)
+  :bind (
+	 ("M-<up>" . md-duplicate-up)
+	 ("M-<down>" . md-duplicate-down)
+	 ("C-M-<up>" .  md-move-lines-up)
+	 ("C-M-<down>" . md-move-lines-down)
 	 ("C-M-<left>" . (lambda () (interactive) (transpose-words -1)))
 	 ("C-M-<right>" . (lambda () (interactive) (transpose-words 1)))
 	 ("M-<left>" . (lambda () (interactive) (transpose-chars -1)))
@@ -2113,9 +1936,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package avy-zap
   :bind (("M-Z". avy-zap-up-to-char-dwim)
 	 ("M-z". avy-zap-to-char-dwim)))
-
-;; (use-package goto-line-preview
-;;   :bind ([remap goto-line] . goto-line-preview))
 
 ;;__________________________________________________________
 ;; Arduino Mode
@@ -2284,6 +2104,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package mutt-mode
   :mode "muttrc")
-
 (provide 'init)
+
 ;;; init.el ends here
