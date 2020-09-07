@@ -1185,11 +1185,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		      :underline t )
   )
 
-;; (use-package flymake-mode :ensure nil
-;;   :hook (prog-mode . flymake-mode)
-;;   ;;:custom
-;;   ;;(flymake-no-changes-timeout 1.0)
-;;   )
+(use-package flymake-mode :ensure nil
+  :hook (prog-mode . flymake-mode)
+  ;;:custom
+  ;;(flymake-no-changes-timeout 1.0)
+  )
 
 ;;__________________________________________________________
 ;; Function arguments show
