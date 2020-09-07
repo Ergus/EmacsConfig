@@ -1284,9 +1284,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (TeX-source-correlate-mode t)
   (setq-default TeX-master nil) ;; Multidocument
 
-  (flyspell-mode 1)
-  (visual-line-mode 1)
-  (auto-fill-mode 1)
+  (defun my/LaTeX-mode-hook ()
+    (flyspell-mode 1)
+    (visual-line-mode 1)
+    (auto-fill-mode 1))
+
+  (add-hook 'LaTeX-mode-hook #'my/LaTeX-mode-hook)
 
   (add-to-list 'TeX-command-list
   	       '("Makeglossaries" "makeglossaries %s" TeX-run-command nil
@@ -1340,22 +1343,28 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
     (flyspell-buffer))
 
+(use-package auctex-latexmk
+  :defer t
+  :config
+  (auctex-latexmk-setup)
+  (setq auctex-latexmk-inherit-TeX-PDF-mode t))
+
 (use-package company-math
   :after (company tex)
   :config
   (add-to-list 'company-backends
 	       '(company-math-symbols-latex company-latex-commands)))
 
-(use-package company-auctex
-  :after (company-math tex)
-  :config
-  (add-to-list 'company-backends 'company-auctex-labels)
-  (add-to-list 'company-backends 'company-auctex-bibs)
-  (add-to-list 'company-backends
-	       '(company-auctex-macros company-auctex-symbols company-auctex-environments)))
+;; (use-package company-auctex
+;;   :after (company-math tex)
+;;   :config
+;;   (add-to-list 'company-backends 'company-auctex-labels)
+;;   (add-to-list 'company-backends 'company-auctex-bibs)
+;;   (add-to-list 'company-backends
+;; 	       '(company-auctex-macros company-auctex-symbols company-auctex-environments)))
 
 (use-package reftex :ensure nil ;; Reftex for cross references
-  :after tex
+  :defer t
   :config
   (reftex-isearch-minor-mode)
   (setq reftex-plug-into-AUCTeX t
@@ -1380,9 +1389,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode "\\.bib\\'"
   :config
   (bibtex-set-dialect 'biblatex)
-  (use-package company-bibtex
-    :config
-    (add-to-list (make-local-variable 'company-backends) 'company-bibtex)))
+  )
+
+(use-package company-bibtex
+  :after bibtex-mode
+  :config
+  (add-to-list (make-local-variable 'company-backends) 'company-bibtex))
+
+(use-package ivy-bibtex
+  :bind ("C-c b b" . ivy-bibtex)
+  :config
+  (setq ivy-bibtex-default-action 'bibtex-completion-insert-citation))
 
 ;;__________________________________________________________
 ;; Python mode
