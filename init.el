@@ -721,7 +721,14 @@
 		lsp-prefer-capf t
 		read-process-output-max (* 1024 1024) ;; 1mb
 		;; lsp-diagnostic-package t ;; prefer flymake
-		lsp-clients-clangd-executable (locate-file "clangd" exec-path '("" "-8" "-7" "-6") 1))
+		)
+
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
+                    :major-modes '(c-mode c++-mode objc-mode)
+		    :remote? t
+                    :priority -1
+                    :server-id 'clangd-tramp))
 
   ;; This before calling lsp
   (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
@@ -1580,7 +1587,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-3)
   (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-4)
 
-  (setq ivy-use-virtual-buffers nil
+  (setq ivy-use-virtual-buffers nil   ;; Recent files or buffers in ivy
 	ivy-count-format "(%d/%d) "
 	ivy-pulse-delay nil
 	ivy-use-selectable-prompt t
@@ -1592,7 +1599,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   ;; Highlight with arrows by default.
   (ivy-mode t)
-  (add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow)))
+  ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
+  )
 
 (use-package ivy-avy
   :after ivy)
@@ -1807,7 +1815,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       (setq-local show-trailing-whitespace nil)))
 
   (add-hook 'magit-pre-display-buffer-hook 'my/magit-pre-display-buffer-hook)
-  (add-hook 'after-save-hook 'magit-after-save-refresh-status t))
+  (add-hook 'after-save-hook 'magit-after-save-refresh-status t)
+  )
 
 (use-package gitattributes-mode
   :mode "\\.gitattributes\\'")
