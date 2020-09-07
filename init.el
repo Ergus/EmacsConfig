@@ -770,6 +770,10 @@
   :bind (:map lsp-mode-map
 	      ("C-c l i" . lsp-ivy-workspace-symbol)))
 
+;; (use-package ccls
+;;   :defer t
+;;   :config
+;;   (setq ccls-enable-skipped-ranges nil))
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
