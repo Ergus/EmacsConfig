@@ -1113,21 +1113,22 @@ non-nil and probably assumes that `c-basic-offset' is the same as
          ("C-c y n" . yas-new-snippet)
          ("C-c y t" . yas-tryout-snippet)
          ("C-c y l" . yas-describe-tables)
-         ("C-c y g" . yas/global-mode)
-         ("C-c y m" . yas/minor-mode)
-         ("C-c y r" . yas-reload-all)
          ("C-c y x" . yas-expand)
 	 :map yas-keymap
-         ("C-i" . yas-next-field-or-maybe-expand))
+         ("C-i" . yas-next-field-or-maybe-expand)
+	 :map yas-minor-mode-map
+	 ("TAB" . nil)
+	 ("<tab>" . nil))
   :init
   (which-key-add-key-based-replacements "C-c y" "yasnippet")
   :config
   (setq yas-verbosity 1                 ; No need to be so verbose
 	yas-wrap-around-region t)
 
-  ;; (yas-reload-all)
-  ;; (yas-minor-mode 1)
-  (yas-global-mode 1))
+  (yas-reload-all)
+  (yas-minor-mode 1)
+  ;; (yas-global-mode 1)
+  )
 
 (use-package yasnippet-snippets
   :after yasnippet)
