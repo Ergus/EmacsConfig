@@ -605,13 +605,6 @@
 
        (global-set-key (kbd "C-a") 'smart-beginning-of-line))
 
-(use-package beginend
-  :demand
-  :diminish beginend-global-mode
-  :config
-  (dolist (mode beginend-modes) (diminish (cdr mode)))
-  (beginend-global-mode 1))
-
 (add-hook 'prog-mode-hook #'my/prog-mode-hook)
 
 ;;__________________________________________________________
@@ -713,6 +706,7 @@
 
 (use-package eglot
   :defer t)
+
 
 (use-package lsp-mode
   :diminish lsp
