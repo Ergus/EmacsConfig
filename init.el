@@ -659,13 +659,13 @@
   (set-face-attribute 'hes-escape-sequence-face nil
 		      :foreground (named-color magenta)))
 
-(use-package highlight-numbers
-  :diminish
-  ;;:hook (prog-mode . highlight-numbers-mode)
-  :bind ("C-c h n" . highlight-numbers-mode)
-  :config
-  (set-face-attribute 'highlight-numbers-number nil
-		      :foreground (named-color red)))
+;; (use-package highlight-numbers
+;;   :diminish
+;;   ;;:hook (prog-mode . highlight-numbers-mode)
+;;   :bind ("C-c h n" . highlight-numbers-mode)
+;;   :config
+;;   (set-face-attribute 'highlight-numbers-number nil
+;; 		      :foreground (named-color red)))
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
@@ -1899,14 +1899,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
  :mode ("\\.org\\'" . org-mode))
 
 ;;__________________________________________________________
-;; Move current line up and down Shift+arrow
-;; (use-package move-text
-;;   :bind(("C-M-<up>" . move-text-up)
-;; 	("C-M-<down>" . move-text-down)
-;; 	("C-M-<left>" . (lambda () (interactive) (transpose-words -1)))
-;; 	("C-M-<right>" . (lambda () (interactive) (transpose-words 1)))
-;; 	("M-<left>" . (lambda () (interactive) (transpose-chars -1)))
-;; 	("M-<right>" . (lambda () (interactive) (transpose-chars 1)))))
+;; Move current line up and down M+arrow
 
 (use-package move-dup
   :bind (
@@ -2019,30 +2012,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq mc/always-run-for-all t
 	mc/always-repeat-command t
 	mc/edit-lines-empty-lines 'ignore))
-
-;;__________________________________________________________
-;; Expand region
-;; (use-package expand-region
-;;   :bind ("C-c e" . hydra-er/body)
-;;   :hydra (hydra-er (:color red :columns 4)
-;; 		   "Expand region"
-;; 		   ("e" er/expand-region "expand")
-;; 		   ("w" er/mark-word "word")
-;; 		   ("c" er/mark-comment "comment")
-;; 		   ("S" er/c-mark-statement "c-stat")
-;; 		   ("i" er/mark-inside-pairs "ipar")
-;; 		   ("o" er/mark-outside-pairs "opar")
-;; 		   ("p" er/mark-text-paragraph "parag")
-;; 		   ("s" er/mark-text-sentence "sentence")
-;; 		   ("f" er/mark-defun "funct")
-;; 		   ("m" er/mark-email "mail")
-;; 		   ("u" er/mark-url "url")
-;; 		   ("\"" er/mark-outside-quotes "out \"")
-;; 		   ("'" er/mark-inside-quotes "in \"")
-;; 		   ("-" er/contract-region "contract")
-;; 		   ("ESC" nil "exit"))
-;;   :init
-;;   (which-key-add-key-based-replacements "C-c e" "expand-region"))
 
 ;;__________________________________________________________
 ;; Web mode
