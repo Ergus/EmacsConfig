@@ -455,9 +455,11 @@
   :diminish
   :custom
   ;;(which-key-idle-delay 0.4)
-  (which-key-use-C-h-commands nil)
-  ;;(which-key-echo-keystrokes echo-keystrokes)
-  (which-key-separator ": ") ;which-key-idle-delay 2.0)
+  ;;(which-key-idle-delay 10000)
+  (which-key-show-early-on-C-h t)
+  (which-key-idle-secondary-delay 0.01)  ;; nil sets the same delay
+  (which-key-dont-use-unicode t)
+  ;;(which-key-separator ": ") ;which-key-idle-delay 2.0)
   :config
   (which-key-mode t)
   (which-key-add-key-based-replacements
