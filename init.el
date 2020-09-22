@@ -103,7 +103,10 @@
 	      eval-expression-print-length nil
 	      eval-expression-print-level nil
 	      enable-remote-dir-locals t    ;; Open remote dir locals.
+
 	      ;; suggest-key-bindings t     ;; Ivy ya hace lo que esta opcion
+	      uniquify-buffer-name-style 'post-forward
+	      ;;uniquify-min-dir-content 0
 	      )
 
 
@@ -837,36 +840,37 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (assq 'class-close c-syntactic-context)
   )
 
-(defun my/c-mode-common-hook () "My hook for C and C++."
-       (c-add-style "mylinux"
-		    '("linux"
-		      (tab-width . 4)
-		      (c-basic-offset . 4)
-		      (indent-tabs-mode . t)
-		      (fill-column . 80)
-		      (c-hanging-semi&comma-criteria my/c-semi&comma)
-		      (c-cleanup-list empty-defun-braces ;; {}
-				      brace-else-brace   ;; } else {
-				      brace-elseif-brace ;; } else if {
-				      ;;defun-close-semi ;; };
-				      )
-		      (c-hanging-braces-alist (brace-list-open)
-					      (brace-entry-open)
-					      (substatement-open after)
-					      (block-close . c-snug-do-while)
-					      (arglist-cont-nonempty)
-					      (class-open . (after))
-					      (class-close . (before)))
-		      (c-offsets-alist (inline-open . 0)
-				       (comment-intro . 0)
-				       ;;(innamespace . [0])
-				       ;;(access-label '-)
-				       )))
+(c-add-style "mylinux"
+	     '("linux"
+	       (tab-width . 4)
+	       (c-basic-offset . 4)
+	       (indent-tabs-mode . t)
+	       (fill-column . 80)
+	       (c-hanging-semi&comma-criteria my/c-semi&comma)
+	       (c-cleanup-list empty-defun-braces ;; {}
+			       brace-else-brace   ;; } else {
+			       brace-elseif-brace ;; } else if {
+			       ;;defun-close-semi ;; };
+			       )
+	       (c-hanging-braces-alist (brace-list-open)
+				       (brace-entry-open)
+				       (substatement-open after)
+				       (block-close . c-snug-do-while)
+				       (arglist-cont-nonempty)
+				       (class-open . (after))
+				       (class-close . (before)))
+	       (c-offsets-alist (inline-open . 0)
+				(comment-intro . 0)
+				;;(innamespace . [0])
+				;;(access-label '-)
+				)))
 
-       (setq-default c-default-style
-		     '((java-mode . "java")
-		       (awk-mode . "awk")
-		       (other . "mylinux")))
+(setq-default c-default-style
+	      '((java-mode . "java")
+		(awk-mode . "awk")
+		(other . "mylinux")))
+
+(defun my/c-mode-common-hook () "My hook for C and C++."
 
        (c-toggle-auto-newline 1)
        (c-toggle-cpp-indent-to-body 1)
