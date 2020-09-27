@@ -556,8 +556,8 @@
 (use-package better-shell
   :bind ("C-c t b" . better-shell-shell))
 
-(use-package bang
-  :bind ("M-!" . bang))
+(use-package shell-command+
+  :bind ("M-!" . shell-command+))
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
