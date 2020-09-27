@@ -1131,12 +1131,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Auto completamiento
 (use-package company
   :diminish
-  :bind (:map company-active-map
-	      ("C-n" . company-select-next-or-abort)
-	      ("C-p" . company-select-previous-or-abort))
+  :bind (("<C-return>" . company-complete)
+	 :map company-active-map
+	 ("<C-tab>" . company-other-backend)
+	 ("C-n" . company-select-next)
+	 ("C-p" . company-select-previous)
+	 ("<C-return>" . company-abort))
   :hook (prog-mode . company-mode)
   :custom
-  ;;(company-idle-delay 1.0)	 ;; no delay for autocomplete
+  (company-idle-delay nil)	 ;; no delay for autocomplete
   (company-minimum-prefix-length 2)
   (company-selection-wrap-around nil)
   (company-show-numbers t)
@@ -1147,9 +1150,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		     (company-dabbrev-code company-gtags company-keywords)
 		     company-dabbrev))
   :config
-  (company-tng-configure-default)
-  (define-key company-active-map (kbd "<C-return>") 'company-other-backend)
-  (define-key company-mode-map (kbd "<C-return>") 'company-other-backend)
+  ;(company-tng-mode)
   (set-face-attribute 'company-tooltip nil		  ;; dialog face
 		      :background (named-color brightblack)
 		      :foreground (named-color white))
@@ -2067,7 +2068,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Web mode
-
 (use-package php-mode
   :mode ("\\.php\\'"))
 
