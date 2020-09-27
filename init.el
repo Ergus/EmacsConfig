@@ -547,6 +547,10 @@
 
 (use-package emamux :defer t)
 
+(use-package pkgbuild-mode
+  :mode "/PKGBUILD$")
+
+
 ;;__________________________________________________________
 ;; Better shell (for ssh)
 (use-package better-shell
