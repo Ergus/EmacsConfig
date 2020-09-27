@@ -575,7 +575,8 @@
 ;;__________________________________________________________
 ;;	Seleccionar con el mouse
 (use-package mouse :ensure nil
-  :unless (display-graphic-p)
+  :unless (or (display-graphic-p)
+	      (string-equal (getenv "TERM") "linux"))
   :config
   (xterm-mouse-mode t)			  ;; mover el cursor al click
   (defun track-mouse (e))
