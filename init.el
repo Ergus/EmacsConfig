@@ -482,7 +482,7 @@
 	 (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
 	 (setq-local mouse-yank-at-point t)
 	 (setq-local transient-mark-mode nil)
-	 (display-line-numbers-mode -1)
+	 ;;(display-line-numbers-mode -1)
 	 (display-fill-column-indicator-mode -1)
 	 (auto-fill-mode -1))
   :hook (term-mode . my/term-mode-hook)
@@ -508,16 +508,31 @@
     (auto-fill-mode -1))
   :hook (vterm-mode . my/vterm-mode-hook))
 
-(use-package multi-vterm
-  :bind (("C-c 4 v" . multi-vterm-dedicated-open)
-	 ("C-c 5 v" . multi-vterm)
-	 ("C-c t v" . multi-vterm-dedicated-toggle)
-	 ("C-c 0 v" . multi-term-dedicated-close)))
+;; (use-package multi-vterm
+;;   :bind (("C-c 5 v" . multi-vterm)
+;; 	 ("C-c t v" . multi-vterm-dedicated-toggle)
+;; 	 ("C-c t v p")))
 
-;; (use-package vterm-toggle
-;;   :bind (("C-c t v" . vterm-toggle)
-;; 	 :map vterm-mode-map (("C-M-n" . vterm-toggle-forward)
-;;			      ("C-M-p" . vterm-toggle-backward))))
+(use-package vterm-toggle
+  :bind (("C-c t v" . vterm-toggle-cd)
+	 :map vterm-mode-map (("<C-return>" . vterm-toggle-insert-cd)
+			      ("C-M-n" . vterm-toggle-forward)
+			      ("C-M-p" . vterm-toggle-backward)))
+
+  :config
+  (setq vterm-toggle-fullscreen-p nil)
+  ;; Show at bottom
+  (add-to-list 'display-buffer-alist
+               '((lambda(bufname _)
+		   (with-current-buffer bufname
+		     (equal major-mode 'vterm-mode)))
+                 (display-buffer-reuse-window display-buffer-at-bottom)
+                 ;;(display-buffer-reuse-window display-buffer-in-direction)
+                 ;;display-buffer-in-direction/direction/dedicated is added in emacs27
+                 ;;(direction . bottom)
+                 ;;(dedicated . t) ;dedicated is supported in emacs27
+                 (reusable-frames . visible)
+                 (window-height . 0.3))))
 
 (use-package eshell-toggle
   :custom
