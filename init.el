@@ -2105,6 +2105,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package json-mode
   :mode "\\.json\\'")
 
+(use-package flymake-json
+  :hook (json-mode . flymake-json-load))
+
+;;__________________________________________________________
+;; yaml mode
+(use-package yaml-mode
+  :mode "\\.yaml\\'")
+
+(use-package flymake-yaml
+  :hook (yaml-mode . flymake-yaml-load))
+
 (use-package sudo-edit :defer t)
 
 (use-package evil
