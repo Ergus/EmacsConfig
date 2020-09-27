@@ -40,7 +40,7 @@
 (setq-default save-place-forget-unreadable-files t)
 (save-place-mode 1)                     ;; Remember point in files
 
-(global-visual-line-mode t)
+;;(global-visual-line-mode t)
 
 ;; Modeline
 ;; (display-battery-mode t)
@@ -107,6 +107,7 @@
 	      ;; suggest-key-bindings t     ;; Ivy ya hace lo que esta opcion
 	      uniquify-buffer-name-style 'post-forward
 	      ;;uniquify-min-dir-content 0
+	      truncate-lines t
 	      )
 
 
