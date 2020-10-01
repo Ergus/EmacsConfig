@@ -558,7 +558,7 @@
   :bind ("C-c t b" . better-shell-shell))
 
 (use-package shell-command+
-  :bind ("M-!" . shell-command+))
+  :bind ([remap shell-command] . shell-command+))
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
@@ -1139,8 +1139,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (("<C-return>" . company-complete)
 	 :map company-active-map
 	 ("<C-tab>" . company-other-backend)
-	 ("C-n" . company-select-next)
-	 ("C-p" . company-select-previous)
+	 ([remap next-line] . company-select-next)
+	 ([remap previous-line] . company-select-previous)
 	 ("<C-return>" . company-abort))
   :hook (prog-mode . company-mode)
   :custom
@@ -1180,7 +1180,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
          ("C-c y l" . yas-describe-tables)
          ("C-c y x" . yas-expand)
 	 :map yas-keymap
-         ("C-i" . yas-next-field-or-maybe-expand)
+         ([remap indent-for-tab-command] . yas-next-field-or-maybe-expand)
 	 :map yas-minor-mode-map
 	 ("TAB" . nil)
 	 ("<tab>" . nil))
@@ -1629,7 +1629,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :diminish
   :defer t
   :bind (("C-c C-r" . ivy-resume)
-	 ("M-s h ." . ivy-highlight-thing-at-point)
+	 ([remap highlight-symbol-at-point] . ivy-highlight-thing-at-point)
 	 :map ivy-minibuffer-map
 	 ("TAB" . ivy-partial)
 	 ("RET" . ivy-alt-done))
@@ -1678,12 +1678,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package swiper
   :preface
-  :bind (("C-s" . swiper-isearch)
-	 ("C-r" . swiper-isearch-backward)
-	 ("M-s ." . swiper-isearch-thing-at-point)
+  :bind (([remap isearch-forward] . swiper-isearch)
+	 ([remap isearch-backward] . swiper-isearch-backward)
+	 ([remap isearch-forward-symbol-at-point] . swiper-isearch-thing-at-point)
 	 :map swiper-map
-	 ("C-y" . yank)
-	 ("M-%" . swiper-query-replace)
+	 ([remap isearch-forward-symbol-at-point] . swiper-query-replace)
 	 ("C-," . swiper-avy)
 	 ("C-c m" . swiper-mc)
 	 ;;("C-r" . ivy-previous-line-or-history)
@@ -2015,7 +2014,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package avy-zap
   :bind (("M-Z". avy-zap-up-to-char-dwim)
-	 ("M-z". avy-zap-to-char-dwim)))
+	 ([remap zap-to-char]. avy-zap-to-char-dwim)))
 
 ;;__________________________________________________________
 ;; Arduino Mode
