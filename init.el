@@ -1769,14 +1769,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package amx ;; Complete history
   :after counsel)
 
-;; (use-package recentf :ensure nil
-;;   :defer t
-;;   :config
-;;   (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
-;;                           "[0-9a-f]\\{32\\}-[0-9a-f]\\{32\\}\\.org"
-;;                           ".*png$" ".*cache$"))
-;;   (setq recentf-max-saved-items 600))
-
 (use-package counsel-gtags
   :diminish
   :bind ("C-c g" . hydra-counsel-gtags/body)
