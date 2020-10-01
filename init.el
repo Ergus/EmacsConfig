@@ -1501,9 +1501,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
 (use-package dired :ensure nil
-  :commands dired
-  :bind (("C-x d" . dired)
-	 :map dired-mode-map
+  :defer t
+  :bind (:map dired-mode-map
 	 ("RET" . dired-find-alternate-file)
 	 ("^" . (lambda () (interactive) (find-alternate-file ".."))))
   :custom
