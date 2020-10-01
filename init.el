@@ -1677,7 +1677,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ([remap isearch-forward-symbol-at-point] . swiper-query-replace)
 	 ("C-," . swiper-avy)
 	 ("C-c m" . swiper-mc)
-	 ;;("C-r" . ivy-previous-line-or-history)
 	 ("C-o" . swiper-isearch-toggle)
 	 :map isearch-mode-map
 	 ("C-o" . swiper-isearch-toggle))
@@ -2103,7 +2102,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package sudo-edit :defer t)
 
 (use-package evil
-  :disabled
+  :defer t
   :init
   (setq-default evil-esc-delay 0.001
 		evil-want-keybinding nil)
@@ -2126,7 +2125,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      (set-face-attribute 'mode-line nil :background visual-state-background))))
 
 (use-package evil-collection
-  :disabled
   :custom (evil-collection-setup-minibuffer t)
   :hook (evil-mode .  evil-collection-init))
 
