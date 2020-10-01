@@ -624,7 +624,7 @@
 
 (defun my/prog-mode-hook () "Some hooks only for prog mode."
        ;;(electric-indent-mode t)	    		;; On by default
-       (electric-pair-mode t)			;; Autoannadir parentesis
+       (electric-pair-local-mode t)			;; Autoannadir parentesis
 
        ;;(define-key global-map (kbd "RET") 'newline-and-indent)
        ;;(electric-indent-local-mode t)         ;; Shouldn't be need
