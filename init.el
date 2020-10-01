@@ -694,14 +694,6 @@
   (set-face-attribute 'hes-escape-sequence-face nil
 		      :foreground (named-color magenta)))
 
-;; (use-package highlight-numbers
-;;   :diminish
-;;   ;;:hook (prog-mode . highlight-numbers-mode)
-;;   :bind ("C-c h n" . highlight-numbers-mode)
-;;   :config
-;;   (set-face-attribute 'highlight-numbers-number nil
-;; 		      :foreground (named-color red)))
-
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
 (use-package flyspell :ensure nil
