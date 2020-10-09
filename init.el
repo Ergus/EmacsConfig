@@ -37,7 +37,9 @@
 (column-number-mode t)			;; Numero de la columna
 (line-number-mode t)			;; Numero de linea modeline
 
-(setq-default save-place-forget-unreadable-files t)
+(setq-default ;;save-place-forget-unreadable-files t
+	      save-place-ignore-files-regexp  ;; Modified to add /tmp/* files
+	      "\\(?:COMMIT_EDITMSG\\|hg-editor-[[:alnum:]]+\\.txt\\|svn-commit\\.tmp\\|bzr_log\\.[[:alnum:]]+\\|^/tmp/.+\\)$")
 (save-place-mode 1)                     ;; Remember point in files
 
 ;;(global-visual-line-mode t)
@@ -434,8 +436,7 @@
       (hydra-smerge/body)))
   :hook ((vc-find-file magit-diff-visit-file) . my/smerge-mode)
   :hydra (hydra-smerge
-	  (:color pink :hint nil
-		  :pre (smerge-mode 1)
+	  (:color pink :hint nil ;;:pre (smerge-mode 1)
 		  :post (smerge-auto-leave))
 	  "smerge"
 	  ("n" smerge-next "next")
@@ -454,13 +455,12 @@
 ;; which-key
 
 (use-package which-key
-  :bind (("C-h b" . which-key-show-top-level)
-         ("C-h m" . which-key-show-major-mode))
+  :defer t
   :diminish
   :custom
   ;;(which-key-idle-delay 0.4)
   ;;(which-key-idle-delay 10000)
-  (which-key-show-early-on-C-h t)
+  ;;(which-key-show-early-on-C-h t)
   (which-key-idle-secondary-delay 0.01)  ;; nil sets the same delay
   (which-key-dont-use-unicode t)
   ;;(which-key-separator ": ") ;which-key-idle-delay 2.0)
@@ -772,7 +772,7 @@
   :diminish
   :bind (:map lsp-command-map
 	      ;; peek commands
-	      ("u d" . lsp-ui-peek-find-definitions)
+	      (("u d" . lsp-ui-peek-find-definitions)
 	      ("u r" . lsp-ui-peek-find-references)
 	      ("u i" . lsp-ui-peek-find-implementation)
 	      ;;("s" . lsp-ui-peek-find-workspace-symbol)
@@ -783,7 +783,7 @@
 	      ("u f" . lsp-ui-flycheck-list)
 	      ;; lsp-ui
 	      ("u n" . lsp-ui-find-next-reference)
-	      ("u p" . lsp-ui-find-prev-reference))
+	      ("u p" . lsp-ui-find-prev-reference)))
   :config
   (setq-default ;;lsp-ui-sideline-delay 1.0
 		lsp-ui-sideline-enable nil
@@ -1090,8 +1090,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-x 4 0" . switch-window-then-delete)
 
 	 ("C-x 4 d" . switch-window-then-dired)
-	 ("C-x 4 f" . switch-window-then-find-file)
-	 ("C-x 4 r" . switch-window-then-find-file-read-only)
+	 ;;("C-x 4 f" . switch-window-then-find-file)
+	 ;;("C-x 4 r" . switch-window-then-find-file-read-only)
 	 ("C-x 4 C-b" . switch-window-then-display-buffer)
 	 ("C-x 4 k" . switch-window-then-kill-buffer))
   :custom
@@ -1666,8 +1666,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq xref-show-definitions-function #'ivy-xref-show-defs
 	xref-show-xrefs-function #'ivy-xref-show-xrefs)
   :bind (("C-c x d" . xref-find-definitions)
+	 ("C-c x 4" . xref-find-definitions-other-window)
 	 ("C-c x a" . xref-find-apropos)
-	 ("C-c x u" . xref-pop-marker-stack) ;; go back
+	 ("C-c x b" . xref-pop-marker-stack) ;; go back
 	 ("C-c x r" . xref-find-references)
 	 ("C-c x TAB" . completion-at-point)))
 
@@ -1677,7 +1678,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ([remap isearch-backward] . swiper-isearch-backward)
 	 ([remap isearch-forward-symbol-at-point] . swiper-isearch-thing-at-point)
 	 :map swiper-map
-	 ([remap isearch-forward-symbol-at-point] . swiper-query-replace)
 	 ("C-," . swiper-avy)
 	 ("C-c m" . swiper-mc)
 	 ("C-o" . swiper-isearch-toggle)
@@ -1768,7 +1768,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (("C-c o g" . ggtags-find-tag-dwim)
 	 ("C-c o d" . ggtags-find-definition)
 	 ("C-c o r" . ggtags-find-reference)
+	 ("C-c o R" . ggtags-find-tag-regexp)
 	 ("C-c o l" . ggtags-view-tag-history)
+	 ("C-c o G" . ggtags-grep)
 	 ("C-c o p" . ggtags-prev-mark)
 	 ("C-c o n" . ggtags-next-mark)
 	 ("C-c o c" . ggtags-create-tags)
@@ -1812,7 +1814,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 			  ("l" dumb-jump-quick-look "Quick look")
 			  ("b" dumb-jump-back "Back"))
   :config
-  (setq dumb-jump-selector 'ivy)
+  ;;(setq dumb-jump-selector 'ivy)
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 ;;__________________________________________________________
@@ -2057,6 +2059,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package lorem-ipsum :defer t)
 ;;__________________________________________________________
+;; json mode
 
 (use-package json-mode
   :mode "\\.json\\'")
@@ -2116,11 +2119,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq inferior-lisp-program "sbcl"
         slime-contribs '(slime-fancy)))
 
+;; Navegacion por objetos... no lo he probado
 (use-package objed
   :commands objed-mode)
 
+;; Emacs en less y otros comandos
 (use-package e2ansi
   :defer t)
+
+;; (use-package ivy-posframe
+;;   :config
+;;   (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-point)))
+;;   (ivy-posframe-mode 1))
 
 (use-package mutt-mode
   :mode "muttrc")
