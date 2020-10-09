@@ -1567,6 +1567,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (ibuffer-mode . hl-line-mode)
   :init
   (defalias 'list-buffers 'ibuffer)
+  :custom
+  ;;(ibuffer-use-other-window t)
+  ;;(ibuffer-default-shrink-to-minimum-size t)
+  (ibuffer-default-sorting-reversep t)       ;; Recent buffers first
   :config
   ;;(add-to-list 'ibuffer-never-show-regexps "^\\*")
   (add-hook 'ibuffer-hook #'my/ibuffer-hook)) ; make ibuffer default
@@ -1743,24 +1747,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (counsel-mode 1)
 
-  (ivy-add-actions
-   'counsel-find-file
-   '(("4" find-file-other-frame "other frame")
-     ("b" counsel-find-file-cd-bookmark-action "cd bookmark")
-     ("x" counsel-find-file-extern "open externally")
-     ("d" delete-file "delete")
-     ("r" counsel-find-file-as-root "open as root")))
-
-  ;; set actions when running C-x b
-  ;; replace "frame" with window to open in new window
-  (ivy-add-actions
-   'counsel-switch-buffer
-   '(("4" switch-to-buffer-other-frame "other frame")
-     ("k" kill-buffer "kill")
-     ("r" ivy--rename-buffer-action "rename")))
-
-  ;; (add-to-list 'ivy-re-builders-alist '(counsel-rg . ivy--regex-plus))
-  ;; (add-to-list 'ivy-re-builders-alist '(counsel-ag . ivy--regex-plus))
   (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
   )
 
@@ -1769,24 +1755,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package counsel-gtags
   :diminish
-  :bind ("C-c g" . hydra-counsel-gtags/body)
-  :hydra (hydra-counsel-gtags (:color red :columns 3)
-			      "Counsel gtags"
-			      ("g" counsel-gtags-dwim "dwim")
-			      ("d" counsel-gtags-find-definition "Definition")
-			      ("r" counsel-gtags-find-reference "Reference")
-			      ("s" counsel-gtags-find-symbol "Symbol")
-			      ("n" counsel-gtags-go-forward "Go forward")
-			      ("p" counsel-gtags-go-backward "Go back")
-			      ("f" counsel-gtags-find-file "Find file")
-			      ("c" counsel-gtags-create-tags "Create" :color blue)
-			      ("u" counsel-gtags-update-tags "Update"  :color blue)
-			      ("q" nil "cancel"))
-
+  :bind-keymap ("C-c g" . counsel-gtags-command-map)
+  :load-path "~/gits/emacs-counsel-gtags/"
   :init
   (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
   :config
-  (add-to-list (make-local-variable 'company-backends) 'company-gtags))
+  (counsel-gtags-mode 1))
 
 
 (use-package ggtags
