@@ -1711,29 +1711,29 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package counsel
   :diminish
-  :bind (("M-x" . counsel-M-x)
-	 ("C-x b" . counsel-switch-buffer)
-	 ("C-x 4 b" . counsel-switch-buffer-other-window)
-	 ("C-c c a" . counsel-ag)
-	 ("C-c c b" . counsel-ibuffer)
-	 ("C-c c d" . counsel-dired)
-	 ("C-c c f" . counsel-flycheck)
-	 ("C-c c i" . counsel-imenu)
-	 ("C-c c j" . counsel-file-jump)
-	 ("C-c c C-s" . counsel-grep)
-	 ("C-c c r" . counsel-rg)	      ;; like git grep
-	 ("C-c c g" . counsel-git)
-	 ("C-c c <f2>" . counsel-linux-app)
-	 ("C-c c G" . counsel-git-grep)
-	 ("C-c c l" . counsel-locate)
-	 ("C-c c L" . counsel-find-library)   ;; Search lisp libraries
-	 ("C-c c C" . counsel-compile)        ;; Compile
-	 ("C-c c R" . counsel-recentf)
-	 ("C-c c C-r" . counsel-register)
-	 :map help-map			      ;; help-map
-	 ("f" . counsel-describe-function)
-	 ("v" . counsel-describe-variable)
-	 ("C-l" . counsel-info-lookup-symbol))
+  :bind (:map counsel-mode-map
+	      (("C-x b" . counsel-switch-buffer)
+	       ("C-x 4 b" . counsel-switch-buffer-other-window)
+	       ("C-c c a" . counsel-ag)
+	       ("C-c c b" . counsel-ibuffer)
+	       ("C-c c d" . counsel-dired)
+	       ("C-c c f" . counsel-flycheck)
+	       ("C-c c i" . counsel-imenu)
+	       ("C-c c j" . counsel-file-jump)
+	       ("C-c c C-s" . counsel-grep)
+	       ("C-c c r" . counsel-rg)	      ;; like git grep
+	       ("C-c c g" . counsel-git)
+	       ("C-c c <f2>" . counsel-linux-app)
+	       ("C-c c G" . counsel-git-grep)
+	       ("C-c c l" . counsel-locate)
+	       ("C-c c L" . counsel-find-library)   ;; Search lisp libraries
+	       ("C-c c C" . counsel-compile)        ;; Compile
+	       ("C-c c R" . counsel-recentf)
+	       ("C-c c C-r" . counsel-register))
+	      :map help-map			      ;; help-map
+	      (("f" . counsel-describe-function)
+	       ("v" . counsel-describe-variable)
+	       ("C-l" . counsel-info-lookup-symbol)))
   :defer 1
   :init
   (which-key-add-key-based-replacements "C-c c" "counsel")
