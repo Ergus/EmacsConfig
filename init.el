@@ -76,7 +76,7 @@
 
 	      ;; split-width-threshold 160  ;; Limite para split vertical
 	      ;; kill-whole-line t
-	      ;; load-prefer-newer t
+	      load-prefer-newer t
 	      ;; mark-even-if-inactive nil	    ;; no mark no region
 	      next-screen-context-lines 5           ;; Lines of continuity when scrolling
 	      fast-but-imprecise-scrolling t
@@ -296,8 +296,8 @@
 			   :background (named-color brightblue))
 
        (set-face-attribute 'mode-line-inactive nil
-			   :background (named-color brightblack)
-			   :foreground (named-color white))
+			   :background (named-color black)
+			   :foreground (named-color brightblack))
 
        (set-face-attribute 'mode-line nil
 			   :background (named-color blue)
@@ -1757,10 +1757,24 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :diminish
   :bind-keymap ("C-c g" . counsel-gtags-command-map)
   :load-path "~/gits/emacs-counsel-gtags/"
+  :custom
+  (counsel-gtags-debug-mode t)
   :init
   (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
   :config
   (counsel-gtags-mode 1))
+
+(use-package global-tags
+  :after counsel-gtags
+  :demand t
+  :bind (:map counsel-gtags-mode-map
+	      ("C-c g x c" . global-tags-create-database)
+	      ("C-c g x u" . global-tags-update-database))
+  :init
+  (which-key-add-key-based-replacements "C-c g x" "global-tags")
+  :config
+  (add-to-list 'xref-backend-functions 'global-tags-xref-backend)
+  (add-to-list 'project-find-functions 'global-tags-try-project-root))
 
 
 (use-package ggtags
