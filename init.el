@@ -1718,7 +1718,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package imenu-anywhere
   :bind ("C-c i i" . ivy-imenu-anywhere)
   :init
-  (setq imenu-auto-rescan t))
+  (setq imenu-auto-rescan t
+	imenu-max-item-length 200))
 
 (use-package imenu-list
   :bind ("C-c s i" . imenu-list-smart-toggle)
