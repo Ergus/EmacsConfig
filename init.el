@@ -331,6 +331,12 @@
 		    :inherit nil
 		    :background (named-color brightblack))
 
+
+(global-set-key [remap just-one-space] #'cycle-spacing)
+
+(use-package unfill
+  :bind ([remap fill-paragraph] . unfill-toggle))
+
 ;;__________________________________________________________
 ;; ssh
 (use-package tramp :ensure nil
@@ -1115,7 +1121,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (which-key-add-key-based-replacements "C-x w" "winner")
   (setq winner-dont-bind-my-keys t)
-  (winner-mode t))
+  (winner-mode 1))
 
 (use-package auto-dim-other-buffers
   :ensure
@@ -1515,6 +1521,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (dired-recursive-deletes 'top)     ;; Always ask recursive delete
   (dired-dwim-target t)		     ;; Copy in split mode with p
   (dired-auto-revert-buffer t)
+  (dired-listing-switches "-alh")
   :config
   (put 'dired-find-alternate-file 'disabled nil)
 
