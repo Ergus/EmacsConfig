@@ -1139,13 +1139,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Auto completamiento
 (use-package company
   :diminish
-  :bind (("<C-return>" . company-complete)
+  :bind (([remap dabbrev-expand] . company-complete)
 	 :map company-active-map
-	 ("<C-tab>" . company-other-backend)
-	 ([remap next-line] . company-select-next)
-	 ([remap previous-line] . company-select-previous)
-	 ("<C-return>" . company-abort))
-  :hook (prog-mode . company-mode)
+	 ("<M-ret>" . company-other-backend)
+	 ([remap dabbrev-expand] . company-abort))
+  :hook ((prog-mode message-mode) . company-mode)
   :custom
   (company-idle-delay nil)	 ;; no delay for autocomplete
   (company-minimum-prefix-length 2)
