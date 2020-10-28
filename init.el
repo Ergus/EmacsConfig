@@ -659,6 +659,7 @@
 
 (global-set-key [remap undo] 'undo-only)
 (global-set-key (kbd "C-M-_") 'undo-redo)
+(global-set-key (kbd "C-M-/") 'undo-redo)
 
 (use-package string-inflection
   :bind ("C-c <right>" . string-inflection-all-cycle))
@@ -1111,8 +1112,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (switch-window-threshold 2)
   (switch-window-minibuffer-shortcut ?z)
   (switch-window-background t)
-  (switch-window-shortcut-appearance 'asciiart)
-  )
+  (switch-window-shortcut-appearance 'asciiart))
 
 ;; Undo redo split
 (use-package winner-mode :ensure nil
@@ -1662,7 +1662,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-4)
 
   ;; Highlight with arrows by default.
-  (ivy-mode t)
+  (ivy-mode 1)
   ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
   )
 
@@ -1699,7 +1699,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (copy-face 'highlight 'swiper-line-face)         ;; linea minibuffer
 
   (set-face-attribute 'swiper-match-face-1 nil     ;; linea en minibuffer
-   		      :inherit nil :background nil :underline t)
+   		      :inherit nil :background nil :weight 'ultrabold)
 
   (copy-face 'isearch 'swiper-match-face-2) ;; primer match
   (copy-face 'isearch 'swiper-match-face-3) ;; segundo match
@@ -1840,7 +1840,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 			  ("l" dumb-jump-quick-look "Quick look")
 			  ("b" dumb-jump-back "Back"))
   :config
-  ;;(setq dumb-jump-selector 'ivy)
+  (setq dumb-jump-selector 'ivy)
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 ;;__________________________________________________________
