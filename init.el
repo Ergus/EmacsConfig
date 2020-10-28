@@ -2132,6 +2132,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :load-path "~/gits/composable.el/"
   :custom
   (composable-copy-active-region-highlight nil)
+  (composable-mode-debug-level 0)
   :config
   (composable-mode)       ; Activates the default keybindings
   (composable-mark-mode)) ; Use composable with C-SPC
