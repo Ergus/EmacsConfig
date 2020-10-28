@@ -487,30 +487,30 @@
 ;;__________________________________________________________
 ;; terms
 
-(use-package term-mode :ensure nil
-  :defer t
-  :preface
-  (defun my/term-mode-hook () "My term mode hook."
-	 (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
-	 (setq-local mouse-yank-at-point t)
-	 (setq-local transient-mark-mode nil)
-	 ;;(display-line-numbers-mode -1)
-	 (display-fill-column-indicator-mode -1)
-	 (auto-fill-mode -1))
-  :hook (term-mode . my/term-mode-hook)
-  :init
-  (which-key-add-key-based-replacements "C-c t" "term"))
+;; (use-package term-mode :ensure nil
+;;   :defer t
+;;   :preface
+;;   (defun my/term-mode-hook () "My term mode hook."
+;; 	 (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
+;; 	 (setq-local mouse-yank-at-point t)
+;; 	 (setq-local transient-mark-mode nil)
+;; 	 ;;(display-line-numbers-mode -1)
+;; 	 (display-fill-column-indicator-mode -1)
+;; 	 (auto-fill-mode -1))
+;;   :hook (term-mode . my/term-mode-hook)
+;;   :init
+;;   (which-key-add-key-based-replacements "C-c t" "term"))
 
-(use-package multi-term
-  :bind (("C-c 4 t" . multi-term-dedicated-open)
-	 ("C-c 5 t" . multi-term)
-	 ("C-c t t" . multi-term-dedicated-toggle)
-	 ("C-c 0 t" . multi-term-dedicated-close))
-  :config
-  (setq ;;multi-term-dedicated-window-height 24
-	;;multi-term-program "/bin/bash"
-	multi-term-program-switches "--login"
-	multi-term-dedicated-select-after-open-p t))
+;; (use-package multi-term
+;;   :bind (("C-c 4 t" . multi-term-dedicated-open)
+;; 	 ("C-c 5 t" . multi-term)
+;; 	 ("C-c t t" . multi-term-dedicated-toggle)
+;; 	 ("C-c 0 t" . multi-term-dedicated-close))
+;;   :config
+;;   (setq ;;multi-term-dedicated-window-height 24
+;; 	;;multi-term-program "/bin/bash"
+;; 	multi-term-program-switches "--login"
+;; 	multi-term-dedicated-select-after-open-p t))
 
 (use-package vterm
   :defer t
@@ -526,10 +526,11 @@
 ;; 	 ("C-c t v p")))
 
 (use-package vterm-toggle
-  :bind (("C-c t v" . vterm-toggle-cd)
-	 :map vterm-mode-map (("<C-return>" . vterm-toggle-insert-cd)
-			      ("C-M-n" . vterm-toggle-forward)
-			      ("C-M-p" . vterm-toggle-backward)))
+  :bind (("C-c t t" . vterm-toggle-cd)
+	 :map vterm-mode-map
+	 (("<C-return>" . vterm-toggle-insert-cd)
+	  ("C-M-n" . vterm-toggle-forward)
+	  ("C-M-p" . vterm-toggle-backward)))
 
   :config
   (setq vterm-toggle-fullscreen-p nil)
