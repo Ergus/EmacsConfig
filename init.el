@@ -113,7 +113,7 @@
 	      )
 
 
-;; Vertical window divider 
+;; Vertical window divider
 (set-display-table-slot standard-display-table
                         'vertical-border
                         (make-glyph-code ?┃))
@@ -228,95 +228,13 @@
   (add-hook 'isearch-mode-mode #'phi-search-from-isearch-mc/setup-keys))
 
 ;;__________________________________________________________
-;;	The Colors (I want to change this for a real theme, there are maaaaany)
+;; The Colors I am using my own theme
 
-(defconst my/colors '((black . "#000000")
-		      (red . "#cd0000")
-		      (green . "#00cd00")
-		      (yellow . "#cdcd00")
-		      (blue . "#0000ee")
-		      (magenta . "#cd00cd")
-		      (cyan . "#00cdcd")
-		      (white . "#e5e5e5")
-		      (brightblack . "#444444") ;;
-		      (brightred . "#ff0000")
-		      (brightgreen . "#00ff00")
-		      (brightyellow . "#ffff00")
-		      (brightblue . "#5c5cff")
-		      (brightmagenta . "#ff00ff")
-		      (brightcyan . "#00ffff")
-		      (brightwhite . "#ffffff"))
-  "List of colors.")
+(load-theme 'simple-16)
 
 (defmacro named-color (colorname)
   "Get color by name COLORNAME from `my/colors' alist."
-  (alist-get colorname my/colors))
-
-(defun my/colors () "Define my color theme."
-
-       (set-face-attribute 'default nil :family "Hack" :height 105)
-
-       (set-background-color (named-color black))
-       (set-foreground-color (named-color white))
-
-       (set-face-attribute 'font-lock-preprocessor-face nil
-			   :foreground (named-color magenta))	;; Preprocessor
-       (set-face-attribute 'font-lock-comment-face nil
-			   :foreground (named-color cyan))	;; Comentarios
-       (set-face-attribute 'font-lock-doc-face nil
-			   :foreground (named-color brightcyan)) ;; Documentation
-
-       (set-face-attribute 'font-lock-string-face nil
-			   :foreground (named-color red))	;; Strings
-       (set-face-attribute 'font-lock-function-name-face nil
-			   :foreground (named-color white))	;; Funciones
-       (set-face-attribute 'font-lock-variable-name-face nil
-			   :foreground (named-color white))	;; Variables
-       (set-face-attribute 'font-lock-constant-face nil
-			   :foreground (named-color magenta))	;; Constates y Clases
-
-       (set-face-attribute 'font-lock-type-face nil
-			   :foreground (named-color green))	;; Tipos (int, float)
-       (set-face-attribute 'font-lock-keyword-face nil
-			   :foreground (named-color yellow))	;; Keywords (for, if)
-       (set-face-attribute 'font-lock-builtin-face nil
-			   :foreground (named-color green))	;; Keywords (for, if)
-
-       (set-face-attribute 'highlight nil
-			   :background (named-color brightblack)
-			   :foreground nil)
-       (set-face-attribute 'secondary-selection nil
-			   :background (named-color brightblue))
-
-       ;; search C-s, resalta lo que encuentra
-       (set-face-attribute 'isearch nil
-			   :background (named-color blue)
-			   :foreground (named-color white)
-			   :weight 'ultrabold)	;; Search
-
-       (set-face-attribute 'lazy-highlight nil
-			   :background (named-color brightblue))
-
-       (set-face-attribute 'region nil
-			   :background (named-color brightblue))
-
-       (set-face-attribute 'mode-line-inactive nil
-			   :background (named-color black)
-			   :foreground (named-color brightblack))
-
-       (set-face-attribute 'mode-line nil
-			   :background (named-color blue)
-			   :foreground (named-color white))
-
-       (set-face-attribute 'line-number nil
-			   :foreground (named-color brightblack))
-       (set-face-attribute 'line-number-current-line nil
-			   :foreground (named-color green))
-       (set-face-attribute 'fill-column-indicator nil
-			   :foreground (named-color brightblack))
-       )
-
-(my/colors)
+  (simple-16-theme-color colorname))
 
 ;;__________________________________________________________
 ;;Packages options
@@ -327,9 +245,6 @@
 (setq-default show-paren-delay 0
 	      blink-matching-paren nil)
 (show-paren-mode t)	  ;; Highlight couple parentesis
-(set-face-attribute 'show-paren-match nil
-		    :inherit nil
-		    :background (named-color brightblack))
 
 
 (global-set-key [remap just-one-space] #'cycle-spacing)
@@ -352,9 +267,9 @@
 		tramp-persistency-file-name "~/.emacs.d/tramp")
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
-(use-package tramp-term
-  :after tramp
-  :commands tramp-term)
+;; (use-package tramp-term
+;;   :after tramp
+;;   :commands tramp-term)
 
 (use-package ssh-config-mode
   :mode (("/\\.ssh/config\\'" . ssh-config-mode)
@@ -369,20 +284,6 @@
   :defer t
   ;; :custom
   ;; (tab-bar-show 1)
-  :config
-  (set-face-attribute 'tab-bar nil
-		      :background (named-color black)
-		      :foreground (named-color white)
-		      :inverse-video nil)
-
-  (set-face-attribute 'tab-bar-tab nil
-		      :weight 'ultra-bold
-		      :underline t)
-
-  (set-face-attribute 'tab-bar-tab-inactive nil
-		      :background (named-color black)
-		      :foreground (named-color brightwhite)
-		      :weight 'normal :underline nil)
   )
 
 ;;__________________________________________________________
@@ -531,7 +432,10 @@
 	 (("<C-return>" . vterm-toggle-insert-cd)
 	  ("C-M-n" . vterm-toggle-forward)
 	  ("C-M-p" . vterm-toggle-backward)))
-
+  :custom
+  (vterm-toggle-scope 'projectile)
+  (vterm-toggle-projectile-root t)
+  ;;(vterm-toggle-reset-window-configration-after-exit t)
   :config
   (setq vterm-toggle-fullscreen-p nil)
   ;; Show at bottom
@@ -629,10 +533,7 @@
 (use-package which-func :ensure nil
   :diminish
   :hook (prog-mode . which-function-mode) ;; Shows the function in spaceline
-  :config
-  (set-face-attribute 'which-func nil
-		      :background nil
-		      :foreground (named-color white)))
+  )
 
 (defun my/prog-mode-hook () "Some hooks only for prog mode."
        ;;(electric-indent-mode t)	    		;; On by default
@@ -1144,7 +1045,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 :map company-active-map
 	 ("<M-ret>" . company-other-backend)
 	 ([remap dabbrev-expand] . company-abort))
-  :hook ((prog-mode message-mode) . company-mode)
+  :hook ((prog-mode message-mode conf-mode) . company-mode)
   :custom
   (company-idle-delay nil)	 ;; no delay for autocomplete
   (company-minimum-prefix-length 2)
@@ -1156,23 +1057,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		     company-files	 ;; company files
 		     (company-dabbrev-code company-gtags company-keywords)
 		     company-dabbrev))
-  :config
-  ;(company-tng-mode)
-  (set-face-attribute 'company-tooltip nil		  ;; dialog face
-		      :background (named-color brightblack)
-		      :foreground (named-color white))
-  (set-face-attribute 'company-tooltip-common nil ;; common part face
-		      :inherit 'company-tooltip
-		      :foreground (named-color green))
-  (set-face-attribute 'company-tooltip-selection nil ;; selection face
-		      :background (named-color blue)
-		      :weight 'ultra-bold)
-  (set-face-attribute 'company-scrollbar-bg nil	  ;; scroll bar face bg
-		      :background (named-color brightblack))
-  (set-face-attribute 'company-scrollbar-fg nil	  ;; scroll bar face fg
-		      :background (named-color blue)))
+  )
 
-(use-package yasnippet                  ; Snippets
+(use-package yasnippet        ;; Snippets
   :diminish
   :bind (("C-c y d" . yas-load-directory)
          ("C-c y i" . yas-insert-snippet)
@@ -1523,9 +1410,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (dired-listing-switches "-alh")
   :config
   (put 'dired-find-alternate-file 'disabled nil)
-
-  (set-face-attribute 'dired-directory nil	;; Dired directory colors
-		      :foreground (named-color cyan)))
+  )
 
 (use-package dired-x :ensure nil
   :hook (dired))
@@ -1771,6 +1656,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :load-path "~/gits/emacs-counsel-gtags/"
   :custom
   (counsel-gtags-debug-mode t)
+  (counsel-gtags-use-dynamic-list nil)
   :init
   (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
   :config
@@ -1986,10 +1872,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	avy-case-fold-search nil		 ;; ignore case
 	avy-highlight-first t
 	;;avy-timeout-seconds 0.5
-	)
-  (set-face-attribute 'avy-lead-face nil
-		      :background (named-color blue)
-		      :foreground (named-color red)))
+	))
 
 (use-package avy-zap
   :bind (("M-Z". avy-zap-up-to-char-dwim)
