@@ -231,6 +231,7 @@
 ;; The Colors I am using my own theme
 
 (load-theme 'simple-16)
+(set-face-attribute 'default t :font "Hack")
 
 (defmacro named-color (colorname)
   "Get color by name COLORNAME from `my/colors' alist."
@@ -435,7 +436,7 @@
   :custom
   (vterm-toggle-scope 'projectile)
   (vterm-toggle-projectile-root t)
-  ;;(vterm-toggle-reset-window-configration-after-exit t)
+  (vterm-toggle-reset-window-configration-after-exit 'kill-window-only)
   :config
   (setq vterm-toggle-fullscreen-p nil)
   ;; Show at bottom
@@ -1635,7 +1636,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      (("f" . counsel-describe-function)
 	       ("v" . counsel-describe-variable)
 	       ("C-l" . counsel-info-lookup-symbol)))
-  :defer 1
+  :defer 0.25
   :init
   (which-key-add-key-based-replacements "C-c c" "counsel")
   :custom
