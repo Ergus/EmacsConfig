@@ -307,7 +307,7 @@
 
 (defun my/minibuffer-exit-hook ()
   "Hook to call when leave the setq."
-  (minibuffer gc-cons-threshold 800000))
+  (setq gc-cons-threshold 800000))
 
 (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
@@ -735,11 +735,7 @@
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
 
-(defvar c-ms-space-for-alignment t
-  "Control ms-space-for-alignment.")
-(make-variable-buffer-local 'c-ms-space-for-alignment)
-
-(defun ms-space-for-alignment ()
+(defun ms-space-for-alignment-hook ()
   "Make the current line use tabs for indentation and spaces for alignment.
 
 It is intended to be called from the hook
@@ -764,26 +760,35 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	  (insert-char ?\t (/ anchor-col tab-width))
 	  (insert-char ?\  (- indent-col (current-column)))))))
   (when (= (current-column) 0)
-    (back-to-indentation))
-  )
+    (back-to-indentation)))
 
-(defun c-toggle-ms-space-for-alignment (&optional arg)
-  "Toggle align with spaces."
-  (interactive "P")
-  (setq c-ms-space-for-alignment
-	(c-calculate-state arg c-ms-space-for-alignment))
-  (if c-ms-space-for-alignment
-      (when (and c-ms-space-for-alignment
-		 indent-tabs-mode
+;; (defun c-toggle-ms-space-for-alignment (&optional arg)
+;;   "Toggle align with spaces."
+;;   (interactive "P")
+;;   (setq c-ms-space-for-alignment
+;; 	(c-calculate-state arg c-ms-space-for-alignment))
+;;   (if c-ms-space-for-alignment
+;;       (when (and c-ms-space-for-alignment
+;; 		 indent-tabs-mode
+;; 		 (= c-basic-offset tab-width))
+;; 	(add-hook 'c-special-indent-hook #'ms-space-for-alignment nil t))
+;;     (remove-hook 'c-special-indent-hook #'ms-space-for-alignment t)))
+
+(define-minor-mode c-ms-space-for-alignment-mode
+  "Enable indent with tabs align with spaces."
+  :global nil
+  :init-value nil
+  (if c-ms-space-for-alignment-mode
+      (when (and indent-tabs-mode
 		 (= c-basic-offset tab-width))
-	(add-hook 'c-special-indent-hook #'ms-space-for-alignment nil t))
-    (remove-hook 'c-special-indent-hook #'ms-space-for-alignment t)))
+	(add-hook 'c-special-indent-hook #'ms-space-for-alignment-hook nil t))
+    (remove-hook 'c-special-indent-hook #'ms-space-for-alignment-hook t)))
 
 ;;====================
 
 (defun my/c-semi&comma ()
-  (assq 'class-close c-syntactic-context)
-  )
+  "Function to handle addition of ; in 'c-mode'."
+  (assq 'class-close c-syntactic-context))
 
 (c-add-style "mylinux"
 	     '("linux"
@@ -816,10 +821,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		(other . "mylinux")))
 
 (defun my/c-mode-common-hook () "My hook for C and C++."
-
        (c-toggle-auto-newline 1)
        (c-toggle-cpp-indent-to-body 1)
-       (c-toggle-ms-space-for-alignment 1)
+       (c-ms-space-for-alignment-mode 1)
        (message "Loaded my/c-mode-common"))
 
 (add-hook 'c-mode-common-hook #'my/c-mode-common-hook)
