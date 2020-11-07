@@ -1839,11 +1839,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; evil mode
 
 (use-package avy
-  :bind (("C-' r" . avy-resume)
+  :bind (("C-' C-r" . avy-resume)
 	 ("C-' C-'" . avy-goto-char-timer)
 	 ("C-' 1" . avy-goto-char)
 	 ("C-' 2" . avy-goto-char-2)
-	 ("C-' '" . avy-goto-char-in-line)
+	 ("C-' c" . avy-goto-char-in-line)
 	 ("C-' w" . avy-goto-word-or-subword-1)
 	 ("C-' W" . avy-goto-word-0)
 	 ("C-' M-b" . avy-goto-word-0-above)
@@ -1858,22 +1858,20 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-' C-w" . avy-move-region)
 	 ("C-' C-k" . avy-kill-region)
 	 ("C-' M-w" . avy-kill-ring-save-region)
+	 ("C-' C-SPC" . avy-pop-mark)
 	 ("C-' i" . avy-copy-region)
 	 :map isearch-mode-map
 	 ("C-'" . avy-isearch))
   :init
   (which-key-add-key-based-replacements "C-'" "avy")
-  :config
-  (setq avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
-	;;		(number-sequence ?A ?Z)
-			)
-	avy-style 'at-full		         ;; Propose only 1 letter
-	;;avy-background t
-	avy-all-windows nil			 ;; Only current window
-	avy-case-fold-search nil		 ;; ignore case
-	avy-highlight-first t
-	;;avy-timeout-seconds 0.5
-	))
+  :custom
+  (avy-style 'at-full)
+  (avy-all-windows nil)
+  (avy-case-fold-search nil)
+  (avy-highlight-first t)
+  (avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
+		   (number-sequence ?1 ?9)
+		   (number-sequence ?A ?Z))))
 
 (use-package avy-zap
   :bind (("M-Z". avy-zap-up-to-char-dwim)
