@@ -110,6 +110,7 @@
 	      uniquify-buffer-name-style 'post-forward
 	      ;;uniquify-min-dir-content 0
 	      truncate-lines t
+	      save-interprogram-paste-before-kill t ;; Save clipboard before replace
 	      )
 
 
@@ -168,22 +169,20 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 
 (unless (file-exists-p custom-file)
-  (write-region "" nil custom-file))
-
+  (write-region "" nil custom-file)
+  (message "Creating %s" custom-file))
 (load custom-file)
 
 ;; Personal Lisp dir
-(defvar mylisp-dir (expand-file-name "lisp" user-emacs-directory))
+(defconst mylisp-dir (expand-file-name "lisp" user-emacs-directory))
 
 (unless (file-exists-p mylisp-dir)
   (make-directory mylisp-dir)
   (message "Creating %s" mylisp-dir))
-
-(add-to-list 'load-path "~/.emacs.d/lisp/")
+(add-to-list 'load-path mylisp-dir)
 
 ;; System Lisp dir
-(defvar syslisp-dir "/usr/share/emacs/site-lisp")
-
+(defconst syslisp-dir "/usr/share/emacs/site-lisp")
 (when (file-exists-p syslisp-dir)
   (add-to-list 'load-path syslisp-dir))
 
@@ -254,18 +253,28 @@
   :bind ([remap fill-paragraph] . unfill-toggle))
 
 ;;__________________________________________________________
+;; compile
+
+(use-package compile :ensure nil
+  :defer t
+  :custom
+  (compilation-scroll-output 'first-error)
+  (compilation-always-kill t))
+
+;;__________________________________________________________
 ;; ssh
 (use-package tramp :ensure nil
   :defer t
+  :custom
+  (tramp-auto-save-directory
+   (expand-file-name "tramp-autosave-dir" user-emacs-directory))
+  (tramp-default-method "rsync")
+  ;;(tramp-change-syntax 'simplified)
+  (tramp-use-ssh-controlmaster-options nil)
+  ;;(tramp-completion-reread-directory-timeout t) ;; Obsolete
+  (tramp-persistency-file-name
+   (expand-file-name "tramp" user-emacs-directory))
   :config
-  (setq-default compilation-scroll-output 'first-error
-		tramp-auto-save-directory "~/.emacs.d/tramp-autosave-dir"
-		tramp-default-method "rsync"
-		;;tramp-default-method "ssh"
-		;;tramp-change-syntax 'simplified
-		tramp-use-ssh-controlmaster-options nil
-		tramp-completion-reread-directory-timeout t
-		tramp-persistency-file-name "~/.emacs.d/tramp")
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 ;; (use-package tramp-term
@@ -283,8 +292,8 @@
 
 (use-package tab-bar :ensure nil
   :defer t
-  ;; :custom
-  ;; (tab-bar-show 1)
+  ;;:custom
+  ;;(tab-bar-show 1)
   )
 
 ;;__________________________________________________________
@@ -293,12 +302,12 @@
 (setq minibuffer-eldef-shorten-default t)
 
 (defun my/minibuffer-setup-hook ()
+  "Hook to call when open the minibuffer."
   (setq gc-cons-threshold most-positive-fixnum))
 
 (defun my/minibuffer-exit-hook ()
-  (setq gc-cons-threshold 800000)
-  ;;(garbage-collect)
-  )
+  "Hook to call when leave the setq."
+  (minibuffer gc-cons-threshold 800000))
 
 (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
@@ -1400,9 +1409,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Dired-mode settings (file manager)
 (use-package dired :ensure nil
   :defer t
+  :preface
+  (defun my/dired-up-directory ()
+    (interactive)
+    (find-alternate-file ".."))
   :bind (:map dired-mode-map
-	 ("RET" . dired-find-alternate-file)
-	 ("^" . (lambda () (interactive) (find-alternate-file ".."))))
+	 ([dired-find-file] . dired-find-alternate-file)
+	 ([dired-up-directory] . #'my/dired-up-directory))
   :custom
   (dired-recursive-copies 'top)	     ;; Always ask recursive copy
   (dired-recursive-deletes 'top)     ;; Always ask recursive delete
@@ -1410,8 +1423,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (dired-auto-revert-buffer t)
   (dired-listing-switches "-alh")
   :config
-  (put 'dired-find-alternate-file 'disabled nil)
-  )
+  (put 'dired-find-alternate-file 'disabled nil))
 
 (use-package dired-x :ensure nil
   :hook (dired))
