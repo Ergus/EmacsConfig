@@ -561,7 +561,8 @@
 	   (and (= oldpos (point))
 		(beginning-of-line))))
 
-       (global-set-key (kbd "C-a") 'smart-beginning-of-line))
+       (global-set-key [remap move-beginning-of-line]
+		       #'smart-beginning-of-line))
 
 (add-hook 'prog-mode-hook #'my/prog-mode-hook)
 
@@ -800,15 +801,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	       (c-cleanup-list empty-defun-braces ;; {}
 			       brace-else-brace   ;; } else {
 			       brace-elseif-brace ;; } else if {
-			       ;;defun-close-semi ;; };
+			       defun-close-semi   ;; }; after class
 			       )
-	       (c-hanging-braces-alist (brace-list-open)
+	       (c-hanging-braces-alist (defun-open before after)
+				       (brace-list-open)
 				       (brace-entry-open)
 				       (substatement-open after)
+				       (namespace-open after)
+				       (namespace-close before)
 				       (block-close . c-snug-do-while)
 				       (arglist-cont-nonempty)
-				       (class-open . (after))
-				       (class-close . (before)))
+				       (class-open after)
+				       (class-close before))
 	       (c-offsets-alist (inline-open . 0)
 				(comment-intro . 0)
 				;;(innamespace . [0])
@@ -820,11 +824,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		(awk-mode . "awk")
 		(other . "mylinux")))
 
-(defun my/c-mode-common-hook () "My hook for C and C++."
-       (c-toggle-auto-newline 1)
-       (c-toggle-cpp-indent-to-body 1)
-       (c-ms-space-for-alignment-mode 1)
-       (message "Loaded my/c-mode-common"))
+(defun my/c-mode-common-hook ()
+  "My hook for C and C++."
+  (c-toggle-auto-newline 1)
+  (c-toggle-cpp-indent-to-body 1)
+  (c-ms-space-for-alignment-mode 1)
+  (message "Loaded my/c-mode-common"))
 
 (add-hook 'c-mode-common-hook #'my/c-mode-common-hook)
 
