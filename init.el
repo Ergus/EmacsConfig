@@ -292,7 +292,9 @@
 
 (use-package tab-bar :ensure nil
   :defer t
-  ;;:custom
+  :custom
+  (tab-bar-tab-hints t)  ;; show tab numbers
+  (tab-bar-close-last-tab-choice 'tab-bar-mode-disable) ;; When close last
   ;;(tab-bar-show 1)
   )
 
@@ -787,9 +789,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;====================
 
-(defun my/c-semi&comma ()
-  "Function to handle addition of ; in 'c-mode'."
-  (assq 'class-close c-syntactic-context))
+;; (defun my/c-semi&comma ()
+;;   "Function to handle addition of ; in 'c-mode'."
+;;   (assq 'class-close c-syntactic-context))
 
 (c-add-style "mylinux"
 	     '("linux"
@@ -797,7 +799,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	       (c-basic-offset . 4)
 	       (indent-tabs-mode . t)
 	       (fill-column . 80)
-	       (c-hanging-semi&comma-criteria my/c-semi&comma)
+	       ;; (c-hanging-semi&comma-criteria my/c-semi&comma)
+	       (c-hanging-semi&comma-criteria nil)
 	       (c-cleanup-list empty-defun-braces ;; {}
 			       brace-else-brace   ;; } else {
 			       brace-elseif-brace ;; } else if {

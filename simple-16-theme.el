@@ -86,10 +86,10 @@
  `(tab-bar ((t (:background ,(simple-16-theme-color black)
                                  :foreground ,(simple-16-theme-color white)
                                  :inverse-video nil))))
- `(tab-bar-tab ((t (:inherit tab-bar :weight ultra-bold :underline t))))
+ `(tab-bar-tab ((t (:inherit tab-bar :weight ultra-bold))))
 
  `(tab-bar-tab-inactive ((t (:background ,(simple-16-theme-color black)
-                                              :foreground ,(simple-16-theme-color brightwhite)
+                                              :foreground ,(simple-16-theme-color brightblack)
                                               :weight normal
                                               :underline nil))))
 
