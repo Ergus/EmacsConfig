@@ -1426,8 +1426,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (interactive)
     (find-alternate-file ".."))
   :bind (:map dired-mode-map
-	 ([dired-find-file] . dired-find-alternate-file)
-	 ([dired-up-directory] . #'my/dired-up-directory))
+	 ([remap dired-find-file] . dired-find-alternate-file)
+	 ([remap dired-up-directory] . my/dired-up-directory))
   :custom
   (dired-recursive-copies 'top)	     ;; Always ask recursive copy
   (dired-recursive-deletes 'top)     ;; Always ask recursive delete
