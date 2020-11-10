@@ -425,13 +425,42 @@
 ;; 	multi-term-program-switches "--login"
 ;; 	multi-term-dedicated-select-after-open-p t))
 
+(use-package eterm-256color   ;; To improve color rendering in vterm
+  :defer t)
+
 (use-package vterm
   :defer t
   :preface
   (defun my/vterm-mode-hook ()
     (display-fill-column-indicator-mode -1)
     (auto-fill-mode -1))
-  :hook (vterm-mode . my/vterm-mode-hook))
+  :hook (vterm-mode . my/vterm-mode-hook)
+  :custom
+  (vterm-term-environment-variable "eterm-color") ;; Improve color rendering
+  (vterm-kill-buffer-on-exit t)
+  (vterm-max-scrollback 10000)
+  :config
+  ;; Export the vterm PATH useful on the other side!
+  (setq process-environment
+	(append `(,(concat "EMACS_VTERM_PATH="
+			   (file-name-directory (find-library-name "vterm")))
+		  process-environment)))
+
+  (defun vterm-counsel-yank-pop-action (orig-fun &rest args)
+    "Advise for make yank-pop work in vterm buffers"
+    (if (equal major-mode 'vterm-mode)
+	(let ((inhibit-read-only t)
+              (yank-undo-function (lambda (_start _end) (vterm-undo))))
+          (cl-letf (((symbol-function 'insert-for-yank)
+		     (lambda (str) (vterm-send-string str t))))
+            (apply orig-fun args)))
+      (apply orig-fun args)))
+
+  (advice-add 'counsel-yank-pop-action :around #'vterm-counsel-yank-pop-action)
+
+  ;; Add find-file-other-window to accepted commands
+  (add-to-list 'vterm-eval-cmds '("find-file-other-window" find-file-other-window))
+  )
 
 ;; (use-package multi-vterm
 ;;   :bind (("C-c 5 v" . multi-vterm)
