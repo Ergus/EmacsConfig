@@ -794,18 +794,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (when (= (current-column) 0)
     (back-to-indentation)))
 
-;; (defun c-toggle-ms-space-for-alignment (&optional arg)
-;;   "Toggle align with spaces."
-;;   (interactive "P")
-;;   (setq c-ms-space-for-alignment
-;; 	(c-calculate-state arg c-ms-space-for-alignment))
-;;   (if c-ms-space-for-alignment
-;;       (when (and c-ms-space-for-alignment
-;; 		 indent-tabs-mode
-;; 		 (= c-basic-offset tab-width))
-;; 	(add-hook 'c-special-indent-hook #'ms-space-for-alignment nil t))
-;;     (remove-hook 'c-special-indent-hook #'ms-space-for-alignment t)))
-
 (define-minor-mode c-ms-space-for-alignment-mode
   "Enable indent with tabs align with spaces."
   :global nil
