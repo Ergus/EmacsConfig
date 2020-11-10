@@ -425,9 +425,6 @@
 ;; 	multi-term-program-switches "--login"
 ;; 	multi-term-dedicated-select-after-open-p t))
 
-(use-package eterm-256color   ;; To improve color rendering in vterm
-  :defer t)
-
 (use-package vterm
   :defer t
   :preface
@@ -436,7 +433,6 @@
     (auto-fill-mode -1))
   :hook (vterm-mode . my/vterm-mode-hook)
   :custom
-  (vterm-term-environment-variable "eterm-color") ;; Improve color rendering
   (vterm-kill-buffer-on-exit t)
   (vterm-max-scrollback 10000)
   :config
