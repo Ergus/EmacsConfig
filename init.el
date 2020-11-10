@@ -847,6 +847,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 				       (class-close before))
 	       (c-offsets-alist (inline-open . 0)
 				(comment-intro . 0)
+				(arglist-close . 0)
 				;;(innamespace . [0])
 				;;(access-label '-)
 				)))
