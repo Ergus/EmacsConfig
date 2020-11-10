@@ -230,7 +230,9 @@
 ;; The Colors I am using my own theme
 
 (load-theme 'simple-16)
-(set-face-attribute 'default t :font "Hack")
+
+(if (display-graphic-p)
+    (set-face-attribute 'default nil :family "Hack" :height 110))
 
 (defmacro named-color (colorname)
   "Get color by name COLORNAME from `my/colors' alist."
@@ -436,32 +438,22 @@
   (vterm-kill-buffer-on-exit t)
   (vterm-max-scrollback 10000)
   :config
+  (require 'find-func)
   ;; Export the vterm PATH useful on the other side!
   (setq process-environment
 	(append `(,(concat "EMACS_VTERM_PATH="
-			   (file-name-directory (find-library-name "vterm")))
-		  process-environment)))
-
-  (defun vterm-counsel-yank-pop-action (orig-fun &rest args)
-    "Advise for make yank-pop work in vterm buffers"
-    (if (equal major-mode 'vterm-mode)
-	(let ((inhibit-read-only t)
-              (yank-undo-function (lambda (_start _end) (vterm-undo))))
-          (cl-letf (((symbol-function 'insert-for-yank)
-		     (lambda (str) (vterm-send-string str t))))
-            (apply orig-fun args)))
-      (apply orig-fun args)))
-
-  (advice-add 'counsel-yank-pop-action :around #'vterm-counsel-yank-pop-action)
+			   (file-name-directory (find-library-name "vterm"))))
+		  process-environment))
 
   ;; Add find-file-other-window to accepted commands
   (add-to-list 'vterm-eval-cmds '("find-file-other-window" find-file-other-window))
   )
 
 ;; (use-package multi-vterm
+;;   :custom
+;;   (multi-vterm-dedicated-window-height 15) ;; height in lines
 ;;   :bind (("C-c 5 v" . multi-vterm)
-;; 	 ("C-c t v" . multi-vterm-dedicated-toggle)
-;; 	 ("C-c t v p")))
+;; 	 ("C-c t t" . multi-vterm-dedicated-toggle)))
 
 (use-package vterm-toggle
   :bind (("C-c t t" . vterm-toggle-cd)
@@ -470,21 +462,21 @@
 	  ("C-M-n" . vterm-toggle-forward)
 	  ("C-M-p" . vterm-toggle-backward)))
   :custom
-  (vterm-toggle-scope 'projectile)
+  ;; (vterm-toggle-scope 'projectile) ;; this is broken now
   (vterm-toggle-projectile-root t)
   (vterm-toggle-reset-window-configration-after-exit 'kill-window-only)
+  (vterm-toggle-fullscreen-p nil)
   :config
-  (setq vterm-toggle-fullscreen-p nil)
-  ;; Show at bottom
+  ;;Show at bottom
   (add-to-list 'display-buffer-alist
                '((lambda(bufname _)
 		   (with-current-buffer bufname
 		     (equal major-mode 'vterm-mode)))
-                 (display-buffer-reuse-window display-buffer-at-bottom)
-                 ;;(display-buffer-reuse-window display-buffer-in-direction)
+                 ;; (display-buffer-reuse-window display-buffer-at-bottom)
+                 (display-buffer-reuse-window display-buffer-in-direction)
                  ;;display-buffer-in-direction/direction/dedicated is added in emacs27
-                 ;;(direction . bottom)
-                 ;;(dedicated . t) ;dedicated is supported in emacs27
+                 (direction . bottom)
+                 (dedicated . t) ;dedicated is supported in emacs27
                  (reusable-frames . visible)
                  (window-height . 0.3))))
 
