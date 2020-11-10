@@ -439,14 +439,14 @@
   (vterm-max-scrollback 10000)
   :config
   (require 'find-func)
-  ;; Export the vterm PATH useful on the other side!
-  (setq process-environment
-	(append `(,(concat "EMACS_VTERM_PATH="
-			   (file-name-directory (find-library-name "vterm"))))
-		  process-environment))
+  ;; Export the vterm PATH usefull on the other side in bashrc!
+  (add-to-list 'process-environment
+	       (concat "EMACS_VTERM_PATH="
+		       (file-name-directory (find-library-name "vterm"))))
 
   ;; Add find-file-other-window to accepted commands
-  (add-to-list 'vterm-eval-cmds '("find-file-other-window" find-file-other-window))
+  (add-to-list 'vterm-eval-cmds
+	       '("find-file-other-window" find-file-other-window))
   )
 
 ;; (use-package multi-vterm
@@ -495,7 +495,6 @@
 
 (use-package pkgbuild-mode
   :mode "/PKGBUILD$")
-
 
 ;;__________________________________________________________
 ;; Better shell (for ssh)
