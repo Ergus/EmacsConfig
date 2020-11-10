@@ -1889,8 +1889,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (which-key-add-key-based-replacements "C-'" "avy")
   :custom
-  (avy-style 'at-full)
-  (avy-all-windows nil)
+  ;; (avy-style 'at-full)  ;; this is already the default
+  (avy-all-windows nil)    ;; commands only in this window
+  (avy-all-windows-alt t)  ;; with prefix commands in all windows
   (avy-case-fold-search nil)
   (avy-highlight-first t)
   (avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
