@@ -542,14 +542,14 @@
   :config
   (xterm-mouse-mode t)			  ;; mover el cursor al click
   (defun track-mouse (e))
-  (setq-default mouse-sel-mode t ;; Mouse selection
-		mouse-scroll-delay 0
-		mouse-wheel-scroll-amount '(5 ((shift) . 1) ((control)))
-		mouse-wheel-progressive-speed nil
-		)
+  (setq-default mouse-sel-mode t          ;; Mouse selection
+		mouse-scroll-delay 0)
   (set-cursor-color "white")
   (set-mouse-color "white")		  ;; Flechita del mouse en blanco
-  (mouse-wheel-mode t)			  ;; scrolling con el mouse
+  (when (fboundp 'mouse-wheel-mode)
+    (setq-default mouse-wheel-scroll-amount '(5 ((shift) . 1) ((control)))
+		  mouse-wheel-progressive-speed nil)
+    (mouse-wheel-mode t))			  ;; scrolling con el mouse
   )
 
 (global-set-key [drag-mouse-2] 'mouse-yank-at-click)
