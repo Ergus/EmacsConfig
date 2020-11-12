@@ -467,7 +467,7 @@
   (vterm-toggle-reset-window-configration-after-exit 'kill-window-only)
   (vterm-toggle-fullscreen-p nil)
   :config
-  ;;Show at bottom
+  ;; Show at bottom
   (add-to-list 'display-buffer-alist
                '((lambda(bufname _)
 		   (with-current-buffer bufname
@@ -507,17 +507,18 @@
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
 
+(setq-default xclip-method
+	      (or (and (getenv "WAYLAND_DISPLAY")
+		       (executable-find "wl-copy")
+		       'wl-copy)
+		  (and (getenv "DISPLAY")
+		       (executable-find "xclip")
+		       'xclip)))
+
 (use-package xclip
   :unless (or (display-graphic-p)
-	      (string-equal (getenv "TERM") "linux"))
-  :init
-  (setq-default xclip-method
-		(or (and (getenv "WAYLAND_DISPLAY")
-			 (executable-find "wl-copy")
-			 'wl-copy)
-		    (and (getenv "DISPLAY")
-			 (executable-find "xclip")
-			 'xclip)))
+	      (string-equal (getenv "TERM") "linux")
+	      (not xclip-method))
   :config
   (xclip-mode 1))
 
