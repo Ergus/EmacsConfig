@@ -475,16 +475,16 @@
                  (reusable-frames . visible)
                  (window-height . 0.3))))
 
-(use-package eshell-toggle
-  :custom
-  (eshell-toggle-size-fraction 3)
-  (eshell-toggle-use-projectile-root t)
-  (eshell-toggle-run-command nil)
-  (eshell-toggle-init-function #'eshell-toggle-init-eshell)
-  ;;(eshell-toggle-init-function #'eshell-toggle-init-tmux)
-  ;;(eshell-toggle-init-function #'eshell-toggle-init-ansi-term)
-  :bind ("C-c t e" . eshell-toggle)
-  )
+;; (use-package eshell-toggle
+;;   :custom
+;;   (eshell-toggle-size-fraction 3)
+;;   (eshell-toggle-use-projectile-root t)
+;;   (eshell-toggle-run-command nil)
+;;   (eshell-toggle-init-function #'eshell-toggle-init-eshell)
+;;   ;;(eshell-toggle-init-function #'eshell-toggle-init-tmux)
+;;   ;;(eshell-toggle-init-function #'eshell-toggle-init-ansi-term)
+;;   :bind ("C-c t e" . eshell-toggle)
+;;   )
 
 (use-package emamux :defer t)
 
@@ -1454,29 +1454,32 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; projectile
 
-(use-package projectile
-  :diminish
-  :commands projectile-project-name
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :init
-  (which-key-add-key-based-replacements
-    "C-c p" "projectile"
-    "C-c p x" "projectile-run"
-    "C-c p s" "projectile-search")
-  :custom
-  (projectile-completion-system 'ivy)
-  (projectile-file-exists-remote-cache-expire (* 10 60))
-  (projectile-enable-caching nil)
-  (projectile-verbose nil)
-  (projectile-do-log nil)
-  :config
-  (projectile-mode t))
+;; (use-package projectile
+;;   :diminish
+;;   :commands projectile-project-name
+;;   :bind-keymap ("C-c p" . projectile-command-map)
+;;   :init
+;;   (which-key-add-key-based-replacements
+;;     "C-c p" "projectile"
+;;     "C-c p x" "projectile-run"
+;;     "C-c p s" "projectile-search")
+;;   :custom
+;;   (projectile-completion-system 'ivy)
+;;   (projectile-file-exists-remote-cache-expire (* 10 60))
+;;   (projectile-enable-caching nil)
+;;   (projectile-verbose nil)
+;;   (projectile-do-log nil)
+;;   :config
+;;   (projectile-mode t))
 
 ;; Uncomment the projectile section is comment this.
-(use-package counsel-projectile
-  :after (counsel projectile)
-  :config
-  (counsel-projectile-mode t))
+;; (use-package counsel-projectile
+;;   :after (counsel projectile)
+;;   :config
+;;   (counsel-projectile-mode t))
+
+;; __________________________________________________________
+;; Templates Projects
 
 ;;__________________________________________________________
 ;; ibuffer
@@ -1504,9 +1507,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :after tramp
   :commands ibuffer-tramp-set-filter-groups-by-tramp-connection)
 
-(use-package ibuffer-projectile
-  :after projectile
-  :hook (ibuffer . ibuffer-projectile-set-filter-groups))
+;; (use-package ibuffer-projectile
+;;   :after projectile
+;;   :hook (ibuffer . ibuffer-projectile-set-filter-groups))
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
 (defun my/sidebar-toggle () "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
