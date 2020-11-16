@@ -439,12 +439,6 @@
   (vterm-kill-buffer-on-exit t)
   (vterm-max-scrollback 10000)
   :config
-  (require 'find-func)
-  ;; Export the vterm PATH usefull on the other side in bashrc!
-  (add-to-list 'process-environment
-	       (concat "EMACS_VTERM_PATH="
-		       (file-name-directory (find-library-name "vterm"))))
-
   ;; Add find-file-other-window to accepted commands
   (add-to-list 'vterm-eval-cmds
 	       '("find-file-other-window" find-file-other-window))
@@ -463,8 +457,8 @@
 	  ("C-M-n" . vterm-toggle-forward)
 	  ("C-M-p" . vterm-toggle-backward)))
   :custom
-  ;; (vterm-toggle-scope 'projectile) ;; this is broken now
-  (vterm-toggle-projectile-root t)
+  (vterm-toggle-scope 'project)
+  (vterm-toggle-project-root t)
   (vterm-toggle-reset-window-configration-after-exit 'kill-window-only)
   (vterm-toggle-fullscreen-p nil)
   :config
