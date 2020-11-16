@@ -1481,6 +1481,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; __________________________________________________________
 ;; Templates Projects
 
+
+(use-package ptemplate
+  :defer t)
+
+(use-package ptemplate-templates
+  :defer t)
 ;;__________________________________________________________
 ;; ibuffer
 (use-package ibuffer :ensure nil
