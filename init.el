@@ -509,17 +509,17 @@
 ;; Clipboard copy and paste with: M-w & C-c v
 
 (setq-default xclip-method
-	      (or (and (getenv "WAYLAND_DISPLAY")
-		       (executable-find "wl-copy")
-		       'wl-copy)
-		  (and (getenv "DISPLAY")
-		       (executable-find "xclip")
-		       'xclip)))
+	      (and (not (or (display-graphic-p)
+			    (string-equal (getenv "TERM") "linux")))
+		   (or (and (getenv "WAYLAND_DISPLAY")
+			    (executable-find "wl-copy")
+			    'wl-copy)
+		       (and (getenv "DISPLAY")
+			    (executable-find "xclip")
+			    'xclip))))
 
 (use-package xclip
-  :unless (or (display-graphic-p)
-	      (string-equal (getenv "TERM") "linux")
-	      (not xclip-method))
+  :if xclip-method
   :config
   (xclip-mode 1))
 
