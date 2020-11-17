@@ -237,7 +237,7 @@
 
 (defmacro named-color (colorname)
   "Get color by name COLORNAME from `my/colors' alist."
-  (simple-16-theme-color colorname))
+  `(simple-16-theme-color ,colorname))
 
 ;;__________________________________________________________
 ;;Packages options
