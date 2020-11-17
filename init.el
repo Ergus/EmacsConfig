@@ -1195,29 +1195,31 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq langtool-language-tool-jar "~/gits/languagetool/languagetool-standalone/target/LanguageTool-4.6-SNAPSHOT/LanguageTool-4.6-SNAPSHOT/languagetool-commandline.jar"))
 
 ;;__________________________________________________________
-;; Music players
-(use-package emms
-  :defer t
-  :config
-  (require 'emms-setup)
-  (emms-all)
-  ;;(emms-minimalistic)
-  (setq emms-player-list '(emms-player-mpg321
-			   emms-player-ogg123
-			   emms-player-vlc
-			   emms-player-vlc-playlist)
-	emms-playlist-buffer-name "*Music*"
-	emms-playing-time 1
-	emms-source-file-default-directory "~/almacen/Musica/"
-	emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
-	emms-stream-info-backend 'vlc))
+;; Music players I never used them
 
-(use-package bongo
-  :defer t
-  :init
-  (setq bongo-default-directory "~/almacen/Musica/"
-	bongo-confirm-flush-playlist nil
-	bongo-insert-whole-directory-trees nil))
+
+;; (use-package emms
+;;   :defer t
+;;   :config
+;;   (require 'emms-setup)
+;;   (emms-all)
+;;   ;;(emms-minimalistic)
+;;   (setq emms-player-list '(emms-player-mpg321
+;; 			   emms-player-ogg123
+;; 			   emms-player-vlc
+;; 			   emms-player-vlc-playlist)
+;; 	emms-playlist-buffer-name "*Music*"
+;; 	emms-playing-time 1
+;; 	emms-source-file-default-directory "~/almacen/Musica/"
+;; 	emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find
+;; 	emms-stream-info-backend 'vlc))
+
+;; (use-package bongo
+;;   :defer t
+;;   :init
+;;   (setq bongo-default-directory "~/almacen/Musica/"
+;; 	bongo-confirm-flush-playlist nil
+;; 	bongo-insert-whole-directory-trees nil))
 
 ;;__________________________________________________________
 ;; Email mode for mutt
