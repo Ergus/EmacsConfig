@@ -111,6 +111,7 @@
 	      ;;uniquify-min-dir-content 0
 	      truncate-lines t
 	      save-interprogram-paste-before-kill t ;; Save clipboard before replace
+	      minibuffer-eldef-shorten-default t
 	      )
 
 
@@ -303,8 +304,6 @@
 
 ;;__________________________________________________________
 ;; minibuffers
-
-(setq minibuffer-eldef-shorten-default t)
 
 (defun my/minibuffer-setup-hook ()
   "Hook to call when open the minibuffer."
