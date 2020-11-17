@@ -2024,26 +2024,23 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package evil
   :defer t
-  :init
-  (setq-default evil-esc-delay 0.001
-		evil-want-keybinding nil)
+  :custom
+  (evil-esc-delay 0.001)
+  (evil-want-keybinding nil)
+  (show-paren-when-point-inside-paren t)
   :config
-  (setq-default show-paren-when-point-inside-paren t)
-  (evil-mode 1)
   ;; Modeline color
-  (setq original-background (face-attribute 'mode-line :background)
-	normal-state-background (named-color brightblack)
-	visual-state-background (named-color green))
+  (defconst original-background (face-attribute 'mode-line :background))
 
   (add-hook 'evil-normal-state-entry-hook
 	    (lambda ()
-	      (set-face-attribute 'mode-line nil :background normal-state-background)))
+	      (set-face-attribute 'mode-line nil :background (named-color brightblack))))
   (add-hook 'evil-insert-state-entry-hook
 	    (lambda ()
 	      (set-face-attribute 'mode-line nil :background original-background)))
   (add-hook 'evil-visual-state-entry-hook
 	    (lambda ()
-	      (set-face-attribute 'mode-line nil :background visual-state-background))))
+	      (set-face-attribute 'mode-line nil :background (named-color green)))))
 
 (use-package evil-collection
   :custom (evil-collection-setup-minibuffer t)
