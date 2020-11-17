@@ -2007,6 +2007,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (json-mode . flymake-json-load))
 
 ;;__________________________________________________________
+;; Modeline
+;; (use-package powerline
+;;   :config
+;;   (powerline-default-theme))
+
+;;__________________________________________________________
 ;; yaml mode
 (use-package yaml-mode
   :mode "\\.yaml\\'")
