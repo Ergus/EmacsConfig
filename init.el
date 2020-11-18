@@ -1022,15 +1022,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (switch-window-shortcut-appearance 'asciiart))
 
 ;; Undo redo split
-(use-package winner-mode :ensure nil
+(use-package winner :ensure nil
   :bind (("C-x w u" . winner-undo)
 	 ("C-x w r" . winner-redo))
-  :defer 3
+  :defer 1  ;; this always after the bind
+  :custom
+  (winner-dont-bind-my-keys t)
   :init
   (which-key-add-key-based-replacements "C-x w" "winner")
-  (winner-mode 1)
-  :custom
-  (winner-dont-bind-my-keys t))
+  :config
+  (winner-mode 1))
 
 ;; Change color selected buffers
 (use-package auto-dim-other-buffers
