@@ -42,6 +42,7 @@
 	      "\\(?:COMMIT_EDITMSG\\|hg-editor-[[:alnum:]]+\\.txt\\|svn-commit\\.tmp\\|bzr_log\\.[[:alnum:]]+\\|^/tmp/.+\\)$")
 (save-place-mode 1)                     ;; Remember point in files
 
+;; Break long lines.
 ;;(global-visual-line-mode t)
 
 ;; Modeline
@@ -110,6 +111,7 @@
 	      uniquify-buffer-name-style 'post-forward
 	      ;;uniquify-min-dir-content 0
 	      truncate-lines t
+	      auto-hscroll-mode 'current-line       ;; scroll horizontally 1 line not all
 	      save-interprogram-paste-before-kill t ;; Save clipboard before replace
 	      minibuffer-eldef-shorten-default t
 	      )
