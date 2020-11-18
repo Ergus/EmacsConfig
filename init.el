@@ -1529,23 +1529,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package flx :defer t)
 
-(defun ivy-highlight-thing-at-point ()
-  "Highlight thing at point or region."
-  (interactive)
-  (require 'hi-lock)
-  (let ((thing (ivy-thing-at-point))
-	(face (hi-lock-read-face-name)))
-    (or (facep face) (setq face 'hi-yellow))
-    (unless hi-lock-mode (hi-lock-mode 1))
-    (when (use-region-p)
-      (deactivate-mark))
-    (hi-lock-set-pattern (regexp-quote thing) face)))
-
 (use-package ivy
   :diminish
-  :defer t
   :bind (("C-c C-r" . ivy-resume)
-	 ([remap highlight-symbol-at-point] . ivy-highlight-thing-at-point)
 	 :map ivy-minibuffer-map
 	 ("TAB" . ivy-partial)
 	 ("RET" . ivy-alt-done))
@@ -1557,12 +1543,23 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-pulse-delay nil)
   (ivy-use-selectable-prompt t)
   (ivy-fixed-height-minibuffer t)
-  ;;(ivy-initial-inputs-alist nil)
   (ivy-read-action-function #'ivy-hydra-read-action)	;; Depends of ivy-hydra
   ;;(ivy-height 10)
   ;;(ivy-wrap t)					;; cycle in minibuffer
-
   :config
+  (defun ivy-highlight-thing-at-point ()
+    "Highlight thing at point or region."
+    (interactive)
+    (require 'hi-lock)
+    (let ((thing (ivy-thing-at-point))
+	  (face (hi-lock-read-face-name)))
+      (or (facep face) (setq face 'hi-yellow))
+      (unless hi-lock-mode (hi-lock-mode 1))
+      (when (use-region-p)
+	(deactivate-mark))
+      (hi-lock-set-pattern (regexp-quote thing) face)))
+  (global-set-key [remap highlight-symbol-at-point] #'ivy-highlight-thing-at-point)
+
   (copy-face 'highlight 'ivy-current-match)  ;; Linea seleccionada
 
   (set-face-attribute 'ivy-minibuffer-match-face-1 nil     ;; espacio entre matches
@@ -1573,12 +1570,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-4)
 
   ;; Highlight with arrows by default.
-  (ivy-mode 1)
   ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
-  )
+  (ivy-mode 1))
 
-(use-package ivy-avy
-  :after ivy)
+(use-package ivy-avy :after ivy)
 
 (use-package ivy-hydra :defer t) ;; Dependency from ivy to use ivy-hydra-read-action
 
@@ -1671,7 +1666,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (counsel-mode 1)
   ;; match by words
-  (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
+  ;; (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
   )
 
 (use-package amx ;; Complete history
