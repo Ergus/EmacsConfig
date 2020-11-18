@@ -137,6 +137,9 @@
 
  ;;Flycheck
  `(flycheck-error ((t (:inherit nil :background nil :foreground nil :underline t))))
+
+ ;;Flymake
+ `(flymake-error ((t (:inherit nil :background nil :foreground nil :underline t))))
  )
 
 (provide-theme 'simple-16)
