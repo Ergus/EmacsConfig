@@ -1906,15 +1906,21 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Arduino Mode
 
 (use-package arduino-mode
-  :mode "\\.ino\\'")
+  :mode ("\\.ino\\'" "\\.pde\\'"))
 
 (use-package company-arduino
   :after company
   :hook (arduino-mode . company-arduino-turn-on))
 
-(use-package flycheck-arduino :ensure arduino-mode
-  :after flycheck
-  :hook (arduino-mode . flycheck-arduino-setup))
+(use-package arduino-cli-mode
+  :hook (arduino-mode . arduino-cli-mode)
+  :custom
+  (arduino-cli-warnings 'all)
+  (arduino-cli-verify t)
+  (arduino-cli-mode-keymap-prefix "C-c C-a")
+  :config
+  (which-key-add-key-based-replacements "C-c C-a" "arduino-cli-mode")
+)
 
 ;;__________________________________________________________
 ;; Multiple Cursors
