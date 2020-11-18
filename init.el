@@ -1351,19 +1351,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;;bibtex mode set use biblatex
-(use-package bibtex-mode :ensure nil
-  :mode "\\.bib\\'"
-  :config
-  (bibtex-set-dialect 'biblatex)
-  )
+(use-package bibtex :ensure nil
+  :mode (("\\.bib\\'" . bibtex-mode))
+  :custom
+  (bibtex-dialect 'biblatex))
 
 (use-package company-bibtex
-  :after bibtex-mode
+  :after bibtex
   :config
   (add-to-list (make-local-variable 'company-backends) 'company-bibtex))
 
 (use-package ivy-bibtex
-  :bind ("C-c b b" . ivy-bibtex)
+  :defer t
   :custom
   (ivy-bibtex-default-action #'bibtex-completion-insert-citation))
 
