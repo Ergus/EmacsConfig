@@ -346,10 +346,16 @@
 (use-package smerge-mode :ensure nil
   :defer t
   :preface
-  (defun my/smerge-mode ()
-    (when smerge-mode
-      (hydra-smerge/body)))
-  :hook ((vc-find-file magit-diff-visit-file) . my/smerge-mode)
+  (defun my/enable-smerge-maybe ()
+    "Auto-enable `smerge-mode' when merge conflict is detected."
+    (when (not (bound-and-true-p smerge-mode))
+      (save-excursion
+	(goto-char (point-min))
+	(when (re-search-forward "^<<<<<<< " nil :noerror)
+          (smerge-mode 1)
+	  (hydra-smerge/body)))))
+
+  :hook ((find-file magit-diff-visit-file) . my/enable-smerge-maybe)
   :hydra (hydra-smerge
 	  (:color pink :hint nil ;;:pre (smerge-mode 1)
 		  :post (smerge-auto-leave))
@@ -360,7 +366,8 @@
 	  ("u" smerge-keep-upper "upper")
 	  ("l" smerge-keep-lower "lower")
 	  ("a" smerge-keep-all "all")
-	  ("q" nil "cancel" :color blue)))
+	  ("q" nil "cancel" :color blue))
+  )
 
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
