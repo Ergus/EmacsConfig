@@ -114,12 +114,10 @@
 	      minibuffer-eldef-shorten-default t
 	      )
 
-
 ;; Vertical window divider
 (set-display-table-slot standard-display-table
                         'vertical-border
                         (make-glyph-code ?\u2502))
-
 
 ;; These two must be enabled/disabled together
 ;; (setq enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
@@ -1059,10 +1057,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Auto completamiento
 (use-package company
   :diminish
-  :bind (([remap dabbrev-expand] . company-complete)
+  :bind (;;([remap dabbrev-expand] . company-complete)
+	 ("<C-return>" . company-complete)
 	 :map company-active-map
 	 ("<M-ret>" . company-other-backend)
-	 ([remap dabbrev-expand] . company-abort))
+	 ;;([remap dabbrev-expand] . company-abort)
+	 ("<C-return>" . company-abort)
+	 )
   :hook ((prog-mode message-mode conf-mode) . company-mode)
   :custom
   (company-idle-delay nil)	 ;; no delay for autocomplete
