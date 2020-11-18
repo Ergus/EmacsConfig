@@ -1889,6 +1889,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (which-key-add-key-based-replacements "C-'" "avy")
   :custom
+  (avy-timeout-seconds 0.75)
   ;; (avy-style 'at-full)  ;; this is already the default
   (avy-all-windows nil)    ;; commands only in this window
   (avy-all-windows-alt t)  ;; with prefix commands in all windows
