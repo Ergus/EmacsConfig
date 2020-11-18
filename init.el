@@ -668,7 +668,7 @@
   :init
   (which-key-add-key-based-replacements "C-c l" "lsp")
   :custom
-  (lsp-keymap-prefix "C-c l")
+  (lsp-keymap-prefix (kbd "C-c l"))
   (lsp-enable-snippet nil)
   (lsp-eldoc-hook nil)
   (lsp-enable-indentation nil)
