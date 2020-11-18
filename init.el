@@ -1116,9 +1116,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :if (< (buffer-size) 200000)
   ;;:defer t
   :hook (prog-mode . flycheck-mode)
-  :bind ("C-c a" . hydra-flycheck/body)
+  :bind (:map flycheck-command-map
+	      ("a" . hydra-flycheck/body))
   :init
-  (which-key-add-key-based-replacements "C-c a" "hydra/flycheck")
+  (which-key-add-key-based-replacements "C-c a" "flycheck")
   :hydra (hydra-flycheck (:color red :columns 4
 				 :pre (hl-line-mode t)
 				 :post (hl-line-mode -1))
@@ -1135,26 +1136,21 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		   ("ESC" nil "exit"))
   :custom
   (flycheck-display-errors-delay 1.0)
+  (flycheck-keymap-prefix (kbd "C-c a"))
   :config
-  (cond
-   ((eq major-mode 'c-mode)
-    (setq flycheck-gcc-language-standard "c17"
-	  flycheck-clang-language-standard "c17"))
-   ((eq major-mode 'c++-mode)
-    (setq flycheck-gcc-language-standard "c++17"
-	  flycheck-clang-language-standard "c++17")))
+  (pcase major-mode
+    ('c-mode
+     (setq flycheck-gcc-language-standard "c17"
+	   flycheck-clang-language-standard "c17"))
+    ('c++-mode
+     (setq flycheck-gcc-language-standard "c++17"
+	   flycheck-clang-language-standard "c++17"))))
 
-  (which-key-add-key-based-replacements "C-c !" "flycheck")
-
-  (set-face-attribute 'flycheck-error nil     ;; espacio entre matches
-		      :inherit nil :background nil
-		      :foreground nil
-		      :underline t ))
-
-(use-package flymake-mode :ensure nil
+(use-package flymake :ensure nil
+  :diminish
   :hook (prog-mode . flymake-mode)
-  ;;:custom
-  ;;(flymake-no-changes-timeout 1.0)
+  :custom
+  (flymake-no-changes-timeout 1.0) ;; default 0.5
   )
 
 ;;__________________________________________________________
