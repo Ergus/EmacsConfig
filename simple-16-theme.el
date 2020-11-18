@@ -94,7 +94,7 @@
                                               :underline nil))))
 
  `(Man-overstrike ((t (:inherit font-lock-type-face :bold t))))
- `(Man-overstrike ((t (:inherit font-lock-keyword-face :underline t))))
+ `(Man-underline ((t (:inherit font-lock-keyword-face :underline t))))
 
  `(which-func ((t (:background nil :foreground ,(simple-16-theme-color white)))))
 
@@ -134,6 +134,9 @@
  ;; Avy
  `(avy-lead-face ((t (:background ,(simple-16-theme-color blue)
                                   :foreground ,(simple-16-theme-color red)))))
+
+ ;;Flycheck
+ `(flycheck-error ((t (:inherit nil :background nil :foreground nil :underline t))))
  )
 
 (provide-theme 'simple-16)
