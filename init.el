@@ -339,12 +339,9 @@
 ;; more like vimdiff
 (use-package vdiff
   :defer t
-  :bind (:map vdiff-mode-map
-	      ("C-c d v" . vdiff-hydra/body))
+  :bind-keymap ("C-c v" . vdiff-mode-prefix-map)
   :custom
-  (vdiff-auto-refine t)
-  :config
-  (define-key vdiff-mode-map (kbd "C-c") vdiff-mode-prefix-map))
+  (vdiff-auto-refine t))
 
 (use-package man :ensure nil
   :defer t
