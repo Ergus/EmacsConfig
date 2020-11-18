@@ -1930,7 +1930,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (("C-c m i" . iedit-mode)
 	 :map iedit-lib-keymap
 	 (("C-c m '" .  iedit-toggle-unmatched-lines-visible)))
-  :config
+  :custom
   (iedit-auto-recenter nil))
 
 (global-unset-key (kbd "C-c <down-mouse-1>"))
