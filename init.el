@@ -2014,9 +2014,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Modeline
-;; (use-package powerline
-;;   :config
-;;   (powerline-default-theme))
+(use-package powerline
+  :config
+  (powerline-default-theme))
 
 ;;__________________________________________________________
 ;; yaml mode
