@@ -1053,7 +1053,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (;;([remap dabbrev-expand] . company-complete)
 	 ("<C-return>" . company-complete)
 	 :map company-active-map
-	 ("<M-ret>" . company-other-backend)
+	 ("<M-return>" . company-other-backend)
 	 ;;([remap dabbrev-expand] . company-abort)
 	 ("<C-return>" . company-abort)
 	 )
