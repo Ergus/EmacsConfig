@@ -356,6 +356,8 @@
 	  (hydra-smerge/body)))))
 
   :hook ((find-file magit-diff-visit-file) . my/enable-smerge-maybe)
+  :custom
+  (smerge-diff-buffer-name "*smerge-diff*")
   :hydra (hydra-smerge
 	  (:color pink :hint nil ;;:pre (smerge-mode 1)
 		  :post (smerge-auto-leave))
@@ -949,23 +951,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; systemd mode
 (use-package systemd
-  :mode ("\\.service\\'" "\\.timer\\'" "\\.target\\'"
-	 "\\.mount\\'" "\\.socket\\'" "\\.slice\\'"
-	 "\\.automount\\'"))
-
-;;__________________________________________________________
-;; DOS batch files
-(autoload 'dos-mode "dos" "Edit Dos scripts." t)
-(add-to-list 'auto-mode-alist '("\\.bat$" . dos-mode))
+  :defer t)
 
 ;;__________________________________________________________
 ;; Use for Qt's .pro and .pri files
 (use-package qt-pro-mode
-  :mode ("\\.pr[io]\\'")
-  :init
-  (add-to-list 'auto-mode-alist '("\\.moc\\'" . c++-mode)) ;; Treat .moc files (Qt) as C++
-  (add-to-list 'auto-mode-alist '("\\.ui\\'" . xml-mode))  ;; Treat .ui files (Qt) as XML
-  )
+  :mode (("\\.pr[io]\\'" . qt-pro-mode)
+	 ("\\.moc\\'" . c++-mode)
+	 ("\\.ui\\'" . xml-mode)))
 
 ;;__________________________________________________________
 ;; javascript-mode
@@ -976,17 +969,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; xml-mode
 (use-package xml-mode :ensure nil
   :mode ("\\.ipe\\'" "\\.qrc\\'" "\\.svn\\'"))
-
-;;__________________________________________________________
-;; Completion
-;; (add-to-list 'completion-styles 'flex)
-;; '(completion-ignored-extensions
-;;   (quote ("CVS/" ".o" "~" ".bin" ".lbin" ".fasl" ".ufsl" ".a" ".ln" ".blg" ".bbl"
-;; 	  ".elc" ".lof" ".glo" ".idx" ".lot" ".dvi" ".fmt" ".tfm" ".class" ".fas"
-;; 	  ".lib" ".x86f" ".sparcf" ".lo" ".la" ".toc" ".log" ".aux" ".cp" ".fn"
-;; 	  ".ky" ".pg" ".tp" ".vr" ".cps" ".fns" ".kys" ".pgs" ".tps" ".vrs" ".lbl"
-;; 	  ".out" ".brf" ".ncb" ".sln" ".suo" ".vcproj.AD.ghali.user" ".idb" ".pdb"
-;; 	  ".synctex.gz" ".svn")))
 
 ;;__________________________________________________________
 ;; splitting
@@ -1691,7 +1673,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (counsel-gtags-mode 1))
 
-(use-package global-tags
+(use-package global-tags ;; gtags with xref integration
   :after counsel-gtags
   :demand t
   :bind (:map counsel-gtags-mode-map
