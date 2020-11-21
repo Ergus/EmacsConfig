@@ -1307,29 +1307,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (python-check-command "pyflakes")
   (flycheck-python-flake8-executable "flake8"))
 
-;; (use-package company-jedi		 ;;; company-mode completion back-end for Python JEDI
-;;   :hook (python-mode . jedi:setup)
-;;   :custom
-;;   (jedi:server-args '("--sys-path" "/usr/lib/python3.7/site-packages"))
-;;   :config
-;;   (add-to-list (make-local-variable 'company-backends) 'company-jedi))
-
-;; (use-package flycheck-pycheckers
-;;   :after (flycheck company-jedi)
-;;   :hook (python-mode . flycheck-pycheckers-setup)
-;;   :init
-;;   (setq flycheck-pycheckers-checkers '(pylint flake8 mypy3)))
-
-;; (use-package elpy
-;;   :defer t
-;;   :init
-;;   (advice-add 'python-mode :before 'elpy-enable)
-;;   :config
-;;   (setq elpy-rpc-python-command "python3"
-;; 	python-check-command "pyflakes"
-;; 	flycheck-python-flake8-executable "flake8")
-;;   (add-to-list 'python-shell-completion-native-disabled-interpreters "jupyter"))
-
 (use-package ein :defer t)
 
 ;;__________________________________________________________
