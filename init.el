@@ -1568,44 +1568,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (add-to-list 'xref-backend-functions 'global-tags-xref-backend)
   (add-to-list 'project-find-functions 'global-tags-try-project-root))
 
-
-;; Other packages do better for me
-;; (use-package ggtags
-;;   :diminish
-;;   :bind (("C-c o g" . ggtags-find-tag-dwim)
-;; 	 ("C-c o d" . ggtags-find-definition)
-;; 	 ("C-c o r" . ggtags-find-reference)
-;; 	 ("C-c o R" . ggtags-find-tag-regexp)
-;; 	 ("C-c o l" . ggtags-view-tag-history)
-;; 	 ("C-c o G" . ggtags-grep)
-;; 	 ("C-c o p" . ggtags-prev-mark)
-;; 	 ("C-c o n" . ggtags-next-mark)
-;; 	 ("C-c o c" . ggtags-create-tags)
-;; 	 ("C-c o f" . ggtags-find-file)
-;; 	 ("C-c o u" . ggtags-update-tags))
-;;   :init
-;;   (which-key-add-key-based-replacements "C-c o" "ggtags"))
-
-
-;;Counsel etags (I never used it)
-;; (use-package counsel-etags
-;;   :preface
-;;   (defun my/counsel-etags-hook ()
-;;     (add-hook 'after-save-hook
-;; 	      'counsel-etags-virtual-update-tags 'append 'local))
-;;   :hook (prog-mode . my/counsel-etags-hook)
-;;   :bind (("C-c e ." . counsel-etags-find-tag-at-point)
-;; 	 ("C-c e l" . counsel-etags-list-tag-in-current-file)
-;; 	 ("C-c e p" . xref-pop-marker-stack)
-;; 	 ("C-c e g" . counsel-etags-grep-symbol-at-point)
-;; 	 ("C-c e f" . counsel-etags-find-tag))
-;;   :init
-;;   (which-key-add-key-based-replacements "C-c e" "counsel-etags")
-;;   :custom
-;;   (tags-revert-without-query t)        ;; Don't ask before rereading TAGS
-;;   (large-file-warning-threshold nil)   ;; Don't warn when TAGS files are large
-;;   )
-
 (use-package dumb-jump
   :bind ("C-c j" . hydra-dumb-jump/body)
   :init
