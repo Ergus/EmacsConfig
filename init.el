@@ -352,14 +352,14 @@
       (save-excursion
 	(goto-char (point-min))
 	(when (re-search-forward "^<<<<<<< " nil :noerror)
-          (smerge-mode 1)
+	  (smerge-mode 1)
 	  (hydra-smerge/body)))))
 
   :hook ((find-file magit-diff-visit-file) . my/enable-smerge-maybe)
   :custom
   (smerge-diff-buffer-name "*smerge-diff*")
   :hydra (hydra-smerge
-	  (:color pink :hint nil ;;:pre (smerge-mode 1)
+	  (:color pink :hint nil
 		  :post (smerge-auto-leave))
 	  "smerge"
 	  ("n" smerge-next "next")
