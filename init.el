@@ -400,31 +400,6 @@
 ;;__________________________________________________________
 ;; terms
 
-;; (use-package term-mode :ensure nil
-;;   :defer t
-;;   :preface
-;;   (defun my/term-mode-hook () "My term mode hook."
-;; 	 (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
-;; 	 (setq-local mouse-yank-at-point t)
-;; 	 (setq-local transient-mark-mode nil)
-;; 	 ;;(display-line-numbers-mode -1)
-;; 	 (display-fill-column-indicator-mode -1)
-;; 	 (auto-fill-mode -1))
-;;   :hook (term-mode . my/term-mode-hook)
-;;   :init
-;;   (which-key-add-key-based-replacements "C-c t" "term"))
-
-;; (use-package multi-term
-;;   :bind (("C-c 4 t" . multi-term-dedicated-open)
-;; 	 ("C-c 5 t" . multi-term)
-;; 	 ("C-c t t" . multi-term-dedicated-toggle)
-;; 	 ("C-c 0 t" . multi-term-dedicated-close))
-;;   :config
-;;   (setq ;;multi-term-dedicated-window-height 24
-;; 	;;multi-term-program "/bin/bash"
-;; 	multi-term-program-switches "--login"
-;; 	multi-term-dedicated-select-after-open-p t))
-
 (use-package vterm
   :defer t
   :preface
@@ -471,17 +446,6 @@
                  (dedicated . t) ;dedicated is supported in emacs27
                  (reusable-frames . visible)
                  (window-height . 0.3))))
-
-;; (use-package eshell-toggle
-;;   :custom
-;;   (eshell-toggle-size-fraction 3)
-;;   (eshell-toggle-use-projectile-root t)
-;;   (eshell-toggle-run-command nil)
-;;   (eshell-toggle-init-function #'eshell-toggle-init-eshell)
-;;   ;;(eshell-toggle-init-function #'eshell-toggle-init-tmux)
-;;   ;;(eshell-toggle-init-function #'eshell-toggle-init-ansi-term)
-;;   :bind ("C-c t e" . eshell-toggle)
-;;   )
 
 (use-package emamux :defer t)
 
