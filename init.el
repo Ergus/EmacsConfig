@@ -748,49 +748,49 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   "Function to handle addition of ; in 'c-mode'."
 ;;   (assq 'class-close c-syntactic-context))
 
-(c-add-style "mylinux"
-	     '("linux"
-	       (tab-width . 4)
-	       (c-basic-offset . 4)
-	       (indent-tabs-mode . t)
-	       (fill-column . 80)
-	       ;; (c-hanging-semi&comma-criteria my/c-semi&comma)
-	       (c-hanging-semi&comma-criteria nil)
-	       (c-cleanup-list empty-defun-braces ;; {}
-			       brace-else-brace   ;; } else {
-			       brace-elseif-brace ;; } else if {
-			       defun-close-semi   ;; }; after class
-			       )
-	       (c-hanging-braces-alist (defun-open before after)
-				       (brace-list-open)
-				       (brace-entry-open)
-				       (substatement-open after)
-				       (namespace-open after)
-				       (namespace-close before)
-				       (block-close . c-snug-do-while)
-				       (arglist-cont-nonempty)
-				       (class-open after)
-				       (class-close before))
-	       (c-offsets-alist (inline-open . 0)
-				(comment-intro . 0)
-				(arglist-close . 0)
-				;;(innamespace . [0])
-				;;(access-label '-)
-				)))
-
-(setq-default c-default-style
-	      '((java-mode . "java")
-		(awk-mode . "awk")
-		(other . "mylinux")))
-
-(defun my/c-mode-common-hook ()
-  "My hook for C and C++."
-  (c-toggle-auto-newline 1)
-  (c-toggle-cpp-indent-to-body 1)
-  (c-ms-space-for-alignment-mode 1)
-  (message "Loaded my/c-mode-common"))
-
-(add-hook 'c-mode-common-hook #'my/c-mode-common-hook)
+(use-package cc-mode :ensure nil
+  :preface
+  (defun my/c-mode-common-hook ()
+    "My hook for C and C++."
+    (c-toggle-auto-newline 1)
+    (c-toggle-cpp-indent-to-body 1)
+    (c-ms-space-for-alignment-mode 1)
+    (message "Loaded my/c-mode-common"))
+  :hook (c-mode-common . my/c-mode-common-hook)
+  :custom
+  (c-default-style '((java-mode . "java")
+		     (awk-mode . "awk")
+		     (other . "mylinux")))
+  :config
+  (c-add-style "mylinux"
+	       '("linux"
+		 (tab-width . 4)
+		 (c-basic-offset . 4)
+		 (indent-tabs-mode . t)
+		 (fill-column . 80)
+		 ;; (c-hanging-semi&comma-criteria my/c-semi&comma)
+		 (c-hanging-semi&comma-criteria nil)
+		 (c-cleanup-list empty-defun-braces ;; {}
+				 brace-else-brace   ;; } else {
+				 brace-elseif-brace ;; } else if {
+				 defun-close-semi   ;; }; after class
+				 )
+		 (c-hanging-braces-alist (defun-open before after)
+					 (brace-list-open)
+					 (brace-entry-open)
+					 (substatement-open after)
+					 (namespace-open after)
+					 (namespace-close before)
+					 (block-close . c-snug-do-while)
+					 (arglist-cont-nonempty)
+					 (class-open after)
+					 (class-close before))
+		 (c-offsets-alist (inline-open . 0)
+				  (comment-intro . 0)
+				  (arglist-close . 0)
+				  ;;(innamespace . [0])
+				  ;;(access-label '-)
+				  ))))
 
 (use-package preproc-font-lock ;; Preprocessor
   :hook (c-mode-common . preproc-font-lock-mode)
