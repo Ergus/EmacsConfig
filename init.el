@@ -890,14 +890,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Go languaje
 (use-package go-mode
-  :mode "\\.go\\'"
-  :config
-  (use-package company-go
-    :after company
-    :config
-    (add-to-list (make-local-variable 'company-backends) 'company-go))
-
-  (use-package go-snippets))
+  :mode "\\.go\\'")
 
 ;;__________________________________________________________
 ;; lua language
