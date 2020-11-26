@@ -99,9 +99,10 @@
 	      auto-save-list-file-name nil
 	      ;; minibuffer interaction
 	      minibuffer-message-timeout 1
-	      read-quoted-char-radix 16     ;; Read number of chars with C-q
-	      kill-buffer-query-functions nil
-	      kill-do-not-save-duplicates t ;; duplicate kill ring entries
+	      read-quoted-char-radix 16       ;; Read number of chars with C-q
+	      kill-buffer-query-functions nil ;; Functions to call before quering a buffer
+	                                      ;; Default asks if process running.
+	      kill-do-not-save-duplicates t   ;; duplicate kill ring entries
 
 	      eval-expression-print-length nil
 	      eval-expression-print-level nil
