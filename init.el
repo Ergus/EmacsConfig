@@ -388,6 +388,7 @@
   ;;(which-key-show-early-on-C-h t)
   (which-key-idle-secondary-delay 0.01)  ;; nil sets the same delay
   (which-key-dont-use-unicode t)
+  (which-key-popup-type 'minibuffer)
   ;;(which-key-separator ": ") ;which-key-idle-delay 2.0)
   :config
   (which-key-mode t)
