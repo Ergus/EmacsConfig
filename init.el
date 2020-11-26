@@ -499,16 +499,14 @@
 (global-set-key [drag-mouse-2] 'mouse-yank-at-click)
 
 (defun my/scroll-up-command (&optional arg)
-  (interactive "^P")
-  (if arg
-      (scroll-up-command arg)
-    (scroll-up-command 1)))
+  "Scroll up single line or ARG."
+  (interactive "^p")
+  (scroll-up-command 1))
 
 (defun my/scroll-down-command (&optional arg)
-  (interactive "^P")
-  (if arg
-      (scroll-down-command arg)
-    (scroll-down-command 1)))
+  "Scroll down single line or ARG."
+  (interactive "^p")
+  (scroll-down-command arg))
 
 (global-set-key [remap scroll-up-command] 'my/scroll-up-command)
 (global-set-key [remap scroll-down-command] 'my/scroll-down-command)
