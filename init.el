@@ -664,17 +664,17 @@
   :bind (:map lsp-command-map
 	      ;; peek commands
 	      (("u d" . lsp-ui-peek-find-definitions)
-	      ("u r" . lsp-ui-peek-find-references)
-	      ("u i" . lsp-ui-peek-find-implementation)
-	      ;;("s" . lsp-ui-peek-find-workspace-symbol)
-	      ("u c" . lsp-ui-peek-find-custom)
-	      ;; imenu
-	      ("u m" . lsp-ui-imenu)
-	      ;; flycheck
-	      ("u f" . lsp-ui-flycheck-list)
-	      ;; lsp-ui
-	      ("u n" . lsp-ui-find-next-reference)
-	      ("u p" . lsp-ui-find-prev-reference)))
+	       ("u r" . lsp-ui-peek-find-references)
+	       ("u i" . lsp-ui-peek-find-implementation)
+	       ;;("s" . lsp-ui-peek-find-workspace-symbol)
+	       ("u c" . lsp-ui-peek-find-custom)
+	       ;; imenu
+	       ("u m" . lsp-ui-imenu)
+	       ;; flycheck
+	       ("u f" . lsp-ui-flycheck-list)
+	       ;; lsp-ui
+	       ("u n" . lsp-ui-find-next-reference)
+	       ("u p" . lsp-ui-find-prev-reference)))
   :custom
   ;;(lsp-ui-sideline-delay 1.0)
   (lsp-ui-sideline-enable nil)
@@ -1067,17 +1067,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hydra (hydra-flycheck (:color red :columns 4
 				 :pre (hl-line-mode t)
 				 :post (hl-line-mode -1))
-		   "flycheck"
-		   ("b" flycheck-buffer "check-buffer")
-		   ("c" flycheck-compile "compile")
-		   ("d" flycheck-display-error-at-point "display-error")
-		   ("e" flycheck-explain-error-at-point "explain-error")
-		   ("l" flycheck-list-errors "list-errors")
-		   ("n" flycheck-next-error "next-error")
-		   ("p" flycheck-previous-error "previous-error")
-		   ("s" flycheck-select-checker "select-checker")
-		   ("v" flycheck-verify-setup "verify-setup")
-		   ("ESC" nil "exit"))
+			 "flycheck"
+			 ("b" flycheck-buffer "check-buffer")
+			 ("c" flycheck-compile "compile")
+			 ("d" flycheck-display-error-at-point "display-error")
+			 ("e" flycheck-explain-error-at-point "explain-error")
+			 ("l" flycheck-list-errors "list-errors")
+			 ("n" flycheck-next-error "next-error")
+			 ("p" flycheck-previous-error "previous-error")
+			 ("s" flycheck-select-checker "select-checker")
+			 ("v" flycheck-verify-setup "verify-setup")
+			 ("ESC" nil "exit"))
   :custom
   (flycheck-display-errors-delay 1.0)
   (flycheck-keymap-prefix (kbd "C-c a"))
