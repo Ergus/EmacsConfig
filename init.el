@@ -1573,9 +1573,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package magit
   :defer t
   :custom
-  (magit-completing-read-function #'ivy-completing-read)
-  ;;:config
+  (magit-completing-read-function #'ivy-completing-read) ;; this is autoset
+  :config
   ;; (add-hook 'after-save-hook 'magit-after-save-refresh-status t)
+
+  (defun my/magit-kill-buffers ()
+    "Restore window configuration and kill all Magit buffers."
+    (interactive)
+    (let ((buffers (magit-mode-get-buffers)))
+      (magit-restore-window-configuration)
+      (mapc #'kill-buffer buffers)))
+
+  (bind-key "q" #'my/magit-kill-buffers magit-status-mode-map)
   )
 
 (use-package gitattributes-mode
