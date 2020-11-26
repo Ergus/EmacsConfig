@@ -1347,10 +1347,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; ibuffer
 (use-package ibuffer :ensure nil
+  :preface
+  (defun my/ibuffer-mode-hook ()
+    (hl-line-mode 1)
+    (ibuffer-auto-mode 1))
   :bind ([remap list-buffers] . ibuffer)
-  :hook (ibuffer-mode . hl-line-mode)
+  :hook (ibuffer-mode . my/ibuffer-mode-hook)
   :custom
-  (ibuffer-default-sorting-mode 'alphabetic)) ;; can use recency
+  (ibuffer-default-sorting-mode 'alphabetic)  ;; can use recency
+  )
 
 (use-package ibuffer-sidebar
   :bind (("C-c s b" . ibuffer-sidebar-toggle-sidebar)))
