@@ -1005,7 +1005,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 )
   :hook ((prog-mode message-mode conf-mode) . company-mode)
   :custom
-  (company-idle-delay nil)	 ;; no delay for autocomplete
+  (company-idle-delay 1.0)	 ;; no delay for autocomplete
   (company-minimum-prefix-length 2)
   (company-selection-wrap-around nil)
   (company-show-numbers t)
