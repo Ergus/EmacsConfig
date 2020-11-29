@@ -133,9 +133,9 @@
 ;;__________________________________________________________
 ;; use-package
 
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/") ;; Using Melpa and Elpa
-			 ("melpa" . "https://melpa.org/packages/"))
-      package-quickstart t)
+(setq-default package-archives '(("gnu" . "https://elpa.gnu.org/packages/") ;; Using Melpa and Elpa
+				 ("melpa" . "https://melpa.org/packages/"))
+	      package-quickstart t)
 
 (unless (and (fboundp 'package-installed-p)
 	     (package-installed-p 'use-package))
@@ -249,7 +249,7 @@
 ;; Show paren mode
 (setq-default show-paren-delay 0
 	      blink-matching-paren nil)
-(show-paren-mode t)	  ;; Highlight couple parentesis
+(show-paren-mode t)	  ;; Highlight couple parenthesis
 
 
 (global-set-key [remap just-one-space] #'cycle-spacing)
@@ -520,24 +520,24 @@
   :hook (prog-mode . which-function-mode) ;; Shows the function in spaceline
   )
 
-(defun my/prog-mode-hook () "Some hooks only for prog mode."
-       ;;(electric-indent-mode t)	    		;; On by default
-       (electric-pair-local-mode t)			;; Autoannadir parentesis
+(defun my/prog-mode-hook ()
+  "Some hooks only for prog mode."
+  ;;(electric-indent-mode t)	    		;; On by default
+  (electric-pair-local-mode t)			;; Autoannadir parentesis
 
-       ;;(define-key global-map (kbd "RET") 'newline-and-indent)
-       ;;(electric-indent-local-mode t)         ;; Shouldn't be need
-       (setq-local show-trailing-whitespace t)
+  ;;(define-key global-map (kbd "RET") 'newline-and-indent)
+  ;;(electric-indent-local-mode t)         ;; Shouldn't be need
+  (setq-local show-trailing-whitespace t)
 
-       (defun smart-beginning-of-line ()
-	 "Move point to first non-whitespace character or beginning-of-line."
-	 (interactive)
-	 (let ((oldpos (point)))
-	   (back-to-indentation)
-	   (and (= oldpos (point))
-		(beginning-of-line))))
+  (defun smart-beginning-of-line ()
+    "Move point to first non-whitespace character or beginning-of-line."
+    (interactive)
+    (let ((oldpos (point)))
+      (back-to-indentation)
+      (and (= oldpos (point))
+	   (beginning-of-line))))
 
-       (global-set-key [remap move-beginning-of-line]
-		       #'smart-beginning-of-line))
+  (global-set-key [remap move-beginning-of-line] #'smart-beginning-of-line))
 
 (add-hook 'prog-mode-hook #'my/prog-mode-hook)
 
