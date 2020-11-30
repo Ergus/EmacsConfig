@@ -433,7 +433,6 @@
   :custom
   (vterm-toggle-scope 'project)
   (vterm-toggle-project-root t)
-  (vterm-toggle-reset-window-configration-after-exit 'kill-window-only)
   (vterm-toggle-fullscreen-p nil)
   :config
   ;; Show at bottom
@@ -881,7 +880,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Ocaml Mode
 (use-package caml-mode :ensure caml
-  :mode "\\.ml\\'")
+  :mode "\\.ml[iylp]?\\'")
 
 ;;__________________________________________________________
 ;; D languaje
