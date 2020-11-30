@@ -1420,15 +1420,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       (hi-lock-set-pattern (regexp-quote thing) face)))
   (global-set-key [remap highlight-symbol-at-point] #'ivy-highlight-thing-at-point)
 
-  (copy-face 'highlight 'ivy-current-match)  ;; Linea seleccionada
-
-  (set-face-attribute 'ivy-minibuffer-match-face-1 nil     ;; espacio entre matches
-		      :inherit nil :background nil
-		      :foreground nil :underline t)
-  (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-2)
-  (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-3)
-  (copy-face 'lazy-highlight 'ivy-minibuffer-match-face-4)
-
   ;; Highlight with arrows by default.
   ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
   (ivy-mode 1))
@@ -1461,21 +1452,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-o" . swiper-isearch-toggle)
 	 :map isearch-mode-map
 	 ("C-o" . swiper-isearch-toggle))
-  :config
-  (copy-face 'isearch 'swiper-isearch-current-match)
-  (copy-face 'highlight 'swiper-line-face)         ;; linea minibuffer
-
-  (set-face-attribute 'swiper-match-face-1 nil     ;; linea en minibuffer
-   		      :inherit nil :background nil :weight 'ultrabold)
-
-  (copy-face 'isearch 'swiper-match-face-2) ;; primer match
-  (copy-face 'isearch 'swiper-match-face-3) ;; segundo match
-  (copy-face 'isearch 'swiper-match-face-4) ;; tercer match
-
-  (copy-face 'lazy-highlight 'swiper-background-match-face-2)
-  (copy-face 'lazy-highlight 'swiper-background-match-face-3)
-  (copy-face 'lazy-highlight 'swiper-background-match-face-4)
-
+  ;; :config
   ;; (add-to-list 'ivy-re-builders-alist '(swiper . ivy--regex-plus))
   ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch . ivy--regex-plus))
   ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch-backward . ivy--regex-plus))
