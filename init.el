@@ -340,9 +340,11 @@
 ;; more like vimdiff
 (use-package vdiff
   :defer t
-  :bind-keymap ("C-c v" . vdiff-mode-prefix-map)
+  :bind-keymap ("C-c d" . vdiff-mode-prefix-map)
   :custom
-  (vdiff-auto-refine t))
+  (vdiff-auto-refine t)
+  :init
+  (which-key-add-key-based-replacements "C-c d" "vdiff"))
 
 (use-package smerge-mode :ensure nil
   :defer t
@@ -359,6 +361,11 @@
   :hook ((find-file magit-diff-visit-file) . my/enable-smerge-maybe)
   :custom
   (smerge-diff-buffer-name "*smerge-diff*")
+  :bind-keymap ("C-c s" . smerge-basic-map)
+  :bind (:map smerge-basic-map
+	      (("h" . hydra-smerge/body)))
+  :init
+  (which-key-add-key-based-replacements "C-c s" "smerge")
   :hydra (hydra-smerge
 	  (:color pink :hint nil
 		  :post (smerge-auto-leave))
@@ -394,7 +401,7 @@
   (which-key-mode t)
   (which-key-add-key-based-replacements
     "C-c h" "highlight"
-    "C-c s" "sidebars"
+    "C-c b" "bars"
     "C-x r" "rectangle||register"
     "C-x n" "narrow"
     "C-x t" "tabs"
@@ -412,6 +419,8 @@
   :custom
   (vterm-kill-buffer-on-exit t)
   (vterm-max-scrollback 10000)
+  :init
+  (which-key-add-key-based-replacements "C-c t" "term")
   :config
   ;; Add find-file-other-window to accepted commands
   (add-to-list 'vterm-eval-cmds
@@ -1060,6 +1069,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :diminish
   :if (< (buffer-size) 200000)
   :hook (prog-mode . flycheck-mode)
+  :bind-keymap ("C-c a" . flycheck-command-map)
   :init
   (which-key-add-key-based-replacements "C-c a" "flycheck")
   :custom
@@ -1309,7 +1319,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (dired))
 
 (use-package dired-sidebar
-  :bind ("C-c s d" . dired-sidebar-toggle-sidebar)
+  :bind ("C-c b d" . dired-sidebar-toggle-sidebar)
   :custom
   ;;(dired-sidebar-use-term-integration t)
   (dired-sidebar-theme 'nerd)
@@ -1343,7 +1353,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   )
 
 (use-package ibuffer-sidebar
-  :bind (("C-c s b" . ibuffer-sidebar-toggle-sidebar)))
+  :bind (("C-c b b" . ibuffer-sidebar-toggle-sidebar)))
 
 (use-package ibuffer-tramp
   :after tramp
@@ -1355,12 +1365,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
        (ibuffer-sidebar-toggle-sidebar)
        (dired-sidebar-toggle-sidebar))
 
-(global-set-key (kbd "C-c s s") 'my/sidebar-toggle)
+(global-set-key (kbd "C-c b s") 'my/sidebar-toggle)
 
 ;;__________________________________________________________
 ;; neotree
 (use-package neotree
-  :bind ("C-c s n" . neotree-toggle))
+  :bind ("C-c b n" . neotree-toggle))
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
@@ -1447,7 +1457,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (imenu-max-item-length 200))
 
 (use-package imenu-list
-  :bind ("C-c s i" . imenu-list-smart-toggle)
+  :bind ("C-c b i" . imenu-list-smart-toggle)
   :custom
   (imenu-list-position 'left))
 
@@ -1708,9 +1718,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :custom
   (arduino-cli-warnings 'all)
   (arduino-cli-verify t)
-  (arduino-cli-mode-keymap-prefix "C-c C-a")
+  (arduino-cli-mode-keymap-prefix (kbd "C-c C-t"))
   :config
-  (which-key-add-key-based-replacements "C-c C-a" "arduino-cli-mode")
+  (which-key-add-key-based-replacements "C-c C-t" "arduino-cli-mode")
 )
 
 ;;__________________________________________________________
