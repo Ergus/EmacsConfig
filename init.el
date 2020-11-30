@@ -1059,26 +1059,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package flycheck
   :diminish
   :if (< (buffer-size) 200000)
-  :defer t
   :hook (prog-mode . flycheck-mode)
-  :bind (:map flycheck-command-map
-	      ("a" . hydra-flycheck/body))
   :init
   (which-key-add-key-based-replacements "C-c a" "flycheck")
-  :hydra (hydra-flycheck (:color red :columns 4
-				 :pre (hl-line-mode t)
-				 :post (hl-line-mode -1))
-			 "flycheck"
-			 ("b" flycheck-buffer "check-buffer")
-			 ("c" flycheck-compile "compile")
-			 ("d" flycheck-display-error-at-point "display-error")
-			 ("e" flycheck-explain-error-at-point "explain-error")
-			 ("l" flycheck-list-errors "list-errors")
-			 ("n" flycheck-next-error "next-error")
-			 ("p" flycheck-previous-error "previous-error")
-			 ("s" flycheck-select-checker "select-checker")
-			 ("v" flycheck-verify-setup "verify-setup")
-			 ("ESC" nil "exit"))
   :custom
   (flycheck-display-errors-delay 1.0)
   (flycheck-keymap-prefix (kbd "C-c a"))
