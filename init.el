@@ -376,8 +376,7 @@
 	  ("u" smerge-keep-upper "upper")
 	  ("l" smerge-keep-lower "lower")
 	  ("a" smerge-keep-all "all")
-	  ("q" nil "cancel" :color blue))
-  )
+	  ("q" nil "cancel" :color blue)))
 
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
@@ -1522,8 +1521,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (which-key-add-key-based-replacements "C-c g x" "global-tags")
   :config
-  (add-to-list 'xref-backend-functions 'global-tags-xref-backend)
-  (add-to-list 'project-find-functions 'global-tags-try-project-root))
+  (add-to-list 'xref-backend-functions #'global-tags-xref-backend)
+  (add-to-list 'project-find-functions #'global-tags-try-project-root))
 
 (use-package dumb-jump
   :bind ("C-c j" . hydra-dumb-jump/body)
