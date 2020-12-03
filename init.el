@@ -177,7 +177,6 @@
   (uniquify-buffer-name-style 'post-forward))
 
 (use-package saveplace :ensure nil
-  :defer 2
   :custom
   ;; (save-place-forget-unreadable-files t)
   (save-place-ignore-files-regexp  ;; Modified to add /tmp/* files
@@ -385,26 +384,27 @@
 	(goto-char (point-min))
 	(when (re-search-forward "^<<<<<<< " nil :noerror)
 	  (smerge-mode 1)
-	  (hydra-smerge/body)))))
+	  ;; (hydra-smerge/body)
+	  ))))
 
   :hook ((find-file magit-diff-visit-file) . my/enable-smerge-maybe)
   :custom
   (smerge-diff-buffer-name "*smerge-diff*")
   :bind-keymap ("C-c s" . smerge-basic-map)
-  :init
-  (which-key-add-key-based-replacements "C-c s" "smerge")
   :config
-  (defhydra hydra-smerge (:color pink :hint nil
-				 :post (smerge-auto-leave))
-    "smerge"
-    ("n" smerge-next "next")
-    ("p" smerge-prev "prev")
-    ("b" smerge-keep-base "base")
-    ("u" smerge-keep-upper "upper")
-    ("l" smerge-keep-lower "lower")
-    ("a" smerge-keep-all "all")
-    ("q" nil "cancel" :color blue))
-  (define-key smerge-basic-map "h" #'hydra-smerge/body)
+  (which-key-add-key-based-replacements "C-c s" "smerge")
+  ;; :config
+  ;; (defhydra hydra-smerge (:color pink :hint nil
+  ;; 				 :post (smerge-auto-leave))
+  ;;   "smerge"
+  ;;   ("n" smerge-next "next")
+  ;;   ("p" smerge-prev "prev")
+  ;;   ("b" smerge-keep-base "base")
+  ;;   ("u" smerge-keep-upper "upper")
+  ;;   ("l" smerge-keep-lower "lower")
+  ;;   ("a" smerge-keep-all "all")
+  ;;   ("q" nil "cancel" :color blue))
+  ;; (define-key smerge-basic-map "h" #'hydra-smerge/body)
   )
 
 ;;__________________________________________________________
@@ -423,7 +423,7 @@
   ;;(which-key-show-early-on-C-h t)
   (which-key-idle-secondary-delay 0.01)  ;; nil sets the same delay
   (which-key-dont-use-unicode t)
-  (which-key-popup-type 'minibuffer)
+  ;;(which-key-popup-type 'minibuffer)
   ;;(which-key-separator ": ") ;which-key-idle-delay 2.0)
   :config
   (which-key-mode t)
@@ -694,8 +694,7 @@
     (add-hook 'c-mode-common-hook #'lsp-deferred))
 
   (when (eq major-mode 'python-mode)
-    (add-hook 'python-mode-hook #'lsp-deferred))
-  )
+    (add-hook 'python-mode-hook #'lsp-deferred)))
 
 (use-package lsp-ui
   :diminish
@@ -1036,9 +1035,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 :map company-active-map
 	 ("<M-return>" . company-other-backend)
 	 ;;([remap dabbrev-expand] . company-abort)
-	 ("<C-return>" . company-abort)
-	 )
-  :hook ((prog-mode message-mode conf-mode) . company-mode)
+	 ("<C-return>" . company-abort))
+  :preface
+  (defun my/company-mode-hook ()
+    (run-with-idle-timer 1 nil #'company-mode 1))
+  :hook ((prog-mode message-mode conf-mode) . my/company-mode-hook)
   :custom
   (company-idle-delay 1.0)	 ;; no delay for autocomplete
   (company-minimum-prefix-length 2)
@@ -1097,7 +1098,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :if (< (buffer-size) 200000)
   :preface
   (defun my/flycheck-mode-hook ()
-    (run-with-timer 1 nil #'flycheck-mode 1))
+    (run-with-idle-timer 1 nil #'flycheck-mode 1))
 
   :hook (prog-mode . my/flycheck-mode-hook)
   :defer t
@@ -1120,14 +1121,21 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :diminish
   :preface
   (defun my/flymake-mode-hook ()
-    (run-with-timer 1 nil #'flymake-mode 1))
+    (run-with-idle-timer 1 nil #'flymake-mode 1))
   :hook (prog-mode .  my/flymake-mode-hook)
   :defer t
-  :custom
-  (flymake-no-changes-timeout 1.0) ;; default 0.5
   :config
-  (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
-  )
+  (which-key-add-key-based-replacements "C-c k" "flymake")
+
+  (easy-mmode-defmap flymake-basic-map
+    `(("n" . flymake-goto-next-error)
+      ("p" . flymake-goto-prev-error)
+      ("d" . flymake-show-diagnostic)
+      ("b" . flymake-show-diagnostic-buffer)
+      ("l" . flymake-switch-to-log-buffer))
+    "The base keymap for `flymake-mode'.")
+
+  (define-key flymake-mode-map (kbd "C-c k") flymake-basic-map))
 
 ;;__________________________________________________________
 ;; Function arguments show
@@ -1413,7 +1421,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
 
-(use-package hydra :defer t)
+;; (use-package hydra :defer t)
 
 (use-package headlong :defer t)
 
@@ -1433,7 +1441,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-pulse-delay nil)
   (ivy-use-selectable-prompt t)
   (ivy-fixed-height-minibuffer t)
-  (ivy-read-action-function #'ivy-hydra-read-action)	;; Depends of ivy-hydra
+  ;; (ivy-read-action-function #'ivy-hydra-read-action)	;; Depends of ivy-hydra
   ;;(ivy-height 10)
   ;;(ivy-wrap t)					;; cycle in minibuffer
   :config
@@ -1455,7 +1463,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-mode 1))
 
 (use-package ivy-avy :after ivy)
-(use-package ivy-hydra :defer t) ;; Dependency from ivy to use ivy-hydra-read-action
+;; (use-package ivy-hydra :defer t) ;; Dependency from ivy to use ivy-hydra-read-action
 
 (use-package ivy-xref
   :init
@@ -1565,22 +1573,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package dumb-jump
   :bind-keymap ("C-c j" . dumb-jump-mode-map)
   :init
-  (which-key-add-key-based-replacements "C-c j" "hydra-dumb-jump")
+  (which-key-add-key-based-replacements "C-c j" "dumb-jump")
   :custom
   (dumb-jump-selector 'ivy)
   :config
-  (defhydra hydra-dumb-jump (:color blue :columns 3)
-    "Dumb Jump"
-    ("j" dumb-jump-go "Go")
-    ("o" dumb-jump-go-other-window "Other window")
-    ("e" dumb-jump-go-prefer-external "Go external")
-    ("x" dumb-jump-go-prefer-external-other-window
-     "Go external other window")
-    ("i" dumb-jump-go-prompt "Prompt")
-    ("l" dumb-jump-quick-look "Quick look")
-    ("b" dumb-jump-back "Back"))
-
-  (define-key dumb-jump-mode-map "j" #'hydra-dumb-jump/body)
+  (define-key dumb-jump-mode-map "j" #'dumb-jump-go)
+  (define-key dumb-jump-mode-map "o" #'dumb-jump-go-other-window)
+  (define-key dumb-jump-mode-map "e" #'dumb-jump-go-prefer-external)
+  (define-key dumb-jump-mode-map "4" #'dumb-jump-go-prefer-external-other-window)
+  (define-key dumb-jump-mode-map "i" #'dumb-jump-go-prompt)
+  (define-key dumb-jump-mode-map "q" #'dumb-jump-quick-look)
+  (define-key dumb-jump-mode-map "b" #'dumb-jump-back)
 
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
