@@ -1097,7 +1097,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package flycheck
   :diminish
   :if (< (buffer-size) 200000)
-  :hook (prog-mode . flycheck-mode)
+  :preface
+  (defun my/flycheck-mode-hook ()
+    (run-with-timer 1 nil #'flycheck-mode 1))
+
+  :hook (prog-mode . my/flycheck-mode-hook)
+  :defer t
   :bind-keymap ("C-c a" . flycheck-command-map)
   :init
   (which-key-add-key-based-replacements "C-c a" "flycheck")
@@ -1115,9 +1120,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package flymake :ensure nil
   :diminish
-  :hook (prog-mode . flymake-mode)
+  :preface
+  (defun my/flymake-mode-hook ()
+    (run-with-timer 1 nil #'flymake-mode 1))
+  :hook (prog-mode .  my/flymake-mode-hook)
+  :defer t
   :custom
   (flymake-no-changes-timeout 1.0) ;; default 0.5
+  :config
+  (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
   )
 
 ;;__________________________________________________________
