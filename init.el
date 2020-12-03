@@ -168,7 +168,7 @@
   :ensure t
   :defer t)
 
-(use-package use-package-hydra)
+;; (use-package use-package-hydra)
 
 ;;__________________________________________________________
 ;; Some internal packages
@@ -393,21 +393,21 @@
   :custom
   (smerge-diff-buffer-name "*smerge-diff*")
   :bind-keymap ("C-c s" . smerge-basic-map)
-  :bind (:map smerge-basic-map
-	      (("h" . hydra-smerge/body)))
   :init
   (which-key-add-key-based-replacements "C-c s" "smerge")
-  :hydra (hydra-smerge
-	  (:color pink :hint nil
-		  :post (smerge-auto-leave))
-	  "smerge"
-	  ("n" smerge-next "next")
-	  ("p" smerge-prev "prev")
-	  ("b" smerge-keep-base "base")
-	  ("u" smerge-keep-upper "upper")
-	  ("l" smerge-keep-lower "lower")
-	  ("a" smerge-keep-all "all")
-	  ("q" nil "cancel" :color blue)))
+  :config
+  (defhydra hydra-smerge (:color pink :hint nil
+				 :post (smerge-auto-leave))
+    "smerge"
+    ("n" smerge-next "next")
+    ("p" smerge-prev "prev")
+    ("b" smerge-keep-base "base")
+    ("u" smerge-keep-upper "upper")
+    ("l" smerge-keep-lower "lower")
+    ("a" smerge-keep-all "all")
+    ("q" nil "cancel" :color blue))
+  (define-key smerge-basic-map "h" #'hydra-smerge/body)
+  )
 
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
@@ -1555,22 +1555,25 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   (add-to-list 'project-find-functions #'global-tags-try-project-root))
 
 (use-package dumb-jump
-  :bind ("C-c j" . hydra-dumb-jump/body)
+  :bind-keymap ("C-c j" . dumb-jump-mode-map)
   :init
-  (which-key-add-key-based-replacements "C-c j" "hydra/dumb-jump")
-  :hydra (hydra-dumb-jump (:color blue :columns 3)
-			  "Dumb Jump"
-			  ("j" dumb-jump-go "Go")
-			  ("o" dumb-jump-go-other-window "Other window")
-			  ("e" dumb-jump-go-prefer-external "Go external")
-			  ("x" dumb-jump-go-prefer-external-other-window
-			   "Go external other window")
-			  ("i" dumb-jump-go-prompt "Prompt")
-			  ("l" dumb-jump-quick-look "Quick look")
-			  ("b" dumb-jump-back "Back"))
+  (which-key-add-key-based-replacements "C-c j" "hydra-dumb-jump")
   :custom
   (dumb-jump-selector 'ivy)
   :config
+  (defhydra hydra-dumb-jump (:color blue :columns 3)
+    "Dumb Jump"
+    ("j" dumb-jump-go "Go")
+    ("o" dumb-jump-go-other-window "Other window")
+    ("e" dumb-jump-go-prefer-external "Go external")
+    ("x" dumb-jump-go-prefer-external-other-window
+     "Go external other window")
+    ("i" dumb-jump-go-prompt "Prompt")
+    ("l" dumb-jump-quick-look "Quick look")
+    ("b" dumb-jump-back "Back"))
+
+  (define-key dumb-jump-mode-map "j" #'hydra-dumb-jump/body)
+
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 ;;__________________________________________________________
