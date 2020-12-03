@@ -12,9 +12,6 @@
 ;;__________________________________________________________
 ;; Internal options
 
-(setq-default auto-revert-verbose nil)	;; not show message when file changes
-(global-auto-revert-mode t)		;; Autoload files changed in disk
-
 ;; (setq-default font-lock-maximum-decoration t)
 ;; (global-font-lock-mode t)		;; Use font-lock everywhere.
 
@@ -36,11 +33,6 @@
 
 (column-number-mode t)			;; Numero de la columna
 (line-number-mode t)			;; Numero de linea modeline
-
-(setq-default ;;save-place-forget-unreadable-files t
-	      save-place-ignore-files-regexp  ;; Modified to add /tmp/* files
-	      "\\(?:COMMIT_EDITMSG\\|hg-editor-[[:alnum:]]+\\.txt\\|svn-commit\\.tmp\\|bzr_log\\.[[:alnum:]]+\\|^/tmp/.+\\)$")
-(save-place-mode 1)                     ;; Remember point in files
 
 ;; Break long lines.
 ;;(global-visual-line-mode t)
@@ -109,7 +101,7 @@
 	      enable-remote-dir-locals t    ;; Open remote dir locals.
 
 	      ;; suggest-key-bindings t     ;; Ivy ya hace lo que esta opcion
-	      uniquify-buffer-name-style 'post-forward
+	      
 	      ;;uniquify-min-dir-content 0
 	      truncate-lines t
 	      auto-hscroll-mode 'current-line       ;; scroll horizontally 1 line not all
@@ -125,6 +117,13 @@
 ;; These two must be enabled/disabled together
 ;; (setq enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
 ;; (minibuffer-depth-indicate-mode 1)    ;; Mostrar nivel de nesting en minibuffer
+
+;; (defun filter-buffers ()
+;;   (interactive)
+;;   (setq switch-to-prev-buffer-skip
+;; 	(if switch-to-prev-buffer-skip nil
+;; 	  (lambda (win nextbuf bury-or-kill)
+;; 	    (string-match "^*.+*$" (buffer-name nextbuf))))))
 
 ;;__________________________________________________________
 ;; I don't want confirm exit, not write yes-not either
@@ -163,9 +162,45 @@
 (use-package benchmark-init
   :if init-file-debug
   :config
-  (add-hook 'window-setup-hook 'benchmark-init/deactivate t))
+  (add-hook 'window-setup-hook #'benchmark-init/deactivate t))
+
+(use-package esup
+  :ensure t
+  :defer t)
 
 (use-package use-package-hydra)
+
+;;__________________________________________________________
+;; Some internal packages
+
+(use-package uniquify :ensure nil
+  :defer 2
+  :custom
+  (uniquify-buffer-name-style 'post-forward))
+
+(use-package saveplace :ensure nil
+  :defer 2
+  :custom
+  ;; (save-place-forget-unreadable-files t)
+  (save-place-ignore-files-regexp  ;; Modified to add /tmp/* files
+   "\\(?:COMMIT_EDITMSG\\|hg-editor-[[:alnum:]]+\\.txt\\|svn-commit\\.tmp\\|bzr_log\\.[[:alnum:]]+\\|^/tmp/.+\\)$")
+  :config
+  (save-place-mode 1))              ;; Remember point in files
+
+(use-package autorevert :ensure nil
+  :defer 2
+  :custom
+  (auto-revert-verbose nil)	;; not show message when file changes
+  :config
+  (global-auto-revert-mode t))		;; Autoload files changed in disk
+
+(use-package paren :ensure nil
+  :defer 2
+  :custom
+  (show-paren-delay 0)
+  (blink-matching-paren nil)	;; not show message when file changes
+  :config
+  (show-paren-mode t))
 
 ;;__________________________________________________________
 ;; Config file not here to not track it
@@ -247,10 +282,6 @@
 
 ;;__________________________________________________________
 ;; Show paren mode
-(setq-default show-paren-delay 0
-	      blink-matching-paren nil)
-(show-paren-mode t)	  ;; Highlight couple parenthesis
-
 
 (global-set-key [remap just-one-space] #'cycle-spacing)
 
@@ -826,10 +857,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; sh mode
 
 (defvaralias 'sh-basic-offset 'tab-width)
-(defun my/sh-mode-hook () "My term mode hook."
-       (setq-local indent-tabs-mode t))
 
-(add-hook 'sh-mode-hook 'my/sh-mode-hook)
+(add-hook 'sh-mode-hook (lambda ()
+			  (setq-local indent-tabs-mode t)))
 
 ;;__________________________________________________________
 ;; Cuda
@@ -1058,9 +1088,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (defun my/elisp-mode-hook ()
   "My elisp mode hook."
   (with-eval-after-load "company"
-    (add-to-list 'company-backends 'company-elisp)))
+    (add-to-list 'company-backends #'company-elisp)))
 
-(add-hook 'emacs-lisp-mode-hook 'my/elisp-mode-hook)
+(add-hook 'emacs-lisp-mode-hook #'my/elisp-mode-hook)
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
@@ -1498,7 +1528,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   )
 
 (use-package amx ;; Complete history
-  :after counsel)
+  :defer t)
 
 (use-package counsel-gtags
   :diminish
@@ -1512,17 +1542,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (counsel-gtags-mode 1))
 
-(use-package global-tags ;; gtags with xref integration
-  :after counsel-gtags
-  :demand t
-  :bind (:map counsel-gtags-mode-map
-	      ("C-c g x c" . global-tags-create-database)
-	      ("C-c g x u" . global-tags-update-database))
-  :init
-  (which-key-add-key-based-replacements "C-c g x" "global-tags")
-  :config
-  (add-to-list 'xref-backend-functions #'global-tags-xref-backend)
-  (add-to-list 'project-find-functions #'global-tags-try-project-root))
+;; (use-package global-tags ;; gtags with xref integration
+;;   :after counsel-gtags
+;;   :demand t
+;;   :bind (:map counsel-gtags-mode-map
+;; 	      ("C-c g x c" . global-tags-create-database)
+;; 	      ("C-c g x u" . global-tags-update-database))
+;;   :init
+;;   (which-key-add-key-based-replacements "C-c g x" "global-tags")
+;;   :config
+;;   (add-to-list 'xref-backend-functions #'global-tags-xref-backend)
+;;   (add-to-list 'project-find-functions #'global-tags-try-project-root))
 
 (use-package dumb-jump
   :bind ("C-c j" . hydra-dumb-jump/body)
