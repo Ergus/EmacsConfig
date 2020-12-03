@@ -17,7 +17,6 @@
 
 ;; (setq-default display-line-numbers-widen t)	;; keep line numbers inside a narrow
 (global-display-line-numbers-mode t)	;; line numbers on the left
-
 (global-display-fill-column-indicator-mode t)
 
 (savehist-mode t)			;; Historial
@@ -101,7 +100,6 @@
 	      enable-remote-dir-locals t    ;; Open remote dir locals.
 
 	      ;; suggest-key-bindings t     ;; Ivy ya hace lo que esta opcion
-	      
 	      ;;uniquify-min-dir-content 0
 	      truncate-lines t
 	      auto-hscroll-mode 'current-line       ;; scroll horizontally 1 line not all
@@ -162,7 +160,7 @@
 (use-package benchmark-init
   :if init-file-debug
   :config
-  (add-hook 'window-setup-hook #'benchmark-init/deactivate t))
+  (add-hook 'window-setup-hook #'benchmark-init/deactivate 0))
 
 (use-package esup
   :ensure t
@@ -171,7 +169,7 @@
 ;; (use-package use-package-hydra)
 
 ;;__________________________________________________________
-;; Some internal packages
+;; Some internal packages to defer them
 
 (use-package uniquify :ensure nil
   :defer 2
@@ -1457,7 +1455,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-mode 1))
 
 (use-package ivy-avy :after ivy)
-
 (use-package ivy-hydra :defer t) ;; Dependency from ivy to use ivy-hydra-read-action
 
 (use-package ivy-xref
