@@ -70,7 +70,7 @@
 	      ;; kill-whole-line t
 	      load-prefer-newer t
 	      ;; mark-even-if-inactive nil	    ;; no mark no region
-	      next-screen-context-lines 5           ;; Lines of continuity when scrolling
+	      next-screen-context-lines 5   ;; Lines of continuity when scrolling
 	      fast-but-imprecise-scrolling t
 	      scroll-error-top-bottom t	    ;; Move cursor before error scroll
 	      scroll-preserve-screen-position t	  ;; Cursor keeps screen pos
@@ -356,8 +356,8 @@
 ;; which-key
 
 (use-package which-key
-  :defer t
   :diminish
+  :defer t
   :custom
   (which-key-idle-delay 0.5)
   ;;(which-key-idle-delay 10000) ;; To not show
@@ -982,20 +982,21 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;; Undo redo split
 (use-package winner :ensure nil
-  :bind (("C-x w u" . winner-undo)
-	 ("C-x w r" . winner-redo))
+  :bind-keymap ("C-c w" . winner-mode-map)
+  :bind (:map winner-mode-map
+	      ("u" . winner-undo)
+	      ("r" . winner-redo))
   :defer 1  ;; this always after the bind
   :custom
   (winner-dont-bind-my-keys t)
   :init
-  (which-key-add-key-based-replacements "C-x w" "winner")
+  (which-key-add-key-based-replacements "C-c w" "winner")
   :config
   (winner-mode 1))
 
 ;; Change color selected buffers
 (use-package auto-dim-other-buffers
-  :ensure
-  :commands auto-dim-other-buffers-mode
+  :defer t
   :custom
   (auto-dim-other-buffers-dim-on-switch-to-minibuffer nil)
   (auto-dim-other-buffers-dim-on-focus-out t))
