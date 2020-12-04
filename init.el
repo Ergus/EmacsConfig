@@ -530,8 +530,11 @@
 ;; My program's mode hooks
 
 (use-package which-func :ensure nil
+  :preface
+  (defun my/which-function-mode-hook ()
+    (run-with-idle-timer 1 nil #'which-function-mode 1))
   :diminish
-  :hook (prog-mode . which-function-mode) ;; Shows the function in spaceline
+  :hook (prog-mode . my/which-function-mode-hook) ;; Shows the function in spaceline
   )
 
 (defun my/prog-mode-hook ()
