@@ -130,6 +130,16 @@
 ;;__________________________________________________________
 ;; use-package
 
+;; Function to see the dependencies list.
+;; (defvar my/require-tree nil)
+;; (defun require--advice (orig-fun feature &rest args)
+;;   (setq my/require-tree
+;;     (append my/require-tree
+;;         (list (let ((my/require-tree (list feature)))
+;;             (apply orig-fun feature args)
+;;             my/require-tree)))))
+;; (advice-add 'require :around 'require--advice)
+
 (setq-default package-archives '(("gnu" . "https://elpa.gnu.org/packages/") ;; Using Melpa and Elpa
 				 ("melpa" . "https://melpa.org/packages/"))
 	      package-quickstart t)
@@ -982,10 +992,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;; Undo redo split
 (use-package winner :ensure nil
-  :bind-keymap ("C-c w" . winner-mode-map)
   :bind (:map winner-mode-map
-	      ("u" . winner-undo)
-	      ("r" . winner-redo))
+	      ("C-c w u" . winner-undo)
+	      ("C-c w r" . winner-redo))
   :defer 1  ;; this always after the bind
   :custom
   (winner-dont-bind-my-keys t)
