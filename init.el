@@ -1706,30 +1706,36 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; evil mode
 
 (use-package avy
-  :bind (("C-' C-r" . avy-resume)
-	 ("C-' C-'" . avy-goto-char-timer)
-	 ("C-' 1" . avy-goto-char)
-	 ("C-' 2" . avy-goto-char-2)
-	 ("C-' c" . avy-goto-char-in-line)
-	 ("C-' w" . avy-goto-word-or-subword-1)
-	 ("C-' W" . avy-goto-word-0)
-	 ("C-' M-b" . avy-goto-word-0-above)
-	 ("C-' M-f" . avy-goto-word-0-below)
-	 ("C-' p" . avy-prev)
-	 ("C-' n" . avy-next)
-	 ("C-' s" . avy-goto-symbol-1)
-	 ("C-' C-a" . avy-goto-line)
-	 ("C-' C-e" . avy-goto-end-of-line)
-	 ("C-' C-n" . avy-goto-line-below)
-	 ("C-' C-p" . avy-goto-line-above)
-	 ("C-' C-w" . avy-move-region)
-	 ("C-' C-k" . avy-kill-region)
-	 ("C-' M-w" . avy-kill-ring-save-region)
-	 ("C-' C-SPC" . avy-pop-mark)
-	 ("C-' i" . avy-copy-region)
-	 :map isearch-mode-map
-	 ("C-'" . avy-isearch))
+  :preface
+  (easy-mmode-defmap avy-basic-map
+    `(("r" . avy-resume)
+      (,(kbd "C-'") . avy-goto-char-timer)
+      ("c" . avy-goto-char)
+      ("2" . avy-goto-char-2)
+      ("\C-f" . avy-goto-char-in-line)
+      ("w" . avy-goto-word-or-subword-1) ;; Alternative avy-goto-word
+      ("W" . avy-goto-word-0)            ;; All words, no initial char
+      ("\C-s" . avy-goto-word-1-below)
+      ("\C-r" . avy-goto-word-1-above)
+      ("\M-b" . avy-goto-word-0-above)
+      ("\M-f" . avy-goto-word-0-below)
+      ("p" . avy-prev)
+      ("n" . avy-next)
+      ("s" . avy-goto-symbol-1)
+      ("\C-a" . avy-goto-line)
+      ("\C-e" . avy-goto-end-of-line)
+      ("\C-n" . avy-goto-line-below)
+      ("\C-p" . avy-goto-line-above)
+      ("\C-w" . avy-move-region)
+      ("\C-k" . avy-kill-region)
+      ("\M-w" . avy-kill-ring-save-region)
+      ("\C-b" . avy-pop-mark)
+      ("i" . avy-copy-region))
+    "The base keymap for `flymake-mode'.")
+  :bind (:map isearch-mode-map
+	      ("C-'" . avy-isearch))
   :init
+  (global-set-key (kbd "C-'") avy-basic-map)
   (which-key-add-key-based-replacements "C-'" "avy")
   :custom
   (avy-timeout-seconds 0.75)
