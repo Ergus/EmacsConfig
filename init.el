@@ -1142,7 +1142,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package eldoc :ensure nil
   :diminish
-  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . eldoc-mode)
+  :preface
+  (defun my/eldoc-mode-hook ()
+    (run-with-idle-timer 1 nil #'eldoc-mode 1))
+  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . my/eldoc-mode-hook)
   :config
   (eldoc-mode t))
 
