@@ -166,8 +166,6 @@
   :ensure t
   :defer t)
 
-;; (use-package use-package-hydra)
-
 ;;__________________________________________________________
 ;; Some internal packages to defer them
 
@@ -383,29 +381,14 @@
       (save-excursion
 	(goto-char (point-min))
 	(when (re-search-forward "^<<<<<<< " nil :noerror)
-	  (smerge-mode 1)
-	  ;; (hydra-smerge/body)
-	  ))))
+	  (smerge-mode 1)))))
 
   :hook ((find-file magit-diff-visit-file) . my/enable-smerge-maybe)
   :custom
   (smerge-diff-buffer-name "*smerge-diff*")
   :bind-keymap ("C-c s" . smerge-basic-map)
   :config
-  (which-key-add-key-based-replacements "C-c s" "smerge")
-  ;; :config
-  ;; (defhydra hydra-smerge (:color pink :hint nil
-  ;; 				 :post (smerge-auto-leave))
-  ;;   "smerge"
-  ;;   ("n" smerge-next "next")
-  ;;   ("p" smerge-prev "prev")
-  ;;   ("b" smerge-keep-base "base")
-  ;;   ("u" smerge-keep-upper "upper")
-  ;;   ("l" smerge-keep-lower "lower")
-  ;;   ("a" smerge-keep-all "all")
-  ;;   ("q" nil "cancel" :color blue))
-  ;; (define-key smerge-basic-map "h" #'hydra-smerge/body)
-  )
+  (which-key-add-key-based-replacements "C-c s" "smerge"))
 
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
@@ -418,8 +401,8 @@
   :defer t
   :diminish
   :custom
-  ;;(which-key-idle-delay 0.4)
-  ;;(which-key-idle-delay 10000)
+  (which-key-idle-delay 0.5)
+  ;;(which-key-idle-delay 10000) ;; To not show
   ;;(which-key-show-early-on-C-h t)
   (which-key-idle-secondary-delay 0.01)  ;; nil sets the same delay
   (which-key-dont-use-unicode t)
@@ -452,14 +435,7 @@
   :config
   ;; Add find-file-other-window to accepted commands
   (add-to-list 'vterm-eval-cmds
-	       '("find-file-other-window" find-file-other-window))
-  )
-
-;; (use-package multi-vterm
-;;   :custom
-;;   (multi-vterm-dedicated-window-height 15) ;; height in lines
-;;   :bind (("C-c 5 v" . multi-vterm)
-;; 	 ("C-c t t" . multi-vterm-dedicated-toggle)))
+	       '("find-file-other-window" find-file-other-window)))
 
 (use-package vterm-toggle
   :bind (("C-c t t" . vterm-toggle-cd)
@@ -561,8 +537,6 @@
   ;;(electric-indent-mode t)	    		;; On by default
   (electric-pair-local-mode t)			;; Autoannadir parentesis
 
-  ;;(define-key global-map (kbd "RET") 'newline-and-indent)
-  ;;(electric-indent-local-mode t)         ;; Shouldn't be need
   (setq-local show-trailing-whitespace t)
 
   (defun smart-beginning-of-line ()
@@ -1050,8 +1024,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		     company-capf		 ;; completion at point
 		     company-files	 ;; company files
 		     (company-dabbrev-code company-gtags company-keywords)
-		     company-dabbrev))
-  )
+		     company-dabbrev)))
 
 (use-package yasnippet        ;; Snippets
   :diminish
@@ -1424,15 +1397,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
 
-;; (use-package hydra :defer t)
-
 (use-package headlong :defer t)
 
 (use-package flx :defer t)
 
 (use-package ivy
   :diminish
-  :bind (("C-c C-r" . ivy-resume)
+  :bind (("C-c r" . ivy-resume)
 	 :map ivy-minibuffer-map
 	 ("TAB" . ivy-partial)
 	 ("RET" . ivy-alt-done))
@@ -1444,7 +1415,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-pulse-delay nil)
   (ivy-use-selectable-prompt t)
   (ivy-fixed-height-minibuffer t)
-  ;; (ivy-read-action-function #'ivy-hydra-read-action)	;; Depends of ivy-hydra
   ;;(ivy-height 10)
   ;;(ivy-wrap t)					;; cycle in minibuffer
   :config
@@ -1466,7 +1436,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-mode 1))
 
 (use-package ivy-avy :after ivy)
-;; (use-package ivy-hydra :defer t) ;; Dependency from ivy to use ivy-hydra-read-action
 
 (use-package ivy-xref
   :init
