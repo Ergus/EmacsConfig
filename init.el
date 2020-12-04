@@ -973,33 +973,33 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-x <M-right>" . windmove-swap-states-right)
 	 ("C-x <M-up>" . windmove-swap-states-up)))
 
-;; (use-package ace-window
-;;   :bind ([remap other-window] . ace-window)
-;;   :custom
-;;   ;;(aw-background nil)
-;;   (aw-ignore-current t)
-;;   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
-
-;; Lets try this instead of ace window
-(use-package switch-window
-  :bind (
-	 ("C-x o" . switch-window)
-	 ("C-x 4 1" . switch-window-then-maximize)
-	 ("C-x 4 2" . switch-window-then-split-below)
-	 ("C-x 4 3" . switch-window-then-split-right)
-	 ("C-x 4 0" . switch-window-then-delete)
-
-	 ("C-x 4 d" . switch-window-then-dired)
-	 ;;("C-x 4 f" . switch-window-then-find-file)
-	 ;;("C-x 4 r" . switch-window-then-find-file-read-only)
-	 ("C-x 4 C-b" . switch-window-then-display-buffer)
-	 ("C-x 4 k" . switch-window-then-kill-buffer))
+(use-package ace-window
+  :bind ([remap other-window] . ace-window)
   :custom
-  (switch-window-shortcut-style 'qwerty)
-  (switch-window-threshold 2)
-  (switch-window-minibuffer-shortcut ?z)
-  (switch-window-background t)
-  (switch-window-shortcut-appearance 'asciiart))
+  ;;(aw-background nil)
+  (aw-ignore-current t)
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
+;; ;; Lets try this instead of ace window
+;; (use-package switch-window
+;;   :bind (
+;; 	 ("C-x o" . switch-window)
+;; 	 ("C-x 4 1" . switch-window-then-maximize)
+;; 	 ("C-x 4 2" . switch-window-then-split-below)
+;; 	 ("C-x 4 3" . switch-window-then-split-right)
+;; 	 ("C-x 4 0" . switch-window-then-delete)
+
+;; 	 ("C-x 4 d" . switch-window-then-dired)
+;; 	 ;;("C-x 4 f" . switch-window-then-find-file)
+;; 	 ;;("C-x 4 r" . switch-window-then-find-file-read-only)
+;; 	 ("C-x 4 C-b" . switch-window-then-display-buffer)
+;; 	 ("C-x 4 k" . switch-window-then-kill-buffer))
+;;   :custom
+;;   (switch-window-shortcut-style 'qwerty)
+;;   (switch-window-threshold 2)
+;;   (switch-window-minibuffer-shortcut ?z)
+;;   (switch-window-background t)
+;;   (switch-window-shortcut-appearance 'asciiart))
 
 ;; Undo redo split
 (use-package winner :ensure nil
