@@ -353,6 +353,31 @@
   (gdb-show-main t))
 
 ;;__________________________________________________________
+;; which-key
+
+(use-package which-key
+  :defer t
+  :diminish
+  :custom
+  (which-key-idle-delay 0.5)
+  ;;(which-key-idle-delay 10000) ;; To not show
+  ;;(which-key-show-early-on-C-h t)
+  (which-key-idle-secondary-delay 0.01)  ;; nil sets the same delay
+  (which-key-dont-use-unicode t)
+  ;;(which-key-popup-type 'minibuffer)
+  ;;(which-key-separator ": ") ;which-key-idle-delay 2.0)
+  :config
+  (which-key-mode t)
+  (which-key-add-key-based-replacements
+    "C-c h" "highlight"
+    "C-c b" "bars"
+    "C-x r" "rectangle||register"
+    "C-x n" "narrow"
+    "C-x t" "tabs"
+    "C-x a" "abbrev"))
+
+
+;;__________________________________________________________
 ;; Two options for diffs
 (use-package ediff :ensure nil
   :defer t
@@ -394,29 +419,6 @@
 ;; Diminish To Hide Packages from bar
 (use-package diminish)
 
-;;__________________________________________________________
-;; which-key
-
-(use-package which-key
-  :defer t
-  :diminish
-  :custom
-  (which-key-idle-delay 0.5)
-  ;;(which-key-idle-delay 10000) ;; To not show
-  ;;(which-key-show-early-on-C-h t)
-  (which-key-idle-secondary-delay 0.01)  ;; nil sets the same delay
-  (which-key-dont-use-unicode t)
-  ;;(which-key-popup-type 'minibuffer)
-  ;;(which-key-separator ": ") ;which-key-idle-delay 2.0)
-  :config
-  (which-key-mode t)
-  (which-key-add-key-based-replacements
-    "C-c h" "highlight"
-    "C-c b" "bars"
-    "C-x r" "rectangle||register"
-    "C-x n" "narrow"
-    "C-x t" "tabs"
-    "C-x a" "abbrev"))
 ;;__________________________________________________________
 ;; terms
 
