@@ -552,19 +552,20 @@
   ;;(electric-indent-mode t)	    		;; On by default
   (electric-pair-local-mode t)			;; Autoannadir parentesis
 
-  (setq-local show-trailing-whitespace t)
-
-  (defun smart-beginning-of-line ()
-    "Move point to first non-whitespace character or beginning-of-line."
-    (interactive)
-    (let ((oldpos (point)))
-      (back-to-indentation)
-      (and (= oldpos (point))
-	   (beginning-of-line))))
-
-  (global-set-key [remap move-beginning-of-line] #'smart-beginning-of-line))
+  (setq-local show-trailing-whitespace t))
 
 (add-hook 'prog-mode-hook #'my/prog-mode-hook)
+
+(defun smart-beginning-of-line ()
+  "Move point to first non-whitespace character or beginning-of-line."
+  (interactive)
+  (let ((oldpos (point)))
+    (back-to-indentation)
+    (and (<= oldpos (point))
+	 (/= (line-beginning-position) oldpos)
+	 (beginning-of-line))))
+
+(global-set-key [remap move-beginning-of-line] #'smart-beginning-of-line)
 
 ;;__________________________________________________________
 ;; Undo tree
