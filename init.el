@@ -89,7 +89,7 @@
 	      auto-save-default nil         ;; No autosave
 	      auto-save-list-file-name nil
 	      ;; minibuffer interaction
-	      minibuffer-message-timeout 1
+	      ;;minibuffer-message-timeout 1
 	      read-quoted-char-radix 16       ;; Read number of chars with C-q
 	      kill-buffer-query-functions nil ;; Functions to call before quering a buffer
 	                                      ;; Default asks if process running.
@@ -200,7 +200,7 @@
   (global-auto-revert-mode t))		;; Autoload files changed in disk
 
 (use-package paren :ensure nil
-  :defer 2
+  :defer 1
   :custom
   (show-paren-delay 0)
   (blink-matching-paren nil)	;; not show message when file changes
@@ -489,16 +489,17 @@
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
 
-(setq-default xclip-method
-	      (and (not (or (display-graphic-p)        ;; checks
-			    (string-equal (getenv "TERM") "linux")))
-		   (or (and (getenv "DISPLAY")         ;; x11
-			    (executable-find "xclip")
-			    'xclip)
-		       (and (getenv "WAYLAND_DISPLAY") ;; wayland
-			    (executable-find "wl-copy")
-			    'wl-copy))))
 (use-package xclip
+  :preface
+  (setq-default xclip-method
+		(and (not (or (display-graphic-p)        ;; checks
+			      (string-equal (getenv "TERM") "linux")))
+		     (or (and (getenv "DISPLAY")         ;; x11
+			      (executable-find "xclip")
+			      'xclip)
+			 (and (getenv "WAYLAND_DISPLAY") ;; wayland
+			      (executable-find "wl-copy")
+			      'wl-copy))))
   :if xclip-method
   :config
   (xclip-mode 1))
