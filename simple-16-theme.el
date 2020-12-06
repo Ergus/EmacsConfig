@@ -137,6 +137,18 @@
 
  ;;Flymake
  `(flymake-error ((t (:inherit nil :background nil :foreground nil :underline t))))
+
+ ;;highlight-escape-sequences
+ `(hes-escape-backslash-face ((t (:inherit font-lock-regexp-grouping-backslash
+					   :foreground ,(simple-16-theme-color magenta)))))
+ `(hes-escape-sequence-face ((t (:inherit font-lock-regexp-grouping-construct
+					  :foreground ,(simple-16-theme-color magenta)))))
+ ;;mu4e
+ `(mu4e-unread-face ((t (:inherit nil :foreground ,(simple-16-theme-color blue) :weight bold))))
+ `(mu4e-system-face ((t (:inherit nil :foreground ,(simple-16-theme-color green)))))
+ `(mu4e-trashed-face ((t (:inherit nil :foreground ,(simple-16-theme-color red)))))
+ ;;`(mu4e-replied-face ((t (:inherit nil :foreground ,(simple-16-theme-color blue)))))
+ `(mu4e-header-highlight-face ((t (:inherit hl-line :weight bold :underline nil))))
  )
 
 (provide-theme 'simple-16)
