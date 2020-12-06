@@ -12,9 +12,6 @@
 ;;__________________________________________________________
 ;; Internal options
 
-;; (setq-default font-lock-maximum-decoration t)
-;; (global-font-lock-mode t)		;; Use font-lock everywhere.
-
 ;; (setq-default display-line-numbers-widen t)	;; keep line numbers inside a narrow
 (global-display-line-numbers-mode t)	;; line numbers on the left
 (global-display-fill-column-indicator-mode t)
@@ -153,18 +150,18 @@
 (eval-and-compile
   (require 'use-package)
 
-   (if init-file-debug
-       (setq use-package-always-ensure t
-	     use-package-enable-imenu-support t
-	     use-package-verbose t
-	     use-package-expand-minimally nil
-	     use-package-compute-statistics t
-	     debug-on-error t)
+  (if init-file-debug
+      (setq-default use-package-always-ensure t
+		    use-package-enable-imenu-support t
+		    use-package-verbose t
+		    use-package-expand-minimally nil
+		    use-package-compute-statistics t
+		    debug-on-error t)
 
-     (setq use-package-always-ensure nil
-	   use-package-enable-imenu-support nil
-	   use-package-verbose nil
-	   use-package-expand-minimally t)))
+    (setq-default use-package-always-ensure nil
+		  use-package-enable-imenu-support nil
+		  use-package-verbose nil
+		  use-package-expand-minimally t)))
 
 
 (use-package benchmark-init
@@ -231,6 +228,7 @@
 
 ;; Next file is in my lisp directory. it only defines mu4e config and
 ;; a variable for the gmail calendar.
+
 (unless (require 'configmail "configmail.el" t)
   (message "No mail config file found: ignored"))
 
@@ -367,7 +365,6 @@
 
 (use-package which-key
   :diminish
-  :defer t
   :custom
   (which-key-idle-delay 0.5)
   ;;(which-key-idle-delay 10000) ;; To not show
@@ -385,7 +382,6 @@
     "C-x n" "narrow"
     "C-x t" "tabs"
     "C-x a" "abbrev"))
-
 
 ;;__________________________________________________________
 ;; Two options for diffs
@@ -501,6 +497,7 @@
 			      (executable-find "wl-copy")
 			      'wl-copy))))
   :if xclip-method
+  :defer 2
   :config
   (xclip-mode 1))
 
@@ -540,13 +537,12 @@
 ;;__________________________________________________________
 ;; My program's mode hooks
 
+;; Shows the function in spaceline
 (use-package which-func :ensure nil
-  :preface
-  (defun my/which-function-mode-hook ()
-    (run-with-idle-timer 1 nil #'which-function-mode 1))
   :diminish
-  :hook (prog-mode . my/which-function-mode-hook) ;; Shows the function in spaceline
-  )
+  :defer t
+  :hook (prog-mode . (lambda ()
+		       (run-with-idle-timer 1 nil #'which-function-mode 1))))
 
 (defun my/prog-mode-hook ()
   "Some hooks only for prog mode."
@@ -615,19 +611,17 @@
 
 (use-package highlight-escape-sequences
   :diminish
-  :bind ("C-c h s" . hes-mode)
-  :config
-  (set-face-attribute 'hes-escape-backslash-face nil
-		      :foreground (named-color magenta))
-  (set-face-attribute 'hes-escape-sequence-face nil
-		      :foreground (named-color magenta)))
+  :bind ("C-c h s" . hes-mode))
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
 (use-package flyspell :ensure nil
   :diminish
-  :hook ((prog-mode . flyspell-prog-mode)
-	 (text-mode . flyspell-mode))
+  :defer t
+  :hook ((prog-mode . (lambda ()
+			(run-with-idle-timer 1 nil #'flyspell-prog-mode)))
+	 (text-mode . (lambda ()
+			(run-with-idle-timer 1 nil #'flyspell-mode 1))))
   :bind (:map flyspell-mode-map
 	      (("C-M-i" .  nil)
 	       ("C-'" .	nil)
@@ -820,9 +814,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package preproc-font-lock ;; Preprocessor
   :hook (c-mode-common . preproc-font-lock-mode)
-  :config
-  (set-face-attribute 'preproc-font-lock-preprocessor-background nil
-		      :inherit 'font-lock-preprocessor-face))
+  :custom
+  (preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
 
 ;; company-c-headers
 (use-package company-c-headers
@@ -831,7 +824,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	     buffer-file-name
 	     (string-match-p tramp-file-name-regexp buffer-file-name))
   :config
-  (add-to-list (make-local-variable 'company-backends) 'company-c-headers))
+  (add-to-list 'company-backends #'company-c-headers))
 
 (use-package clang-format
   :commands clang-format-region)
@@ -925,10 +918,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package company-lua
     :after company
-    :preface
-    (defun my/company-lua ()
-      (add-to-list (make-local-variable 'company-backends) 'company-lua))
-    :hook (lua-mode . my/company-lua))
+    :hook (lua-mode . (lambda ()
+			(add-to-list 'company-backends #'company-lua))))
 
 ;;__________________________________________________________
 ;; systemd mode
@@ -1027,10 +1018,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("<M-return>" . company-other-backend)
 	 ;;([remap dabbrev-expand] . company-abort)
 	 ("<C-return>" . company-abort))
-  :preface
-  (defun my/company-mode-hook ()
-    (run-with-idle-timer 1 nil #'company-mode 1))
-  :hook ((prog-mode message-mode conf-mode) . my/company-mode-hook)
+  :defer t
+  :hook ((prog-mode message-mode conf-mode) . (lambda ()
+						(run-with-idle-timer 1 nil #'company-mode 1)))
   :custom
   (company-idle-delay 1.0)	 ;; no delay for autocomplete
   (company-minimum-prefix-length 2)
@@ -1041,7 +1031,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		     company-capf		 ;; completion at point
 		     company-files	 ;; company files
 		     (company-dabbrev-code company-gtags company-keywords)
-		     company-dabbrev)))
+		     company-dabbrev))
+  :config
+  (make-variable-buffer-local 'company-backends))
 
 (use-package yasnippet        ;; Snippets
   :diminish
@@ -1076,7 +1068,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (defun my/elisp-mode-hook ()
   "My elisp mode hook."
-  (with-eval-after-load "company"
+  (with-eval-after-load 'company
     (add-to-list 'company-backends #'company-elisp)))
 
 (add-hook 'emacs-lisp-mode-hook #'my/elisp-mode-hook)
@@ -1086,12 +1078,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package flycheck
   :diminish
   :if (< (buffer-size) 200000)
-  :preface
-  (defun my/flycheck-mode-hook ()
-    (run-with-idle-timer 1 nil #'flycheck-mode 1))
-
-  :hook (prog-mode . my/flycheck-mode-hook)
   :defer t
+  :hook (prog-mode . (lambda ()
+		       (run-with-idle-timer 1 nil #'flycheck-mode 1)))
   :bind-keymap ("C-c a" . flycheck-command-map)
   :init
   (which-key-add-key-based-replacements "C-c a" "flycheck")
@@ -1109,11 +1098,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package flymake :ensure nil
   :diminish
-  :preface
-  (defun my/flymake-mode-hook ()
-    (run-with-idle-timer 1 nil #'flymake-mode 1))
-  :hook (prog-mode .  my/flymake-mode-hook)
   :defer t
+  :hook (prog-mode . (lambda ()
+		       (run-with-idle-timer 1 nil #'flymake-mode 1)))
   :config
   (which-key-add-key-based-replacements "C-c k" "flymake")
 
@@ -1132,10 +1119,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package eldoc :ensure nil
   :diminish
-  :preface
-  (defun my/eldoc-mode-hook ()
-    (run-with-idle-timer 1 nil #'eldoc-mode 1))
-  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . my/eldoc-mode-hook)
+  :defer t
+  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . (lambda ()
+							       (run-with-idle-timer 1 nil #'eldoc-mode 1)))
   :config
   (eldoc-mode t))
 
@@ -1167,6 +1153,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package message-mode :ensure nil
   :mode ("/neomut" "neomutt-Ergus-" "draft")
   :custom
+  (message-default-mail-headers "Cc: \nBcc: \n")
+  (message-kill-buffer-on-exit t)
+  (message-send-mail-function #'message-use-send-mail-function)
   (mail-header-separator "")
   :config
   (auto-fill-mode t)
@@ -1179,7 +1168,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (require 'notmuch-address)
     ;; (setq notmuch-address-command "~/gits/notmuch-addrlookup-c/notmuch-addrlookup")
     (require 'notmuch-company)
-    (add-to-list (make-local-variable 'company-backends) 'notmuch-company))
+    (add-to-list 'company-backends #'notmuch-company))
   :init
   (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
   :hook (message-mode . my/notmuch))
@@ -1250,7 +1239,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
               (t                                                     ;; any other row
 	       (+ indent offset itemcont))))))
 
-    (with-eval-after-load "latex"
+    (with-eval-after-load 'latex
       (add-to-list 'LaTeX-indent-environment-list '("itemize" my/LaTeX-indent-item))
       (add-to-list 'LaTeX-indent-environment-list '("enumerate" my/LaTeX-indent-item))
       (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item)))
@@ -1310,7 +1299,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package company-bibtex
   :after bibtex
   :config
-  (add-to-list (make-local-variable 'company-backends) 'company-bibtex))
+  (add-to-list 'company-backends #'company-bibtex))
 
 (use-package ivy-bibtex
   :defer t
@@ -1627,7 +1616,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package cmake-mode
   :mode ("CMakeLists\\.txt\\'" "\\.cmake\(.in\)?\\'")
   :config
-  (add-to-list 'company-backends 'company-cmake))
+  (add-to-list 'company-backends #'company-cmake))
 
 (use-package cmake-font-lock
   :defer t
@@ -1813,10 +1802,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 "\\.as[cp]x\\'" "\\.erb\\'" "\\.djhtml\\'"))
 
 (use-package company-web
-  :preface
-  (defun my/company-web ()
-    (add-to-list (make-local-variable 'company-backends) '(company-web-html)))
-  :hook (web-mode . my/company-web))
+  :hook (web-mode . (lambda ()
+		      (add-to-list 'company-backends #'company-web-html)))
+  :defer t)
 
 ;; (use-package web-mode-edit-element
 ;;   :hook (web-mode . web-mode-edit-element-minor-mode))
@@ -1883,16 +1871,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package composable
   :diminish
-  :after which-key
+  ;; :after which-key
   :load-path "~/gits/composable.el/"
   :custom
-  (composable-copy-active-region-highlight nil)
-  (composable-mode-debug-level 0)
+  (composable-mode-debug-level 3)
   :config
   (composable-mode)       ; Activates the default keybindings
   (composable-mark-mode)) ; Use composable with C-SPC
 
-(use-package slime :defer t
+(use-package slime
+  :defer t
   :custom
   (inferior-lisp-program "sbcl")
   (slime-contribs '(slime-fancy)))
