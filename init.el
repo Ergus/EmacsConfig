@@ -204,6 +204,16 @@
   :config
   (show-paren-mode t))
 
+(use-package smtpmail :ensure nil
+  :defer t
+  :custom
+  (smtpmail-debug-info t))
+
+(use-package sendmail :ensure nil
+  :defer t
+  :custom
+  (send-mail-function #'smtpmail-send-it))
+
 ;;__________________________________________________________
 ;; Config file not here to not track it
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
