@@ -216,21 +216,23 @@
 ;; Personal Lisp dir
 (defconst mylisp-dir (expand-file-name "lisp" user-emacs-directory))
 
-(unless (file-exists-p mylisp-dir)
-  (make-directory mylisp-dir)
-  (message "Creating %s" mylisp-dir))
-(add-to-list 'load-path mylisp-dir)
+(if (file-exists-p mylisp-dir)
+    (progn
+      (add-to-list 'load-path mylisp-dir)
+
+      ;; Next file is in my lisp directory. it only defines mu4e
+      ;; config and a variable for the gmail calendar. It goes in the
+      ;; lisp directory.
+      (unless (require 'configmail "configmail.el" t)
+	(message "No mail config file found: ignoring")))
+
+  ;; No lisp subdir so ignore.
+  (message "Subdir %s does not exist: ignoring" mylisp-dir))
 
 ;; System Lisp dir
 (defconst syslisp-dir "/usr/share/emacs/site-lisp")
 (when (file-exists-p syslisp-dir)
   (add-to-list 'load-path syslisp-dir))
-
-;; Next file is in my lisp directory. it only defines mu4e config and
-;; a variable for the gmail calendar.
-
-(unless (require 'configmail "configmail.el" t)
-  (message "No mail config file found: ignored"))
 
 ;;__________________________________________________________
 ;; Benchmark-init

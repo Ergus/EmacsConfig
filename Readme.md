@@ -12,3 +12,4 @@ use.
 So I don't recommend to use it as is, but you can copy any portion of
 the config if you want. And report me issues if you find them in the config.
 
+Files in the lisp directory are detected automatially.
