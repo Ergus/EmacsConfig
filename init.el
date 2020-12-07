@@ -552,9 +552,9 @@
 ;; Shows the function in spaceline
 (use-package which-func :ensure nil
   :diminish
-  :defer t
   :hook (prog-mode . (lambda ()
-		       (run-with-idle-timer 1 nil #'which-function-mode 1))))
+		       (run-with-idle-timer 1 nil #'which-function-mode 1)))
+  :defer t)
 
 (defun my/prog-mode-hook ()
   "Some hooks only for prog mode."
@@ -629,7 +629,6 @@
 ;; Flyspell (Orthography)
 (use-package flyspell :ensure nil
   :diminish
-  :defer t
   :hook ((prog-mode . (lambda ()
 			(run-with-idle-timer 1 nil #'flyspell-prog-mode)))
 	 (text-mode . (lambda ()
@@ -644,6 +643,7 @@
 	       ("C-c f r" . flyspell-region)
 	       ("C-c f b" . flyspell-buffer)
 	       ("C-c f n" . flyspell-goto-next-error)))
+  :defer t
   :config
   (which-key-add-key-based-replacements "C-c f" "flyspell"))
 
@@ -1030,9 +1030,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("<M-return>" . company-other-backend)
 	 ;;([remap dabbrev-expand] . company-abort)
 	 ("<C-return>" . company-abort))
-  :defer t
   :hook ((prog-mode message-mode conf-mode) . (lambda ()
 						(run-with-idle-timer 1 nil #'company-mode 1)))
+  :defer t
   :custom
   (company-idle-delay 1.0)	 ;; no delay for autocomplete
   (company-minimum-prefix-length 2)
@@ -1061,15 +1061,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 :map yas-minor-mode-map
 	 ("TAB" . nil)
 	 ("<tab>" . nil))
+  :hook ((prog-mode message-mode conf-mode) . (lambda ()
+						(run-with-idle-timer 1 nil #'company-mode 1)))
+  :defer 3
   :init
   (which-key-add-key-based-replacements "C-c y" "yasnippet")
   :custom
   (yas-verbosity 1)                 ; No need to be so verbose
   (yas-wrap-around-region t)
   :config
-  (yas-reload-all)
-  (yas-minor-mode 1)
-  ;; (yas-global-mode 1)
+  ;; (yas-reload-all)
+  ;; (yas-minor-mode 1)
+  (yas-global-mode 1)
   )
 
 (use-package yasnippet-snippets
@@ -1090,10 +1093,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package flycheck
   :diminish
   :if (< (buffer-size) 200000)
-  :defer t
   :hook (prog-mode . (lambda ()
 		       (run-with-idle-timer 1 nil #'flycheck-mode 1)))
   :bind-keymap ("C-c a" . flycheck-command-map)
+  :defer t
   :init
   (which-key-add-key-based-replacements "C-c a" "flycheck")
   :custom
@@ -1110,9 +1113,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package flymake :ensure nil
   :diminish
-  :defer t
   :hook (prog-mode . (lambda ()
 		       (run-with-idle-timer 1 nil #'flymake-mode 1)))
+  :defer t
   :config
   (which-key-add-key-based-replacements "C-c k" "flymake")
 
@@ -1131,9 +1134,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package eldoc :ensure nil
   :diminish
-  :defer t
   :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . (lambda ()
 							       (run-with-idle-timer 1 nil #'eldoc-mode 1)))
+  :defer t
   :config
   (eldoc-mode t))
 
@@ -1548,17 +1551,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (counsel-gtags-mode 1))
 
-;; (use-package global-tags ;; gtags with xref integration
-;;   :after counsel-gtags
-;;   :demand t
-;;   :bind (:map counsel-gtags-mode-map
-;; 	      ("C-c g x c" . global-tags-create-database)
-;; 	      ("C-c g x u" . global-tags-update-database))
-;;   :init
-;;   (which-key-add-key-based-replacements "C-c g x" "global-tags")
-;;   :config
-;;   (add-to-list 'xref-backend-functions #'global-tags-xref-backend)
-;;   (add-to-list 'project-find-functions #'global-tags-try-project-root))
+(use-package global-tags ;; gtags with xref integration
+  :after counsel-gtags
+  :demand t
+  :bind (:map counsel-gtags-mode-map
+	      ("C-c g x c" . global-tags-create-database)
+	      ("C-c g x u" . global-tags-update-database))
+  :init
+  (which-key-add-key-based-replacements "C-c g x" "global-tags")
+  :config
+  (add-to-list 'xref-backend-functions #'global-tags-xref-backend)
+  (add-to-list 'project-find-functions #'global-tags-try-project-root))
 
 (use-package dumb-jump
   :bind-keymap ("C-c j" . dumb-jump-mode-map)
