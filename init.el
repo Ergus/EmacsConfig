@@ -161,17 +161,20 @@
     (setq-default use-package-always-ensure nil
 		  use-package-enable-imenu-support nil
 		  use-package-verbose nil
-		  use-package-expand-minimally t)))
+		  use-package-expand-minimally t))
 
+  (defun my/load-path (path)
+    "Return the PATH if exist or nil."
+    (and (file-exists-p path) path)))
 
 (use-package benchmark-init
   :if init-file-debug
   :config
+  (add-hook 'benchmark-init/tree-mode-hook #'hl-line-mode)
+  (add-hook 'benchmark-init/tabulated-mode-hook #'hl-line-mode)
   (add-hook 'window-setup-hook #'benchmark-init/deactivate 0))
 
-(use-package esup
-  :ensure t
-  :defer t)
+(use-package esup :defer t)
 
 ;;__________________________________________________________
 ;; Some internal packages to defer them
@@ -216,6 +219,11 @@
   :custom
   (send-mail-function #'smtpmail-send-it))
 
+(use-package profiler :ensure nil
+  :defer t
+  :hook (profiler-report-mode . hl-line-mode)
+  )
+
 ;;__________________________________________________________
 ;; Config file not here to not track it
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -249,9 +257,8 @@
 ;;__________________________________________________________
 ;; Benchmark-init
 
-(use-package diminish)		      ;; if you use :diminish
-(use-package bind-key)		      ;; if you use any :bind variant
-
+(use-package diminish :defer t)   ;; if you use :diminish
+(use-package bind-key :defer t)	  ;; if you use any :bind variant
 (use-package paradox
   :defer t
   :custom
@@ -272,8 +279,7 @@
   (isearch-yank-on-move 'shift)       ;; Copy text from buffer with meta
   )
 
-(use-package phi-search
-  :defer t)
+(use-package phi-search :defer t)
 
 (use-package phi-search-mc
   :after multiple-cursors
@@ -565,14 +571,18 @@
 		       (run-with-idle-timer 1 nil #'which-function-mode 1)))
   :defer t)
 
-(defun my/prog-mode-hook ()
-  "Some hooks only for prog mode."
-  ;;(electric-indent-mode t)	    		;; On by default
-  (electric-pair-local-mode t)			;; Autoannadir parentesis
+(use-package prog-mode :ensure nil
+  :preface
+  (defun my/prog-mode-hook ()
+    "Some hooks only for prog mode."
+    (setq-local show-trailing-whitespace t))
+  :hook (prog-mode . my/prog-mode-hook)
+  :defer t)
 
-  (setq-local show-trailing-whitespace t))
-
-(add-hook 'prog-mode-hook #'my/prog-mode-hook)
+(use-package elec-pair :ensure nil
+  :hook ((prog-mode text-mode) . (lambda ()
+				   (electric-pair-local-mode 1)))
+  :defer t)
 
 (defun smart-beginning-of-line ()
   "Move point to first non-whitespace character or beginning-of-line."
@@ -599,7 +609,8 @@
 ;; Mark column 80 when crossed
 (use-package hl-line :ensure nil
   :diminish
-  :bind ("C-c h l" . hl-line-mode))
+  :bind ("C-c h l" . hl-line-mode)
+  :hook (package-menu-mode . hl-line-mode))
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
@@ -673,9 +684,7 @@
 ;;__________________________________________________________
 ;; LSP try for a whil
 
-(use-package eglot
-  :defer t)
-
+(use-package eglot :defer t)
 
 (use-package lsp-mode
   :diminish lsp
@@ -838,8 +847,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
 
 (use-package company
-  :load-path (and (file-exists-p "~/gits/company-mode/")
-		  "~/gits/company-mode/")
+  :load-path (lambda () (my/load-path "~/gits/company-mode/"))
   :bind (:map company-mode-map
 	      ("M-RET" . company-complete)
 	      ("M-/" . company-other-backend)                   ;; M-/
@@ -873,8 +881,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook ((c-mode c++-mode objc-mode) . (lambda ()
 					 (with-eval-after-load 'company
 					   (add-to-list 'company-backends #'company-c-headers))))
-  :defer t
-  )
+  :defer t)
 
 (use-package clang-format
   :commands clang-format-region)
@@ -882,7 +889,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; C++ mode
 (use-package modern-cpp-font-lock
-  :hook (c++-mode . modern-c++-font-lock-mode))
+  :diminish modern-c++-font-lock-mode
+  :hook (c++-mode . modern-c++-font-lock-mode)
+  :defer t)
 
 ;;__________________________________________________________
 ;; sh mode
@@ -974,8 +983,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; systemd mode
-(use-package systemd
-  :defer t)
+(use-package systemd :defer t)
 
 ;;__________________________________________________________
 ;; Use for Qt's .pro and .pri files
@@ -1076,9 +1084,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 :map yas-minor-mode-map
 	 ("TAB" . nil)
 	 ("<tab>" . nil))
-  :hook ((prog-mode message-mode conf-mode) . (lambda ()
-						(run-with-idle-timer 1 nil #'company-mode 1)))
-  :defer 3
+  :defer 2
   :init
   (which-key-add-key-based-replacements "C-c y" "yasnippet")
   :custom
@@ -1176,8 +1182,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Email mode for mutt
 ;;__________________________________________________________
 (use-package abbrev :ensure nil
-  :defer t
-  :diminish)
+  :diminish
+  :defer t)
 
 ;; Asocia buffers que empiecen con messaje mode
 (use-package message-mode :ensure nil
@@ -1554,14 +1560,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   ;; (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
   )
 
-(use-package amx ;; Complete history
-  :defer t)
+(use-package amx :defer t) ;; Complete history
 
 (use-package counsel-gtags
   :diminish
+  :load-path (lambda () (my/load-path "~/gits/emacs-counsel-gtags/"))
   :bind-keymap ("C-c g" . counsel-gtags-command-map)
-  :load-path (and (file-exists-p "~/gits/emacs-counsel-gtags/")
-		  "~/gits/emacs-counsel-gtags/")
   :custom
   (counsel-gtags-debug-mode t)
   (counsel-gtags-use-dynamic-list nil)
@@ -1870,7 +1874,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (nginx-mode . company-nginx-keywords))
 
 (use-package lice :defer t)
-
 (use-package lorem-ipsum :defer t)
 ;;__________________________________________________________
 ;; json mode
@@ -1928,8 +1931,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package composable
   :diminish
   ;; :after which-key
-  :load-path (and (file-exists-p "~/gits/composable.el/")
-		  "~/gits/composable.el/")
+  :preface
+  :load-path (lambda () (my/load-path "~/gits/composable.el/"))
   :custom
   (composable-mode-debug-level 3)
   :config
@@ -1960,6 +1963,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package mutt-mode
   :mode "muttrc")
+
 (provide 'init)
 
 ;;; init.el ends here
