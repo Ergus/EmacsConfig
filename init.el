@@ -693,7 +693,6 @@
   :config
   ;; This before calling lsp
   (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-
   (lsp)
   ;; TODO: extend this for more languages
   (when (memq major-mode '(c-mode c++-mode))
@@ -838,14 +837,44 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :custom
   (preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
 
+(use-package company
+  :load-path (and (file-exists-p "~/gits/company-mode/")
+		  "~/gits/company-mode/")
+  :bind (:map company-mode-map
+	      ("M-RET" . company-complete)
+	      ("M-/" . company-other-backend)                   ;; M-/
+	      ;; ([remap indent-for-tab-command] . company-indent-or-complete-common) ;; TAB
+	      :map company-active-map
+	      ("M-RET" . company-abort)
+	      ([remap dabbrev-expand] . company-other-backend)  ;; M-/
+	      ;;("C-h" . company-show-doc-buffer)               ;; this is already default
+	      ([remap xref-find-definitions] . company-show-location) ;; M-.
+	      )
+  :hook ((prog-mode message-mode conf-mode) . (lambda ()
+						(run-with-idle-timer 1 nil #'company-mode 1)))
+  :defer t
+  :custom
+  (company-idle-delay nil)	 ;; no delay for autocomplete
+  (company-minimum-prefix-length 2)
+  (company-selection-wrap-around nil)
+  (company-show-numbers t)
+  (company-tooltip-align-annotations t)
+  ;;company-tooltip-limit 20
+  ;; (company-backends '(company-capf       ;; completion at point
+  ;; 		      company-semantic
+  ;; 		      company-files	 ;; company files
+  ;; 		      (company-dabbrev-code company-gtags company-keywords)
+  ;; 		      company-dabbrev))
+  :config
+  (make-variable-buffer-local 'company-backends))
+
 ;; company-c-headers
 (use-package company-c-headers
-  :after company
-  :when (and (member major-mode '(c++-mode c-mode arduino-mode))
-	     buffer-file-name
-	     (string-match-p tramp-file-name-regexp buffer-file-name))
-  :config
-  (add-to-list 'company-backends #'company-c-headers))
+  :hook ((c-mode c++-mode objc-mode) . (lambda ()
+					 (with-eval-after-load 'company
+					   (add-to-list 'company-backends #'company-c-headers))))
+  :defer t
+  )
 
 (use-package clang-format
   :commands clang-format-region)
@@ -938,9 +967,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :interpreter "lua")
 
 (use-package company-lua
-    :after company
-    :hook (lua-mode . (lambda ()
+  :hook (lua-mode . (lambda ()
+		      (with-eval-after-load 'company
 			(add-to-list 'company-backends #'company-lua))))
+  :defer t)
 
 ;;__________________________________________________________
 ;; systemd mode
@@ -1031,37 +1061,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Auto completamiento
-(use-package company
-  :bind (:map company-mode-map
-	      ([remap dabbrev-expand] . company-complete-common);; M-/
-	      ([remap completion-at-point] . company-complete)  ;; M-TAB
-	      ;;([remap indent-for-tab-command] . company-indent-or-complete-common) ;; TAB
-	      :map company-active-map
-	      ([remap dabbrev-expand] . company-complete-common);; M-/
-	      ([remap completion-at-point] . company-abort)     ;; M-TAB
-	      ("C-n" . company-select-next)
-	      ("C-p" . company-select-previous)
-	      ;;("C-h" . company-show-doc-buffer)               ;; this is already default
-	      ([remap xref-find-definitions] . company-show-location) ;; M-.
-	      ("<C-return>" . company-other-backend)
-	      )
-  :hook ((prog-mode message-mode conf-mode) . (lambda ()
-						(run-with-idle-timer 1 nil #'company-mode 1)))
-  :defer t
-  :custom
-  (company-idle-delay nil)	 ;; no delay for autocomplete
-  (company-minimum-prefix-length 2)
-  (company-selection-wrap-around nil)
-  (company-show-numbers t)
-  (company-tooltip-align-annotations t)
-  ;;company-tooltip-limit 20
-  ;; (company-backends '(company-semantic
-  ;; 		     company-capf		 ;; completion at point
-  ;; 		     company-files	 ;; company files
-  ;; 		     (company-dabbrev-code company-gtags company-keywords)
-  ;; 		     company-dabbrev))
-  :config
-  (make-variable-buffer-local 'company-backends))
 
 (use-package yasnippet        ;; Snippets
   :diminish
@@ -1151,11 +1150,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package eldoc :ensure nil
   :diminish
-  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) . (lambda ()
-							       (run-with-idle-timer 1 nil #'eldoc-mode 1)))
-  :defer t
-  :config
-  (eldoc-mode t))
+  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) .
+	 (lambda ()
+	   (run-with-idle-timer 1 nil #'eldoc-mode 1)))
+  :defer t)
 
 (use-package helpful
   :bind (("C-h F" . helpful-function)
@@ -1287,10 +1285,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (auctex-latexmk-setup))
 
 (use-package company-math
-  :after (company tex)
-  :config
-  (add-to-list 'company-backends
-	       '(company-math-symbols-latex company-latex-commands)))
+  :hook (TeX-mode . (lambda ()
+		      (with-eval-after-load 'company
+			(add-to-list 'company-backends
+				     '(company-math-symbols-latex company-latex-commands)))))
+  :defer t)
 
 ;; (use-package company-auctex
 ;;   :after (company-math tex)
@@ -1316,10 +1315,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 
 (use-package company-reftex
-  :after (company reftex)
-  :config
-  (add-to-list 'company-backends
-	       '(company-reftex-labels company-reftex-citations)))
+  :hook (reftex-mode . (lambda ()
+			 (with-eval-after-load 'company
+			   (add-to-list 'company-backends
+					'(company-reftex-labels company-reftex-citations)))))
+  :defer t)
 
 ;;__________________________________________________________
 ;;bibtex mode set use biblatex
@@ -1329,9 +1329,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (bibtex-dialect 'biblatex))
 
 (use-package company-bibtex
-  :after bibtex
-  :config
-  (add-to-list 'company-backends #'company-bibtex))
+  :hook (bibtex-mode . (lambda ()
+			 (with-eval-after-load 'company
+			   (add-to-list 'company-backends 'company-bibtex))))
+  :defer t)
 
 (use-package ivy-bibtex
   :defer t
@@ -1559,14 +1560,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package counsel-gtags
   :diminish
   :bind-keymap ("C-c g" . counsel-gtags-command-map)
-  :load-path "~/gits/emacs-counsel-gtags/"
+  :load-path (and (file-exists-p "~/gits/emacs-counsel-gtags/")
+		  "~/gits/emacs-counsel-gtags/")
   :custom
   (counsel-gtags-debug-mode t)
   (counsel-gtags-use-dynamic-list nil)
   :init
   (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
   :config
-  (counsel-gtags-mode 1))
+  (counsel-gtags-mode 1)
+  ;; Promote company gtags to the beginning.
+  (with-eval-after-load 'company
+    (add-to-list 'company-backends #'company-gtags)))
 
 (use-package global-tags ;; gtags with xref integration
   :after counsel-gtags
@@ -1648,7 +1653,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package cmake-mode
   :mode ("CMakeLists\\.txt\\'" "\\.cmake\(.in\)?\\'")
   :config
-  (add-to-list 'company-backends #'company-cmake))
+  (with-eval-after-load 'company
+    (add-to-list 'company-backends #'company-cmake)))
 
 (use-package cmake-font-lock
   :defer t
@@ -1661,8 +1667,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (cmake-mode . my/cmake-font-lock))
 
 (use-package eldoc-cmake
-  :after company
-  :hook (cmake-mode . eldoc-cmake-enable))
+  :hook (cmake-mode . (lambda ()
+			(run-with-idle-timer 1 nil #'eldoc-cmake-enable)))
+  :defer t)
 
 ;;__________________________________________________________
 ;; Cobol
@@ -1769,16 +1776,28 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode ("\\.ino\\'" "\\.pde\\'"))
 
 (use-package company-arduino
-  :after company
-  :hook (arduino-mode . company-arduino-turn-on))
+  :hook (arduino-mode . (lambda ()
+			  (eval-after-load 'company
+			    #'company-arduino-turn-on)))
+  :defer t
+  :config
+  ;; This package already loads 'company-c-headers.
+  (defconst initial-company-c-headers-path-system company-c-headers-path-system)
+
+  (defun my/company-c-headers-get-system-path ()
+    "Return the system include path for the current buffer plus arduino headers"
+    (company-arduino-append-include-dirs initial-company-c-headers-path-system t))
+
+  (setq company-c-headers-path-system #'my/company-c-headers-get-system-path))
 
 (use-package arduino-cli-mode
-  :hook (arduino-mode . arduino-cli-mode)
+  :after company-arduino      ;; This is latter enough
   :custom
   (arduino-cli-warnings 'all)
   (arduino-cli-verify t)
   (arduino-cli-mode-keymap-prefix (kbd "C-c C-t"))
   :config
+  (arduino-cli-mode)
   (which-key-add-key-based-replacements "C-c C-t" "arduino-cli-mode")
 )
 
@@ -1835,7 +1854,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package company-web
   :hook (web-mode . (lambda ()
-		      (add-to-list 'company-backends #'company-web-html)))
+		      (with-eval-after-load 'company
+			(add-to-list 'company-backends #'company-web-html))))
   :defer t)
 
 ;; (use-package web-mode-edit-element
@@ -1908,7 +1928,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package composable
   :diminish
   ;; :after which-key
-  :load-path "~/gits/composable.el/"
+  :load-path (and (file-exists-p "~/gits/composable.el/")
+		  "~/gits/composable.el/")
   :custom
   (composable-mode-debug-level 3)
   :config
