@@ -192,7 +192,9 @@
 (use-package autorevert :ensure nil
   :defer 2
   :custom
-  (auto-revert-verbose nil)	;; not show message when file changes
+  (auto-revert-verbose nil)	 ;; not show message when file changes
+  (auto-revert-avoid-polling t)  ;; don't do pooling for autorevert (use notifications).
+  ;;(auto-revert-remote-files t) ;; No autorevert tramp files
   :config
   (global-auto-revert-mode t))		;; Autoload files changed in disk
 
@@ -321,12 +323,19 @@
    (expand-file-name "tramp-autosave-dir" user-emacs-directory))
   (tramp-default-method "rsync")
   ;;(tramp-change-syntax 'simplified)
-  (tramp-use-ssh-controlmaster-options nil)
+  (tramp-use-ssh-controlmaster-options nil) ;; I use Control* or Proxy* in ssh/config
   ;;(tramp-completion-reread-directory-timeout t) ;; Obsolete
   (tramp-persistency-file-name
    (expand-file-name "tramp" user-emacs-directory))
   :config
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  (add-to-list 'tramp-remote-process-environment
+               (format "DISPLAY=%s" (getenv "DISPLAY"))))
+
+;; (use-package tramp-sh :ensure nil
+;;   :config
+;;   (add-to-list 'tramp-remote-path "/usr/local/sbin")
+;;   )
 
 ;; (use-package tramp-term
 ;;   :after tramp
@@ -1023,27 +1032,34 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Auto completamiento
 (use-package company
-  :diminish
-  :bind (;;([remap dabbrev-expand] . company-complete)
-	 ("<C-return>" . company-complete)
-	 :map company-active-map
-	 ("<M-return>" . company-other-backend)
-	 ;;([remap dabbrev-expand] . company-abort)
-	 ("<C-return>" . company-abort))
+  :bind (:map company-mode-map
+	      ([remap dabbrev-expand] . company-complete-common);; M-/
+	      ([remap completion-at-point] . company-complete)  ;; M-TAB
+	      ;;([remap indent-for-tab-command] . company-indent-or-complete-common) ;; TAB
+	      :map company-active-map
+	      ([remap dabbrev-expand] . company-complete-common);; M-/
+	      ([remap completion-at-point] . company-abort)     ;; M-TAB
+	      ("C-n" . company-select-next)
+	      ("C-p" . company-select-previous)
+	      ;;("C-h" . company-show-doc-buffer)               ;; this is already default
+	      ([remap xref-find-definitions] . company-show-location) ;; M-.
+	      ("<C-return>" . company-other-backend)
+	      )
   :hook ((prog-mode message-mode conf-mode) . (lambda ()
 						(run-with-idle-timer 1 nil #'company-mode 1)))
   :defer t
   :custom
-  (company-idle-delay 1.0)	 ;; no delay for autocomplete
+  (company-idle-delay nil)	 ;; no delay for autocomplete
   (company-minimum-prefix-length 2)
   (company-selection-wrap-around nil)
   (company-show-numbers t)
+  (company-tooltip-align-annotations t)
   ;;company-tooltip-limit 20
-  (company-backends '(company-semantic
-		     company-capf		 ;; completion at point
-		     company-files	 ;; company files
-		     (company-dabbrev-code company-gtags company-keywords)
-		     company-dabbrev))
+  ;; (company-backends '(company-semantic
+  ;; 		     company-capf		 ;; completion at point
+  ;; 		     company-files	 ;; company files
+  ;; 		     (company-dabbrev-code company-gtags company-keywords)
+  ;; 		     company-dabbrev))
   :config
   (make-variable-buffer-local 'company-backends))
 
@@ -1113,10 +1129,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package flymake :ensure nil
   :diminish
-  :hook (prog-mode . (lambda ()
-		       (run-with-idle-timer 1 nil #'flymake-mode 1)))
+  ;; :hook (prog-mode . (lambda ()
+  ;; 		       (run-with-idle-timer 1 nil #'flymake-mode 1)))
   :defer t
   :config
+  (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
   (which-key-add-key-based-replacements "C-c k" "flymake")
 
   (easy-mmode-defmap flymake-basic-map
@@ -1724,7 +1741,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       ("\M-w" . avy-kill-ring-save-region)
       ("\C-b" . avy-pop-mark)
       ("i" . avy-copy-region))
-    "The base keymap for `flymake-mode'.")
+    "The base keymap for `avy-mode'.")
   :bind (:map isearch-mode-map
 	      ("C-'" . avy-isearch))
   :init
@@ -1842,7 +1859,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode "\\.json\\'")
 
 (use-package flymake-json
-  :hook (json-mode . flymake-json-load))
+  :hook (json-mode . (lambda ()
+ 		       (run-with-idle-timer 1 nil #'flymake-json-load)))
+  :defer t)
 
 ;;__________________________________________________________
 ;; Modeline
@@ -1856,7 +1875,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode "\\.yaml\\'")
 
 (use-package flymake-yaml
-  :hook (yaml-mode . flymake-yaml-load))
+  :hook (yaml-mode . (lambda ()
+		       (run-with-idle-timer 1 nil #'flymake-yaml-load)))
+  :defer t)
 
 (use-package sudo-edit :defer t)
 
