@@ -1096,12 +1096,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; __________________________________________________________
 ;; Emacs lisp
 
-(defun my/elisp-mode-hook ()
-  "My elisp mode hook."
-  (with-eval-after-load 'company
-    (add-to-list 'company-backends #'company-elisp)))
-
-(add-hook 'emacs-lisp-mode-hook #'my/elisp-mode-hook)
+(use-package emacs-lisp-mode :ensure nil
+  :hook (emacs-lisp-mode . (lambda ()
+			      (with-eval-after-load 'company
+				(add-to-list 'company-backends #'company-elisp))))
+  :defer t
+  )
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
