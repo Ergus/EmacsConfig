@@ -221,9 +221,70 @@
 
 (use-package profiler :ensure nil
   :defer t
-  :hook (profiler-report-mode . hl-line-mode)
-  )
+  :hook (profiler-report-mode . hl-line-mode))
 
+;; Shows the function in spaceline
+(use-package which-func :ensure nil
+  :diminish
+  :hook (prog-mode . (lambda ()
+		       (run-with-idle-timer 1 nil #'which-function-mode 1)))
+  :defer t)
+
+(use-package prog-mode :ensure nil
+  :preface
+  (defun my/prog-mode-hook ()
+    "Some hooks only for prog mode."
+    (setq-local show-trailing-whitespace t))
+  :hook (prog-mode . my/prog-mode-hook)
+  :defer t)
+
+(use-package elec-pair :ensure nil
+  :hook ((prog-mode text-mode) . (lambda ()
+				   (electric-pair-local-mode 1)))
+  :defer t)
+
+(use-package hl-line :ensure nil
+  :diminish
+  :bind ("C-c h l" . hl-line-mode)
+  :hook (package-menu-mode . hl-line-mode))
+
+(use-package winner :ensure nil
+  :bind (:map winner-mode-map
+	      ("C-c w u" . winner-undo)
+	      ("C-c w r" . winner-redo))
+  :defer 1  ;; this always after the bind
+  :custom
+  (winner-dont-bind-my-keys t)
+  :init
+  (which-key-add-key-based-replacements "C-c w" "winner")
+  :config
+  (winner-mode 1))
+
+(use-package org :ensure nil
+  :mode ("\\.org\\'" . org-mode))
+
+(use-package abbrev :ensure nil ;; Abbrev M-/
+  :diminish
+  :defer t)
+
+(use-package eldoc :ensure nil ;; function arguments
+  :diminish
+  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) .
+	 (lambda ()
+	   (run-with-idle-timer 1 nil #'eldoc-mode 1)))
+  :defer t)
+
+(use-package emacs-lisp-mode :ensure nil
+  :hook (emacs-lisp-mode . (lambda ()
+			      (with-eval-after-load 'company
+				(add-to-list 'company-backends #'company-elisp))))
+  :defer t)
+
+(use-package gdb :ensure nil
+  :defer t
+  :custom
+  (gdb-many-windows nil)
+  (gdb-show-main t))
 ;;__________________________________________________________
 ;; Config file not here to not track it
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -377,15 +438,6 @@
 
 (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
-
-;;__________________________________________________________
-;; gdb rectangles
-
-(use-package gdb :ensure nil
-  :defer t
-  :custom
-  (gdb-many-windows nil)
-  (gdb-show-main t))
 
 ;;__________________________________________________________
 ;; which-key
@@ -564,26 +616,6 @@
 ;;__________________________________________________________
 ;; My program's mode hooks
 
-;; Shows the function in spaceline
-(use-package which-func :ensure nil
-  :diminish
-  :hook (prog-mode . (lambda ()
-		       (run-with-idle-timer 1 nil #'which-function-mode 1)))
-  :defer t)
-
-(use-package prog-mode :ensure nil
-  :preface
-  (defun my/prog-mode-hook ()
-    "Some hooks only for prog mode."
-    (setq-local show-trailing-whitespace t))
-  :hook (prog-mode . my/prog-mode-hook)
-  :defer t)
-
-(use-package elec-pair :ensure nil
-  :hook ((prog-mode text-mode) . (lambda ()
-				   (electric-pair-local-mode 1)))
-  :defer t)
-
 (defun smart-beginning-of-line ()
   "Move point to first non-whitespace character or beginning-of-line."
   (interactive)
@@ -604,13 +636,6 @@
 
 (use-package string-inflection
   :bind ("C-c <right>" . string-inflection-all-cycle))
-
-;;__________________________________________________________
-;; Mark column 80 when crossed
-(use-package hl-line :ensure nil
-  :diminish
-  :bind ("C-c h l" . hl-line-mode)
-  :hook (package-menu-mode . hl-line-mode))
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
@@ -929,7 +954,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; ruby-mode
 (use-package ruby-mode :ensure nil
-  :mode ("\\.rb\\'" "\\.rjs\\'" "\\Rakefile\\'" "\\Gemfile\\'")
+  :mode ("\\.rjs\\'")
   :custom
   (ruby-indent-level 2))
 
@@ -994,8 +1019,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; javascript-mode
-(use-package js-mode :ensure nil
-  :mode ("\\.js\\'"))
+;; (use-package js-mode :ensure nil
+;;   :mode ("\\.js\\'"))
 
 ;;__________________________________________________________
 ;; xml-mode
@@ -1042,19 +1067,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   (switch-window-background t)
 ;;   (switch-window-shortcut-appearance 'asciiart))
 
-;; Undo redo split
-(use-package winner :ensure nil
-  :bind (:map winner-mode-map
-	      ("C-c w u" . winner-undo)
-	      ("C-c w r" . winner-redo))
-  :defer 1  ;; this always after the bind
-  :custom
-  (winner-dont-bind-my-keys t)
-  :init
-  (which-key-add-key-based-replacements "C-c w" "winner")
-  :config
-  (winner-mode 1))
-
 ;; Change color selected buffers
 (use-package auto-dim-other-buffers
   :defer t
@@ -1071,7 +1083,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Auto completamiento
 
 (use-package yasnippet        ;; Snippets
-  :diminish
+  :diminish yas-minor-mode
   :bind (("C-c y d" . yas-load-directory)
          ("C-c y i" . yas-insert-snippet)
          ("C-c y f" . yas-visit-snippet-file)
@@ -1098,16 +1110,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package yasnippet-snippets
   :after yasnippet)
-
-;; __________________________________________________________
-;; Emacs lisp
-
-(use-package emacs-lisp-mode :ensure nil
-  :hook (emacs-lisp-mode . (lambda ()
-			      (with-eval-after-load 'company
-				(add-to-list 'company-backends #'company-elisp))))
-  :defer t
-  )
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
@@ -1152,14 +1154,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (define-key flymake-mode-map (kbd "C-c k") flymake-basic-map))
 
 ;;__________________________________________________________
-;; Function arguments show
-
-(use-package eldoc :ensure nil
-  :diminish
-  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) .
-	 (lambda ()
-	   (run-with-idle-timer 1 nil #'eldoc-mode 1)))
-  :defer t)
+;; Improved help buffer
 
 (use-package helpful
   :bind (("C-h F" . helpful-function)
@@ -1181,9 +1176,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Email mode for mutt
 ;;__________________________________________________________
-(use-package abbrev :ensure nil
-  :diminish
-  :defer t)
 
 ;; Asocia buffers que empiecen con messaje mode
 (use-package message-mode :ensure nil
@@ -1702,12 +1694,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
         (insert filename)
         (clipboard-kill-region (point-min) (point-max)))
       (message filename))))
-
-;;__________________________________________________________
-;;; Org Mode (I don't use it)
-
-(use-package org :ensure nil
- :mode ("\\.org\\'" . org-mode))
 
 ;;__________________________________________________________
 ;; Move current line up and down M+arrow
