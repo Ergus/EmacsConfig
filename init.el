@@ -226,8 +226,8 @@
 ;; Shows the function in spaceline
 (use-package which-func :ensure nil
   :diminish
-  :hook (prog-mode . (lambda ()
-		       (run-with-idle-timer 1 nil #'which-function-mode 1)))
+  ;; :hook (prog-mode . (lambda ()
+  ;; 		       (run-with-idle-timer 1 nil #'which-function-mode 1)))
   :defer t)
 
 (use-package prog-mode :ensure nil
@@ -246,7 +246,8 @@
 (use-package hl-line :ensure nil
   :diminish
   :bind ("C-c h l" . hl-line-mode)
-  :hook (package-menu-mode . hl-line-mode))
+  :hook (package-menu-mode . hl-line-mode)
+  :defer t)
 
 (use-package winner :ensure nil
   :bind (:map winner-mode-map
@@ -272,7 +273,14 @@
   :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) .
 	 (lambda ()
 	   (run-with-idle-timer 1 nil #'eldoc-mode 1)))
-  :defer t)
+  :custom
+  (eldoc-idle-delay 2)                             ;; default 0.5
+  (eldoc-print-after-edit t)                       ;; only show after edit
+  (eldoc-echo-area-display-truncation-message nil) ;; Not verbose when truncated
+  :defer t
+  :config
+  (global-eldoc-mode -1))  ;; This is enabled by default, disable it
+
 
 (use-package emacs-lisp-mode :ensure nil
   :hook (emacs-lisp-mode . (lambda ()
@@ -672,6 +680,13 @@
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
+
+(use-package ispell :ensure nil
+  :custom
+  (ispell-following-word t)  ;;Check word around point not only before
+  (ispell-quietly t)         ;; Supress messages in ispell-word
+  :defer t)
+
 (use-package flyspell :ensure nil
   :diminish
   :hook ((prog-mode . (lambda ()
@@ -831,6 +846,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (c-ms-space-for-alignment-mode 1)
     (message "Loaded my/c-mode-common"))
   :hook (c-mode-common . my/c-mode-common-hook)
+  :defer t
   :custom
   (c-default-style '((java-mode . "java")
 		     (awk-mode . "awk")
@@ -869,7 +885,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package preproc-font-lock ;; Preprocessor
   :hook (c-mode-common . preproc-font-lock-mode)
   :custom
-  (preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
+  (preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face)
+  :defer t)
 
 (use-package company
   :load-path (lambda () (my/load-path "~/gits/company-mode/"))
@@ -949,7 +966,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Restructured text
 (use-package sphinx-mode
-    :hook rst-mode)
+  :hook rst-mode
+  :defer t)
 
 ;;__________________________________________________________
 ;; ruby-mode
@@ -959,10 +977,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ruby-indent-level 2))
 
 (use-package ruby-tools
-  :hook (ruby-mode . ruby-tools-mode))
+  :hook (ruby-mode . ruby-tools-mode)
+  :defer t)
 
 (use-package ruby-electric
-  :hook (ruby-mode . ruby-electric-mode))
+  :hook (ruby-mode . ruby-electric-mode)
+  :defer t)
 
 ;;__________________________________________________________
 ;; Julia Mode
@@ -970,7 +990,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode "\\.jl\\'")
 
 (use-package flycheck-julia
-  :hook (julia-mode . flycheck-julia-setup))
+  :hook (julia-mode . flycheck-julia-setup)
+  :defer t)
 
 ;;__________________________________________________________
 ;; Rust Mode
@@ -978,7 +999,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode "\\.rs\\'")
 
 (use-package flycheck-rust
-  :hook (rust-mode . flycheck-rust-setup))
+  :hook (rust-mode . flycheck-rust-setup)
+  :defer t)
 
 ;;__________________________________________________________
 ;; Ocaml Mode
@@ -1195,7 +1217,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
   :hook (message-mode . (lambda ()
 			  (with-eval-after-load 'company
-			    (add-to-list 'company-backends #'notmuch-company)))))
+			    (add-to-list 'company-backends #'notmuch-company))))
+  :defer t)
 
 ;;__________________________________________________________
 ;; Latex mode
@@ -1371,7 +1394,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (put 'dired-find-alternate-file 'disabled nil))
 
 (use-package dired-x :ensure nil
-  :hook (dired))
+  :hook dired
+  :defer t)
 
 (use-package dired-sidebar
   :bind ("C-c b d" . dired-sidebar-toggle-sidebar)
@@ -1663,12 +1687,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       (cmake-font-lock-activate)
       (when auto-refresh-defaults
 	(font-lock-refresh-defaults))))
-  :hook (cmake-mode . my/cmake-font-lock))
-
-(use-package eldoc-cmake
-  :hook (cmake-mode . (lambda ()
-			(run-with-idle-timer 1 nil #'eldoc-cmake-enable)))
+  :hook (cmake-mode . my/cmake-font-lock)
   :defer t)
+
+;; (use-package eldoc-cmake
+;;   :hook (cmake-mode . (lambda ()
+;; 			(run-with-idle-timer 1 nil #'eldoc-cmake-enable)))
+;;   :defer t)
 
 ;;__________________________________________________________
 ;; Cobol
@@ -1860,7 +1885,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode ("sites-\\(?:available\\|enabled\\)\\'" "nginx\\.config\\'"))
 
 (use-package company-nginx
-  :hook (nginx-mode . company-nginx-keywords))
+  :hook (nginx-mode . company-nginx-keywords)
+  :defer t)
 
 (use-package lice :defer t)
 (use-package lorem-ipsum :defer t)
@@ -1915,7 +1941,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package evil-collection
   :custom (evil-collection-setup-minibuffer t)
-  :hook (evil-mode .  evil-collection-init))
+  :hook (evil-mode .  evil-collection-init)
+  :defer t)
 
 (use-package composable
   :diminish

@@ -49,7 +49,7 @@
 (menu-bar-mode   -1)
 (tooltip-mode    -1)			;; Tool tip in the echo
 (electric-indent-mode -1)
-;;(flymake-mode    -1)
+;; (flymake-mode    -1)
 
 ;;(setq-default package-enable-at-startup nil)
 ;;-------------------- Some tricks--------------------------
