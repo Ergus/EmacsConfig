@@ -893,11 +893,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (company-show-numbers t)
   (company-tooltip-align-annotations t)
   ;;company-tooltip-limit 20
-  ;; (company-backends '(company-capf       ;; completion at point
-  ;; 		      company-semantic
-  ;; 		      company-files	 ;; company files
-  ;; 		      (company-dabbrev-code company-gtags company-keywords)
-  ;; 		      company-dabbrev))
+  (company-backends '(company-capf       ;; completion at point
+		      company-semantic
+		      company-files	 ;; company files
+		      (company-dabbrev-code company-gtags company-keywords)
+		      company-dabbrev))
   :config
   (make-variable-buffer-local 'company-backends))
 
@@ -1191,15 +1191,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (flyspell-mode t))
 
 (use-package notmuch
-  :preface
-  (defun my/notmuch ()
-    (require 'notmuch-address)
-    ;; (setq notmuch-address-command "~/gits/notmuch-addrlookup-c/notmuch-addrlookup")
-    (require 'notmuch-company)
-    (add-to-list 'company-backends #'notmuch-company))
   :init
   (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
-  :hook (message-mode . my/notmuch))
+  :hook (message-mode . (lambda ()
+			  (with-eval-after-load 'company
+			    (add-to-list 'company-backends #'notmuch-company)))))
 
 ;;__________________________________________________________
 ;; Latex mode
@@ -1654,9 +1650,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; CMake
 (use-package cmake-mode
   :mode ("CMakeLists\\.txt\\'" "\\.cmake\(.in\)?\\'")
-  :config
-  (with-eval-after-load 'company
-    (add-to-list 'company-backends #'company-cmake)))
+  :hook (cmake-mode . (lambda ()
+			(with-eval-after-load 'company
+			  (add-to-list 'company-backends #'company-cmake))))
+  :defer t)
 
 (use-package cmake-font-lock
   :defer t
