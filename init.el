@@ -1566,8 +1566,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (counsel-gtags-mode 1)
   ;; Promote company gtags to the beginning.
-  (with-eval-after-load 'company
-    (add-to-list 'company-backends #'company-gtags)))
+  (defun my/counsel-gtags-hook ()
+    (with-eval-after-load 'company
+      (add-to-list 'company-backends #'company-gtags)))
+
+  (add-hook 'c-mode-hook #'my/counsel-gtags-hook)
+  (add-hook 'c++-mode-hook #'my/counsel-gtags-hook)
+  (add-hook 'objc-mode-hook #'my/counsel-gtags-hook)
+  )
 
 (use-package global-tags ;; gtags with xref integration
   :after counsel-gtags
