@@ -109,13 +109,10 @@
 	      )
 
 ;; Vertical window divider
-(set-display-table-slot standard-display-table
-                        'vertical-border
-                        (make-glyph-code ?\u2502))
-
-;; These two must be enabled/disabled together
-;; (setq enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
-;; (minibuffer-depth-indicate-mode 1)    ;; Mostrar nivel de nesting en minibuffer
+(dont-compile
+  (set-display-table-slot standard-display-table
+			  'vertical-border
+			  (make-glyph-code ?\u2502)))
 
 ;; (defun filter-buffers ()
 ;;   (interactive)
