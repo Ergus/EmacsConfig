@@ -102,6 +102,10 @@
 	      auto-hscroll-mode 'current-line       ;; scroll horizontally 1 line not all
 	      save-interprogram-paste-before-kill t ;; Save clipboard before replace
 	      minibuffer-eldef-shorten-default t
+
+	      ;; These two must be enabled/disabled together
+	      ;; (setq enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
+	      ;; (minibuffer-depth-indicate-mode 1)    ;; Mostrar nivel de nesting en minibuffer
 	      )
 
 ;; Vertical window divider
