@@ -1430,7 +1430,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (("C-c b b" . ibuffer-sidebar-toggle-sidebar)))
 
 (use-package ibuffer-tramp
-  :after tramp
+  :after (tramp ibuffer)
   :commands ibuffer-tramp-set-filter-groups-by-tramp-connection)
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
