@@ -1583,8 +1583,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (add-hook 'c-mode-hook #'my/counsel-gtags-hook)
   (add-hook 'c++-mode-hook #'my/counsel-gtags-hook)
-  (add-hook 'objc-mode-hook #'my/counsel-gtags-hook)
-  )
+  (add-hook 'objc-mode-hook #'my/counsel-gtags-hook))
 
 (use-package global-tags ;; gtags with xref integration
   :after counsel-gtags
@@ -1632,8 +1631,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       (magit-restore-window-configuration)
       (mapc #'kill-buffer buffers)))
 
-  (bind-key "q" #'my/magit-kill-buffers magit-status-mode-map)
-  )
+  (bind-key "q" #'my/magit-kill-buffers magit-status-mode-map))
 
 (use-package gitattributes-mode
   :mode "\\.gitattributes\\'")
@@ -1717,8 +1715,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Move current line up and down M+arrow
 
 (use-package move-dup
-  :bind (
-	 ("M-<up>" . md-duplicate-up)
+  :bind (("M-<up>" . md-duplicate-up)
 	 ("M-<down>" . md-duplicate-down)
 	 ("C-M-<up>" .  md-move-lines-up)
 	 ("C-M-<down>" . md-move-lines-down)
@@ -1806,8 +1803,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (arduino-cli-mode-keymap-prefix (kbd "C-c C-t"))
   :config
   (arduino-cli-mode)
-  (which-key-add-key-based-replacements "C-c C-t" "arduino-cli-mode")
-)
+  (which-key-add-key-based-replacements "C-c C-t" "arduino-cli-mode"))
 
 ;;__________________________________________________________
 ;; Multiple Cursors
