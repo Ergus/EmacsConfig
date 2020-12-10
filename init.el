@@ -497,11 +497,10 @@
   :preface
   (defun my/enable-smerge-maybe ()
     "Auto-enable `smerge-mode' when merge conflict is detected."
-    (when (not (bound-and-true-p smerge-mode))
-      (save-excursion
-	(goto-char (point-min))
-	(when (re-search-forward "^<<<<<<< " nil :noerror)
-	  (smerge-mode 1)))))
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward "^<<<<<<< " nil t)
+	(smerge-mode 1))))
 
   :hook ((find-file magit-diff-visit-file) . my/enable-smerge-maybe)
   :custom
