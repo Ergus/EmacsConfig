@@ -1364,9 +1364,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Python mode
 
-(use-package python-mode :ensure nil
-  :mode "\\.py\\'"
-  :interpreter "python3"
+
+(use-package python :ensure nil
+  :mode ("\\.py\\'" . python-mode)
+  :interpreter ("python3" . python-mode)
   :bind (:map python-mode-map
               ("C-c C-z" . python-shell))
   :custom
