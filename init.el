@@ -359,9 +359,7 @@
 (if (display-graphic-p)
     (set-face-attribute 'default nil :family "Hack" :height 110))
 
-(defmacro named-color (colorname)
-  "Get color by name COLORNAME from `my/colors' alist."
-  `(simple-16-theme-color ,colorname))
+(defalias 'my/named-color 'simple-16-theme-color)
 
 ;;__________________________________________________________
 ;;Packages options
@@ -650,7 +648,7 @@
   (highlight-indent-guides-method 'character)
   :config
   (set-face-attribute 'highlight-indent-guides-character-face nil
-		      :foreground (named-color brightblack)))
+		      :foreground (my/named-color brightblack)))
 
 ;;__________________________________________________________
 ;; Resalta scopes entorno al cursor
@@ -722,10 +720,10 @@
 
 (use-package lsp-mode
   :diminish lsp
-  :bind-keymap ("C-c l" . lsp-command-map)
-  :hook (lsp-mode . lsp-enable-which-key-integration)
-  :init
-  (which-key-add-key-based-replacements "C-c l" "lsp")
+  :hook (lsp-mode . (lambda ()
+		      (my/company-backend-after-load #'company-capf)
+		      (lsp-enable-which-key-integration)))
+  :defer t
   :custom
   (lsp-keymap-prefix (kbd "C-c l"))
   (lsp-enable-snippet nil)
@@ -734,16 +732,14 @@
   (lsp-prefer-capf t)
   (read-process-output-max (* 1024 1024)) ;; 1mb
   ;; lsp-diagnostic-package t ;; prefer flymake
-  :config
-  ;; This before calling lsp
-  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-  (lsp)
-  ;; TODO: extend this for more languages
-  (when (memq major-mode '(c-mode c++-mode))
-    (add-hook 'c-mode-common-hook #'lsp-deferred))
+  ;;:config
+  ;; TODO: extend this for more languages, and find a way to set this for a project
+  ;; (when (memq major-mode '(c-mode c++-mode))
+  ;;   (add-hook 'c-mode-common-hook #'lsp-deferred))
 
-  (when (eq major-mode 'python-mode)
-    (add-hook 'python-mode-hook #'lsp-deferred)))
+  ;; (when (eq major-mode 'python-mode)
+  ;;   (add-hook 'python-mode-hook #'lsp-deferred))
+  )
 
 (use-package lsp-ui
   :diminish
@@ -885,6 +881,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package company
   :load-path (lambda () (my/load-path "~/gits/company-mode/"))
+  :preface
+  (defmacro my/company-backend-after-load (backend)
+    `(with-eval-after-load 'company
+       (unless (eq ,backend (car company-backends))
+	 (setq-local company-backends
+		     (cons ,backend (remove ,backend company-backends))))))
+
   :bind (:map company-mode-map
 	      ("M-RET" . company-complete)
 	      ("M-/" . company-other-backend)                   ;; M-/
@@ -916,9 +919,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; company-c-headers
 (use-package company-c-headers
   :hook ((c-mode c++-mode objc-mode) . (lambda ()
-					 (with-eval-after-load 'company
-					   (add-to-list 'company-backends #'company-c-headers))))
+					 (my/company-backend-after-load #'company-c-headers)))
   :defer t)
+
 
 (use-package clang-format
   :commands clang-format-region)
@@ -937,9 +940,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (emacs-lisp-mode . (lambda ()
 			     ;; emacs-lisp-mode is evaluated in too many places...
 			     (when (and buffer-file-name
-					(string-match "\\.el\\'" buffer-filename))
-			       (with-eval-after-load 'company
-				 (add-to-list 'company-backends #'company-elisp)))))
+					(string-match "\\.el\\'" buffer-file-name))
+			       (my/company-backend-after-load #'company-elisp))))
   :defer t)
 ;;__________________________________________________________
 ;; sh mode
@@ -1030,8 +1032,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package company-lua
   :hook (lua-mode . (lambda ()
-		      (with-eval-after-load 'company
-			(add-to-list 'company-backends #'company-lua))))
+		      (my/company-backend-after-load #'company-lua)))
   :defer t)
 
 ;;__________________________________________________________
@@ -1222,8 +1223,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
   :hook (message-mode . (lambda ()
-			  (with-eval-after-load 'company
-			    (add-to-list 'company-backends #'notmuch-company))))
+			  (my/company-backend-after-load #'notmuch-company)))
   :defer t)
 
 ;;__________________________________________________________
@@ -1231,10 +1231,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package tex :ensure auctex
   :mode ("\\.tex\\'" . TeX-latex-mode)
-  :hook (TeX-latex-mode . (lambda ()
-			    (flyspell-mode 1)
-			    (visual-line-mode 1)
-			    (auto-fill-mode 1)))
+  :hook (LaTeX-mode . (lambda ()
+			(flyspell-mode 1)
+			(visual-line-mode 1)
+			(auto-fill-mode 1)))
   :custom
   (TeX-source-correlate-start-server t)
   (TeX-auto-save t)
@@ -1301,21 +1301,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package company-math
   :hook (TeX-mode . (lambda ()
-		      (with-eval-after-load 'company
-			(add-to-list 'company-backends
-				     '(company-math-symbols-latex company-latex-commands)))))
+		      (my/company-backend-after-load
+		       '(company-math-symbols-latex company-latex-commands))))
   :defer t)
 
-;; (use-package company-auctex
-;;   :after (company-math tex)
-;;   :config
-;;   (add-to-list 'company-backends 'company-auctex-labels)
-;;   (add-to-list 'company-backends 'company-auctex-bibs)
-;;   (add-to-list 'company-backends
-;; 	       '(company-auctex-macros company-auctex-symbols company-auctex-environments)))
+(use-package company-auctex
+  :hook (TeX-mode . (lambda ()
+		      (my/company-backend-after-load #'company-auctex-init)))
+  :defer t)
 
 (use-package reftex :ensure nil ;; Reftex for cross references
-  :hook ((TeX-latex-mode) . turn-on-reftex)  ;; with AUCTeX LaTeX mode
+  :hook (LaTeX-mode . turn-on-reftex)  ;; with AUCTeX LaTeX mode
   :defer t
   :custom
   (reftex-cite-prompt-optional-args t)   ; Prompt for empty optional arguments in cite
@@ -1331,9 +1327,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package company-reftex
   :hook (reftex-mode . (lambda ()
-			 (with-eval-after-load 'company
-			   (add-to-list 'company-backends
-					'(company-reftex-labels company-reftex-citations)))))
+			 (my/company-backend-after-load
+			  '(company-reftex-labels company-reftex-citations))))
   :defer t)
 
 ;;__________________________________________________________
@@ -1345,8 +1340,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package company-bibtex
   :hook (bibtex-mode . (lambda ()
-			 (with-eval-after-load 'company
-			   (add-to-list 'company-backends 'company-bibtex))))
+			 (my/company-backend-after-load #'company-bibtex)))
   :defer t)
 
 (use-package ivy-bibtex
@@ -1586,8 +1580,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (counsel-gtags-mode 1)
   ;; Promote company gtags to the beginning.
   (defun my/counsel-gtags-hook ()
-    (with-eval-after-load 'company
-      (add-to-list 'company-backends #'company-gtags)))
+    (my/company-backend-after-load #'company-gtags))
 
   (add-hook 'c-mode-hook #'my/counsel-gtags-hook)
   (add-hook 'c++-mode-hook #'my/counsel-gtags-hook)
@@ -1674,8 +1667,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package cmake-mode
   :mode ("CMakeLists\\.txt\\'" "\\.cmake\(.in\)?\\'")
   :hook (cmake-mode . (lambda ()
-			(with-eval-after-load 'company
-			  (add-to-list 'company-backends #'company-cmake))))
+			(my/company-backend-after-load #'company-cmake)))
   :defer t)
 
 (use-package cmake-font-lock
@@ -1871,8 +1863,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package company-web
   :hook (web-mode . (lambda ()
-		      (with-eval-after-load 'company
-			(add-to-list 'company-backends #'company-web-html))))
+		      (my/company-backend-after-load #'company-web-html)))
   :defer t)
 
 ;; (use-package web-mode-edit-element
@@ -1930,13 +1921,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (add-hook 'evil-normal-state-entry-hook
 	    (lambda ()
-	      (set-face-attribute 'mode-line nil :background (named-color brightblack))))
+	      (set-face-attribute 'mode-line nil :background (my/named-color brightblack))))
   (add-hook 'evil-insert-state-entry-hook
 	    (lambda ()
 	      (set-face-attribute 'mode-line nil :background original-background)))
   (add-hook 'evil-visual-state-entry-hook
 	    (lambda ()
-	      (set-face-attribute 'mode-line nil :background (named-color green)))))
+	      (set-face-attribute 'mode-line nil :background (my/named-color green)))))
 
 (use-package evil-collection
   :custom (evil-collection-setup-minibuffer t)
