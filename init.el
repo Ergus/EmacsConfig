@@ -283,13 +283,6 @@
   :config
   (global-eldoc-mode -1))  ;; This is enabled by default, disable it
 
-
-(use-package emacs-lisp-mode :ensure nil
-  :hook (emacs-lisp-mode . (lambda ()
-			      (with-eval-after-load 'company
-				(add-to-list 'company-backends #'company-elisp))))
-  :defer t)
-
 (use-package gdb :ensure nil
   :defer t
   :custom
@@ -936,6 +929,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (c++-mode . modern-c++-font-lock-mode)
   :defer t)
 
+;;__________________________________________________________
+;; elisp mode (all after the company declaration)
+
+(use-package emacs-lisp-mode :ensure nil
+  :hook (emacs-lisp-mode . (lambda ()
+			     ;; emacs-lisp-mode is evaluated in too many places...
+			     (when (and buffer-file-name
+					(string-match "\\.el\\'" buffer-filename))
+			       (with-eval-after-load 'company
+				 (add-to-list 'company-backends #'company-elisp)))))
+  :defer t)
 ;;__________________________________________________________
 ;; sh mode
 
