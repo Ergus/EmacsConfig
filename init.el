@@ -179,6 +179,37 @@
 (use-package esup :defer t)
 
 ;;__________________________________________________________
+;; Config file not here to not track it
+(setq-default custom-file (expand-file-name "custom.el" user-emacs-directory))
+
+(unless (file-exists-p custom-file)
+  (write-region "" nil custom-file)
+  (message "Creating %s" custom-file))
+(load custom-file)
+
+;; Personal Lisp dir
+(defconst mylisp-dir (expand-file-name "lisp" user-emacs-directory))
+
+(if (file-exists-p mylisp-dir)
+    (progn
+      (add-to-list 'load-path mylisp-dir)
+
+      ;; Next file is in my lisp directory. it only defines mu4e
+      ;; config and a variable for the gmail calendar. It goes in the
+      ;; lisp directory.
+      (unless (require 'configmail "configmail.el" t)
+	(message "No mail config file found: ignoring")))
+
+  ;; No lisp subdir so ignore.
+  (message "Subdir %s does not exist: ignoring" mylisp-dir))
+
+;; System Lisp dir
+(defconst syslisp-dir "/usr/share/emacs/site-lisp")
+(when (file-exists-p syslisp-dir)
+  (add-to-list 'load-path syslisp-dir))
+
+
+;;__________________________________________________________
 ;; Some internal packages to defer them
 
 (use-package uniquify :ensure nil
@@ -288,35 +319,6 @@
   :custom
   (gdb-many-windows nil)
   (gdb-show-main t))
-;;__________________________________________________________
-;; Config file not here to not track it
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-
-(unless (file-exists-p custom-file)
-  (write-region "" nil custom-file)
-  (message "Creating %s" custom-file))
-(load custom-file)
-
-;; Personal Lisp dir
-(defconst mylisp-dir (expand-file-name "lisp" user-emacs-directory))
-
-(if (file-exists-p mylisp-dir)
-    (progn
-      (add-to-list 'load-path mylisp-dir)
-
-      ;; Next file is in my lisp directory. it only defines mu4e
-      ;; config and a variable for the gmail calendar. It goes in the
-      ;; lisp directory.
-      (unless (require 'configmail "configmail.el" t)
-	(message "No mail config file found: ignoring")))
-
-  ;; No lisp subdir so ignore.
-  (message "Subdir %s does not exist: ignoring" mylisp-dir))
-
-;; System Lisp dir
-(defconst syslisp-dir "/usr/share/emacs/site-lisp")
-(when (file-exists-p syslisp-dir)
-  (add-to-list 'load-path syslisp-dir))
 
 ;;__________________________________________________________
 ;; Benchmark-init
@@ -1558,6 +1560,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   )
 
 (use-package amx :defer t) ;; Complete history
+(use-package recentf :ensure nil
+  :defer t
+  :config
+  (recentf-mode 1)) ;; Complete history
+
 
 (use-package counsel-gtags
   :diminish
