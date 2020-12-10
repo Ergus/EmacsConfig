@@ -617,7 +617,7 @@
 ;; My program's mode hooks
 
 (defun smart-beginning-of-line ()
-  "Move point to first non-whitespace character or beginning-of-line."
+  "Move point to first non-whitespace character or `beginning-of-line'."
   (interactive)
   (let ((oldpos (point)))
     (back-to-indentation)
@@ -1455,8 +1455,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package ivy
   :diminish
-  :bind (("C-c r" . ivy-resume)
-	 :map ivy-minibuffer-map
+  :bind (:map ivy-minibuffer-map
 	 ("TAB" . ivy-partial)
 	 ("RET" . ivy-alt-done))
   :init
@@ -1495,8 +1494,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ([remap isearch-backward] . swiper-isearch-backward)
 	 ([remap isearch-forward-symbol-at-point] . swiper-isearch-thing-at-point)
 	 :map swiper-map
-	 ("C-," . swiper-avy)
-	 ("C-c m" . swiper-mc)
+	 ;; TODO: Find bindings for swiper-all and swiper-all-thing-at-point
+	 ;;("M-q" . swiper-query-replace)   ;; Already default
 	 ("C-o" . swiper-isearch-toggle)
 	 :map isearch-mode-map
 	 ("C-o" . swiper-isearch-toggle))
@@ -1507,7 +1506,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   )
 
 (use-package imenu-anywhere
-  :bind ("C-c i i" . ivy-imenu-anywhere)
+  :bind (("C-c i i" . ivy-imenu-anywhere)
+	 ("C-c i c" . counsel-imenu))
   :custom
   (imenu-auto-rescan t)
   (imenu-max-item-length 200))
@@ -1520,31 +1520,34 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package counsel
   :diminish
   :bind (:map counsel-mode-map
-	      (("C-x b" . counsel-switch-buffer)
-	       ("C-x 4 b" . counsel-switch-buffer-other-window)
+	      (([remap switch-to-buffer] . counsel-switch-buffer)
+	       ([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
+	       ([remap ibuffer] . counsel-ibuffer)
+	       ([remap dired] . counsel-dired)
+	       ("C-c c c" . ivy-resume)             ;; resume ivy
 	       ("C-c c a" . counsel-ag)
-	       ("C-c c b" . counsel-ibuffer)
-	       ("C-c c d" . counsel-dired)
-	       ("C-c c f" . counsel-flycheck)
 	       ("C-c c i" . counsel-imenu)
-	       ("C-c c j" . counsel-file-jump)
-	       ("C-c c C-s" . counsel-grep)
-	       ("C-c c r" . counsel-rg)	      ;; like git grep
-	       ("C-c c g" . counsel-git)
-	       ("C-c c <f2>" . counsel-linux-app)
-	       ("C-c c G" . counsel-git-grep)
-	       ("C-c c l" . counsel-locate)
-	       ("C-c c L" . counsel-find-library)   ;; Search lisp libraries
-	       ("C-c c C" . counsel-compile)        ;; Compile
-	       ("C-c c R" . counsel-recentf)
-	       ("C-c c C-r" . counsel-register))
-	      :map help-map			      ;; help-map
-	      (("f" . counsel-describe-function)
-	       ("v" . counsel-describe-variable)
-	       ("C-l" . counsel-info-lookup-symbol)))
+	       ("C-c c r" . counsel-rg)	            ;; like git grep
+	       ("C-c c g" . counsel-grep)           ;; grep in local file
+	       ("C-c c G" . counsel-git-grep)       ;; grep in current git repo
+	       ("C-c c e" . counsel-linux-app)      ;; call application
+	       ("C-c c l" . counsel-find-library)   ;; Search lisp libraries
+	       ("C-c c SPC" . counsel-register)     ;; list registers
+	       ("C-c c M-RET" . counsel-company)    ;; company completions
+	       ("C-c c C-r" . counsel-command-history) ;; command history
+	       ("C-c c p" . counsel-package)        ;; command history
+	       ("C-c c P" . counsel-list-processes)        ;; command history
+	       ;; Find file commands
+	       ("C-c c f g" . counsel-git)          ;; find file in git rempo
+	       ("C-c c f j" . counsel-file-jump)    ;; file in subdir
+	       ("C-c c f l" . counsel-locate)       ;; locate command (como search)
+	       ("C-c c f r" . counsel-recentf)
+	       ("C-c c f z" . counsel-fzf)
+	       ("C-c c f b" . counsel-buffer-or-recentf)))
   :defer 0.25
   :init
   (which-key-add-key-based-replacements "C-c c" "counsel")
+  (which-key-add-key-based-replacements "C-c c f" "find-file")
   :custom
   (counsel-find-file-at-point t)       ;; Select file at point
   (counsel-preselect-current-file t)   ;; Select current file in list
