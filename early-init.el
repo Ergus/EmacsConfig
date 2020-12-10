@@ -18,7 +18,7 @@
   (profiler-start 'cpu)
   (add-hook 'window-setup-hook #'profiler-stop 0))
 
-(defvar file-name-handler-alist-old file-name-handler-alist)
+(defconst file-name-handler-alist-save file-name-handler-alist)
 
 (setq-default file-name-handler-alist nil
 	      message-log-max 16384
@@ -28,9 +28,9 @@
 ;; This hook is always added, set to 90 to go to the end
 (add-hook 'window-setup-hook
           (lambda ()
-            (setq file-name-handler-alist file-name-handler-alist-old
-		  gc-cons-threshold 800000
-		  gc-cons-percentage 0.1)
+            (setq-default file-name-handler-alist file-name-handler-alist-save
+			  gc-cons-threshold 800000
+			  gc-cons-percentage 0.1)
 	    ;; (garbage-collect)
 	    (let ((curtime (current-time)))
 
