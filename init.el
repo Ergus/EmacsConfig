@@ -1148,6 +1148,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (prog-mode . (lambda ()
 		       (run-with-idle-timer 1 nil #'flycheck-mode 1)))
   :bind-keymap ("C-c a" . flycheck-command-map)
+  :bind (:map flycheck-command-map
+	      (("a" . counsel-flycheck)))
   :defer t
   :init
   (which-key-add-key-based-replacements "C-c a" "flycheck")
