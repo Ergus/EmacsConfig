@@ -723,6 +723,7 @@
 (use-package lsp-mode
   :diminish lsp
   :bind-keymap ("C-c l" . lsp-command-map)
+  :hook (lsp-mode . lsp-enable-which-key-integration)
   :init
   (which-key-add-key-based-replacements "C-c l" "lsp")
   :custom
@@ -1230,22 +1231,21 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package tex :ensure auctex
   :mode ("\\.tex\\'" . TeX-latex-mode)
+  :hook (TeX-latex-mode . (lambda ()
+			    (flyspell-mode 1)
+			    (visual-line-mode 1)
+			    (auto-fill-mode 1)))
   :custom
   (TeX-source-correlate-start-server t)
   (TeX-auto-save t)
   (TeX-parse-self t)
   (LaTeX-babel-hyphen nil)
   (TeX-master nil) ;; Multidocument
+  (LaTeX-indent-level 4)
+  (LaTeX-item-indent 0)
 
   :config
-  (TeX-source-correlate-mode t)
-
-  (defun my/LaTeX-mode-hook ()
-    (flyspell-mode 1)
-    (visual-line-mode 1)
-    (auto-fill-mode 1))
-
-  (add-hook 'LaTeX-mode-hook #'my/LaTeX-mode-hook)
+  (TeX-source-correlate-mode 1)
 
   (add-to-list 'TeX-command-list
   	       '("Makeglossaries" "makeglossaries %s" TeX-run-command nil
@@ -1253,51 +1253,44 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   		 :help "Run makeglossaries, will choose xindy or makeindex") t)
 
   ;; ====== Fix for itemize indentation.
-  (defcustom LaTeX-indent-level-item-continuation 4
-    "Indentation of continuation items."
-    :group 'LaTeX-indentation
-    :type 'integer)
 
-  (defun my/LaTeX-indent-item ()
-    "Syntactic indentation for itemize like environments to add extra offsets."
-    (save-match-data
-      (let* ((itemcont (or (and (boundp 'LaTeX-indent-level-item-continuation)
-				(numberp LaTeX-indent-level-item-continuation)
-				LaTeX-indent-level-item-continuation)
-			   0))
-	     (offset (+ LaTeX-indent-level LaTeX-item-indent))
-             (re-beg "\\\\begin{")
-             (re-end "\\\\end{")
-             (re-env "\\(itemize\\|\\enumerate\\|description\\)")
-             (indent (save-excursion                                 ;; parent indent column
-                       (when (looking-at (concat re-beg re-env "}"))
-			 (end-of-line))
-                       (LaTeX-find-matching-begin)
-                       (current-column))))
-	(cond ((looking-at (concat re-beg re-env "}"))               ;; row with \begin{itemize}
-               (or (save-excursion
-                     (beginning-of-line)
-                     (ignore-errors
-                       (LaTeX-find-matching-begin)
-		       (+ (current-column)
-			  (if (looking-at (concat re-beg re-env "}")) ;; check if parent scope is also itemize
-			      offset
-			    LaTeX-indent-level)))
-		     indent)))
-              ((looking-at (concat re-end re-env "}"))               ;; row with \end{itemize}
-	       indent)
-              ((looking-at "\\\\item")                               ;; row with \item
-	       (+ indent offset))
-              (t                                                     ;; any other row
-	       (+ indent offset itemcont))))))
+  (with-eval-after-load 'latex
+    (defun my/LaTeX-indent-item ()
+      "Syntactic indentation for itemize like environments to add extra offsets."
+      (save-match-data
+	(let* ((offset (+ LaTeX-indent-level LaTeX-item-indent))
+               (re-beg "\\\\begin{")
+               (re-end "\\\\end{")
+               (re-env "\\(itemize\\|\\enumerate\\|description\\)")
+               (indent (save-excursion                                 ;; parent indent column
+			 (when (looking-at (concat re-beg re-env "}"))
+			   (end-of-line))
+			 (LaTeX-find-matching-begin)
+			 (current-column))))
+	  (cond
+	   ((looking-at (concat re-beg re-env "}"))               ;; row with \begin{itemize}
+	    (or (save-excursion
+                  (beginning-of-line)
+                  (ignore-errors
+		    (LaTeX-find-matching-begin)
+		    (+ (current-column)                            ;; parent indentation pos
+		       (if (looking-at (concat re-beg re-env "}")) ;; check if parent scope is also itemize
+			   offset
+			 LaTeX-indent-level)))
+		  indent)))
+	   ((looking-at (concat re-end re-env "}"))     ;; row with \end{itemize}
+	    indent)
+	   ((looking-at "\\\\item")                     ;; row with \item
+	    (+ indent offset))
+	   (t                                           ;; any other row (continuation)
+	    (+ indent offset LaTeX-indent-level))))))
 
-    (with-eval-after-load 'latex
-      (add-to-list 'LaTeX-indent-environment-list '("itemize" my/LaTeX-indent-item))
-      (add-to-list 'LaTeX-indent-environment-list '("enumerate" my/LaTeX-indent-item))
-      (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item)))
-    ;; =========================
+    (add-to-list 'LaTeX-indent-environment-list '("itemize" my/LaTeX-indent-item))
+    (add-to-list 'LaTeX-indent-environment-list '("enumerate" my/LaTeX-indent-item))
+    (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item)))
+  ;; =========================
 
-    (flyspell-buffer))
+  )
 
 (use-package auctex-latexmk
   :defer t
@@ -1322,9 +1315,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; 	       '(company-auctex-macros company-auctex-symbols company-auctex-environments)))
 
 (use-package reftex :ensure nil ;; Reftex for cross references
+  :hook ((TeX-latex-mode) . turn-on-reftex)  ;; with AUCTeX LaTeX mode
   :defer t
   :custom
-  (reftex-plug-into-AUCTeX t)
   (reftex-cite-prompt-optional-args t)   ; Prompt for empty optional arguments in cite
   (reftex-cite-format 'biblatex)
   (reftex-plug-into-AUCTeX t)
