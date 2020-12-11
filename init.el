@@ -1690,17 +1690,51 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; path
-(defun my/shell-command-on-buffer (start end command)
-  "Execute shell COMMAND on buffer overwriting it."
-  (interactive (let ((string (read-shell-command "Shell command on buffer: ")))
-		 (if (use-region-p)
-		     (list (region-beginning) (region-end) string)
-		   (list (point-min) (point-max) string))))
+
+(defun my/point-to-abs (point)
+  "Get current char pos counting only no whitespaces."
   (save-excursion
-    (shell-command-on-region start end command t t)))
+    (goto-char point)
+    (let ((counter 0))
+      (while (not (bobp))
+	(skip-chars-backward " \t\n")
+	(setq counter (- counter (skip-chars-backward "^ \t\n"))))
+      counter)))
+
+(defun my/abs-to-point (value)
+  "Go to char VALUE counting only no whitespaces."
+  (save-excursion
+    (let ((counter value)
+	  (point-min (point-min)))
+      (goto-char point-min)
+      (while (and (> counter 0)
+		  (not (eobp)))
+	(setq counter (- counter (skip-chars-forward "^ \t\n")))
+	(cond ((> counter 0)
+	       (skip-chars-forward " \t\n"))
+	      ((< counter 0)
+	       (backward-char (- counter))))))
+    (point)))
+
+(defun my/shell-command-on-buffer (command)
+  "Execute shell COMMAND on buffer overwriting it."
+  (interactive (list (read-shell-command "Shell command on buffer: ")))
+
+  (let ((abspoint (my/point-to-abs (point)))
+	(absmark (and (region-active-p)
+		      (my/point-to-abs (mark))))
+	(deactivate-mark t)
+	(output (save-excursion
+		  (shell-command-on-region (point-min) (point-max) command t t))))
+
+    (when absmark
+      (set-mark (my/abs-to-point absmark))
+      (activate-mark))
+
+    (goto-char (my/abs-to-point abspoint))))
 
 (defun my/filename-to-clipboard ()
-  "Put the current file name on the clipboard"
+  "Put the current file name on the clipboard."
   (interactive)
   (let ((filename (if (equal major-mode 'dired-mode)
                       default-directory
