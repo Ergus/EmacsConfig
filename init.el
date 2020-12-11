@@ -1692,7 +1692,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; path
 
 (defun my/point-to-abs (point)
-  "Get current char pos counting only no whitespaces."
+  "Count number of not whitespaces characters preceding POINT."
   (save-excursion
     (goto-char point)
     (let ((counter 0))
@@ -1702,7 +1702,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       counter)))
 
 (defun my/abs-to-point (value)
-  "Go to char VALUE counting only no whitespaces."
+  "First buffer position after VALUE non whitespaces chars."
   (save-excursion
     (let ((counter value)
 	  (point-min (point-min)))
@@ -1717,7 +1717,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (point)))
 
 (defun my/shell-command-on-buffer (command)
-  "Execute shell COMMAND on buffer overwriting it."
+  "Execute shell COMMAND on buffer overwriting it but preserve
+position."
   (interactive (list (read-shell-command "Shell command on buffer: ")))
 
   (let ((abspoint (my/point-to-abs (point)))
@@ -1733,17 +1734,19 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
     (goto-char (my/abs-to-point abspoint))))
 
-(defun my/filename-to-clipboard ()
+(defun my/var-to-clipboard ()
   "Put the current file name on the clipboard."
   (interactive)
-  (let ((filename (if (equal major-mode 'dired-mode)
-                      default-directory
-                    (buffer-file-name))))
-    (when filename
-      (with-temp-buffer
-        (insert filename)
-        (clipboard-kill-region (point-min) (point-max)))
-      (message filename))))
+  (ivy-read "Describe variable: " obarray
+	    :predicate #'counsel--variable-p
+	    :require-match t
+	    :preselect (ivy-thing-at-point)
+	    :action (lambda (x)
+		      (let ((value (format "%s" (symbol-value (intern x)))))
+			(kill-new value)
+			(message "Copied %s value %s to clipboard"
+				 x value)))
+	    :caller 'my/var-to-clipboard))
 
 ;;__________________________________________________________
 ;; Move current line up and down M+arrow
