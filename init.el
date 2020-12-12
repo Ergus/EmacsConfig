@@ -1424,7 +1424,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :preface
   (defun my/ibuffer-mode-hook ()
     (hl-line-mode 1)
-    (ibuffer-auto-mode 1))
+    ;; (ibuffer-auto-mode 1)
+    )
   :bind ([remap list-buffers] . ibuffer)
   :hook (ibuffer-mode . my/ibuffer-mode-hook)
   :custom
