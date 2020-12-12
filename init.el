@@ -317,6 +317,7 @@
 (use-package gdb :ensure nil
   :defer t
   :custom
+  (gdb-debug-log-max nil)   ;; no limit log
   (gdb-many-windows nil)
   (gdb-show-main t))
 
@@ -852,7 +853,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		 (indent-tabs-mode . t)
 		 (fill-column . 80)
 		 ;; (c-hanging-semi&comma-criteria my/c-semi&comma)
-		 (c-hanging-semi&comma-criteria nil)
+		 (c-hanging-semi&comma-criteria . nil)
 		 (c-cleanup-list empty-defun-braces ;; {}
 				 brace-else-brace   ;; } else {
 				 brace-elseif-brace ;; } else if {
