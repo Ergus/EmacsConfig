@@ -1432,8 +1432,27 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (("C-c b b" . ibuffer-sidebar-toggle-sidebar)))
 
 (use-package ibuffer-tramp
-  :after (tramp ibuffer)
-  :commands ibuffer-tramp-set-filter-groups-by-tramp-connection)
+  :after ibuffer
+  :bind (:map ibuffer--filter-map
+	      ("G t" . ibuffer-tramp-set-filter-groups-by-tramp-connection))
+  :ensure t)
+
+(use-package ibuffer-project
+  :after ibuffer
+  :preface
+  (defun ibuffer-set-filter-groups-by-project ()
+    (interactive)
+    (setq ibuffer-filter-groups (ibuffer-project-generate-filter-groups))
+    (ibuffer-update nil t))
+  :bind (:map ibuffer--filter-map
+	      ("G p" . ibuffer-set-filter-groups-by-project))
+  :defer t)
+
+(use-package ibuffer-vc
+  :after ibuffer
+  :bind (:map ibuffer--filter-map
+	      ("G v" . ibuffer-vc-set-filter-groups-by-vc-root))
+  :ensure t)
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
 (defun my/sidebar-toggle () "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
