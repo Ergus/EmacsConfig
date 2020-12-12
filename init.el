@@ -1479,9 +1479,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package ivy
   :diminish
-  :bind (:map ivy-minibuffer-map
-	 ("TAB" . ivy-partial)
-	 ("RET" . ivy-alt-done))
+  :bind (:map ivy-mode-map
+	      ("C-c c c" . ivy-resume)
+	      :map ivy-minibuffer-map
+	      ("TAB" . ivy-partial)
+	      ("RET" . ivy-alt-done))
   :init
   (which-key-add-key-based-replacements "C-c i" "ivy")
   :custom
