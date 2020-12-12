@@ -1598,20 +1598,23 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :diminish
   :load-path (lambda () (my/load-path "~/gits/emacs-counsel-gtags/"))
   :bind-keymap ("C-c g" . counsel-gtags-command-map)
+  :hook (counsel-gtags . my/counsel-gtags-hook)
   :custom
   (counsel-gtags-debug-mode t)
   (counsel-gtags-use-dynamic-list nil)
   :init
   (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
   :config
-  (counsel-gtags-mode 1)
-  ;; Promote company gtags to the beginning.
   (defun my/counsel-gtags-hook ()
     (my/company-backend-after-load #'company-gtags))
 
+  ;; Promote company-gtags to the beginning.
+  (add-hook 'counsel-gtags-mode-hook #'my/counsel-gtags-hook)
   (add-hook 'c-mode-hook #'my/counsel-gtags-hook)
   (add-hook 'c++-mode-hook #'my/counsel-gtags-hook)
-  (add-hook 'objc-mode-hook #'my/counsel-gtags-hook))
+  (add-hook 'objc-mode-hook #'my/counsel-gtags-hook)
+
+  (counsel-gtags-mode 1))
 
 (use-package global-tags ;; gtags with xref integration
   :after counsel-gtags
