@@ -1056,7 +1056,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; xml-mode
 (use-package xml-mode :ensure nil
-  :mode ("\\.ipe\\'" "\\.qrc\\'" "\\.svn\\'"))
+  :mode ("\\.\\(ipe\\|qrc\\|svn\\)\\'"))
 
 ;;__________________________________________________________
 ;; splitting
@@ -1107,8 +1107,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Lines enabling gnuplot-mode
-(use-package gnuplot-mode
-  :mode ("\\.gp\\'" "\\.gpl\\'" "\\.plt\\'"))
+;; (use-package gnuplot-mode
+;;   :mode ("\\.gp\\'" "\\.gpl\\'" "\\.plt\\'"))
+
+(use-package gnuplot
+  :mode ("\\.\\(gpl?\\|plt\\)\\'" . gnuplot-mode))
 
 ;;__________________________________________________________
 ;; Auto completamiento
@@ -1705,7 +1708,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Cobol
 (use-package cobol-mode
-  :mode ("\\.cobc\\'" "\\.cob\\'" "\\.cbl\\'" "\\.cpy\\'"))
+  :mode ("\\.\\(cobc?\\|cbl\\|cpy\\)\\'"))
 
 ;;__________________________________________________________
 ;; path
@@ -1908,9 +1911,9 @@ position."
   :mode ("\\.php\\'"))
 
 (use-package web-mode
-  :mode ("\\.phtml\\'" "\\.html\\'"
+  :mode ("\\.\\(p\\|dj\\)?html\\'"
 	 "\\.tpl\\.php\\'" "\\.[agj]sp\\'"
-	 "\\.as[cp]x\\'" "\\.erb\\'" "\\.djhtml\\'"))
+	 "\\.as[cp]x\\'" "\\.erb\\'"))
 
 (use-package company-web
   :hook (web-mode . (lambda ()
