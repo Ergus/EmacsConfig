@@ -395,9 +395,9 @@
   (tramp-default-method "rsync")
   ;;(tramp-change-syntax 'simplified)
   (tramp-use-ssh-controlmaster-options nil) ;; I use Control* or Proxy* in ssh/config
-  ;;(tramp-completion-reread-directory-timeout t) ;; Obsolete
-  (tramp-persistency-file-name
-   (expand-file-name "tramp" user-emacs-directory))
+  (remote-file-name-inhibit-cache 120)      ;; Default 10
+  ;; (tramp-persistency-file-name
+  ;;  (expand-file-name "tramp" user-emacs-directory))
   :config
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
   (add-to-list 'tramp-remote-process-environment
@@ -614,8 +614,8 @@
   (interactive "^p")
   (scroll-down-command arg))
 
-(global-set-key [remap scroll-up-command] 'my/scroll-up-command)
-(global-set-key [remap scroll-down-command] 'my/scroll-down-command)
+(global-set-key [remap scroll-up-command] #'my/scroll-up-command)
+(global-set-key [remap scroll-down-command] #'my/scroll-down-command)
 ;;__________________________________________________________
 ;; My program's mode hooks
 
@@ -633,9 +633,9 @@
 ;;__________________________________________________________
 ;; Undo tree
 
-(global-set-key [remap undo] 'undo-only)
-(global-set-key (kbd "C-M-_") 'undo-redo)
-(global-set-key (kbd "C-M-/") 'undo-redo)
+(global-set-key [remap undo] #'undo-only)
+(global-set-key (kbd "C-M-_") #'undo-redo)
+(global-set-key (kbd "C-M-/") #'undo-redo)
 
 (use-package string-inflection
   :bind ("C-c <right>" . string-inflection-all-cycle))
@@ -883,7 +883,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t)
 
 (use-package company
-  :load-path (lambda () (my/load-path "~/gits/company-mode/"))
+  ;; :load-path (lambda () (my/load-path "~/gits/company-mode/"))
   :preface
   (defmacro my/company-backend-after-load (backend)
     `(with-eval-after-load 'company
@@ -1467,7 +1467,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
        (ibuffer-sidebar-toggle-sidebar)
        (dired-sidebar-toggle-sidebar))
 
-(global-set-key (kbd "C-c b s") 'my/sidebar-toggle)
+(global-set-key (kbd "C-c b s") #'my/sidebar-toggle)
 
 ;;__________________________________________________________
 ;; neotree
@@ -1634,15 +1634,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (which-key-add-key-based-replacements "C-c j" "dumb-jump")
   :custom
   (dumb-jump-selector 'ivy)
+  (dumb-jump-disable-obsolete-warnings t)
+  :bind (:map dumb-jump-mode-map
+	      (("j" . dumb-jump-go)
+	       ("o" . dumb-jump-go-other-window)
+	       ("e" . dumb-jump-go-prefer-external)
+	       ("4" . dumb-jump-go-prefer-external-other-window)
+	       ("i" . dumb-jump-go-prompt)
+	       ("q" . dumb-jump-quick-look)
+	       ("b" . dumb-jump-back)))
   :config
-  (define-key dumb-jump-mode-map "j" #'dumb-jump-go)
-  (define-key dumb-jump-mode-map "o" #'dumb-jump-go-other-window)
-  (define-key dumb-jump-mode-map "e" #'dumb-jump-go-prefer-external)
-  (define-key dumb-jump-mode-map "4" #'dumb-jump-go-prefer-external-other-window)
-  (define-key dumb-jump-mode-map "i" #'dumb-jump-go-prompt)
-  (define-key dumb-jump-mode-map "q" #'dumb-jump-quick-look)
-  (define-key dumb-jump-mode-map "b" #'dumb-jump-back)
-
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 ;;__________________________________________________________
@@ -1662,7 +1663,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       (magit-restore-window-configuration)
       (mapc #'kill-buffer buffers)))
 
-  (bind-key "q" #'my/magit-kill-buffers magit-status-mode-map))
+  (define-key magit-status-mode-map "j" #'my/magit-kill-buffers))
 
 (use-package gitattributes-mode
   :mode "\\.gitattributes\\'")
