@@ -854,6 +854,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (c-toggle-auto-newline 1)
     (c-toggle-cpp-indent-to-body 1)
     (c-ms-space-for-alignment-mode 1)
+    (subword-mode 1)
     (message "Loaded my/c-mode-common"))
   :hook (c-mode-common . my/c-mode-common-hook)
   :defer t
