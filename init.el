@@ -1542,7 +1542,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-c x TAB" . completion-at-point)))
 
 (use-package swiper
-  :preface
   :bind (([remap isearch-forward] . swiper-isearch)
 	 ([remap isearch-backward] . swiper-isearch-backward)
 	 ([remap isearch-forward-symbol-at-point] . swiper-isearch-thing-at-point)
@@ -1552,6 +1551,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-o" . swiper-isearch-toggle)
 	 :map isearch-mode-map
 	 ("C-o" . swiper-isearch-toggle))
+  :custom
+  (swiper-goto-start-of-match t)
   ;; :config
   ;; (add-to-list 'ivy-re-builders-alist '(swiper . ivy--regex-plus))
   ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch . ivy--regex-plus))
