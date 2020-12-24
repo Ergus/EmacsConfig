@@ -503,6 +503,22 @@
   :config
   (which-key-add-key-based-replacements "C-c s" "smerge"))
 
+;; Highlight diff lines on current buffer.
+(use-package diff-hl
+  :preface
+
+  (defun my/diff-hl-mode ()
+    (when (or (and buffer-file-name
+		   (not (file-remote-p buffer-file-name)))
+	      (eq major-mode 'vc-dir-mode))
+      (turn-on-diff-hl-mode)))
+  :defer t
+  :hook ((diff-hl-mode . (lambda ()
+			   (unless (display-graphic-p)
+			     (diff-hl-margin-mode 1))))
+	 (prog-mode . (lambda ()
+			(run-with-idle-timer 1 nil #'my/diff-hl-mode)))))
+
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
 (use-package diminish)
