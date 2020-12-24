@@ -1939,13 +1939,31 @@ position."
 
 ;;__________________________________________________________
 ;; Web mode
-(use-package php-mode
-  :mode ("\\.php\\'"))
+;; (use-package phps-mode
+;;   :mode ("\\.php\\'" "\\.phtml\\'")
+;;   :custom
+;;   (phps-mode-async-process t)
+;;   (phps-mode-async-process-using-async-el t)
+;;   :config
+;;   (eval-after-load 'flycheck
+;;     (phps-mode-flycheck-setup)))
+
+
+;; (use-package php-mode
+;;   :mode ("\\.php\\'"))
 
 (use-package web-mode
   :mode ("\\.\\(p\\|dj\\)?html\\'"
-	 "\\.tpl\\.php\\'" "\\.[agj]sp\\'"
-	 "\\.as[cp]x\\'" "\\.erb\\'"))
+	 "\\(\\.tpl\\)?\\.php\\'" "\\.[agj]sp\\'"
+	 "\\.as[cp]x\\'" "\\.erb\\'")
+  :custom
+  (web-mode-markup-indent-offset tab-width)
+  (web-mode-css-indent-offset tab-width)
+  (web-mode-code-indent-offset tab-width)
+  (web-mode-enable-auto-pairing t)
+  (web-mode-enable-auto-closing t)
+  (web-mode-enable-css-colorization t)
+  )
 
 (use-package company-web
   :hook (web-mode . (lambda ()
