@@ -1453,7 +1453,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :preface
   (defun my/ibuffer-mode-hook ()
     (hl-line-mode 1)
-    ;; (ibuffer-auto-mode 1)
+    ;; (ibuffer-auto-mode 1) ;; auto reflesh ibuffer. Disabled due to tramp
     )
   :bind ([remap list-buffers] . ibuffer)
   :hook (ibuffer-mode . my/ibuffer-mode-hook)
@@ -1497,6 +1497,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; neotree
+;; Like dired sidebar but a bit fancier.
 (use-package neotree
   :bind ("C-c b n" . neotree-toggle))
 
@@ -1579,10 +1580,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (:map counsel-mode-map
 	      (([remap switch-to-buffer] . counsel-switch-buffer)
 	       ([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
-	       ([remap ibuffer] . counsel-ibuffer)
-	       ([remap dired] . counsel-dired)
 	       ("C-c c c" . ivy-resume)             ;; resume ivy
 	       ("C-c c a" . counsel-ag)
+	       ("C-c c b" . counsel-ibuffer)        ;; like ibuffer + switch-to-buffer
 	       ("C-c c i" . counsel-imenu)
 	       ("C-c c r" . counsel-rg)	            ;; like git grep
 	       ("C-c c g" . counsel-grep)           ;; grep in local file
