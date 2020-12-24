@@ -618,6 +618,11 @@
     (mouse-wheel-mode t))			  ;; scrolling con el mouse
   )
 
+;; (use-package right-click-context
+;;   :after mouse
+;;   :config
+;;   (right-click-context-mode 1))
+
 ;; (global-set-key [drag-mouse-2] 'mouse-yank-at-click)
 
 (defun my/scroll-up-command (&optional arg)
