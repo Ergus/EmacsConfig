@@ -1055,6 +1055,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t)
 
 ;;__________________________________________________________
+;; groovy language
+
+(use-package groovy-mode
+  :defer t)
+
+;;__________________________________________________________
 ;; systemd mode
 (use-package systemd :defer t)
 
