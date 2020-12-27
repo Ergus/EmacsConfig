@@ -180,7 +180,8 @@
 
 ;;__________________________________________________________
 ;; Config file not here to not track it
-(setq-default custom-file (expand-file-name "custom.el" user-emacs-directory))
+(setq-default custom-file
+	      (expand-file-name "custom.el" user-emacs-directory))
 
 (unless (file-exists-p custom-file)
   (write-region "" nil custom-file)
@@ -263,17 +264,37 @@
   ;; 		       (run-with-idle-timer 1 nil #'which-function-mode 1)))
   :defer t)
 
+(use-package text-mode :ensure nil
+  :preface
+  (defvar text-mode-delay-hook nil)
+  (defun my/text-mode-hook ()
+    "Some hooks only for text mode."
+    (run-with-idle-timer 1 nil
+			 (lambda (buf)
+			   (with-current-buffer buf
+			     (run-hooks 'text-mode-delay-hook)))
+			 (current-buffer)))
+  :hook (text-mode . my/text-mode-hook)
+  :defer t
+  )
+
 (use-package prog-mode :ensure nil
   :preface
+  (defvar prog-mode-delay-hook nil)
   (defun my/prog-mode-hook ()
     "Some hooks only for prog mode."
-    (setq-local show-trailing-whitespace t))
+    (setq-local show-trailing-whitespace t)
+    (run-with-idle-timer 1 nil
+			 (lambda (buf)
+			   (with-current-buffer buf
+			     (run-hooks 'prog-mode-delay-hook)))
+			 (current-buffer)))
   :hook (prog-mode . my/prog-mode-hook)
   :defer t)
 
 (use-package elec-pair :ensure nil
   :hook ((prog-mode text-mode) . (lambda ()
-				   (electric-pair-local-mode 1)))
+				  (electric-pair-local-mode 1)))
   :defer t)
 
 (use-package hl-line :ensure nil
@@ -303,9 +324,17 @@
 
 (use-package eldoc :ensure nil ;; function arguments
   :diminish
+  :preface
+  (defvar eldoc-mode-delay-hook nil)
+  (defun my/eldoc-mode-hook ()
+    "Some hooks only for eldoc mode."
+    (run-with-idle-timer 1 nil
+			 (lambda (buf)
+			   (with-current-buffer buf
+			     (run-hooks 'eldoc-mode-delay-hook)))
+			 (current-buffer)))
   :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) .
-	 (lambda ()
-	   (run-with-idle-timer 1 nil #'eldoc-mode 1)))
+	 my/eldoc-mode-hook)
   :custom
   (eldoc-idle-delay 2)                             ;; default 0.5
   (eldoc-print-after-edit t)                       ;; only show after edit
@@ -511,11 +540,12 @@
 		   (not (file-remote-p buffer-file-name)))
 	      (eq major-mode 'vc-dir-mode))
       (turn-on-diff-hl-mode)
+      (add-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh nil t)
+      (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh nil t)
       (unless (display-graphic-p)
 	(diff-hl-margin-mode 1))))
   :defer t
-  :hook ((prog-mode . (lambda ()
-			(run-with-idle-timer 2 nil #'my/diff-hl-mode)))))
+  :hook (prog-mode-delay . my/diff-hl-mode))
 
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
@@ -703,10 +733,8 @@
 
 (use-package flyspell :ensure nil
   :diminish
-  :hook ((prog-mode . (lambda ()
-			(run-with-idle-timer 1 nil #'flyspell-prog-mode)))
-	 (text-mode . (lambda ()
-			(run-with-idle-timer 1 nil #'flyspell-mode 1))))
+  :hook ((prog-mode-delay . flyspell-prog-mode)
+	 (text-mode-delay . turn-on-flyspell))
   :bind (:map flyspell-mode-map
 	      (("C-M-i" .  nil)
 	       ("C-'" .	nil)
@@ -936,7 +964,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		      company-files	 ;; company files
 		      (company-dabbrev-code company-gtags company-keywords)
 		      company-dabbrev))
-  :config
+  :init
   (make-variable-buffer-local 'company-backends))
 
 ;; company-c-headers
@@ -1179,8 +1207,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package flycheck
   :diminish
   :if (< (buffer-size) 200000)
-  :hook (prog-mode . (lambda ()
-		       (run-with-idle-timer 1 nil #'flycheck-mode 1)))
+  :preface
+  (defun flycheck-mode-on ()
+    (flycheck-mode 1))
+  :hook (prog-mode-delay . flycheck-mode-on)
   :bind-keymap ("C-c a" . flycheck-command-map)
   :bind (:map flycheck-command-map
 	      (("a" . counsel-flycheck)))
@@ -1201,8 +1231,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package flymake :ensure nil
   :diminish
-  ;; :hook (prog-mode . (lambda ()
-  ;; 		       (run-with-idle-timer 1 nil #'flymake-mode 1)))
+  ;; :hook (prog-mode-delay . flymake-mode-on)
   :defer t
   :config
   (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
@@ -1434,6 +1463,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (dired-sidebar-subtree-line-prefix "."))
 
 (use-package dired-du
+  :custom
+  (dired-du-size-format t)
   :commands dired-du-mode)
 
 
