@@ -324,17 +324,8 @@
 
 (use-package eldoc :ensure nil ;; function arguments
   :diminish
-  :preface
-  (defvar eldoc-mode-delay-hook nil)
-  (defun my/eldoc-mode-hook ()
-    "Some hooks only for eldoc mode."
-    (run-with-idle-timer 1 nil
-			 (lambda (buf)
-			   (with-current-buffer buf
-			     (run-hooks 'eldoc-mode-delay-hook)))
-			 (current-buffer)))
   :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) .
-	 my/eldoc-mode-hook)
+	 turn-on-eldoc-mode)
   :custom
   (eldoc-idle-delay 2)                             ;; default 0.5
   (eldoc-print-after-edit t)                       ;; only show after edit
@@ -546,6 +537,9 @@
 	(diff-hl-margin-mode 1))))
   :defer t
   :hook (prog-mode-delay . my/diff-hl-mode))
+
+(use-package git-timemachine
+  :defer t)
 
 ;;__________________________________________________________
 ;; Diminish To Hide Packages from bar
