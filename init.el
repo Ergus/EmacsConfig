@@ -1460,10 +1460,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (dired-sidebar-theme 'nerd)
   (dired-sidebar-subtree-line-prefix "."))
 
-(use-package dired-du
-  :custom
-  (dired-du-size-format t)
-  :commands dired-du-mode)
+;; du for direct. Get file sizes..
+;; it is too slow, so don't use it please.
+;; (use-package dired-du
+;;   :custom
+;;   (dired-du-size-format t)
+;;   :commands dired-du-mode)
 
 
 ;; __________________________________________________________
