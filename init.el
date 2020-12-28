@@ -1435,13 +1435,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Dired-mode settings (file manager)
 (use-package dired :ensure nil
   :defer t
-  :preface
-  (defun my/dired-up-directory ()
-    (interactive)
-    (find-alternate-file ".."))
   :bind (:map dired-mode-map
 	 ([remap dired-find-file] . dired-find-alternate-file)
-	 ([remap dired-up-directory] . my/dired-up-directory))
+	 ([remap dired-up-directory] . (lambda ()
+					 (interactive)
+					 (find-alternate-file ".."))))
   :custom
   (dired-recursive-copies 'top)	     ;; Always ask recursive copy
   (dired-recursive-deletes 'top)     ;; Always ask recursive delete
@@ -1487,7 +1485,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     ;; (ibuffer-auto-mode 1) ;; auto reflesh ibuffer. Disabled due to tramp
     )
   :bind ([remap list-buffers] . ibuffer)
-  :hook (ibuffer-mode . my/ibuffer-mode-hook)
+  :hook (ibuffer-mode . (lambda ()
+			  ;; autorefresh. Not enable when tramp is loaded.
+			  ;; (if (featurep 'tramp)
+			  ;;     (message "ibuffer-auto-mode not enabled.")
+			  ;;   (ibuffer-auto-mode 1))
+			  (hl-line-mode 1)))
   :custom
   (ibuffer-default-sorting-mode 'alphabetic)  ;; can use recency
   )
@@ -1519,10 +1522,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :ensure t)
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
-(defun my/sidebar-toggle () "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
-       (interactive)
-       (ibuffer-sidebar-toggle-sidebar)
-       (dired-sidebar-toggle-sidebar))
+(defun my/sidebar-toggle ()
+  "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
+  (interactive)
+  (ibuffer-sidebar-toggle-sidebar)
+  (dired-sidebar-toggle-sidebar))
 
 (global-set-key (kbd "C-c b s") #'my/sidebar-toggle)
 
@@ -1753,6 +1757,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; CMake
 (use-package cmake-mode
   :mode ("CMakeLists\\.txt\\'" "\\.cmake\(.in\)?\\'")
+  :commands company-cmake
   :hook (cmake-mode . (lambda ()
 			(my/company-backend-after-load #'company-cmake)))
   :defer t)
