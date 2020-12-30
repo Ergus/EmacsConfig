@@ -286,8 +286,9 @@
     (setq-local show-trailing-whitespace t)
     (run-with-idle-timer 1 nil
 			 (lambda (buf)
-			   (with-current-buffer buf
-			     (run-hooks 'prog-mode-delay-hook)))
+			   (when (buffer-live-p buf)
+			     (with-current-buffer buf
+			       (run-hooks 'prog-mode-delay-hook))))
 			 (current-buffer)))
   :hook (prog-mode . my/prog-mode-hook)
   :defer t)
