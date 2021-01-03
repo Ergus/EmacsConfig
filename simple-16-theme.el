@@ -80,7 +80,7 @@
  `(line-number-current-line ((t :foreground ,(simple-16-theme-color green))))
  `(fill-column-indicator ((t :foreground ,(simple-16-theme-color brightblack))))
 
- `(show-paren-match ((t :background ,(simple-16-theme-color brightblack)
+ `(show-paren-match ((t :background ,(simple-16-theme-color brightblue)
                                      :inherit nil)))
 
  `(tab-bar ((t :background ,(simple-16-theme-color black)
