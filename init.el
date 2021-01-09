@@ -230,6 +230,29 @@
 
 
 ;;__________________________________________________________
+;; which-key
+
+(use-package which-key
+  :diminish
+  :custom
+  (which-key-idle-delay 0.5)
+  ;;(which-key-idle-delay 10000) ;; To not show
+  ;;(which-key-show-early-on-C-h t)
+  (which-key-idle-secondary-delay 0.01)  ;; nil sets the same delay
+  (which-key-dont-use-unicode t)
+  ;;(which-key-popup-type 'minibuffer)
+  ;;(which-key-separator ": ") ;which-key-idle-delay 2.0)
+  :config
+  (which-key-mode t)
+  (which-key-add-key-based-replacements
+    "C-c h" "highlight"
+    "C-c b" "bars"
+    "C-x r" "rectangle||register"
+    "C-x n" "narrow"
+    "C-x t" "tabs"
+    "C-x a" "abbrev"))
+
+;;__________________________________________________________
 ;; Some internal packages to defer them
 
 (use-package uniquify :ensure nil
@@ -463,29 +486,6 @@
 
 (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
-
-;;__________________________________________________________
-;; which-key
-
-(use-package which-key
-  :diminish
-  :custom
-  (which-key-idle-delay 0.5)
-  ;;(which-key-idle-delay 10000) ;; To not show
-  ;;(which-key-show-early-on-C-h t)
-  (which-key-idle-secondary-delay 0.01)  ;; nil sets the same delay
-  (which-key-dont-use-unicode t)
-  ;;(which-key-popup-type 'minibuffer)
-  ;;(which-key-separator ": ") ;which-key-idle-delay 2.0)
-  :config
-  (which-key-mode t)
-  (which-key-add-key-based-replacements
-    "C-c h" "highlight"
-    "C-c b" "bars"
-    "C-x r" "rectangle||register"
-    "C-x n" "narrow"
-    "C-x t" "tabs"
-    "C-x a" "abbrev"))
 
 ;;__________________________________________________________
 ;; Two options for diffs
