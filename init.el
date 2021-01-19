@@ -189,6 +189,7 @@
 				(current-buffer)))
 	 (add-hook ',modehook (function ,funame))))))
 
+;;Commented because define-obsolete-alias api changed.
 (use-package benchmark-init
   :if init-file-debug
   :config
@@ -1718,6 +1719,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   ;; (add-hook 'after-save-hook 'magit-after-save-refresh-status t)
 
+  (add-hook 'magit-log-mode-hook (lambda ()
+				   (setq-local show-trailing-whitespace nil
+					       tab-width 4)))
+
   (defun my/magit-kill-buffers ()
     "Restore window configuration and kill all Magit buffers."
     (interactive)
@@ -1738,8 +1743,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;______________________________________
 ;; Git commit
+
 (use-package git-commit
-  :mode ("COMMIT_EDITMSG" . git-commit-mode)
+  :defer t
+  :init
+  (when (boundp 'git-commit-filename-regexp)
+    (add-to-list 'auto-mode-alist
+		 (cons git-commit-filename-regexp #'git-commit-setup)))
   :custom
   (git-commit-summary-max-length 68)
   :config
