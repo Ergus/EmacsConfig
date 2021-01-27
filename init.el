@@ -315,10 +315,8 @@
   :preface
   (my/gen-delay-hook prog-mode)
   :defer t
-  :config
-  (add-hook 'prog-mode-delay-hook
-	    (lambda ()
-	      (setq show-trailing-whitespace t))))
+  :hook (prog-mode-delay . (lambda ()
+			     (setq show-trailing-whitespace t))))
 
 (use-package elec-pair :ensure nil
   :hook ((prog-mode text-mode) . (lambda ()
