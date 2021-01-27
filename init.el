@@ -304,8 +304,6 @@
 ;; Shows the function in spaceline
 (use-package which-func :ensure nil
   :diminish
-  ;; :hook (prog-mode . (lambda ()
-  ;; 		       (run-with-idle-timer 1 nil #'which-function-mode 1)))
   :defer t)
 
 (use-package text-mode :ensure nil
@@ -316,7 +314,11 @@
 (use-package prog-mode :ensure nil
   :preface
   (my/gen-delay-hook prog-mode)
-  :defer t)
+  :defer t
+  :config
+  (add-hook 'prog-mode-delay-hook
+	    (lambda ()
+	      (setq show-trailing-whitespace t))))
 
 (use-package elec-pair :ensure nil
   :hook ((prog-mode text-mode) . (lambda ()
@@ -998,7 +1000,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (defvaralias 'sh-basic-offset 'tab-width)
 
 (add-hook 'sh-mode-hook (lambda ()
-			  (setq-local indent-tabs-mode t)))
+			  (setq-local indent-tabs-mode t
+				      tab-width 4)))
 
 ;;__________________________________________________________
 ;; Cuda
@@ -1558,7 +1561,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-pulse-delay nil)
   (ivy-use-selectable-prompt t)
   (ivy-fixed-height-minibuffer t)
-  (ivy-dynamic-exhibit-delay-ms 150)  ;; Tiempo refresco, default 0
   ;;(ivy-height 10)
   ;;(ivy-wrap t)		      ;; cycle in minibuffer
   :config
@@ -1762,6 +1764,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Ensamblador nasm
 (use-package nasm-mode
   :mode ("\\.asm\\'" "\\.s\\'"))
+
+(use-package flymake-nasm
+  :hook (asm-mode-hook . flymake-nasm-setup)
+  :defer t)
 
 ;;__________________________________________________________
 ;; CMake
