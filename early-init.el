@@ -50,9 +50,6 @@
 (tooltip-mode    -1)			;; Tool tip in the echo
 (electric-indent-mode -1)
 ;; (flymake-mode    -1)
-
-(setq-default global-git-commit-mode nil)
-
 ;;(setq-default package-enable-at-startup nil)
 ;;-------------------- Some tricks--------------------------
 

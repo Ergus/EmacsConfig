@@ -1746,17 +1746,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package git-commit
   :defer t
-  :init
-  (when (boundp 'git-commit-filename-regexp)
-    (add-to-list 'auto-mode-alist
-		 (cons git-commit-filename-regexp #'git-commit-setup)))
+  :mode ("COMMIT_EDITMSG" . git-commit-setup)
   :custom
   (git-commit-summary-max-length 68)
   :config
-  (defun my/git-commit-setup-hook ()
-    (setq-local fill-column 72)
-    (git-commit-turn-on-flyspell))
-  (add-hook 'git-commit-setup-hook #'my/git-commit-setup-hook))
+  (add-to-list 'git-commit-style-convention-checks 'overlong-summary-line)
+
+  (add-hook 'git-commit-setup-hook (lambda ()
+				     (setq-local fill-column 72)
+				     (git-commit-turn-on-flyspell))))
 
 ;;__________________________________________________________
 ;; Ensamblador nasm
