@@ -1856,14 +1856,14 @@ position."
 ;; Move current line up and down M+arrow
 
 (use-package move-dup
-  :bind (("M-<up>" . md-duplicate-up)
-	 ("M-<down>" . md-duplicate-down)
-	 ("C-M-<up>" .  md-move-lines-up)
-	 ("C-M-<down>" . md-move-lines-down)
+  :bind (("M-<up>" . move-dup-duplicate-up)
+	 ("M-<down>" . move-dup-duplicate-down)
+	 ("C-M-<up>" .  move-dup-move-lines-up)
+	 ("C-M-<down>" . move-dup-move-lines-down)
 	 ("C-M-<left>" . (lambda () (interactive) (transpose-words -1)))
-	 ("C-M-<right>" . (lambda () (interactive) (transpose-words 1)))
+	 ("C-M-<right>" . transpose-words)
 	 ("M-<left>" . (lambda () (interactive) (transpose-chars -1)))
-	 ("M-<right>" . (lambda () (interactive) (transpose-chars 1)))))
+	 ("M-<right>" . transpose-chars)))
 
 ;;__________________________________________________________
 ;; evil mode
