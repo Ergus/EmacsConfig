@@ -2029,7 +2029,8 @@ position."
   :mode ("sites-\\(?:available\\|enabled\\)\\'" "nginx\\.config\\'"))
 
 (use-package company-nginx
-  :hook (nginx-mode . company-nginx-keywords)
+  :hook (nginx-mode . (lambda ()
+			(my/company-backend-after-load #'company-nginx)))
   :defer t)
 
 (use-package lice :defer t)
