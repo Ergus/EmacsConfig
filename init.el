@@ -41,7 +41,6 @@
 ;; 	      display-time-default-load-average nil)
 ;; (display-time-mode t)
 
-
 (setq-default vc-follow-symlinks t	    ;; Open links not open
 	      ;;tab-always-indent complete  ;; make tab key do indent only
 	      initial-scratch-message ";; Welcome Jimmy!!"
@@ -233,6 +232,8 @@
 
 ;;__________________________________________________________
 ;; which-key
+(use-package diminish :defer t)   ;; if you use :diminish
+(use-package bind-key :defer t)	  ;; if you use any :bind variant
 
 (use-package which-key
   :diminish
@@ -370,8 +371,6 @@
 ;;__________________________________________________________
 ;; Benchmark-init
 
-(use-package diminish :defer t)   ;; if you use :diminish
-(use-package bind-key :defer t)	  ;; if you use any :bind variant
 (use-package paradox
   :defer t
   :custom
@@ -540,10 +539,6 @@
 
 (use-package git-timemachine
   :defer t)
-
-;;__________________________________________________________
-;; Diminish To Hide Packages from bar
-(use-package diminish)
 
 ;;__________________________________________________________
 ;; terms
