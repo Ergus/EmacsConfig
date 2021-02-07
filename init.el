@@ -478,16 +478,13 @@
 ;;__________________________________________________________
 ;; minibuffers
 
-(defun my/minibuffer-setup-hook ()
-  "Hook to call when open the minibuffer."
-  (setq gc-cons-threshold most-positive-fixnum))
+(add-hook 'minibuffer-setup-hook
+	  (lambda ()
+	    (setq gc-cons-threshold most-positive-fixnum)))
 
-(defun my/minibuffer-exit-hook ()
-  "Hook to call when leave the setq."
-  (setq gc-cons-threshold 800000))
-
-(add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
-(add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
+(add-hook 'minibuffer-exit-hook
+	  (lambda ()
+	    (setq gc-cons-threshold my/gc-cons-threshold)))
 
 ;;__________________________________________________________
 ;; Two options for diffs
