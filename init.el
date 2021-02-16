@@ -387,9 +387,17 @@
   (lazy-highlight-initial-delay 0)
   (isearch-allow-scroll t)	      ;; Permit scroll can be 'unlimited
   (isearch-lazy-count t)
-  ;;(search-exit-option 'edit)          ;; Control or meta keys edit search
+  (search-ring-max 64)                ;; Cuantas busquedas recordar
+  (regexp-search-ring-max 64)
+  ;;(search-exit-option 'edit)        ;; Control or meta keys edit search
   (isearch-yank-on-move 'shift)       ;; Copy text from buffer with meta
-  )
+  :config
+   (defun my/goto-match-beginning ()
+     (when (and isearch-forward
+		(not isearch-mode-end-hook-quit))
+       (goto-char isearch-other-end)))
+
+  (add-hook 'isearch-mode-end-hook 'my/goto-match-beginning))
 
 (use-package phi-search :defer t)
 
@@ -1574,9 +1582,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("C-c x TAB" . completion-at-point)))
 
 (use-package swiper
-  :bind (([remap isearch-forward] . swiper-isearch)
-	 ([remap isearch-backward] . swiper-isearch-backward)
-	 ([remap isearch-forward-symbol-at-point] . swiper-isearch-thing-at-point)
+  :bind (;;([remap isearch-forward] . swiper-isearch)
+	 ;;([remap isearch-backward] . swiper-isearch-backward)
+	 ;;([remap isearch-forward-symbol-at-point] . swiper-isearch-thing-at-point)
 	 :map swiper-map
 	 ;; TODO: Find bindings for swiper-all and swiper-all-thing-at-point
 	 ;;("M-q" . swiper-query-replace)   ;; Already default
