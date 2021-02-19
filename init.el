@@ -1563,44 +1563,51 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con Selectrum)
 (use-package selectrum
+  :custom
+  (selectrum-count-style 'current/matches)
+  (selectrum-fix-vertical-window-height nil)
+  (completion-styles '(substring partial-completion))
+  (selectrum-extend-current-candidate-highlight nil)
   :config
   (selectrum-mode 1)
 
   (defun selectrum-partial ()
-  "Complete the minibuffer text as much as possible."
-  (interactive)
-  (let* ((matchstr (if minibuffer-completing-file-name
-                       (or (file-name-nondirectory
-                            (minibuffer-contents)) "")
-                  (minibuffer-contents)))
-         (parts (or (split-string matchstr " " t) (list "")))
-         (tail (last parts))
-         (postfix (car tail))
-         (new (try-completion postfix
-                              selectrum--refined-candidates)))
-    (cond ((or (eq new t) (null new)) nil)
-          ((string= new matchstr) nil)
-          ((string= (car tail) (car (split-string new " " t))) nil)
-          (new
-           (delete-region (save-excursion
-                            (search-backward matchstr nil t)
-                            (point))
-                          (point-max))
-           (setcar tail new)
-           (insert (mapconcat #'identity parts " "))
-           t))))
+    "Complete the minibuffer text as much as possible."
+    (interactive)
+    (let* ((matchstr (if minibuffer-completing-file-name
+			 (or (file-name-nondirectory
+                              (minibuffer-contents)) "")
+                       (minibuffer-contents)))
+           (parts (or (split-string matchstr " " t) (list "")))
+           (tail (last parts))
+           (postfix (car tail))
+           (new (try-completion postfix
+				selectrum--refined-candidates)))
+      (cond ((or (eq new t) (null new)) nil)
+            ((string= new matchstr) nil)
+            ((string= (car tail) (car (split-string new " " t))) nil)
+            (new
+             (delete-region (save-excursion
+                              (search-backward matchstr nil t)
+                              (point))
+                            (point-max))
+             (setcar tail new)
+             (insert (mapconcat #'identity parts " "))
+             t))))
 
-  (define-key selectrum-minibuffer-map (kbd "TAB") 'selectrum-partial)
-  )
+  (define-key selectrum-minibuffer-map (kbd "TAB") #'selectrum-partial))
+
+
+(use-package prescient :defer t
+  :custom
+  (prescient-history-length 1000)
+  :config
+  (prescient-persist-mode +1))
 
 (use-package selectrum-prescient
-  :custom
-  (completion-styles '(substring partial-completion))
-  (selectrum-fix-vertical-window-height nil)
-  ;; (selectrum-max-window-height 10) ;; default 10
+  :after selectrum
   :config
   (selectrum-prescient-mode +1) ;; sorting intelligent
-  (prescient-persist-mode +1)   ;; save your command history on disk
   )
 
 
