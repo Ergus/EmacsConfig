@@ -1126,12 +1126,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      ("<C-M-down>" . windmove-swap-states-down)
 	      ("<C-M-up>" . windmove-swap-states-up)))
 
-(use-package ace-window
-  :bind ([remap other-window] . ace-window)
-  :custom
-  ;;(aw-background nil)
-  (aw-ignore-current t)
-  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+(use-package repeat :ensure nil
+  :config
+  (repeat-mode 1))
+
+;; This gets obsoleted for me with the repeat mode.
+;; (use-package ace-window
+;;   :bind ([remap other-window] . ace-window)
+;;   :custom
+;;   ;;(aw-background nil)
+;;   (aw-ignore-current t)
+;;   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 ;; ;; Lets try this instead of ace window
 ;; (use-package switch-window
