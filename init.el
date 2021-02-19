@@ -1910,12 +1910,13 @@ position."
   (global-set-key (kbd "C-'") avy-basic-map)
   (which-key-add-key-based-replacements "C-'" "avy")
   :custom
-  (avy-timeout-seconds 0.75)
+  ;; (avy-timeout-seconds 0.75)
   ;; (avy-style 'at-full)  ;; this is already the default
   (avy-all-windows nil)    ;; commands only in this window
   (avy-all-windows-alt t)  ;; with prefix commands in all windows
   (avy-case-fold-search nil)
-  (avy-highlight-first t)
+  ;; (avy-highlight-first t)
+  (avy-indent-line-overlay t) ;; show highlight after non-whitespace
   (avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
 		   (number-sequence ?1 ?9)
 		   (number-sequence ?A ?Z))))
