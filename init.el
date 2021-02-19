@@ -105,6 +105,9 @@
 	      ;; These two must be enabled/disabled together
 	      ;; (setq enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
 	      ;; (minibuffer-depth-indicate-mode 1)    ;; Mostrar nivel de nesting en minibuffer
+
+	      ;; Filter commands; not working with ivy.
+	      ;; read-extended-command-predicate #'command-completion-default-include-p
 	      )
 
 ;; Vertical window divider
@@ -742,20 +745,34 @@
 	       ("C-c $" .  nil)
 	       ("C-c f r" . flyspell-region)
 	       ("C-c f b" . flyspell-buffer)
-	       ("C-c f n" . flyspell-goto-next-error)))
+	       ("C-c f g" . flyspell-goto-next-error)))
   :defer t
   :config
   (which-key-add-key-based-replacements "C-c f" "flyspell"))
 
-(use-package flyspell-correct-ivy
-  :diminish
+(use-package flyspell-correct
   :after flyspell
-  :bind (("C-c f w" . flyspell-correct-wrapper)
-	 ("C-c f f" . flyspell-correct-at-point)
-	 ("C-c f C-n" . flyspell-correct-next)
-	 ("C-c f C-p" . flyspell-correct-previous))
   :custom
-  (flyspell-correct-interface #'flyspell-correct-ivy))
+  (flyspell-correct-interface #'flyspell-correct-dummy)
+  :bind (:map flyspell-mode-map
+	      ("C-c f f" . flyspell-correct-wrapper)
+	      ("C-c f w" . flyspell-correct-wrapper)
+	      ("C-c f n" . flyspell-correct-next)
+	      ("C-c f p" . flyspell-correct-previous)))
+
+;; (use-package flyspell-correct-popup
+;;   :after flyspell-correct)
+
+;; (use-package flyspell-correct-ivy
+;;   :diminish
+;;   :after flyspell
+;;   :bind (:map flyspell-mode-map
+;;	 ("C-c f w" . flyspell-correct-wrapper)
+;; 	 ("C-c f f" . flyspell-correct-at-point)
+;; 	 ("C-c f C-n" . flyspell-correct-next)
+;; 	 ("C-c f C-p" . flyspell-correct-previous))
+;;   :custom
+;;   (flyspell-correct-interface #'flyspell-correct-ivy))
 
 ;;__________________________________________________________
 ;; {c/c++}-mode
@@ -819,11 +836,11 @@
   (lsp-metals-treeview-enable t)
   (lsp-metals-treeview-show-when-views-received t))
 
-(use-package lsp-ivy
-  :diminish
-  :after lsp-mode
-  :bind (:map lsp-mode-map
-	      ("C-c l i" . lsp-ivy-workspace-symbol)))
+;; (use-package lsp-ivy
+;;   :diminish
+;;   :after lsp-mode
+;;   :bind (:map lsp-mode-map
+;; 	      ("C-c l i" . lsp-ivy-workspace-symbol)))
 
 ;; (use-package ccls
 ;;   :defer t
@@ -1413,10 +1430,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 			 (my/company-backend-after-load #'company-bibtex)))
   :defer t)
 
-(use-package ivy-bibtex
-  :defer t
-  :custom
-  (ivy-bibtex-default-action #'bibtex-completion-insert-citation))
+;; (use-package ivy-bibtex
+;;   :defer t
+;;   :custom
+;;   (ivy-bibtex-default-action #'bibtex-completion-insert-citation))
 
 ;;__________________________________________________________
 ;; Python mode
@@ -1544,48 +1561,100 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind ("C-c b n" . neotree-toggle))
 
 ;;__________________________________________________________
-;; Ivy (probare un tiempo con helm/ivy)
-
-(use-package headlong :defer t)
-
-(use-package flx :defer t)
-
-(use-package ivy
-  :diminish
-  :bind (:map ivy-mode-map
-	      ("C-c c c" . ivy-resume)
-	      :map ivy-minibuffer-map
-	      ("TAB" . ivy-partial)
-	      ("RET" . ivy-alt-done))
-  :init
-  (which-key-add-key-based-replacements "C-c i" "ivy")
-  :custom
-  (ivy-use-virtual-buffers nil)   ;; Recent files or buffers in ivy
-  (ivy-count-format "(%d/%d) ")
-  (ivy-pulse-delay nil)
-  (ivy-use-selectable-prompt t)
-  (ivy-fixed-height-minibuffer t)
-  ;;(ivy-height 10)
-  ;;(ivy-wrap t)		      ;; cycle in minibuffer
+;; Ivy (probare un tiempo con Selectrum)
+(use-package selectrum
   :config
-  ;; Highlight with arrows by default.
-  ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
-  (ivy-mode 1))
+  (selectrum-mode 1)
 
-(use-package ivy-avy :after ivy)
+  (defun selectrum-partial ()
+  "Complete the minibuffer text as much as possible."
+  (interactive)
+  (let* ((matchstr (if minibuffer-completing-file-name
+                       (or (file-name-nondirectory
+                            (minibuffer-contents)) "")
+                  (minibuffer-contents)))
+         (parts (or (split-string matchstr " " t) (list "")))
+         (tail (last parts))
+         (postfix (car tail))
+         (new (try-completion postfix
+                              selectrum--refined-candidates)))
+    (cond ((or (eq new t) (null new)) nil)
+          ((string= new matchstr) nil)
+          ((string= (car tail) (car (split-string new " " t))) nil)
+          (new
+           (delete-region (save-excursion
+                            (search-backward matchstr nil t)
+                            (point))
+                          (point-max))
+           (setcar tail new)
+           (insert (mapconcat #'identity parts " "))
+           t))))
 
-(use-package ivy-xref
-  :init
-  (which-key-add-key-based-replacements "C-c x" "xref")
+  (define-key selectrum-minibuffer-map (kbd "TAB") 'selectrum-partial)
+  )
+
+(use-package selectrum-prescient
   :custom
-  (xref-show-definitions-function #'ivy-xref-show-defs)
-  (xref-show-xrefs-function #'ivy-xref-show-xrefs)
-  :bind (("C-c x d" . xref-find-definitions)
-	 ("C-c x 4" . xref-find-definitions-other-window)
-	 ("C-c x a" . xref-find-apropos)
-	 ("C-c x b" . xref-pop-marker-stack) ;; go back
-	 ("C-c x r" . xref-find-references)
-	 ("C-c x TAB" . completion-at-point)))
+  (completion-styles '(substring partial-completion))
+  (selectrum-fix-vertical-window-height nil)
+  ;; (selectrum-max-window-height 10) ;; default 10
+  :config
+  (selectrum-prescient-mode +1) ;; sorting intelligent
+  (prescient-persist-mode +1)   ;; save your command history on disk
+  )
+
+
+;; (use-package ctrlf
+;;   :custom
+;;   (ctrlf-go-to-end-of-match nil)
+;;   (ctrlf-show-match-count-at-eol nil)
+;;   (ctrlf-highlight-current-line nil)
+;;   :config
+;;   (ctrlf-mode +1))
+
+;;__________________________________________________________
+;; Ivy
+
+;; (use-package headlong :defer t)
+
+;; (use-package flx :defer t)
+
+;; (use-package ivy
+;;   :diminish
+;;   :bind (:map ivy-mode-map
+;; 	      ("C-c c c" . ivy-resume)
+;; 	      :map ivy-minibuffer-map
+;; 	      ("TAB" . ivy-partial)
+;; 	      ("RET" . ivy-alt-done))
+;;   :init
+;;   (which-key-add-key-based-replacements "C-c i" "ivy")
+;;   :custom
+;;   (ivy-use-virtual-buffers nil)   ;; Recent files or buffers in ivy
+;;   (ivy-count-format "(%d/%d) ")
+;;   (ivy-pulse-delay nil)
+;;   (ivy-use-selectable-prompt t)
+;;   (ivy-fixed-height-minibuffer t)
+;;   ;;(ivy-height 10)
+;;   ;;(ivy-wrap t)		      ;; cycle in minibuffer
+;;   :config
+;;   ;; Highlight with arrows by default.
+;;   ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
+;;   (ivy-mode 1))
+
+;; (use-package ivy-avy :after ivy)
+
+;; (use-package ivy-xref
+;;   :init
+;;   (which-key-add-key-based-replacements "C-c x" "xref")
+;;   :custom
+;;   (xref-show-definitions-function #'ivy-xref-show-defs)
+;;   (xref-show-xrefs-function #'ivy-xref-show-xrefs)
+;;   :bind (("C-c x d" . xref-find-definitions)
+;; 	 ("C-c x 4" . xref-find-definitions-other-window)
+;; 	 ("C-c x a" . xref-find-apropos)
+;; 	 ("C-c x b" . xref-pop-marker-stack) ;; go back
+;; 	 ("C-c x r" . xref-find-references)
+;; 	 ("C-c x TAB" . completion-at-point)))
 
 (use-package swiper
   :bind (;;([remap isearch-forward] . swiper-isearch)
@@ -1606,7 +1675,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   )
 
 (use-package imenu-anywhere
-  :bind (("C-c i i" . ivy-imenu-anywhere)
+  :bind (("C-c i i" . imenu-anywhere)
 	 ("C-c i c" . counsel-imenu))
   :custom
   (imenu-auto-rescan t)
@@ -1617,44 +1686,44 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :custom
   (imenu-list-position 'left))
 
-(use-package counsel
-  :diminish
-  :bind (:map counsel-mode-map
-	      (([remap switch-to-buffer] . counsel-switch-buffer)
-	       ([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
-	       ("C-c c c" . ivy-resume)             ;; resume ivy
-	       ("C-c c a" . counsel-ag)
-	       ("C-c c b" . counsel-ibuffer)        ;; like ibuffer + switch-to-buffer
-	       ("C-c c i" . counsel-imenu)
-	       ("C-c c r" . counsel-rg)	            ;; like git grep
-	       ("C-c c g" . counsel-grep)           ;; grep in local file
-	       ("C-c c G" . counsel-git-grep)       ;; grep in current git repo
-	       ("C-c c e" . counsel-linux-app)      ;; call application
-	       ("C-c c l" . counsel-find-library)   ;; Search lisp libraries
-	       ("C-c c SPC" . counsel-register)     ;; list registers
-	       ("C-c c M-RET" . counsel-company)    ;; company completions
-	       ("C-c c C-r" . counsel-command-history) ;; command history
-	       ("C-c c p" . counsel-package)        ;; command history
-	       ("C-c c P" . counsel-list-processes)        ;; command history
-	       ;; Find file commands
-	       ("C-c c f g" . counsel-git)          ;; find file in git rempo
-	       ("C-c c f j" . counsel-file-jump)    ;; file in subdir
-	       ("C-c c f l" . counsel-locate)       ;; locate command (como search)
-	       ("C-c c f r" . counsel-recentf)
-	       ("C-c c f z" . counsel-fzf)
-	       ("C-c c f b" . counsel-buffer-or-recentf)))
-  :defer 0.25
-  :init
-  (which-key-add-key-based-replacements "C-c c" "counsel")
-  (which-key-add-key-based-replacements "C-c c f" "find-file")
-  :custom
-  (counsel-find-file-at-point t)       ;; Select file at point
-  (counsel-preselect-current-file t)   ;; Select current file in list
-  :config
-  (counsel-mode 1)
-  ;; match by words
-  ;; (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
-  )
+;; (use-package counsel
+;;   :diminish
+;;   :bind (:map counsel-mode-map
+;; 	      (([remap switch-to-buffer] . counsel-switch-buffer)
+;; 	       ([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
+;; 	       ("C-c c c" . ivy-resume)             ;; resume ivy
+;; 	       ("C-c c a" . counsel-ag)
+;; 	       ("C-c c b" . counsel-ibuffer)        ;; like ibuffer + switch-to-buffer
+;; 	       ("C-c c i" . counsel-imenu)
+;; 	       ("C-c c r" . counsel-rg)	            ;; like git grep
+;; 	       ("C-c c g" . counsel-grep)           ;; grep in local file
+;; 	       ("C-c c G" . counsel-git-grep)       ;; grep in current git repo
+;; 	       ("C-c c e" . counsel-linux-app)      ;; call application
+;; 	       ("C-c c l" . counsel-find-library)   ;; Search lisp libraries
+;; 	       ("C-c c SPC" . counsel-register)     ;; list registers
+;; 	       ("C-c c M-RET" . counsel-company)    ;; company completions
+;; 	       ("C-c c C-r" . counsel-command-history) ;; command history
+;; 	       ("C-c c p" . counsel-package)        ;; command history
+;; 	       ("C-c c P" . counsel-list-processes)        ;; command history
+;; 	       ;; Find file commands
+;; 	       ("C-c c f g" . counsel-git)          ;; find file in git rempo
+;; 	       ("C-c c f j" . counsel-file-jump)    ;; file in subdir
+;; 	       ("C-c c f l" . counsel-locate)       ;; locate command (como search)
+;; 	       ("C-c c f r" . counsel-recentf)
+;; 	       ("C-c c f z" . counsel-fzf)
+;; 	       ("C-c c f b" . counsel-buffer-or-recentf)))
+;;   :defer 0.25
+;;   :init
+;;   (which-key-add-key-based-replacements "C-c c" "counsel")
+;;   (which-key-add-key-based-replacements "C-c c f" "find-file")
+;;   :custom
+;;   (counsel-find-file-at-point t)       ;; Select file at point
+;;   (counsel-preselect-current-file t)   ;; Select current file in list
+;;   :config
+;;   (counsel-mode 1)
+;;   ;; match by words
+;;   ;; (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
+;;   )
 
 (use-package amx :defer t) ;; Complete history
 (use-package recentf :ensure nil
@@ -1663,34 +1732,40 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (recentf-mode 1)) ;; Complete history
 
 
-(use-package counsel-gtags
-  :diminish
-  :load-path (lambda () (my/load-path "~/gits/emacs-counsel-gtags/"))
-  :bind-keymap ("C-c g" . counsel-gtags-command-map)
-  :hook (counsel-gtags . my/counsel-gtags-hook)
-  :custom
-  (counsel-gtags-debug-mode t)
-  (counsel-gtags-use-dynamic-list nil)
-  :init
-  (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
-  :config
-  (defun my/counsel-gtags-hook ()
-    (my/company-backend-after-load #'company-gtags))
+;; (use-package counsel-gtags
+;;   :diminish
+;;   :load-path (lambda () (my/load-path "~/gits/emacs-counsel-gtags/"))
+;;   :bind-keymap ("C-c g" . counsel-gtags-command-map)
+;;   :hook (counsel-gtags . my/counsel-gtags-hook)
+;;   :custom
+;;   (counsel-gtags-debug-mode t)
+;;   (counsel-gtags-use-dynamic-list nil)
+;;   :init
+;;   (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
+;;   :config
+;;   (defun my/counsel-gtags-hook ()
+;;     (my/company-backend-after-load #'company-gtags))
 
-  ;; Promote company-gtags to the beginning.
-  (add-hook 'counsel-gtags-mode-hook #'my/counsel-gtags-hook)
-  (add-hook 'c-mode-hook #'my/counsel-gtags-hook)
-  (add-hook 'c++-mode-hook #'my/counsel-gtags-hook)
-  (add-hook 'objc-mode-hook #'my/counsel-gtags-hook)
+;;   ;; Promote company-gtags to the beginning.
+;;   (add-hook 'counsel-gtags-mode-hook #'my/counsel-gtags-hook)
+;;   (add-hook 'c-mode-hook #'my/counsel-gtags-hook)
+;;   (add-hook 'c++-mode-hook #'my/counsel-gtags-hook)
+;;   (add-hook 'objc-mode-hook #'my/counsel-gtags-hook)
 
-  (counsel-gtags-mode 1))
+;;   (counsel-gtags-mode 1))
+
+;; (use-package rg
+;;   :bind-keymap ("C-c r" . rg-global-map))
+
+(use-package deadgrep
+  :bind (("C-c r r" . deadgrep)
+	 ("C-c r k" . deadgrep-kill-all-buffers))
+  )
 
 (use-package global-tags ;; gtags with xref integration
-  :after counsel-gtags
-  :demand t
-  :bind (:map counsel-gtags-mode-map
-	      ("C-c g x c" . global-tags-create-database)
-	      ("C-c g x u" . global-tags-update-database))
+  ;; :after counsel-gtags
+  :bind (("C-c g x c" . global-tags-create-database)
+	 ("C-c g x u" . global-tags-update-database))
   :init
   (which-key-add-key-based-replacements "C-c g x" "global-tags")
   :config
@@ -1702,7 +1777,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (which-key-add-key-based-replacements "C-c j" "dumb-jump")
   :custom
-  (dumb-jump-selector 'ivy)
+  ;; (dumb-jump-selector 'ivy)
   (dumb-jump-disable-obsolete-warnings t)
   :bind (:map dumb-jump-mode-map
 	      (("j" . dumb-jump-go)
@@ -1721,7 +1796,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package magit
   :defer t
   :custom
-  (magit-completing-read-function #'ivy-completing-read) ;; this is autoset
+  (magit-completing-read-function #'selectrum-completing-read)
+  ;; (magit-completing-read-function #'ivy-completing-read) ;; this is autoset
   :config
   ;; (add-hook 'after-save-hook 'magit-after-save-refresh-status t)
 
@@ -1847,19 +1923,19 @@ position."
 
     (goto-char (my/abs-to-point abspoint))))
 
-(defun my/var-to-clipboard ()
-  "Put the current file name on the clipboard."
-  (interactive)
-  (ivy-read "Describe variable: " obarray
-	    :predicate #'counsel--variable-p
-	    :require-match t
-	    :preselect (ivy-thing-at-point)
-	    :action (lambda (x)
-		      (let ((value (format "%s" (symbol-value (intern x)))))
-			(kill-new value)
-			(message "Copied %s value %s to clipboard"
-				 x value)))
-	    :caller 'my/var-to-clipboard))
+;; (defun my/var-to-clipboard ()
+;;   "Put the current file name on the clipboard."
+;;   (interactive)
+;;   (ivy-read "Describe variable: " obarray
+;; 	    :predicate #'counsel--variable-p
+;; 	    :require-match t
+;; 	    :preselect (ivy-thing-at-point)
+;; 	    :action (lambda (x)
+;; 		      (let ((value (format "%s" (symbol-value (intern x)))))
+;; 			(kill-new value)
+;; 			(message "Copied %s value %s to clipboard"
+;; 				 x value)))
+;; 	    :caller 'my/var-to-clipboard))
 
 ;;__________________________________________________________
 ;; Move current line up and down M+arrow
