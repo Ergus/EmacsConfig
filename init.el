@@ -1876,6 +1876,7 @@ position."
   (easy-mmode-defmap avy-basic-map
     `(("r" . avy-resume)
       (,(kbd "C-'") . avy-goto-char-timer)
+      ("'" . avy-goto-char-timer)
       ("c" . avy-goto-char)
       ("2" . avy-goto-char-2)
       ("\C-f" . avy-goto-char-in-line)
