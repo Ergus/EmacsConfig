@@ -479,7 +479,7 @@
   :custom
   (tab-bar-tab-hints t)  ;; show tab numbers
   (tab-bar-close-last-tab-choice 'tab-bar-mode-disable) ;; When close last
-  ;;(tab-bar-show 1)
+  (tab-bar-show 1)
   )
 
 ;;__________________________________________________________
