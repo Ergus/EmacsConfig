@@ -447,6 +447,7 @@
    (expand-file-name "tramp-autosave-dir" user-emacs-directory))
   (tramp-default-method "rsync")
   ;;(tramp-change-syntax 'simplified)
+  (tramp-completion-use-auth-sources nil)
   (tramp-use-ssh-controlmaster-options nil) ;; I use Control* or Proxy* in ssh/config
   (remote-file-name-inhibit-cache 120)      ;; Default 10
   ;; (tramp-persistency-file-name
