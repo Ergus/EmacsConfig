@@ -371,6 +371,11 @@
   (gdb-many-windows nil)
   (gdb-show-main t))
 
+(use-package ffap :ensure nil
+  :defer 1
+  :config
+  (ffap-bindings))
+
 ;;__________________________________________________________
 ;; Benchmark-init
 
