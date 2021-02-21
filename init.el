@@ -189,12 +189,12 @@
 	 (add-hook ',modehook (function ,funame))))))
 
 ;;Commented because define-obsolete-alias api changed.
-(use-package benchmark-init
-  :if init-file-debug
-  :config
-  (add-hook 'benchmark-init/tree-mode-hook #'hl-line-mode)
-  (add-hook 'benchmark-init/tabulated-mode-hook #'hl-line-mode)
-  (add-hook 'window-setup-hook #'benchmark-init/deactivate 0))
+;;(use-package benchmark-init
+;;  :if init-file-debug
+;;  :config
+;;  (add-hook 'benchmark-init/tree-mode-hook #'hl-line-mode)
+;;  (add-hook 'benchmark-init/tabulated-mode-hook #'hl-line-mode)
+;;  (add-hook 'window-setup-hook #'benchmark-init/deactivate 0))
 
 (use-package esup :defer t)
 
@@ -445,26 +445,26 @@
   :custom
   (tramp-auto-save-directory
    (expand-file-name "tramp-autosave-dir" user-emacs-directory))
-  (tramp-default-method "rsync")
-  ;;(tramp-change-syntax 'simplified)
+  ;; (tramp-default-method "rsync")
   (tramp-completion-use-auth-sources nil)
-  (tramp-use-ssh-controlmaster-options nil) ;; I use Control* or Proxy* in ssh/config
   (remote-file-name-inhibit-cache 120)      ;; Default 10
+  (password-cache-expiry 3600)              ;; Cache for 1 hour
+  (tramp-default-method "ssh")
+  ;; (tramp-verbose 10)
   ;; (tramp-persistency-file-name
   ;;  (expand-file-name "tramp" user-emacs-directory))
   :config
+  (connection-local-set-profile-variables
+   'my/tramp-profile '((auth-sources . nil)
+		       (tramp-use-ssh-controlmaster-options . nil)))
+
+  (connection-local-set-profiles
+   '(:application tramp) 'my/tramp-profile)
+
+  ;;(tramp-change-syntax 'simplified)
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
   (add-to-list 'tramp-remote-process-environment
                (format "DISPLAY=%s" (getenv "DISPLAY"))))
-
-;; (use-package tramp-sh :ensure nil
-;;   :config
-;;   (add-to-list 'tramp-remote-path "/usr/local/sbin")
-;;   )
-
-;; (use-package tramp-term
-;;   :after tramp
-;;   :commands tramp-term)
 
 (use-package ssh-config-mode
   :mode (("/\\.ssh/config\\'" . ssh-config-mode)
@@ -513,41 +513,6 @@
   (vdiff-auto-refine t)
   :init
   (which-key-add-key-based-replacements "C-c d" "vdiff"))
-
-(use-package smerge-mode :ensure nil
-  :defer t
-  :preface
-  (defun my/enable-smerge-maybe ()
-    "Auto-enable `smerge-mode' when merge conflict is detected."
-    (save-excursion
-      (goto-char (point-min))
-      (when (re-search-forward "^<<<<<<< " nil t)
-	(smerge-mode 1))))
-
-  :hook ((find-file magit-diff-visit-file) . my/enable-smerge-maybe)
-  :custom
-  (smerge-diff-buffer-name "*smerge-diff*")
-  :bind-keymap ("C-c s" . smerge-basic-map)
-  :config
-  (which-key-add-key-based-replacements "C-c s" "smerge"))
-
-;; Highlight diff lines on current buffer.
-(use-package diff-hl
-  :preface
-  (defun my/diff-hl-mode ()
-    (when (or (and buffer-file-name
-		   (not (file-remote-p buffer-file-name)))
-	      (eq major-mode 'vc-dir-mode))
-      (turn-on-diff-hl-mode)
-      (add-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh nil t)
-      (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh nil t)
-      (unless (display-graphic-p)
-	(diff-hl-margin-mode 1))))
-  :defer t
-  :hook (prog-mode-delay . my/diff-hl-mode))
-
-(use-package git-timemachine
-  :defer t)
 
 ;;__________________________________________________________
 ;; terms
@@ -1565,7 +1530,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-use-selectable-prompt t)
   (ivy-fixed-height-minibuffer t)
   (ivy-on-del-error-function #'ignore)
-  (ivy-more-chars-alist 2)
   (ivy-read-action-format-function #'ivy-read-action-format-columns)
   ;; (ivy-use-virtual-buffers t)   ;; Recent files or buffers in ivy
   ;; (ivy-height 10)
@@ -1723,7 +1687,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 ;;__________________________________________________________
-;; Magit
+;; Magit and git packages
 
 (use-package magit
   :defer t
@@ -1754,8 +1718,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package gitignore-mode
   :mode "\\.gitignore\\'")
 
-;;______________________________________
-;; Git commit
+(use-package git-timemachine
+  :defer t)
 
 (use-package git-commit
   :defer t
@@ -1768,6 +1732,41 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (add-hook 'git-commit-setup-hook (lambda ()
 				     (setq-local fill-column 72)
 				     (git-commit-turn-on-flyspell))))
+
+(use-package smerge-mode :ensure nil
+  :defer t
+  :preface
+  (defun my/enable-smerge-maybe ()
+    "Auto-enable `smerge-mode' when merge conflict is detected."
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward "^<<<<<<< " nil t)
+	(smerge-mode 1))))
+
+  :hook ((find-file magit-diff-visit-file) . my/enable-smerge-maybe)
+  :custom
+  (smerge-diff-buffer-name "*smerge-diff*")
+  :bind-keymap ("C-c s" . smerge-basic-map)
+  :config
+  (which-key-add-key-based-replacements "C-c s" "smerge"))
+
+(use-package diff-hl
+  :preface
+  (defun my/diff-hl-mode ()
+    (when (or (and buffer-file-name
+		   (not (file-remote-p buffer-file-name)))
+	      (eq major-mode 'vc-dir-mode))
+      (turn-on-diff-hl-mode)
+      (unless (display-graphic-p)
+	(diff-hl-margin-mode 1))))
+  :hook ((prog-mode-delay . my/diff-hl-mode)
+	 (vc-dir-mode-hook . my/diff-hl-mode)
+	 (magit-pre-refresh-hook . (lambda ()
+				     (unless (file-remote-p default-directory)
+				       (diff-hl-magit-pre-refresh))))
+	 (magit-post-refresh-hook . (lambda ()
+				      (unless (file-remote-p default-directory)
+					(diff-hl-magit-post-refresh))))))
 
 ;;__________________________________________________________
 ;; Ensamblador nasm
