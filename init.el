@@ -1560,13 +1560,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (which-key-add-key-based-replacements "C-c i" "ivy")
   :custom
-  (ivy-use-virtual-buffers nil)   ;; Recent files or buffers in ivy
   (ivy-count-format "(%d/%d) ")
   (ivy-pulse-delay nil)
   (ivy-use-selectable-prompt t)
   (ivy-fixed-height-minibuffer t)
-  ;;(ivy-height 10)
-  ;;(ivy-wrap t)		      ;; cycle in minibuffer
+  (ivy-on-del-error-function #'ignore)
+  (ivy-more-chars-alist 2)
+  (ivy-read-action-format-function #'ivy-read-action-format-columns)
+  ;; (ivy-use-virtual-buffers t)   ;; Recent files or buffers in ivy
+  ;; (ivy-height 10)
+  ;; (ivy-wrap t)		      ;; cycle in minibuffer
   :config
   ;; Highlight with arrows by default.
   ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
