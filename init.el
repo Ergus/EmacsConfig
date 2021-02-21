@@ -1575,6 +1575,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
   (ivy-mode 1))
 
+(use-package ivy-hydra :defer t
+  :custom
+  (ivy-read-action-function #'ivy-hydra-read-action))
+
 (use-package ivy-avy :after ivy)
 
 (use-package ivy-xref
