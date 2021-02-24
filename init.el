@@ -368,6 +368,11 @@
   (gdb-many-windows nil)
   (gdb-show-main t))
 
+(use-package conf-mode :ensure nil
+  :defer t
+  :preface
+  (my/gen-delay-hook conf-mode))
+
 ;;__________________________________________________________
 ;; Benchmark-init
 
@@ -733,6 +738,42 @@
 
 (use-package eglot :defer t)
 
+(use-package company
+  ;; :load-path (lambda () (my/load-path "~/gits/company-mode/"))
+  :preface
+  (defmacro my/company-backend-after-load (backend)
+    `(with-eval-after-load 'company
+       (unless (eq ,backend (car company-backends))
+	 (setq-local company-backends
+		     (cons ,backend (remove ,backend company-backends))))))
+
+
+  :bind (:map company-mode-map
+	      ("M-RET" . company-complete)
+	      ("M-/" . company-other-backend)                   ;; M-/
+	      ;; ([remap indent-for-tab-command] . company-indent-or-complete-common) ;; TAB
+	      :map company-active-map
+	      ("M-RET" . company-abort)
+	      ([remap dabbrev-expand] . company-other-backend)  ;; M-/
+	      ;;("C-h" . company-show-doc-buffer)               ;; this is already default
+	      ([remap xref-find-definitions] . company-show-location) ;; M-.
+	      )
+  :hook ((prog-mode-delay message-mode-delay conf-mode-delay) . (lambda ()
+								  (company-mode 1)))
+  :defer t
+  :custom
+  (company-idle-delay nil)	 ;; no delay for autocomplete
+  (company-minimum-prefix-length 2)
+  (company-selection-wrap-around nil)
+  (company-show-numbers t)
+  (company-tooltip-align-annotations t)
+  ;;company-tooltip-limit 20
+  (company-backends '(company-capf       ;; completion at point
+		      company-semantic
+		      company-files	 ;; company files
+		      (company-dabbrev-code company-gtags company-keywords)
+		      company-dabbrev)))
+
 (use-package lsp-mode
   :diminish lsp
   :hook (lsp-mode . (lambda ()
@@ -894,44 +935,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :custom
   (preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face)
   :defer t)
-
-(use-package company
-  ;; :load-path (lambda () (my/load-path "~/gits/company-mode/"))
-  :preface
-  (defmacro my/company-backend-after-load (backend)
-    `(with-eval-after-load 'company
-       (unless (eq ,backend (car company-backends))
-	 (setq-local company-backends
-		     (cons ,backend (remove ,backend company-backends))))))
-
-  :bind (:map company-mode-map
-	      ("M-RET" . company-complete)
-	      ("M-/" . company-other-backend)                   ;; M-/
-	      ;; ([remap indent-for-tab-command] . company-indent-or-complete-common) ;; TAB
-	      :map company-active-map
-	      ("M-RET" . company-abort)
-	      ([remap dabbrev-expand] . company-other-backend)  ;; M-/
-	      ;;("C-h" . company-show-doc-buffer)               ;; this is already default
-	      ([remap xref-find-definitions] . company-show-location) ;; M-.
-	      )
-  :hook ((prog-mode message-mode conf-mode) .
-	 (lambda ()
-	   (run-with-idle-timer 1 nil #'company-mode 1)))
-  :defer t
-  :custom
-  (company-idle-delay nil)	 ;; no delay for autocomplete
-  (company-minimum-prefix-length 2)
-  (company-selection-wrap-around nil)
-  (company-show-numbers t)
-  (company-tooltip-align-annotations t)
-  ;;company-tooltip-limit 20
-  (company-backends '(company-capf       ;; completion at point
-		      company-semantic
-		      company-files	 ;; company files
-		      (company-dabbrev-code company-gtags company-keywords)
-		      company-dabbrev))
-  :init
-  (make-variable-buffer-local 'company-backends))
 
 ;; company-c-headers
 (use-package company-c-headers
@@ -1246,6 +1249,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Asocia buffers que empiecen con messaje mode
 (use-package message-mode :ensure nil
   :mode ("/neomut" "neomutt-Ergus-" "draft")
+  :preface
+  (my/gen-delay-hook message-mode)
   :custom
   (message-default-mail-headers "Cc: \nBcc: \n")
   (message-kill-buffer-on-exit t)
@@ -1638,7 +1643,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package counsel-gtags
   :diminish
-  :load-path (lambda () (my/load-path "~/gits/emacs-counsel-gtags/"))
+  :load-path (lambda () (my/load-path "~/gits/emacs_clones/emacs-counsel-gtags/"))
   :bind-keymap ("C-c g" . counsel-gtags-command-map)
   :hook (counsel-gtags . my/counsel-gtags-hook)
   :custom
@@ -1695,6 +1700,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :custom
   (magit-completing-read-function #'ivy-completing-read) ;; this is autoset
+  (magit-define-global-key-bindings nil)
   :config
   ;; (add-hook 'after-save-hook 'magit-after-save-refresh-status t)
 
@@ -2058,11 +2064,12 @@ position."
 ;; json mode
 
 (use-package json-mode
-  :mode "\\.json\\'")
+  :mode "\\.json\\'"
+  :preface
+  (my/gen-delay-hook json-mode))
 
 (use-package flymake-json
-  :hook (json-mode . (lambda ()
- 		       (run-with-idle-timer 1 nil #'flymake-json-load)))
+  :hook (json-mode-delay . flymake-json-load)
   :defer t)
 
 ;;__________________________________________________________
@@ -2074,11 +2081,12 @@ position."
 ;;__________________________________________________________
 ;; yaml mode
 (use-package yaml-mode
-  :mode "\\.yaml\\'")
+  :mode "\\.yaml\\'"
+  :preface
+  (my/gen-delay-hook yaml-mode))
 
 (use-package flymake-yaml
-  :hook (yaml-mode . (lambda ()
-		       (run-with-idle-timer 1 nil #'flymake-yaml-load)))
+  :hook (yaml-mode-delay . flymake-yaml-load)
   :defer t)
 
 (use-package sudo-edit :defer t)
