@@ -382,6 +382,8 @@
 
 (use-package isearch :ensure nil
   :defer t
+  :bind (:map isearch-mode-map
+	      ([remap isearch-delete-char] . isearch-del-char))
   :custom
   (search-nonincremental-instead nil) ;; No incremental if enter with empty
   (lazy-highlight-initial-delay 0)
@@ -392,12 +394,12 @@
   ;;(search-exit-option 'edit)        ;; Control or meta keys edit search
   (isearch-yank-on-move 'shift)       ;; Copy text from buffer with meta
   :config
-   (defun my/goto-match-beginning ()
-     (when (and isearch-forward
-		(not isearch-mode-end-hook-quit))
-       (goto-char isearch-other-end)))
+  (defun my/goto-match-beginning ()
+    (when (and isearch-forward
+	       (not isearch-mode-end-hook-quit))
+      (goto-char isearch-other-end)))
 
-  (add-hook 'isearch-mode-end-hook 'my/goto-match-beginning))
+  (add-hook 'isearch-mode-end-hook #'my/goto-match-beginning))
 
 (use-package phi-search :defer t)
 
