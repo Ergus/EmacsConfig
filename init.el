@@ -748,8 +748,10 @@
 	      ;;("C-h" . company-show-doc-buffer)               ;; this is already default
 	      ([remap xref-find-definitions] . company-show-location) ;; M-.
 	      )
-  :hook ((prog-mode-delay message-mode-delay conf-mode-delay) . (lambda ()
-								  (company-mode 1)))
+  :hook ((prog-mode-delay message-mode-delay conf-mode-delay)
+	 . (lambda ()
+	     (unless (bound-and-true-p company-mode)
+	       (company-mode 1))))
   :defer t
   :custom
   (company-idle-delay nil)	 ;; no delay for autocomplete
