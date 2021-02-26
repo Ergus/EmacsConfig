@@ -105,6 +105,8 @@
 	      ;; These two must be enabled/disabled together
 	      ;; (setq enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
 	      ;; (minibuffer-depth-indicate-mode 1)    ;; Mostrar nivel de nesting en minibuffer
+
+	      use-short-answers t             ;; Use y or n to exit and other shorter answers.
 	      )
 
 ;; Vertical window divider
@@ -112,18 +114,6 @@
   (set-display-table-slot standard-display-table
 			  'vertical-border
 			  (make-glyph-code ?\u2502)))
-
-;; (defun filter-buffers ()
-;;   (interactive)
-;;   (setq switch-to-prev-buffer-skip
-;; 	(if switch-to-prev-buffer-skip nil
-;; 	  (lambda (win nextbuf bury-or-kill)
-;; 	    (string-match "^*.+*$" (buffer-name nextbuf))))))
-
-;;__________________________________________________________
-;; I don't want confirm exit, not write yes-not either
-(defalias 'yes-or-no-p 'y-or-n-p) ;; Reemplazar "yes" por "y" en el prompt
-
 ;;__________________________________________________________
 ;; use-package
 
