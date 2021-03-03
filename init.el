@@ -93,9 +93,9 @@
 
 	      eval-expression-print-length nil
 	      eval-expression-print-level nil
-	      enable-remote-dir-locals t    ;; Open remote dir locals.
+	      enable-remote-dir-locals t      ;; Open remote dir locals.
 
-	      ;; suggest-key-bindings t     ;; Ivy ya hace lo que esta opcion
+	      ;; suggest-key-bindings t       ;; Ivy ya hace lo que esta opcion
 	      ;;uniquify-min-dir-content 0
 	      truncate-lines t
 	      auto-hscroll-mode 'current-line       ;; scroll horizontally 1 line not all
@@ -107,6 +107,7 @@
 	      ;; (minibuffer-depth-indicate-mode 1)    ;; Mostrar nivel de nesting en minibuffer
 
 	      use-short-answers t             ;; Use y or n to exit and other shorter answers.
+	      goto-line-history-local t       ;; Buffer local goto-line history
 	      )
 
 ;; Vertical window divider
@@ -322,8 +323,8 @@
 
 (use-package winner :ensure nil
   :bind (:map winner-mode-map
-	      ("C-c w u" . winner-undo)
-	      ("C-c w r" . winner-redo))
+	      ("C-x w u" . winner-undo)
+	      ("C-x w r" . winner-redo))
   :defer 1  ;; this always after the bind
   :custom
   (winner-dont-bind-my-keys t)
@@ -444,11 +445,12 @@
    (expand-file-name "tramp-autosave-dir" user-emacs-directory))
   ;; (tramp-default-method "rsync")
   (tramp-completion-use-auth-sources nil)
-  (remote-file-name-inhibit-cache 120)      ;; Default 10
-  (password-cache-expiry 3600)              ;; Cache for 1 hour
+  (remote-file-name-inhibit-cache 120)    ;; Default 10
+  (password-cache-expiry 3600)            ;; Cache for 1 hour
   (tramp-default-method "ssh")
+  ;; (tramp-debug-buffer t)
   ;; (tramp-verbose 10)
-  ;; (tramp-persistency-file-name
+  ;; (tramp-persistency-file-name         ;; this is already the default
   ;;  (expand-file-name "tramp" user-emacs-directory))
   :config
   (connection-local-set-profile-variables
