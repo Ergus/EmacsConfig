@@ -1087,10 +1087,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      ("<right>" . windmove-right)
 	      ("<down>" . windmove-down)
 	      ("<up>" . windmove-up)
-	      ("<C-M-left>" . windmove-swap-states-left)
-	      ("<C-M-right>" . windmove-swap-states-right)
-	      ("<C-M-down>" . windmove-swap-states-down)
-	      ("<C-M-up>" . windmove-swap-states-up)))
+	      ("C-M-<left>" . windmove-swap-states-left)
+	      ("C-M-<right>" . windmove-swap-states-right)
+	      ("C-M-<down>" . windmove-swap-states-down)
+	      ("C-M-<up>" . windmove-swap-states-up)))
 
 (use-package repeat :ensure nil
   :config
@@ -1453,11 +1453,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; ibuffer
 (use-package ibuffer :ensure nil
-  :preface
-  (defun my/ibuffer-mode-hook ()
-    (hl-line-mode 1)
-    ;; (ibuffer-auto-mode 1) ;; auto reflesh ibuffer. Disabled due to tramp
-    )
   :bind ([remap list-buffers] . ibuffer)
   :hook (ibuffer-mode . (lambda ()
 			  ;; autorefresh. Not enable when tramp is loaded.
@@ -1475,8 +1470,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package ibuffer-tramp
   :after ibuffer
   :bind (:map ibuffer--filter-map
-	      ("G t" . ibuffer-tramp-set-filter-groups-by-tramp-connection))
-  :ensure t)
+	      ("G t" . ibuffer-tramp-set-filter-groups-by-tramp-connection)))
 
 (use-package ibuffer-project
   :after ibuffer
@@ -1486,14 +1480,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (setq ibuffer-filter-groups (ibuffer-project-generate-filter-groups))
     (ibuffer-update nil t))
   :bind (:map ibuffer--filter-map
-	      ("G p" . ibuffer-set-filter-groups-by-project))
-  :defer t)
+	      ("G p" . ibuffer-set-filter-groups-by-project)))
 
 (use-package ibuffer-vc
   :after ibuffer
   :bind (:map ibuffer--filter-map
-	      ("G v" . ibuffer-vc-set-filter-groups-by-vc-root))
-  :ensure t)
+	      ("G v" . ibuffer-vc-set-filter-groups-by-vc-root)))
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
 (defun my/sidebar-toggle ()
