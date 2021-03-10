@@ -106,8 +106,9 @@
 	      ;; (setq enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
 	      ;; (minibuffer-depth-indicate-mode 1)    ;; Mostrar nivel de nesting en minibuffer
 
-	      use-short-answers t             ;; Use y or n to exit and other shorter answers.
-	      goto-line-history-local t       ;; Buffer local goto-line history
+	      read-extended-command-predicate t   ;; M-x show context-local commands
+	      use-short-answers t                 ;; Use y or n to exit and other shorter answers.
+	      goto-line-history-local t           ;; Buffer local goto-line history
 	      )
 
 ;; Vertical window divider
