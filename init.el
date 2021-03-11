@@ -393,6 +393,7 @@
   :config
   (defun my/goto-match-beginning ()
     (when (and isearch-forward
+	       isearch-other-end
 	       (not isearch-mode-end-hook-quit))
       (goto-char isearch-other-end)))
 
