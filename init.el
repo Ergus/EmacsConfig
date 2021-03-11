@@ -98,7 +98,7 @@
 	      ;; suggest-key-bindings t       ;; Ivy ya hace lo que esta opcion
 	      ;;uniquify-min-dir-content 0
 	      truncate-lines t
-	      auto-hscroll-mode 'current-line       ;; scroll horizontally 1 line not all
+	      ;; auto-hscroll-mode 'current-line       ;; scroll horizontally 1 line not all
 	      save-interprogram-paste-before-kill t ;; Save clipboard before replace
 	      minibuffer-eldef-shorten-default t
 
@@ -620,7 +620,7 @@
 (defun my/scroll-up-command (&optional arg)
   "Scroll up single line or ARG."
   (interactive "^p")
-  (scroll-up-command 1))
+  (scroll-up-command arg))
 
 (defun my/scroll-down-command (&optional arg)
   "Scroll down single line or ARG."
