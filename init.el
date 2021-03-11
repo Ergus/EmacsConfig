@@ -1758,13 +1758,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	(diff-hl-margin-mode 1))))
   :hook ((prog-mode-delay . my/diff-hl-mode)
 	 (vc-dir-mode . my/diff-hl-mode)
-	 (dired-mode . diff-hl-dired-mode-unless-remote)
-	 (magit-pre-refresh . (lambda ()
-				(unless (file-remote-p default-directory)
-				  (diff-hl-magit-pre-refresh))))
-	 (magit-post-refresh . (lambda ()
-				 (unless (file-remote-p default-directory)
-				   (diff-hl-magit-post-refresh))))))
+	 (dired-mode . diff-hl-dired-mode-unless-remote))
+  :config
+  ;; Add the hook only after the package is loaded because they are not autoloads.
+  (add-hook 'magit-pre-refresh-hook (lambda ()
+				      (unless (file-remote-p default-directory)
+					(diff-hl-magit-pre-refresh))))
+  (add-hook 'magit-post-refresh-hook (lambda ()
+				       (unless (file-remote-p default-directory)
+					 (diff-hl-magit-post-refresh)))))
 
 ;;__________________________________________________________
 ;; Ensamblador nasm
