@@ -605,18 +605,17 @@
   ;; (defun track-mouse (e))
   (set-cursor-color "white")
   (set-mouse-color "white")		  ;; Flechita del mouse en blanco
-  (when (fboundp 'mouse-wheel-mode)
-    (setq-default mouse-wheel-scroll-amount '(5 ((shift) . 1) ((control)))
-		  mouse-wheel-progressive-speed nil)
-    (mouse-wheel-mode t))			  ;; scrolling con el mouse
+  (if (fboundp 'mouse-wheel-mode)
+      (progn
+	(setq-default mouse-wheel-scroll-amount '(5 ((shift) . 1) ((control)))
+		      mouse-wheel-progressive-speed nil)
+	(mouse-wheel-mode t))
+
+    ;; Else set them manually
+    (global-set-key (kbd "<mouse-4>") #'scroll-down-command)
+    (global-set-key (kbd "<mouse-5>") #'scroll-up-command))	;; scrolling con el mouse
   )
 
-;; (use-package right-click-context
-;;   :after mouse
-;;   :config
-;;   (right-click-context-mode 1))
-
-;; (global-set-key [drag-mouse-2] 'mouse-yank-at-click)
 
 (defun my/scroll-up-command (&optional arg)
   "Scroll up single line or ARG."
