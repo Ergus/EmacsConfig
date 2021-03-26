@@ -456,6 +456,11 @@
   ;; (tramp-persistency-file-name         ;; this is already the default
   ;;  (expand-file-name "tramp" user-emacs-directory))
   :config
+  ;; Disable vc checking tramp
+  (setq vc-ignore-dir-regexp (format "%s\\|%s"
+				     vc-ignore-dir-regexp
+				     tramp-file-name-regexp))
+
   (connection-local-set-profile-variables
    'my/tramp-profile '((auth-sources . nil)
 		       (tramp-use-ssh-controlmaster-options . nil)))
