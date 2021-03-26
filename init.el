@@ -1084,6 +1084,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package windmove :ensure nil
   :bind (:map ctl-x-map
+	      ("4 <left>" . windmove-display-left)
+	      ("4 <right>" . windmove-display-right)
+	      ("4 <up>" . windmove-display-up)
+	      ("4 <down>" . windmove-display-down)
+
 	      ("<left>" . windmove-left)
 	      ("<right>" . windmove-right)
 	      ("<down>" . windmove-down)
