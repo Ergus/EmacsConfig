@@ -19,7 +19,7 @@
 (savehist-mode t)			;; Historial
 (auto-compression-mode t)		;; Uncompress on the fly
 
-(size-indication-mode t)		;; Muestra el el tamanno en modeline
+(size-indication-mode t)		;; Muestra el tamanno en modeline
 (delete-selection-mode t)		;; Sobreescribe seleccion al pegar
 
 (prefer-coding-system 'utf-8)	        ;; Encoding
@@ -446,11 +446,11 @@
   :custom
   (tramp-auto-save-directory
    (expand-file-name "tramp-autosave-dir" user-emacs-directory))
-  ;; (tramp-default-method "rsync")
   (tramp-completion-use-auth-sources nil)
-  (remote-file-name-inhibit-cache 120)    ;; Default 10
-  (password-cache-expiry 3600)            ;; Cache for 1 hour
-  (tramp-default-method "ssh")
+  (remote-file-name-inhibit-cache 120)           ;; Default 10
+  (tramp-completion-reread-directory-timeout 120);; Default 10
+  (password-cache-expiry 3600)                   ;; Cache for 1 hour
+  (tramp-default-method "scp")
   ;; (tramp-debug-buffer t)
   ;; (tramp-verbose 10)
   ;; (tramp-persistency-file-name         ;; this is already the default
