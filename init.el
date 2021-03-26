@@ -658,6 +658,9 @@
 (use-package string-inflection
   :bind ("C-c <right>" . string-inflection-all-cycle))
 
+(use-package undo-propose
+  :commands undo-propose)
+
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
 
@@ -1104,6 +1107,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      ("C-M-<up>" . windmove-swap-states-up)))
 
 (use-package repeat :ensure nil
+  :defer 1
   :config
   (repeat-mode 1))
 
