@@ -110,6 +110,7 @@
 	      read-extended-command-predicate  #'command-completion-default-include-p
 	      use-short-answers t                 ;; Use y or n to exit and other shorter answers.
 	      goto-line-history-local t           ;; Buffer local goto-line history
+	      switch-to-buffer-obey-display-actions t ;; switching the buffer respects display actions
 	      )
 
 ;; Vertical window divider
@@ -1600,8 +1601,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package counsel
   :diminish
   :bind (:map counsel-mode-map
-	      (([remap switch-to-buffer] . counsel-switch-buffer)
-	       ([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
+	      (;;([remap switch-to-buffer] . counsel-switch-buffer)
+	       ;;([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
 	       ("C-c c c" . ivy-resume)             ;; resume ivy
 	       ("C-c c a" . counsel-ag)
 	       ("C-c c b" . counsel-ibuffer)        ;; like ibuffer + switch-to-buffer
