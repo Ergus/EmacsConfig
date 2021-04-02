@@ -772,6 +772,7 @@
   (company-selection-wrap-around nil)
   (company-show-numbers t)
   (company-tooltip-align-annotations t)
+  (company-format-margin-function #'company-detect-icons-margin)
   ;;company-tooltip-limit 20
   (company-backends '(company-capf       ;; completion at point
 		      company-semantic
