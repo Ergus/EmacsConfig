@@ -1141,29 +1141,35 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package yasnippet        ;; Snippets
   :diminish yas-minor-mode
-  :bind (("C-c y d" . yas-load-directory)
-         ("C-c y i" . yas-insert-snippet)
-         ("C-c y f" . yas-visit-snippet-file)
-         ("C-c y n" . yas-new-snippet)
-         ("C-c y t" . yas-tryout-snippet)
-         ("C-c y l" . yas-describe-tables)
-         ("C-c y x" . yas-expand)
-	 :map yas-keymap
-         ([remap indent-for-tab-command] . yas-next-field-or-maybe-expand)
-	 :map yas-minor-mode-map
-	 ("TAB" . nil)
-	 ("<tab>" . nil))
-  :defer 2
   :init
-  (which-key-add-key-based-replacements "C-c y" "yasnippet")
+  :defer 2
   :custom
   (yas-verbosity 1)                 ; No need to be so verbose
   (yas-wrap-around-region t)
   :config
-  ;; (yas-reload-all)
-  ;; (yas-minor-mode 1)
-  (yas-global-mode 1)
-  )
+  (define-key yas-keymap [remap indent-for-tab-command] #'yas-next-field-or-maybe-expand)
+
+  (defun yas-expand-or-insert ()
+    (interactive)
+    (or (call-interactively #'yas-expand)
+	(call-interactively #'yas-insert-snippet)))
+
+  (easy-mmode-defmap yas-minor-basic-map
+    '(("d" . yas-load-directory)
+      ("i" . yas-insert-snippet)
+      ("f" . yas-visit-snippet-file)
+      ("n" . yas-new-snippet)
+      ("t" . yas-tryout-snippet)
+      ("l" . yas-describe-tables)
+      ("x" . yas-expand)
+      ("y" . yas-expand-or-insert))
+    "The keymap used when `yas-minor-mode' is active.")
+
+  (setf (cdr yas-minor-mode-map) nil)  ;; clear yas minor map
+  (define-key yas-minor-mode-map (kbd "C-c y") yas-minor-basic-map)
+  (which-key-add-keymap-based-replacements yas-minor-mode-map "C-c y" "yasnippet")
+
+  (yas-global-mode 1))
 
 (use-package yasnippet-snippets
   :after yasnippet)
