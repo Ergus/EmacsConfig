@@ -144,8 +144,8 @@
     (package-install 'use-package)))
 
 (eval-and-compile
-  (require 'use-package)
 
+  ;; Set this BEFORE require use-ackage
   (if init-file-debug
       (setq-default use-package-always-ensure t
 		    use-package-enable-imenu-support t
@@ -158,6 +158,7 @@
 		  use-package-enable-imenu-support nil
 		  use-package-verbose nil
 		  use-package-expand-minimally t))
+  (require 'use-package)
 
   (defun my/load-path (path)
     "Return the PATH if exist or nil."
