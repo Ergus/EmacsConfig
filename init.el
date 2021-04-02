@@ -244,11 +244,14 @@
   (which-key-mode t)
   (which-key-add-key-based-replacements
     "C-c h" "highlight"
-    "C-c b" "bars"
+    "C-c b" "sidebars"
     "C-x r" "rectangle||register"
     "C-x n" "narrow"
-    "C-x t" "tabs"
-    "C-x a" "abbrev"))
+    "C-x p" "project"
+    "C-x RET" "coding-system"
+    "C-x @" "event-apply-modifier"
+    "C-x ESC" "repeat-command"
+    "C-x x" "buffer"))
 
 ;;__________________________________________________________
 ;; Some internal packages to defer them
@@ -333,7 +336,7 @@
   :custom
   (winner-dont-bind-my-keys t)
   :init
-  (which-key-add-key-based-replacements "C-c w" "winner")
+  (which-key-add-key-based-replacements "C-x w" "winner")
   :config
   (winner-mode 1))
 
@@ -342,7 +345,9 @@
 
 (use-package abbrev :ensure nil ;; Abbrev M-/
   :diminish
-  :defer t)
+  :defer t
+  :init
+  (which-key-add-key-based-replacements "C-x a" "abbrev"))
 
 (use-package eldoc :ensure nil ;; function arguments
   :diminish
@@ -490,6 +495,8 @@
   (tab-bar-tab-hints t)  ;; show tab numbers
   (tab-bar-close-last-tab-choice 'tab-bar-mode-disable) ;; When close last
   (tab-bar-show 1)
+  :init
+  (which-key-add-key-based-replacements "C-x t" "tab-bar")
   )
 
 ;;__________________________________________________________
@@ -825,7 +832,7 @@
   (lsp-ui-sideline-enable nil)
   (lsp-ui-doc-enable nil)
   :config
-  (which-key-add-key-based-replacements "C-c l u" "lsp-ui"))
+  (which-key-add-keymap-based-replacements lsp-command-map "C-c l u" "lsp-ui"))
 
 (use-package lsp-treemacs
   :diminish
@@ -1729,9 +1736,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook ((find-file magit-diff-visit-file) . my/enable-smerge-maybe)
   :custom
   (smerge-diff-buffer-name "*smerge-diff*")
-  :bind-keymap ("C-c s" . smerge-basic-map)
+  (smerge-command-prefix (kbd "C-c s"))
   :config
-  (which-key-add-key-based-replacements "C-c s" "smerge"))
+  (which-key-add-keymap-based-replacements smerge-mode-map
+    "C-c s" "smerge"
+    "C-c s =" "smerge-diff"))
 
 (use-package diff-hl
   :preface
