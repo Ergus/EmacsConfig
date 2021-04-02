@@ -716,27 +716,30 @@
   :diminish
   :hook ((prog-mode-delay . flyspell-prog-mode)
 	 (text-mode-delay . turn-on-flyspell))
-  :bind (:map flyspell-mode-map
-	      (("C-M-i" .  nil)
-	       ("C-'" .	nil)
-	       ("C-;" .	nil)
-	       ("C-," .	nil)
-	       ("C-." .	nil)
-	       ("C-c $" .  nil)
-	       ("C-c f r" . flyspell-region)
-	       ("C-c f b" . flyspell-buffer)
-	       ("C-c f n" . flyspell-goto-next-error)))
   :defer t
+  :custom
+  (flyspell-use-meta-tab nil)      ;; Not correct with M-TAB
+  (flyspell-mode-line-string nil)  ;; Not show Fly in modeline
+  (flyspell-delay 2)               ;; default 3
   :config
-  (which-key-add-key-based-replacements "C-c f" "flyspell"))
+  (easy-mmode-defmap flyspell-basic-map
+    `(("r" . flyspell-region)
+      ("b" . flyspell-buffer)
+      ("n" . flyspell-goto-next-error))
+    "The base keymap for `flyspell-mode'")
+
+  (setf (cdr flyspell-mode-map) nil)  ;; clear yas minor map
+  (define-key flyspell-mode-map (kbd "C-c f") flyspell-basic-map)
+  (which-key-add-keymap-based-replacements flyspell-mode-map "C-c f" "flyspell"))
 
 (use-package flyspell-correct-ivy
   :diminish
   :after flyspell
-  :bind (("C-c f w" . flyspell-correct-wrapper)
-	 ("C-c f f" . flyspell-correct-at-point)
-	 ("C-c f C-n" . flyspell-correct-next)
-	 ("C-c f C-p" . flyspell-correct-previous))
+  :bind (:map flyspell-basic-map
+	      ("w" . flyspell-correct-wrapper)
+	      ("f" . flyspell-correct-at-point)
+	      ("C-n" . flyspell-correct-next)
+	      ("C-p" . flyspell-correct-previous))
   :custom
   (flyspell-correct-interface #'flyspell-correct-ivy))
 
