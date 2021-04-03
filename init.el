@@ -388,16 +388,21 @@
 (use-package isearch :ensure nil
   :defer t
   :bind (:map isearch-mode-map
-	      ([remap isearch-delete-char] . isearch-del-char))
+	      ([remap isearch-delete-char] . isearch-del-char)
+	      ("M-<" . isearch-beginning-of-buffer)
+	      ("M->" . isearch-end-of-buffer))
   :custom
   (search-nonincremental-instead nil) ;; No incremental if enter with empty
+  ;;(lazy-highlight-no-delay-length 2)  ;; Highlight after 2 letters
   (lazy-highlight-initial-delay 0)
   (isearch-allow-scroll t)	      ;; Permit scroll can be 'unlimited
   (isearch-lazy-count t)
   (search-ring-max 64)                ;; Cuantas busquedas recordar
   (regexp-search-ring-max 64)
+  (search-default-mode t)             ;; regex search by default
   ;;(search-exit-option 'edit)        ;; Control or meta keys edit search
   (isearch-yank-on-move 'shift)       ;; Copy text from buffer with meta
+  (isearch-wrap-function #'ignore)
   :config
   (defun my/goto-match-beginning ()
     (when (and isearch-forward
@@ -463,10 +468,10 @@
   ;; (tramp-persistency-file-name         ;; this is already the default
   ;;  (expand-file-name "tramp" user-emacs-directory))
   :config
-  ;; Disable vc checking tramp
-  (setq vc-ignore-dir-regexp (format "%s\\|%s"
-				     vc-ignore-dir-regexp
-				     tramp-file-name-regexp))
+  ;; Disable vc checking tramp     ;; Disable vc on tramp files
+  ;; (setq vc-ignore-dir-regexp (format "%s\\|%s"
+  ;; 				     vc-ignore-dir-regexp
+  ;; 				     tramp-file-name-regexp))
 
   (connection-local-set-profile-variables
    'my/tramp-profile '((auth-sources . nil)
