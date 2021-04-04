@@ -1590,38 +1590,41 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package counsel
   :diminish
-  :bind (:map counsel-mode-map
-	      (;;([remap switch-to-buffer] . counsel-switch-buffer)
-	       ;;([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
-	       ("C-c c c" . ivy-resume)             ;; resume ivy
-	       ("C-c c a" . counsel-ag)
-	       ("C-c c b" . counsel-ibuffer)        ;; like ibuffer + switch-to-buffer
-	       ("C-c c i" . counsel-imenu)
-	       ("C-c c r" . counsel-rg)	            ;; like git grep
-	       ("C-c c g" . counsel-grep)           ;; grep in local file
-	       ("C-c c G" . counsel-git-grep)       ;; grep in current git repo
-	       ("C-c c e" . counsel-linux-app)      ;; call application
-	       ("C-c c l" . counsel-find-library)   ;; Search lisp libraries
-	       ("C-c c SPC" . counsel-register)     ;; list registers
-	       ("C-c c M-RET" . counsel-company)    ;; company completions
-	       ("C-c c C-r" . counsel-command-history) ;; command history
-	       ("C-c c p" . counsel-package)        ;; command history
-	       ("C-c c P" . counsel-list-processes)        ;; command history
-	       ;; Find file commands
-	       ("C-c c f g" . counsel-git)          ;; find file in git rempo
-	       ("C-c c f j" . counsel-file-jump)    ;; file in subdir
-	       ("C-c c f l" . counsel-locate)       ;; locate command (como search)
-	       ("C-c c f r" . counsel-recentf)
-	       ("C-c c f z" . counsel-fzf)
-	       ("C-c c f b" . counsel-buffer-or-recentf)))
   :defer 0.25
-  :init
-  (which-key-add-key-based-replacements "C-c c" "counsel")
-  (which-key-add-key-based-replacements "C-c c f" "find-file")
   :custom
   (counsel-find-file-at-point t)       ;; Select file at point
   (counsel-preselect-current-file t)   ;; Select current file in list
   :config
+  (easy-mmode-defmap counsel-basic-map
+    `(;;([remap switch-to-buffer] . counsel-switch-buffer)
+      ;;([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
+      ("c" . ivy-resume)               ;; resume ivy
+      ("a" . counsel-ag)
+      ("b" . counsel-ibuffer)          ;; like ibuffer + switch-to-buffer
+      ("i" . counsel-imenu)
+      ("r" . counsel-rg)	       ;; like git grep
+      ("g" . counsel-grep)             ;; grep in local file
+      ("G" . counsel-git-grep)         ;; grep in current git repo
+      ("e" . counsel-linux-app)        ;; call application
+      ("l" . counsel-find-library)     ;; Search lisp libraries
+      (,(kbd "SPC") . counsel-register)     ;; list registers
+      (,(kbd "M-RET") . counsel-company)    ;; company completions
+      (,(kbd "C-r") . counsel-command-history) ;; command history
+      ("p" . counsel-package)          ;; command history
+      ("P" . counsel-list-processes)   ;; command history
+      ;; counsel-file commands
+      ("fg" . counsel-git)             ;; find file in git rempo
+      ("fj" . counsel-file-jump)       ;; file in subdir
+      ("fl" . counsel-locate)          ;; locate command (como search)
+      ("fr" . counsel-recentf)
+      ("fz" . counsel-fzf)
+      ("fb" . counsel-buffer-or-recentf))
+    "The base keymap for `counsel-mode'.")
+
+  (define-key counsel-mode-map (kbd "C-c c") counsel-basic-map)
+  (which-key-add-keymap-based-replacements counsel-mode-map
+    "C-c c" "counsel"
+    "C-c c f" "counsel-file")
   (counsel-mode 1)
   ;; match by words
   ;; (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
