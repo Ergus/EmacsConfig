@@ -1271,7 +1271,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Latex mode
 
-(use-package tex :ensure auctex
+(when (and init-file-debug
+	   (not (package-installed-p 'auctex)))
+  (package-install 'auctex))
+
+(use-package tex :ensure nil
   :mode ("\\.tex\\'" . TeX-latex-mode)
   :hook (LaTeX-mode . (lambda ()
 			(flyspell-mode 1)
