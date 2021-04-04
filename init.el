@@ -1445,11 +1445,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (dired-auto-revert-buffer t)
   (dired-listing-switches "-alh")
   :config
+  (require 'dired-x)
   (put 'dired-find-alternate-file 'disabled nil))
 
-(use-package dired-x :ensure nil
-  :hook dired
-  :defer t)
 
 (use-package dired-sidebar
   :bind ("C-c b d" . dired-sidebar-toggle-sidebar)
