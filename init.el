@@ -165,7 +165,7 @@
 
 	 (defun ,funame ()
 	   ,(format "Delayed hook for %s." mode-name)
-	   (run-with-idle-timer 1 nil
+	   (run-with-idle-timer 0.5 nil
 				(lambda (buf)
 				  (when (buffer-live-p buf)
 				    (with-current-buffer buf
@@ -273,7 +273,7 @@
   (imenu-max-item-length 256))
 
 (use-package uniquify :ensure nil
-  :defer 2
+  :defer 1
   :custom
   (uniquify-buffer-name-style 'post-forward))
 
@@ -286,7 +286,7 @@
   (save-place-mode 1))              ;; Remember point in files
 
 (use-package autorevert :ensure nil
-  :defer 2
+  :defer 1
   :custom
   (auto-revert-verbose nil)	 ;; not show message when file changes
   (auto-revert-avoid-polling t)  ;; don't do pooling for autorevert (use notifications).
@@ -295,7 +295,7 @@
   (global-auto-revert-mode t))		;; Autoload files changed in disk
 
 (use-package paren :ensure nil
-  :defer 1
+  :defer 0.5
   :custom
   (show-paren-delay 0)
   (blink-matching-paren nil)	;; not show message when file changes
@@ -348,7 +348,7 @@
   :bind (:map winner-mode-map
 	      ("C-x w u" . winner-undo)
 	      ("C-x w r" . winner-redo))
-  :defer 1  ;; this always after the bind
+  :defer 0.5  ;; this always after the bind
   :custom
   (winner-dont-bind-my-keys t)
   :init
@@ -625,7 +625,7 @@
 			      (executable-find "wl-copy")
 			      'wl-copy))))
   :if xclip-method
-  :defer 2
+  :defer 1
   :config
   (xclip-mode 1))
 
@@ -1164,7 +1164,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package yasnippet        ;; Snippets
   :diminish yas-minor-mode
   :init
-  :defer 2
+  :defer 1
   :custom
   (yas-verbosity 1)                 ; No need to be so verbose
   (yas-wrap-around-region t)
