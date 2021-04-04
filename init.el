@@ -907,15 +907,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   (assq 'class-close c-syntactic-context))
 
 (use-package cc-mode :ensure nil
-  :preface
-  (defun my/c-mode-common-hook ()
-    "My hook for C and C++."
-    (c-toggle-auto-newline 1)
-    (c-toggle-cpp-indent-to-body 1)
-    (c-ms-space-for-alignment-mode 1)
-    (subword-mode 1)
-    (message "Loaded my/c-mode-common"))
-  :hook (c-mode-common . my/c-mode-common-hook)
+  :hook (c-mode-common . (lambda ()
+			   (c-toggle-auto-newline 1)
+			   (c-toggle-cpp-indent-to-body 1)
+			   (c-ms-space-for-alignment-mode 1)
+			   (subword-mode 1)))
   :defer t
   :custom
   (c-default-style '((java-mode . "java")
@@ -1055,8 +1051,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Ocaml Mode
-(use-package caml-mode :ensure caml
-  :mode "\\.ml[iylp]?\\'")
+(use-package caml
+  :mode ("\\.ml[iylp]?\\'" . caml-mode))
 
 ;;__________________________________________________________
 ;; D languaje
@@ -1281,6 +1277,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 			(flyspell-mode 1)
 			(visual-line-mode 1)
 			(auto-fill-mode 1)))
+  :defer t
   :custom
   (TeX-source-correlate-start-server t)
   (TeX-auto-save t)
@@ -1441,14 +1438,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (dired-sidebar-theme 'nerd)
   (dired-sidebar-subtree-line-prefix "."))
 
-;; du for direct. Get file sizes..
-;; it is too slow, so don't use it please.
-;; (use-package dired-du
-;;   :custom
-;;   (dired-du-size-format t)
-;;   :commands dired-du-mode)
-
-
 ;; __________________________________________________________
 ;; Templates Projects
 
@@ -1463,12 +1452,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; ibuffer
 (use-package ibuffer :ensure nil
   :bind ([remap list-buffers] . ibuffer)
-  :hook (ibuffer-mode . (lambda ()
-			  ;; autorefresh. Not enable when tramp is loaded.
-			  ;; (if (featurep 'tramp)
-			  ;;     (message "ibuffer-auto-mode not enabled.")
-			  ;;   (ibuffer-auto-mode 1))
-			  (hl-line-mode 1)))
+  :hook (ibuffer-mode . hl-line-mode)
   :custom
   (ibuffer-default-sorting-mode 'alphabetic)  ;; can use recency
   )
