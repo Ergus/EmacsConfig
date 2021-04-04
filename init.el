@@ -135,30 +135,21 @@
 				 ("melpa" . "https://melpa.org/packages/"))
 	      package-quickstart t)
 
-(when init-file-debug
-  (unless (fboundp 'package-installed-p)
-    (require 'package))
-  (unless (package-installed-p 'use-package)
-    (package-initialize)
-    (package-refresh-contents)
-    (package-install 'use-package)))
-
 (eval-and-compile
+  ;; Set this BEFORE require use-package
+  (defvar my/package-initialized-p nil
+    "Set to true when package where initialized.")
 
-  ;; Set this BEFORE require use-ackage
-  (if init-file-debug
-      (setq-default use-package-always-ensure t
-		    use-package-enable-imenu-support t
-		    use-package-verbose t
-		    use-package-expand-minimally nil
-		    use-package-compute-statistics t
-		    debug-on-error t)
-
-    (setq-default use-package-always-ensure nil
-		  use-package-enable-imenu-support nil
-		  use-package-verbose nil
-		  use-package-expand-minimally t))
-  (require 'use-package)
+  (defun my/package-install (package)
+    (when init-file-debug
+      (unless (fboundp 'package-installed-p)
+	(require 'package))
+      (unless (package-installed-p package)
+	(unless my/package-initialized-p
+	  (package-initialize)
+	  (package-refresh-contents)
+	  (setq my/package-initialized-p t))
+	(package-install package))))
 
   (defun my/load-path (path)
     "Return the PATH if exist or nil."
@@ -166,7 +157,6 @@
 
   (defmacro my/gen-delay-hook (mode-name)
     "Generate delayed hook for MODE-NAME."
-
     (let ((funame (intern (format "my/%s-hook" mode-name)))
 	  (delayhook (intern (format "%s-delay-hook" mode-name)))
 	  (modehook (intern (format "%s-hook" mode-name))))
@@ -181,7 +171,25 @@
 				    (with-current-buffer buf
 				      (run-hooks ',delayhook))))
 				(current-buffer)))
-	 (add-hook ',modehook (function ,funame))))))
+	 (add-hook ',modehook (function ,funame)))))
+
+  (if init-file-debug
+      (progn
+	;; Install use-package if not installed
+	(my/package-install 'use-package)
+
+	(setq-default use-package-always-ensure t
+		      use-package-enable-imenu-support t
+		      use-package-verbose t
+		      use-package-expand-minimally nil
+		      use-package-compute-statistics t
+		      debug-on-error t))
+
+    (setq-default use-package-always-ensure nil
+		  use-package-enable-imenu-support nil
+		  use-package-verbose nil
+		  use-package-expand-minimally t))
+  (require 'use-package))
 
 ;;Commented because define-obsolete-alias api changed.
 ;;(use-package benchmark-init
@@ -1271,11 +1279,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Latex mode
 
-(when (and init-file-debug
-	   (not (package-installed-p 'auctex)))
-  (package-install 'auctex))
-
 (use-package tex :ensure nil
+  :preface
+  (my/package-install 'auctex)
   :mode ("\\.tex\\'" . TeX-latex-mode)
   :hook (LaTeX-mode . (lambda ()
 			(flyspell-mode 1)
@@ -1721,7 +1727,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (add-to-list 'git-commit-style-convention-checks 'overlong-summary-line)
 
-  (add-hook 'git-commit-setup-hook (lambda ()
+  (add-hook 'git-commit-setup-hook (lambda nil
 				     (setq-local fill-column 72)
 				     (git-commit-turn-on-flyspell))))
 
