@@ -259,6 +259,7 @@
     "C-x RET" "coding-system"
     "C-x @" "event-apply-modifier"
     "C-x ESC" "repeat-command"
+    "C-x 8" "unicode"
     "C-x x" "buffer"))
 
 ;;__________________________________________________________
@@ -541,7 +542,9 @@
   :custom
   (vdiff-auto-refine t)
   :init
-  (which-key-add-key-based-replacements "C-c d" "vdiff"))
+  (which-key-add-key-based-replacements
+    "C-c d" "vdiff"
+    "C-c d i" "vdiff-toggle"))
 
 ;;__________________________________________________________
 ;; terms
@@ -1640,7 +1643,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (counsel-gtags-debug-mode t)
   (counsel-gtags-use-dynamic-list nil)
   :init
-  (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
+  (which-key-add-key-based-replacements
+    "C-c g" "counsel-gtags"
+    "C-c g 4" "counsel-gtags-other")
   :config
   (defun my/counsel-gtags-hook ()
     (my/company-backend-after-load #'company-gtags))
