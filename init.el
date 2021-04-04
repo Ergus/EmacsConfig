@@ -265,6 +265,13 @@
 ;;__________________________________________________________
 ;; Some internal packages to defer them
 
+(use-package imenu :ensure nil
+  :defer t
+  :custom
+  (imenu-use-markers nil)
+  (imenu-auto-rescan t)
+  (imenu-max-item-length 256))
+
 (use-package uniquify :ensure nil
   :defer 2
   :custom
@@ -1523,7 +1530,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      ("TAB" . ivy-partial)
 	      ("RET" . ivy-alt-done))
   :init
-  (which-key-add-key-based-replacements "C-c i" "ivy")
+  
   :custom
   (ivy-count-format "(%d/%d) ")
   (ivy-pulse-delay nil)
@@ -1575,13 +1582,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch . ivy--regex-plus))
   ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch-backward . ivy--regex-plus))
   )
-
-(use-package imenu-anywhere
-  :bind (("C-c i i" . ivy-imenu-anywhere)
-	 ("C-c i c" . counsel-imenu))
-  :custom
-  (imenu-auto-rescan t)
-  (imenu-max-item-length 200))
 
 (use-package imenu-list
   :bind ("C-c b i" . imenu-list-smart-toggle)
