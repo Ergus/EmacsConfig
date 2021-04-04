@@ -322,11 +322,11 @@
   :preface
   (my/gen-delay-hook prog-mode)
   :defer t
-  :hook (prog-mode-delay . (lambda ()
+  :hook (prog-mode-delay . (lambda nil
 			     (setq show-trailing-whitespace t))))
 
 (use-package elec-pair :ensure nil
-  :hook ((prog-mode text-mode) . (lambda ()
+  :hook ((prog-mode text-mode) . (lambda nil
 				  (electric-pair-local-mode 1)))
   :defer t)
 
@@ -516,11 +516,11 @@
 ;; minibuffers
 
 (add-hook 'minibuffer-setup-hook
-	  (lambda ()
+	  (lambda nil
 	    (setq gc-cons-threshold most-positive-fixnum)))
 
 (add-hook 'minibuffer-exit-hook
-	  (lambda ()
+	  (lambda nil
 	    (setq gc-cons-threshold my/gc-cons-threshold)))
 
 ;;__________________________________________________________
@@ -766,7 +766,7 @@
 (use-package eglot :defer t)
 
 (use-package company
-  ;; :load-path (lambda () (my/load-path "~/gits/company-mode/"))
+  ;; :load-path (lambda nil (my/load-path "~/gits/company-mode/"))
   :preface
   (defmacro my/company-backend-after-load (backend)
     `(with-eval-after-load 'company
@@ -786,7 +786,7 @@
 	      ([remap xref-find-definitions] . company-show-location) ;; M-.
 	      )
   :hook ((prog-mode-delay message-mode-delay conf-mode-delay)
-	 . (lambda ()
+	 . (lambda nil
 	     (unless (bound-and-true-p company-mode)
 	       (company-mode 1))))
   :defer t
@@ -806,7 +806,7 @@
 
 (use-package lsp-mode
   :diminish lsp
-  :hook (lsp-mode . (lambda ()
+  :hook (lsp-mode . (lambda nil
 		      (my/company-backend-after-load #'company-capf)
 		      (lsp-enable-which-key-integration)))
   :defer t
@@ -915,7 +915,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   (assq 'class-close c-syntactic-context))
 
 (use-package cc-mode :ensure nil
-  :hook (c-mode-common . (lambda ()
+  :hook (c-mode-common . (lambda nil
 			   (c-toggle-auto-newline 1)
 			   (c-toggle-cpp-indent-to-body 1)
 			   (c-ms-space-for-alignment-mode 1)
@@ -964,7 +964,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;; company-c-headers
 (use-package company-c-headers
-  :hook ((c-mode c++-mode objc-mode) . (lambda ()
+  :hook ((c-mode c++-mode objc-mode) . (lambda nil
 					 (my/company-backend-after-load #'company-c-headers)))
   :defer t)
 
@@ -983,7 +983,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; elisp mode (all after the company declaration)
 
 (use-package emacs-lisp-mode :ensure nil
-  :hook (emacs-lisp-mode . (lambda ()
+  :hook (emacs-lisp-mode . (lambda nil
 			     ;; emacs-lisp-mode is evaluated in too many places...
 			     (when (and buffer-file-name
 					(string-match "\\.el\\'" buffer-file-name))
@@ -994,7 +994,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (defvaralias 'sh-basic-offset 'tab-width)
 
-(add-hook 'sh-mode-hook (lambda ()
+(add-hook 'sh-mode-hook (lambda nil
 			  (setq-local indent-tabs-mode t
 				      tab-width 4)))
 
@@ -1078,7 +1078,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :interpreter "lua")
 
 (use-package company-lua
-  :hook (lua-mode . (lambda ()
+  :hook (lua-mode . (lambda nil
 		      (my/company-backend-after-load #'company-lua)))
   :defer t)
 
@@ -1272,7 +1272,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package notmuch
   :init
   (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
-  :hook (message-mode . (lambda ()
+  :hook (message-mode . (lambda nil
 			  (my/company-backend-after-load #'notmuch-company)))
   :defer t)
 
@@ -1283,7 +1283,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :preface
   (my/package-install 'auctex)
   :mode ("\\.tex\\'" . TeX-latex-mode)
-  :hook (LaTeX-mode . (lambda ()
+  :hook (LaTeX-mode . (lambda nil
 			(flyspell-mode 1)
 			(visual-line-mode 1)
 			(auto-fill-mode 1)))
@@ -1353,13 +1353,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (auctex-latexmk-setup))
 
 (use-package company-math
-  :hook (TeX-mode . (lambda ()
+  :hook (TeX-mode . (lambda nil
 		      (my/company-backend-after-load
 		       '(company-math-symbols-latex company-latex-commands))))
   :defer t)
 
 (use-package company-auctex
-  :hook (TeX-mode . (lambda ()
+  :hook (TeX-mode . (lambda nil
 		      (my/company-backend-after-load #'company-auctex-init)))
   :defer t)
 
@@ -1379,7 +1379,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 
 (use-package company-reftex
-  :hook (reftex-mode . (lambda ()
+  :hook (reftex-mode . (lambda nil
 			 (my/company-backend-after-load
 			  '(company-reftex-labels company-reftex-citations))))
   :defer t)
@@ -1392,7 +1392,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (bibtex-dialect 'biblatex))
 
 (use-package company-bibtex
-  :hook (bibtex-mode . (lambda ()
+  :hook (bibtex-mode . (lambda nil
 			 (my/company-backend-after-load #'company-bibtex)))
   :defer t)
 
@@ -1425,7 +1425,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :bind (:map dired-mode-map
 	 ([remap dired-find-file] . dired-find-alternate-file)
-	 ([remap dired-up-directory] . (lambda ()
+	 ([remap dired-up-directory] . (lambda nil
 					 (interactive)
 					 (find-alternate-file ".."))))
   :custom
@@ -1633,7 +1633,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package counsel-gtags
   :diminish
-  :load-path (lambda () (my/load-path "~/gits/emacs_clones/emacs-counsel-gtags/"))
+  :load-path (lambda nil (my/load-path "~/gits/emacs_clones/emacs-counsel-gtags/"))
   :bind-keymap ("C-c g" . counsel-gtags-command-map)
   :hook (counsel-gtags . my/counsel-gtags-hook)
   :custom
@@ -1694,7 +1694,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   ;; (add-hook 'after-save-hook 'magit-after-save-refresh-status t)
 
-  (add-hook 'magit-log-mode-hook (lambda ()
+  (add-hook 'magit-log-mode-hook (lambda nil
 				   (setq-local show-trailing-whitespace nil
 					       tab-width 4)))
 
@@ -1764,10 +1764,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 (dired-mode . diff-hl-dired-mode-unless-remote))
   :config
   ;; Add the hook only after the package is loaded because they are not autoloads.
-  (add-hook 'magit-pre-refresh-hook (lambda ()
+  (add-hook 'magit-pre-refresh-hook (lambda nil
 				      (unless (file-remote-p default-directory)
 					(diff-hl-magit-pre-refresh))))
-  (add-hook 'magit-post-refresh-hook (lambda ()
+  (add-hook 'magit-post-refresh-hook (lambda nil
 				       (unless (file-remote-p default-directory)
 					 (diff-hl-magit-post-refresh)))))
 
@@ -1785,7 +1785,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package cmake-mode
   :mode ("CMakeLists\\.txt\\'" "\\.cmake\(.in\)?\\'")
   :commands company-cmake
-  :hook (cmake-mode . (lambda ()
+  :hook (cmake-mode . (lambda nil
 			(my/company-backend-after-load #'company-cmake)))
   :defer t)
 
@@ -1801,7 +1801,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t)
 
 ;; (use-package eldoc-cmake
-;;   :hook (cmake-mode . (lambda ()
+;;   :hook (cmake-mode . (lambda nil
 ;; 			(run-with-idle-timer 1 nil #'eldoc-cmake-enable)))
 ;;   :defer t)
 
@@ -1878,9 +1878,9 @@ position."
 	 ("M-<down>" . move-dup-duplicate-down)
 	 ("C-M-<up>" .  move-dup-move-lines-up)
 	 ("C-M-<down>" . move-dup-move-lines-down)
-	 ("C-M-<left>" . (lambda () (interactive) (transpose-words -1)))
+	 ("C-M-<left>" . (lambda nil (interactive) (transpose-words -1)))
 	 ("C-M-<right>" . transpose-words)
-	 ("M-<left>" . (lambda () (interactive) (transpose-chars -1)))
+	 ("M-<left>" . (lambda nil (interactive) (transpose-chars -1)))
 	 ("M-<right>" . transpose-chars)))
 
 ;;__________________________________________________________
@@ -1942,7 +1942,7 @@ position."
   :mode ("\\.ino\\'" "\\.pde\\'"))
 
 (use-package company-arduino
-  :hook (arduino-mode . (lambda ()
+  :hook (arduino-mode . (lambda nil
 			  (eval-after-load 'company
 			    #'company-arduino-turn-on)))
   :defer t
@@ -2036,7 +2036,7 @@ position."
   )
 
 (use-package company-web
-  :hook (web-mode . (lambda ()
+  :hook (web-mode . (lambda nil
 		      (my/company-backend-after-load #'company-web-html)))
   :defer t)
 
@@ -2049,7 +2049,7 @@ position."
   :mode ("sites-\\(?:available\\|enabled\\)\\'" "nginx\\.config\\'"))
 
 (use-package company-nginx
-  :hook (nginx-mode . (lambda ()
+  :hook (nginx-mode . (lambda nil
 			(my/company-backend-after-load #'company-nginx)))
   :defer t)
 
@@ -2097,13 +2097,13 @@ position."
   (defconst original-background (face-attribute 'mode-line :background))
 
   (add-hook 'evil-normal-state-entry-hook
-	    (lambda ()
+	    (lambda nil
 	      (set-face-attribute 'mode-line nil :background (my/named-color brightblack))))
   (add-hook 'evil-insert-state-entry-hook
-	    (lambda ()
+	    (lambda nil
 	      (set-face-attribute 'mode-line nil :background original-background)))
   (add-hook 'evil-visual-state-entry-hook
-	    (lambda ()
+	    (lambda nil
 	      (set-face-attribute 'mode-line nil :background (my/named-color green)))))
 
 (use-package evil-collection
@@ -2115,7 +2115,7 @@ position."
   :diminish
   ;; :after which-key
   :preface
-  :load-path (lambda () (my/load-path "~/gits/composable.el/"))
+  :load-path (lambda nil (my/load-path "~/gits/composable.el/"))
   :custom
   (composable-mode-debug-level 3)
   :config
