@@ -265,131 +265,104 @@
 ;;__________________________________________________________
 ;; Some internal packages to defer them
 
-(use-package imenu :ensure nil
-  :defer t
-  :custom
-  (imenu-use-markers nil)
-  (imenu-auto-rescan t)
-  (imenu-max-item-length 256))
+;; imenu
+(setq-default imenu-use-markers nil
+	      imenu-auto-rescan t
+	      imenu-max-item-length 256)
 
-(use-package uniquify :ensure nil
-  :defer 1
-  :custom
-  (uniquify-buffer-name-style 'post-forward))
+;; uniquify
+(setq-default uniquify-buffer-name-style 'post-forward)
 
-(use-package saveplace :ensure nil
-  :custom
-  ;; (save-place-forget-unreadable-files t)
-  (save-place-ignore-files-regexp  ;; Modified to add /tmp/* files
-   "\\(?:COMMIT_EDITMSG\\|hg-editor-[[:alnum:]]+\\.txt\\|svn-commit\\.tmp\\|bzr_log\\.[[:alnum:]]+\\|^/tmp/.+\\)$")
-  :config
-  (save-place-mode 1))              ;; Remember point in files
+;; saveplace
+(setq-default save-place-ignore-files-regexp  ;; Modified to add /tmp/* files
+	      "\\(?:COMMIT_EDITMSG\\|hg-editor-[[:alnum:]]+\\.txt\\|svn-commit\\.tmp\\|bzr_log\\.[[:alnum:]]+\\|^/tmp/.+\\)$")
+(save-place-mode 1)              ;; Remember point in files
 
-(use-package autorevert :ensure nil
-  :defer 1
-  :custom
-  (auto-revert-verbose nil)	 ;; not show message when file changes
-  (auto-revert-avoid-polling t)  ;; don't do pooling for autorevert (use notifications).
-  ;;(auto-revert-remote-files t) ;; No autorevert tramp files
-  :config
-  (global-auto-revert-mode t))		;; Autoload files changed in disk
+;; autorevert
+(setq-default auto-revert-verbose nil	                ;; not show message when file changes
+	      auto-revert-avoid-polling t)              ;; don't do pooling for autorevert (use notifications).)
+(run-with-idle-timer 1 nil #'global-auto-revert-mode t) ;; Autoload files changed in disk
 
-(use-package paren :ensure nil
-  :defer 0.5
-  :custom
-  (show-paren-delay 0)
-  (blink-matching-paren nil)	;; not show message when file changes
-  :config
-  (show-paren-mode t))
+;; show-paren-mode
+(setq-default show-paren-delay 0
+	      blink-matching-paren nil)
+(run-with-idle-timer 0.5 nil #'show-paren-mode t)
 
-(use-package smtpmail :ensure nil
-  :defer t
-  :custom
-  (smtpmail-debug-info t))
+;; smtpmail
+(setq-default smtpmail-debug-info t)
 
-(use-package sendmail :ensure nil
-  :defer t
-  :custom
-  (send-mail-function #'smtpmail-send-it))
+;; sendmail
+(setq-default send-mail-function #'smtpmail-send-it)
 
-(use-package profiler :ensure nil
-  :defer t
-  :hook (profiler-report-mode . hl-line-mode))
+;; profiler
+(add-hook 'profiler-report-mode-hook #'hl-line-mode)
 
 ;; Shows the function in spaceline
-(use-package which-func :ensure nil
-  :diminish
-  :defer t)
+(with-eval-after-load 'which-func
+  (diminish 'which-func-mode))
 
-(use-package text-mode :ensure nil
-  :preface
-  (my/gen-delay-hook text-mode)
-  :defer t)
+;; text-mode
+(eval-and-compile
+    (my/gen-delay-hook text-mode))
 
-(use-package prog-mode :ensure nil
-  :preface
-  (my/gen-delay-hook prog-mode)
-  :defer t
-  :hook (prog-mode-delay . (lambda nil
-			     (setq show-trailing-whitespace t))))
+;; prog-mode
+(eval-and-compile
+  (my/gen-delay-hook prog-mode))
+(add-hook 'prog-mode-delay-hook
+	  (lambda nil
+	    (setq show-trailing-whitespace t)))
 
-(use-package elec-pair :ensure nil
-  :hook ((prog-mode text-mode) . (lambda nil
-				  (electric-pair-local-mode 1)))
-  :defer t)
+;; elec-pair
+(eval-and-compile
+  (defun my/electric-pair-local-mode ()
+    "Enable electric-pair-local-mode"
+    (electric-pair-local-mode 1)))
+(add-hook 'prog-mode-hook #'my/electric-pair-local-mode)
+(add-hook 'text-mode-hook #'my/electric-pair-local-mode)
 
-(use-package hl-line :ensure nil
-  :diminish
-  :defer t
-  :init
-  (global-set-key (kbd "C-c h l") #'hl-line-mode)
-  (add-hook 'package-menu-mode-hook #'hl-line-mode)
-  :defer t)
+;; hl-line
+(global-set-key (kbd "C-c h l") #'hl-line-mode)
+(with-eval-after-load 'hl-line
+  (diminish 'hl-line-mode))
+(add-hook 'package-menu-mode-hook #'hl-line-mode)
 
-(use-package winner :ensure nil
-  :defer 0.5  ;; this always after the bind
-  :custom
-  (winner-dont-bind-my-keys t)
-  :init
+;; winner
+(setq-default winner-dont-bind-my-keys t)
+(run-with-idle-timer 0.5 nil #'winner-mode 1)
+(with-eval-after-load 'winner
   (which-key-add-key-based-replacements "C-x w" "winner")
-  :config
   (define-key winner-mode-map (kbd "C-x w u") #'winner-undo)
-  (define-key winner-mode-map (kbd "C-x w r") #'winner-redo)
+  (define-key winner-mode-map (kbd "C-x w r") #'winner-redo))
 
-  (winner-mode 1))
+;; Org mode
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
-(use-package org :ensure nil
-  :mode ("\\.org\\'" . org-mode))
+;; abbrev
+(which-key-add-key-based-replacements "C-x a" "abbrev")
+(with-eval-after-load 'abbrev
+  (diminish 'abbrev-mode))
 
-(use-package abbrev :ensure nil ;; Abbrev M-/
-  :diminish
-  :defer t
-  :init
-  (which-key-add-key-based-replacements "C-x a" "abbrev"))
 
-(use-package eldoc :ensure nil ;; function arguments
-  :diminish
-  :hook ((emacs-lisp-mode lisp-interaction-mode ielm-mode) .
-	 turn-on-eldoc-mode)
-  :custom
-  (eldoc-idle-delay 2)                             ;; default 0.5
-  (eldoc-print-after-edit t)                       ;; only show after edit
-  (eldoc-echo-area-display-truncation-message nil) ;; Not verbose when truncated
-  :defer t
-  :config
-  (global-eldoc-mode -1))  ;; This is enabled by default, disable it
+;; eldoc
+(setq-default eldoc-idle-delay 2                              ;; default 0.5
+	      eldoc-print-after-edit t                        ;; only show after edit
+	      eldoc-echo-area-display-truncation-message nil) ;; Not verbose when truncated)
+(with-eval-after-load 'eldoc
+  (diminish 'eldoc-mode)
+  (global-eldoc-mode -1))   ;; This is enabled by default, disable it
 
-(use-package gdb :ensure nil
-  :defer t
-  :custom
-  (gdb-debug-log-max nil)   ;; no limit log
-  (gdb-many-windows nil)
-  (gdb-show-main t))
+(add-hook 'emacs-lisp-mode-hook #'turn-on-eldoc-mode)
+(add-hook 'lisp-interaction-mode-hook #'turn-on-eldoc-mode)
+(add-hook 'ielm-mode-hook #'turn-on-eldoc-mode)
 
-(use-package conf-mode :ensure nil
-  :defer t
-  :preface
-  (my/gen-delay-hook conf-mode))
+;; gdb
+(setq-default gdb-debug-log-max nil   ;; no limit log
+	      gdb-many-windows nil
+	      gdb-show-main t)
+
+;; conf-mode
+(eval-and-compile
+    (my/gen-delay-hook conf-mode))
 
 ;;__________________________________________________________
 ;; Benchmark-init
@@ -403,21 +376,18 @@
 ;;__________________________________________________________
 ;; Isearch
 
-(use-package isearch :ensure nil
-  :defer t
-  :custom
-  (search-nonincremental-instead nil) ;; No incremental if enter with empty
-  ;;(lazy-highlight-no-delay-length 2)  ;; Highlight after 2 letters
-  (lazy-highlight-initial-delay 0)
-  (isearch-allow-scroll t)	      ;; Permit scroll can be 'unlimited
-  (isearch-lazy-count t)
-  (search-ring-max 64)                ;; Cuantas busquedas recordar
-  (regexp-search-ring-max 64)
-  (search-default-mode t)             ;; regex search by default
-  ;;(search-exit-option 'edit)        ;; Control or meta keys edit search
-  (isearch-yank-on-move 'shift)       ;; Copy text from buffer with meta
-  (isearch-wrap-pause nil)            ;; Disable wrapping.
-  :config
+(setq-default search-nonincremental-instead nil  ;; No incremental if enter & empty
+	      lazy-highlight-initial-delay 0
+	      isearch-allow-scroll t 	         ;; Permit scroll can be 'unlimited
+	      isearch-lazy-count t
+	      search-ring-max 64
+	      regexp-search-ring-max 64
+	      isearch-yank-on-move 'shift       ;; Copy text from buffer with meta
+	      ;; isearch-wrap-function #'ignore ;; Look at the emacs-major-version check
+	      isearch-wrap-pause nil            ;; Disable wrapping.
+	      )
+
+(with-eval-after-load 'isearch
   (define-key isearch-mode-map
     [remap isearch-delete-char] #'isearch-del-char)
 
@@ -460,42 +430,28 @@
 
 (global-set-key [remap just-one-space] #'cycle-spacing)
 
-(use-package unfill
-  :defer t
-  :init
-  (global-set-key [remap fill-paragraph] #'unfill-toggle))
+;; (use-package unfill
+;;   :defer t
+;;   :init
+;;   (global-set-key [remap fill-paragraph] #'unfill-toggle))
 
 ;;__________________________________________________________
 ;; compile
 
-(use-package compile :ensure nil
-  :defer t
-  :custom
-  (compilation-scroll-output 'first-error)
-  (compilation-always-kill t))
+(setq-default compilation-scroll-output 'first-error
+	      compilation-always-kill t)
 
 ;;__________________________________________________________
 ;; ssh
-(use-package tramp :ensure nil
-  :defer t
-  :custom
-  (tramp-auto-save-directory
-   (expand-file-name "tramp-autosave-dir" user-emacs-directory))
-  (tramp-completion-use-auth-sources nil)
-  (remote-file-name-inhibit-cache 120)           ;; Default 10
-  (tramp-completion-reread-directory-timeout 120);; Default 10
-  (password-cache-expiry 3600)                   ;; Cache for 1 hour
-  (tramp-default-method "scp")
-  ;; (tramp-debug-buffer t)
-  ;; (tramp-verbose 10)
-  ;; (tramp-persistency-file-name         ;; this is already the default
-  ;;  (expand-file-name "tramp" user-emacs-directory))
-  :config
-  ;; Disable vc checking tramp     ;; Disable vc on tramp files
-  ;; (setq vc-ignore-dir-regexp (format "%s\\|%s"
-  ;; 				     vc-ignore-dir-regexp
-  ;; 				     tramp-file-name-regexp))
+(setq-default tramp-auto-save-directory
+	      (expand-file-name "tramp-autosave-dir" user-emacs-directory)
+	      tramp-completion-use-auth-sources nil
+	      remote-file-name-inhibit-cache 120           ;; Default 10
+	      tramp-completion-reread-directory-timeout 120;; Default 10
+	      password-cache-expiry 3600                   ;; Cache for 1 hour
+	      tramp-default-method "scp")
 
+(with-eval-after-load 'tramp
   (connection-local-set-profile-variables
    'my/tramp-profile '((auth-sources . nil)
 		       (tramp-use-ssh-controlmaster-options . nil)))
@@ -517,15 +473,10 @@
 ;;__________________________________________________________
 ;; tab-bar
 
-(use-package tab-bar :ensure nil
-  :defer t
-  :custom
-  (tab-bar-tab-hints t)  ;; show tab numbers
-  (tab-bar-close-last-tab-choice 'tab-bar-mode-disable) ;; When close last
-  (tab-bar-show 1)
-  :init
-  (which-key-add-key-based-replacements "C-x t" "tab-bar")
-  )
+(setq-default tab-bar-tab-hints t  ;; show tab numbers
+	      tab-bar-close-last-tab-choice 'tab-bar-mode-disable ;; When close last
+	      tab-bar-show 1)
+(which-key-add-key-based-replacements "C-x t" "tab-bar")
 
 ;;__________________________________________________________
 ;; minibuffers
@@ -540,12 +491,9 @@
 
 ;;__________________________________________________________
 ;; Two options for diffs
-(use-package ediff :ensure nil
-  :defer t
-  :custom
-  (ediff-window-setup-function #'ediff-setup-windows-plain)
-  (ediff-split-window-function #'split-window-horizontally)
-  :config
+(setq-default ediff-window-setup-function #'ediff-setup-windows-plain
+	      ediff-split-window-function #'split-window-horizontally)
+(with-eval-after-load 'ediff
   (with-eval-after-load 'winner
     (add-hook 'ediff-after-quit-hook-internal #'winner-undo)))
 
@@ -566,11 +514,9 @@
 
 (use-package vterm
   :defer t
-  :preface
-  (defun my/vterm-mode-hook ()
-    (display-fill-column-indicator-mode -1)
-    (auto-fill-mode -1))
-  :hook (vterm-mode . my/vterm-mode-hook)
+  :hook (vterm-mode . (lambda nil
+			(display-fill-column-indicator-mode -1)
+			(auto-fill-mode -1)))
   :custom
   (vterm-kill-buffer-on-exit t)
   (vterm-max-scrollback 10000)
@@ -644,14 +590,12 @@
   (xclip-mode 1))
 
 ;;__________________________________________________________
-;;	Seleccionar con el mouse
-(use-package mouse :ensure nil
-  :unless (or (display-graphic-p)
-	      (string-equal (getenv "TERM") "linux"))
-  :custom
-  (mouse-sel-mode t)          ;; Mouse selection
-  (mouse-scroll-delay 0)
-  :config
+;; xterm mouse
+(unless (or (display-graphic-p)
+	    (string-equal (getenv "TERM") "linux"))
+  (setq-default mouse-sel-mode t          ;; Mouse selection
+		mouse-scroll-delay 0)
+
   (xterm-mouse-mode t)			  ;; mover el cursor al click
   ;; (defun track-mouse (e))
   (set-cursor-color "white")
@@ -664,8 +608,7 @@
 
     ;; Else set them manually
     (global-set-key (kbd "<mouse-4>") #'scroll-down-command)
-    (global-set-key (kbd "<mouse-5>") #'scroll-up-command))	;; scrolling con el mouse
-  )
+    (global-set-key (kbd "<mouse-5>") #'scroll-up-command)))
 
 
 (defun my/scroll-up-command (&optional arg)
@@ -750,23 +693,19 @@
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
+(setq-default ispell-following-word t ;;Check word around point not only before
+	      ispell-quietly t)       ;; Supress messages in ispell-word
 
-(use-package ispell :ensure nil
-  :custom
-  (ispell-following-word t)  ;;Check word around point not only before
-  (ispell-quietly t)         ;; Supress messages in ispell-word
-  :defer t)
 
-(use-package flyspell :ensure nil
-  :diminish
-  :hook ((prog-mode-delay . flyspell-prog-mode)
-	 (text-mode-delay . turn-on-flyspell))
-  :defer t
-  :custom
-  (flyspell-use-meta-tab nil)      ;; Not correct with M-TAB
-  (flyspell-mode-line-string nil)  ;; Not show Fly in modeline
-  (flyspell-delay 2)               ;; default 3
-  :config
+;; Flyspell
+(setq-default flyspell-use-meta-tab nil      ;; Not correct with M-TAB
+	      flyspell-mode-line-string nil  ;; Not show Fly in modeline
+	      flyspell-delay 2)              ;; default 3
+
+(add-hook 'prog-mode-delay-hook #'flyspell-prog-mode)
+(add-hook 'text-mode-delay-hook #'turn-on-flyspell)
+
+(with-eval-after-load 'flyspell
   (easy-mmode-defmap flyspell-basic-map
     `(("r" . flyspell-region)
       ("b" . flyspell-buffer)
@@ -775,11 +714,11 @@
 
   (setf (cdr flyspell-mode-map) nil)  ;; clear yas minor map
   (define-key flyspell-mode-map (kbd "C-c f") flyspell-basic-map)
-  (which-key-add-keymap-based-replacements flyspell-mode-map "C-c f" "flyspell"))
+  (which-key-add-keymap-based-replacements flyspell-mode-map "C-c f" "flyspell")
+  (diminish 'flyspell-mode))
 
 (use-package flyspell-correct-ivy
   :diminish
-  :defer t
   :after flyspell
   :custom
   (flyspell-correct-interface #'flyspell-correct-ivy)
@@ -812,9 +751,10 @@
     "Load company mode if not active."
     (unless (bound-and-true-p company-mode)
       (company-mode 1)))
-
-  :hook ((prog-mode-delay message-mode-delay conf-mode-delay)
-	 . my/company-mode-delay-hook)
+  :init
+  (add-hook 'prog-mode-delay-hook #'my/company-mode-delay-hook)
+  (add-hook 'message-mode-delay-hook #'my/company-mode-delay-hook)
+  (add-hook 'conf-mode-delay-hook #'my/company-mode-delay-hook)
   :defer t
   :custom
   (company-idle-delay nil)	 ;; no delay for autocomplete
@@ -863,7 +803,6 @@
 
 (use-package lsp-ui
   :diminish
-  :defer t
   :after lsp-mode
   :custom
   ;;(lsp-ui-sideline-delay 1.0)
@@ -895,7 +834,6 @@
 
 (use-package lsp-ivy
   :diminish
-  :defer t
   :after lsp-mode
   :config
   (define-key lsp-mode-map (kbd "C-c l i") #'lsp-ivy-workspace-symbol)
@@ -952,18 +890,21 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   "Function to handle addition of ; in 'c-mode'."
 ;;   (assq 'class-close c-syntactic-context))
 
-(use-package cc-mode :ensure nil
-  :hook (c-mode-common . (lambda nil
-			   (c-toggle-auto-newline 1)
-			   (c-toggle-cpp-indent-to-body 1)
-			   (c-ms-space-for-alignment-mode 1)
-			   (subword-mode 1)))
-  :defer t
-  :custom
-  (c-default-style '((java-mode . "java")
-		     (awk-mode . "awk")
-		     (other . "mylinux")))
-  :config
+;; cc-mode
+(eval-and-compile
+  (defun my/c-mode-common-hook ()
+    "my/c-mode-common common."
+    (c-toggle-auto-newline 1)
+    (c-toggle-cpp-indent-to-body 1)
+    (c-ms-space-for-alignment-mode 1)
+    (subword-mode 1)))
+(add-hook 'c-mode-common-hook #'my/c-mode-common-hook)
+
+(setq-default c-default-style '((java-mode . "java")
+				(awk-mode . "awk")
+				(other . "mylinux")))
+
+(with-eval-after-load 'cc-mode
   (c-add-style "mylinux"
 	       '("linux"
 		 (tab-width . 4)
@@ -995,38 +936,42 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 				  ))))
 
 (use-package preproc-font-lock ;; Preprocessor
-  :hook (c-mode-common . preproc-font-lock-mode)
+  :defer t
+  :init
+  (add-hook 'c-mode-common-hook #'preproc-font-lock-mode)
   :custom
-  (preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face)
-  :defer t)
+  (preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
 
 ;; company-c-headers
 (use-package company-c-headers
-  :hook ((c-mode c++-mode objc-mode) . (lambda nil
-					 (my/company-backend-after-load #'company-c-headers)))
-  :defer t)
+  :preface
+  (defun my/c-mode-hook ()
+    (my/company-backend-after-load #'company-c-headers))
+  :defer t
+  :init
+  (add-hook 'c-mode #'my/c-mode-hook)
+  (add-hook 'c++-mode #'my/c-mode-hook)
+  (add-hook 'objc-mode #'my/c-mode-hook))
 
-
-(use-package clang-format
-  :commands clang-format-region)
+(use-package clang-format :defer t)
 
 ;;__________________________________________________________
 ;; C++ mode
 (use-package modern-cpp-font-lock
   :diminish modern-c++-font-lock-mode
-  :hook (c++-mode . modern-c++-font-lock-mode)
-  :defer t)
+  :defer t
+  :init
+  (add-hook 'c++-mode #'modern-c++-font-lock-mode))
 
 ;;__________________________________________________________
 ;; elisp mode (all after the company declaration)
 
-(use-package emacs-lisp-mode :ensure nil
-  :hook (emacs-lisp-mode . (lambda nil
-			     ;; emacs-lisp-mode is evaluated in too many places...
-			     (when (and buffer-file-name
-					(string-match "\\.el\\'" buffer-file-name))
-			       (my/company-backend-after-load #'company-elisp))))
-  :defer t)
+(add-hook 'emacs-lisp-mode-hook
+	  (lambda nil
+	    (when (and buffer-file-name
+		       (string-match "\\.el\\'" buffer-file-name))
+	      (my/company-backend-after-load #'company-elisp))))
+
 ;;__________________________________________________________
 ;; sh mode
 
@@ -1049,7 +994,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Markdown mode
 (use-package markdown-mode
-  :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode)
 	 ("\\.md\\'" . markdown-mode)
 	 ("\\.markdown\\'" . markdown-mode))
@@ -1059,23 +1003,24 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Restructured text
 (use-package sphinx-mode
-  :hook rst-mode
-  :defer t)
+  :defer t
+  :init
+  (add-hook 'rst-mode-hook #'sphinx-mode))
 
 ;;__________________________________________________________
 ;; ruby-mode
-(use-package ruby-mode :ensure nil
-  :mode ("\\.rjs\\'")
-  :custom
-  (ruby-indent-level 2))
+(setq-default ruby-indent-level 2)
+(add-to-list 'auto-mode-alist '("\\.rjs\\'" . ruby-mode))
 
 (use-package ruby-tools
-  :hook (ruby-mode . ruby-tools-mode)
-  :defer t)
+  :defer t
+  :init
+  (add-hook 'ruby-mode-hook #'ruby-tools-mode))
 
 (use-package ruby-electric
-  :hook (ruby-mode . ruby-electric-mode)
-  :defer t)
+  :defer t
+  :init
+  (add-hook 'ruby-mode-hook  #'ruby-electric-mode))
 
 ;;__________________________________________________________
 ;; Julia Mode
@@ -1083,8 +1028,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode "\\.jl\\'")
 
 (use-package flycheck-julia
-  :hook (julia-mode . flycheck-julia-setup)
-  :defer t)
+  :defer t
+  :init
+  (add-hook 'julia-mode-hook #'flycheck-julia-setup))
 
 ;;__________________________________________________________
 ;; Rust Mode
@@ -1092,28 +1038,40 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode "\\.rs\\'")
 
 (use-package flycheck-rust
-  :hook (rust-mode . flycheck-rust-setup)
-  :defer t)
+  :defer t
+  :init
+  (add-hook 'rust-mode-hook #'flycheck-rust-setup))
 
 ;;__________________________________________________________
 ;; Ocaml Mode
 (use-package caml
-  :mode ("\\.ml[iylp]?\\'" . caml-mode))
+  :defer t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.ml[iylp]?\\'" . caml-mode)))
 
 ;;__________________________________________________________
 ;; D languaje
-(use-package d-mode :mode "\\.d\\'")
+(use-package d-mode
+  :defer t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.d\\'" . d-mode)))
 
 ;;__________________________________________________________
 ;; Go languaje
 (use-package go-mode
-  :mode "\\.go\\'")
+  :defer t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode)))
 
 ;;__________________________________________________________
 ;; lua language
 (use-package lua-mode
-  :mode "\\.lua\\'"
-  :interpreter "lua")
+  :defer t
+  :init
+  (add-to-list 'auto-mode-alist
+	       '("\\.lua\\'" . lua-mode))
+  (add-to-list 'interpreter-mode-alist
+	       '("lua" . lua-mode)))
 
 (use-package company-lua
   :hook (lua-mode . (lambda nil
@@ -1123,8 +1081,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; groovy language
 
-(use-package groovy-mode
-  :defer t)
+(use-package groovy-mode :defer t)
 
 ;;__________________________________________________________
 ;; systemd mode
@@ -1133,9 +1090,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Use for Qt's .pro and .pri files
 (use-package qt-pro-mode
-  :mode (("\\.pr[io]\\'" . qt-pro-mode)
-	 ("\\.moc\\'" . c++-mode)
-	 ("\\.ui\\'" . xml-mode)))
+  :defer t
+  :init
+  (add-to-list 'auto-mode-alist
+	       '("\\.pr[io]\\'" . qt-pro-mode))
+  (add-to-list 'auto-mode-alist
+	       '("\\.moc\\'" . c++-mode))
+  (add-to-list 'auto-mode-alist
+	       '("\\.ui\\'" . xml-mode)))
 
 ;;__________________________________________________________
 ;; javascript-mode
@@ -1144,32 +1106,27 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; xml-mode
-(use-package xml-mode :ensure nil
-  :mode ("\\.\\(ipe\\|qrc\\|svn\\)\\'"))
+(add-to-list 'auto-mode-alist
+	     '("\\.\\(ipe\\|qrc\\|svn\\)\\'" . xml-mode))
 
 ;;__________________________________________________________
 ;; splitting
+(define-key ctl-x-map (kbd "4<left>")  #'windmove-display-left)
+(define-key ctl-x-map (kbd "4<right>")  #'windmove-display-right)
+(define-key ctl-x-map (kbd "4<up>")  #'windmove-display-up)
+(define-key ctl-x-map (kbd "4<down>")  #'windmove-display-down)
+(define-key ctl-x-map (kbd "<left>")  #'windmove-left)
+(define-key ctl-x-map (kbd "<right>")  #'windmove-right)
+(define-key ctl-x-map (kbd "<down>")  #'windmove-down)
+(define-key ctl-x-map (kbd "<up>")  #'windmove-up)
+(define-key ctl-x-map (kbd "C-M-<left>")  #'windmove-swap-states-left)
+(define-key ctl-x-map (kbd "C-M-<right>")  #'windmove-swap-states-right)
+(define-key ctl-x-map (kbd "C-M-<down>")  #'windmove-swap-states-down)
+(define-key ctl-x-map (kbd "C-M-<up>")  #'windmove-swap-states-up)
 
-(use-package windmove :ensure nil
-  :defer t
-  :init
-  (define-key ctl-x-map (kbd "4<left>")  #'windmove-display-left)
-  (define-key ctl-x-map (kbd "4<right>")  #'windmove-display-right)
-  (define-key ctl-x-map (kbd "4<up>")  #'windmove-display-up)
-  (define-key ctl-x-map (kbd "4<down>")  #'windmove-display-down)
-  (define-key ctl-x-map (kbd "<left>")  #'windmove-left)
-  (define-key ctl-x-map (kbd "<right>")  #'windmove-right)
-  (define-key ctl-x-map (kbd "<down>")  #'windmove-down)
-  (define-key ctl-x-map (kbd "<up>")  #'windmove-up)
-  (define-key ctl-x-map (kbd "C-M-<left>")  #'windmove-swap-states-left)
-  (define-key ctl-x-map (kbd "C-M-<right>")  #'windmove-swap-states-right)
-  (define-key ctl-x-map (kbd "C-M-<down>")  #'windmove-swap-states-down)
-  (define-key ctl-x-map (kbd "C-M-<up>")  #'windmove-swap-states-up))
+;; repeat-mode
+(run-with-idle-timer 1 nil #'repeat-mode 1)
 
-(use-package repeat :ensure nil
-  :defer 1
-  :config
-  (repeat-mode 1))
 
 ;; Change color selected buffers
 ;; (use-package auto-dim-other-buffers
@@ -1184,7 +1141,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   :mode ("\\.gp\\'" "\\.gpl\\'" "\\.plt\\'"))
 
 (use-package gnuplot
-  :mode ("\\.\\(gpl?\\|plt\\)\\'" . gnuplot-mode))
+  :defer t
+  :init
+  (add-to-list 'auto-mode-alist
+	       '("\\.\\(gpl?\\|plt\\)\\'" . gnuplot-mode)))
 
 ;;__________________________________________________________
 ;; Auto completamiento
@@ -1228,7 +1188,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Chequeo de syntaxis
 (use-package flycheck
   :diminish
-  :if (< (buffer-size) 200000)
+  :when (< (buffer-size) 200000)
+  :defer t
   :preface
   (defun my/flycheck-mode-hook ()
     "Hook to enable flycheck-mode."
@@ -1240,7 +1201,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
        (setq-local flycheck-gcc-language-standard "c++17"
 		   flycheck-clang-language-standard "c++17")))
     (flycheck-mode 1))
-  :hook (prog-mode-delay . my/flycheck-mode-hook)
+  :init
+  (add-hook 'prog-mode-delay-hook #'my/flycheck-mode-hook)
   :custom
   (flycheck-display-errors-delay 1.0)
   (flycheck-keymap-prefix (kbd "C-c a"))
@@ -1249,13 +1211,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (define-key flycheck-command-map "a" #'counsel-flycheck)
   )
 
-(use-package flymake :ensure nil
-  :diminish
-  ;; :hook (prog-mode-delay . flymake-mode-on)
-  :defer t
-  :config
+(with-eval-after-load 'flymake
   (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
-
   (easy-mmode-defmap flymake-basic-map
     `(("n" . flymake-goto-next-error)
       ("p" . flymake-goto-prev-error)
@@ -1266,7 +1223,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (define-key flymake-mode-map (kbd "C-c k") flymake-basic-map)
   (which-key-add-keymap-based-replacements flymake-mode-map "C-c k" "flymake")
-  )
+  (diminish 'flymake-mode))
 
 ;;__________________________________________________________
 ;; Improved help buffer
@@ -1296,19 +1253,24 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 
 ;; Asocia buffers que empiecen con messaje mode
-(use-package message-mode :ensure nil
-  :mode ("/neomut" "neomutt-Ergus-" "draft")
-  :preface
-  (my/gen-delay-hook message-mode)
-  :custom
-  (message-default-mail-headers "Cc: \nBcc: \n")
-  (message-kill-buffer-on-exit t)
-  (message-send-mail-function #'message-use-send-mail-function)
-  (mail-header-separator "")
-  :config
+
+;; message-mode
+(eval-and-compile
+  (my/gen-delay-hook message-mode))
+
+(setq-default message-default-mail-headers "Cc: \nBcc: \n"
+	      message-kill-buffer-on-exit t
+	      message-send-mail-function #'message-use-send-mail-function
+	      mail-header-separator "")
+
+(with-eval-after-load 'message-mode
   (auto-fill-mode t)
   (mail-abbrevs-setup)
   (flyspell-mode t))
+
+(add-to-list 'auto-mode-alist '("/neomut" . message-mode))
+(add-to-list 'auto-mode-alist '("neomutt-Ergus-" . message-mode))
+(add-to-list 'auto-mode-alist '("draft" . message-mode))
 
 (use-package notmuch
   :init
@@ -1319,73 +1281,69 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Latex mode
+(eval-and-compile
+    (my/package-install 'auctex))
 
-(use-package tex :ensure nil
-  :preface
-  (my/package-install 'auctex)
-  :mode ("\\.tex\\'" . TeX-latex-mode)
-  :hook (LaTeX-mode . (lambda nil
-			(flyspell-mode 1)
-			(visual-line-mode 1)
-			(auto-fill-mode 1)))
-  :defer t
-  :custom
-  (TeX-source-correlate-start-server t)
-  (TeX-auto-save t)
-  (TeX-parse-self t)
-  (LaTeX-babel-hyphen nil)
-  (TeX-master nil) ;; Multidocument
-  (LaTeX-indent-level 4)
-  (LaTeX-item-indent 0)
+(setq-default TeX-source-correlate-start-server t
+	      TeX-auto-save t
+	      TeX-parse-self t
+	      LaTeX-babel-hyphen nil
+	      TeX-master nil ;; Multidocument
+	      LaTeX-indent-level 4
+	      LaTeX-item-indent 0)
 
-  :config
+(with-eval-after-load 'tex
   (TeX-source-correlate-mode 1)
-
   (add-to-list 'TeX-command-list
-  	       '("Makeglossaries" "makeglossaries %s" TeX-run-command nil
-  		 (latex-mode)
-  		 :help "Run makeglossaries, will choose xindy or makeindex") t)
-
-  ;; ====== Fix for itemize indentation.
-
+	       '("Makeglossaries" "makeglossaries %s" TeX-run-command nil
+		 (latex-mode)
+		 :help "Run makeglossaries, will choose xindy or makeindex")
+	       t)
   (with-eval-after-load 'latex
-    (defun my/LaTeX-indent-item ()
-      "Syntactic indentation for itemize like environments to add extra offsets."
-      (save-match-data
-	(let* ((offset (+ LaTeX-indent-level LaTeX-item-indent))
-               (re-beg "\\\\begin{")
-               (re-end "\\\\end{")
-               (re-env "\\(itemize\\|\\enumerate\\|description\\)")
-               (indent (save-excursion                                 ;; parent indent column
-			 (when (looking-at (concat re-beg re-env "}"))
-			   (end-of-line))
+    (defun my/LaTeX-indent-item nil "Syntactic indentation for itemize like environments to add extra offsets."
+	   (save-match-data
+	     (let*
+		 ((offset
+		   (+ LaTeX-indent-level LaTeX-item-indent))
+		  (re-beg "\\\\begin{")
+		  (re-end "\\\\end{")
+		  (re-env "\\(itemize\\|\\enumerate\\|description\\)")
+		  (indent (save-excursion
+			    (when
+				(looking-at
+				 (concat re-beg re-env "}"))
+			      (end-of-line))
+			    (LaTeX-find-matching-begin)
+			    (current-column))))
+	       (cond
+		((looking-at (concat re-beg re-env "}"))
+		 (or (save-excursion
+		       (beginning-of-line)
+		       (ignore-errors
 			 (LaTeX-find-matching-begin)
-			 (current-column))))
-	  (cond
-	   ((looking-at (concat re-beg re-env "}"))               ;; row with \begin{itemize}
-	    (or (save-excursion
-                  (beginning-of-line)
-                  (ignore-errors
-		    (LaTeX-find-matching-begin)
-		    (+ (current-column)                            ;; parent indentation pos
-		       (if (looking-at (concat re-beg re-env "}")) ;; check if parent scope is also itemize
-			   offset
-			 LaTeX-indent-level)))
-		  indent)))
-	   ((looking-at (concat re-end re-env "}"))     ;; row with \end{itemize}
-	    indent)
-	   ((looking-at "\\\\item")                     ;; row with \item
-	    (+ indent offset))
-	   (t                                           ;; any other row (continuation)
-	    (+ indent offset LaTeX-indent-level))))))
-
+			 (+ (current-column)
+			    (if (looking-at (concat re-beg re-env "}"))
+				offset
+			      LaTeX-indent-level)))
+		       indent)))
+		((looking-at (concat re-end re-env "}"))
+		 indent)
+		((looking-at "\\\\item")
+		 (+ indent offset))
+		(t
+		 (+ indent offset LaTeX-indent-level))))))
     (add-to-list 'LaTeX-indent-environment-list '("itemize" my/LaTeX-indent-item))
     (add-to-list 'LaTeX-indent-environment-list '("enumerate" my/LaTeX-indent-item))
-    (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item)))
-  ;; =========================
+    (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item))))
 
-  )
+(add-hook 'LaTeX-mode-hook (lambda nil
+			     (flyspell-mode 1)
+			     (visual-line-mode 1)
+			     (auto-fill-mode 1)))
+(add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
 
+
+;; auctex-latexmk
 (use-package auctex-latexmk
   :defer t
   :custom
@@ -1404,20 +1362,19 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		      (my/company-backend-after-load #'company-auctex-init)))
   :defer t)
 
-(use-package reftex :ensure nil ;; Reftex for cross references
-  :hook (LaTeX-mode . turn-on-reftex)  ;; with AUCTeX LaTeX mode
-  :defer t
-  :custom
-  (reftex-cite-prompt-optional-args t)   ; Prompt for empty optional arguments in cite
-  (reftex-cite-format 'biblatex)
-  (reftex-plug-into-AUCTeX t)
-  (reftex-insert-label-flags '(t t))
-  (reftex-save-parse-info t)
-  (reftex-enable-partial-scans t)
-  (reftex-use-multiple-selection-buffers t)
-  :config
-  (reftex-isearch-minor-mode))
+;; reftex
+(setq-default reftex-cite-prompt-optional-args t   ; Prompt for empty optional arguments in cite
+	      reftex-cite-format 'biblatex
+	      reftex-plug-into-AUCTeX t
+	      reftex-insert-label-flags t
+	      reftex-save-parse-info t
+	      reftex-enable-partial-scans t
+	      reftex-use-multiple-selection-buffers t)
 
+(add-hook 'LaTeX-mode-hook #'turn-on-reftex)
+
+(with-eval-after-load 'reftex
+  (reftex-isearch-minor-mode))
 
 (use-package company-reftex
   :hook (reftex-mode . (lambda nil
@@ -1427,10 +1384,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;;bibtex mode set use biblatex
-(use-package bibtex :ensure nil
-  :mode (("\\.bib\\'" . bibtex-mode))
-  :custom
-  (bibtex-dialect 'biblatex))
+
+(setq-default bibtex-dialect 'biblatex)
+(add-to-list 'auto-mode-alist '("\\.bib\\'" . bibtex-mode))
 
 (use-package company-bibtex
   :hook (bibtex-mode . (lambda nil
@@ -1444,41 +1400,35 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Python mode
+(setq-default python-shell-interpreter "ipython3"
+	      python-shell-interpreter-args "-i --simple-prompt"
+	      python-shell-prompt-detect-failure-warning nil
+	      python-check-command "pyflakes"
+	      flycheck-python-flake8-executable "flake8")
 
-
-(use-package python :ensure nil
-  :mode ("\\.py\\'" . python-mode)
-  :interpreter ("python3" . python-mode)
-  :custom
-  (python-shell-interpreter "ipython3")
-  (python-shell-interpreter-args "-i --simple-prompt")
-  (python-shell-prompt-detect-failure-warning nil)
-  (python-check-command "pyflakes")
-  (flycheck-python-flake8-executable "flake8")
-  :config
+(with-eval-after-load 'python
   (define-key python-mode-map (kbd "C-c C-z") #'python-shell))
+(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
+(add-to-list 'interpreter-mode-alist '("python3" . python-mode))
 
 (use-package ein :defer t)
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
-(use-package dired :ensure nil
-  :defer t
-  :custom
-  (dired-recursive-copies 'top)	     ;; Always ask recursive copy
-  (dired-recursive-deletes 'top)     ;; Always ask recursive delete
-  (dired-dwim-target t)		     ;; Copy in split mode with p
-  (dired-auto-revert-buffer t)
-  (dired-listing-switches "-alh")
-  :config
+
+(setq-default dired-recursive-copies 'top   ;; Always ask recursive copy
+	      dired-recursive-deletes 'top  ;; Always ask recursive delete
+	      dired-dwim-target t	   ;; Copy in split mode with p
+	      dired-auto-revert-buffer t
+	      dired-listing-switches "-alh")
+
+(with-eval-after-load 'dired
   (require 'dired-x)
   (put 'dired-find-alternate-file 'disabled nil)
-
-  (define-key dired-mode-map [remap dired-find-file] #'dired-find-alternate-file)
-  (define-key dired-mode-map [remap dired-up-directory] (lambda nil
+  (define-key dired-mode-map [remap dired-find-file] #'dired-find-alternate-file) ; was dired-advertised-find-file
+  (define-key dired-mode-map [remap dired-up-directory] (lambda nil               ; was dired-up-directory
 							  (interactive)
-							  (find-alternate-file "..")))
-  )
+							  (find-alternate-file ".."))))
 
 (use-package dired-sidebar
   :defer t
@@ -1501,14 +1451,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ptemplate-templates-mode 1))
 ;;__________________________________________________________
 ;; ibuffer
-(use-package ibuffer :ensure nil
-  :defer t
-  :init
-  (global-set-key [remap list-buffers] #'ibuffer)
-  (add-hook 'ibuffer-mode-hook #'hl-line-mode)
-  :custom
-  (ibuffer-default-sorting-mode 'alphabetic)  ;; can use recency
-  )
+(setq-default ibuffer-default-sorting-mode 'alphabetic)  ;; can use recency)
+(global-set-key [remap list-buffers] #'ibuffer)
+(add-hook 'ibuffer-mode-hook #'hl-line-mode)
 
 (use-package ibuffer-sidebar
   :defer t
@@ -1671,17 +1616,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   )
 
 (use-package amx :defer t) ;; Complete history
-(use-package recentf :ensure nil
-  :defer t
-  :config
-  (recentf-mode 1)) ;; Complete history
+
+;; recentf
+(with-eval-after-load 'recentf
+  (recentf-mode 1))
+
+ ;; Complete history
 
 
 (use-package counsel-gtags
   :diminish
   :load-path (lambda nil (my/load-path "~/gits/emacs_clones/emacs-counsel-gtags/"))
   :bind-keymap ("C-c g" . counsel-gtags-command-map)
-  :hook (counsel-gtags . my/counsel-gtags-hook)
   :custom
   (counsel-gtags-debug-mode t)
   (counsel-gtags-use-dynamic-list nil)
@@ -1783,25 +1729,28 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 				     (setq-local fill-column 72)
 				     (git-commit-turn-on-flyspell))))
 
-(use-package smerge-mode :ensure nil
-  :defer t
-  :preface
+
+;; smerge
+(setq-default smerge-diff-buffer-name "*smerge-diff*"
+	      smerge-command-prefix (kbd "C-c s"))
+
+(eval-and-compile
   (defun my/enable-smerge-maybe ()
     "Auto-enable `smerge-mode' when merge conflict is detected."
     (save-excursion
       (goto-char (point-min))
       (when (re-search-forward "^<<<<<<< " nil t)
-	(smerge-mode 1))))
+	(smerge-mode 1)))))
 
-  :hook ((find-file magit-diff-visit-file) . my/enable-smerge-maybe)
-  :custom
-  (smerge-diff-buffer-name "*smerge-diff*")
-  (smerge-command-prefix (kbd "C-c s"))
-  :config
+(with-eval-after-load 'smerge
   (which-key-add-keymap-based-replacements smerge-mode-map
     "C-c s" "smerge"
     "C-c s =" "smerge-diff"))
 
+(add-hook 'find-file-hook #'my/enable-smerge-maybe)
+(add-hook 'magit-diff-visit-file-hook #'my/enable-smerge-maybe)
+
+;; diff-hl
 (use-package diff-hl
   :preface
   (defun my/diff-hl-mode ()
@@ -1811,9 +1760,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       (turn-on-diff-hl-mode)
       (unless (display-graphic-p)
 	(diff-hl-margin-mode 1))))
-  :hook ((prog-mode-delay . my/diff-hl-mode)
-	 (vc-dir-mode . my/diff-hl-mode)
-	 (dired-mode . diff-hl-dired-mode-unless-remote))
+  :defer t
+  :init
+  (add-hook 'prog-mode-delay-hook #'my/diff-hl-mode)
+  (add-hook 'vc-dir-mode-hook #'my/diff-hl-mode)
+  (add-hook 'dired-mode-hook #'diff-hl-dired-mode-unless-remote)
   :config
   ;; Add the hook only after the package is loaded because they are not autoloads.
   (add-hook 'magit-pre-refresh-hook (lambda nil
@@ -1829,17 +1780,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode ("\\.asm\\'" "\\.s\\'"))
 
 (use-package flymake-nasm
-  :hook (asm-mode-hook . flymake-nasm-setup)
-  :defer t)
+  :defer t
+  :init
+  (add-hook 'asm-mode-hook-hook #'flymake-nasm-setup))
 
 ;;__________________________________________________________
 ;; CMake
 (use-package cmake-mode
-  :mode ("CMakeLists\\.txt\\'" "\\.cmake\(.in\)?\\'")
-  :commands company-cmake
-  :hook (cmake-mode . (lambda nil
-			(my/company-backend-after-load #'company-cmake)))
-  :defer t)
+  :defer t
+  :init
+  (add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
+  (add-to-list 'auto-mode-alist '("\\.cmake(.in)?\\'" . cmake-mode)))
 
 (use-package cmake-font-lock
   :defer t
@@ -1849,8 +1800,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       (cmake-font-lock-activate)
       (when auto-refresh-defaults
 	(font-lock-refresh-defaults))))
-  :hook (cmake-mode . my/cmake-font-lock)
-  :defer t)
+  :init
+  (add-hook 'cmake-mode-hook #'my/cmake-font-lock))
 
 ;; (use-package eldoc-cmake
 ;;   :hook (cmake-mode . (lambda nil
@@ -1865,62 +1816,62 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; path
 
-(defun my/point-to-abs (point)
-  "Count number of not whitespaces characters preceding POINT."
-  (save-excursion
-    (goto-char point)
-    (let ((counter 0))
-      (while (not (bobp))
-	(skip-chars-backward " \t\n")
-	(setq counter (- counter (skip-chars-backward "^ \t\n"))))
-      counter)))
+(eval-and-compile
+  (defun my/point-to-abs (point)
+    "Count number of not whitespaces characters preceding POINT."
+    (save-excursion
+      (goto-char point)
+      (let ((counter 0))
+	(while (not (bobp))
+	  (skip-chars-backward " \t\n")
+	  (setq counter (- counter (skip-chars-backward "^ \t\n"))))
+	counter)))
 
-(defun my/abs-to-point (value)
-  "First buffer position after VALUE non whitespaces chars."
-  (save-excursion
-    (let ((counter value)
-	  (point-min (point-min)))
-      (goto-char point-min)
-      (while (and (> counter 0)
-		  (not (eobp)))
-	(setq counter (- counter (skip-chars-forward "^ \t\n")))
-	(cond ((> counter 0)
-	       (skip-chars-forward " \t\n"))
-	      ((< counter 0)
-	       (backward-char (- counter))))))
-    (point)))
+  (defun my/abs-to-point (value)
+    "First buffer position after VALUE non whitespaces chars."
+    (save-excursion
+      (let ((counter value)
+	    (point-min (point-min)))
+	(goto-char point-min)
+	(while (and (> counter 0)
+		    (not (eobp)))
+	  (setq counter (- counter (skip-chars-forward "^ \t\n")))
+	  (cond ((> counter 0)
+		 (skip-chars-forward " \t\n"))
+		((< counter 0)
+		 (backward-char (- counter))))))
+      (point)))
 
-(defun my/shell-command-on-buffer (command)
-  "Execute shell COMMAND on buffer overwriting it but preserve
-position."
-  (interactive (list (read-shell-command "Shell command on buffer: ")))
+  (defun my/shell-command-on-buffer (command)
+    "Execute shell COMMAND on buffer overwriting but preserve position."
+    (interactive (list (read-shell-command "Shell command on buffer: ")))
 
-  (let ((abspoint (my/point-to-abs (point)))
-	(absmark (and (region-active-p)
-		      (my/point-to-abs (mark))))
-	(deactivate-mark t)
-	(output (save-excursion
-		  (shell-command-on-region (point-min) (point-max) command t t))))
+    (let ((abspoint (my/point-to-abs (point)))
+	  (absmark (and (region-active-p)
+			(my/point-to-abs (mark))))
+	  (deactivate-mark t)
+	  (output (save-excursion
+		    (shell-command-on-region (point-min) (point-max) command t t))))
 
-    (when absmark
-      (set-mark (my/abs-to-point absmark))
-      (activate-mark))
+      (when absmark
+	(set-mark (my/abs-to-point absmark))
+	(activate-mark))
 
-    (goto-char (my/abs-to-point abspoint))))
+      (goto-char (my/abs-to-point abspoint))))
 
-(defun my/var-to-clipboard ()
-  "Put the current file name on the clipboard."
-  (interactive)
-  (ivy-read "Describe variable: " obarray
-	    :predicate #'counsel--variable-p
-	    :require-match t
-	    :preselect (ivy-thing-at-point)
-	    :action (lambda (x)
-		      (let ((value (format "%s" (symbol-value (intern x)))))
-			(kill-new value)
-			(message "Copied %s value %s to clipboard"
-				 x value)))
-	    :caller 'my/var-to-clipboard))
+  (defun my/var-to-clipboard ()
+    "Put the current file name on the clipboard."
+    (interactive)
+    (ivy-read "Describe variable: " obarray
+	      :predicate #'counsel--variable-p
+	      :require-match t
+	      :preselect (ivy-thing-at-point)
+	      :action (lambda (x)
+			(let ((value (format "%s" (symbol-value (intern x)))))
+			  (kill-new value)
+			  (message "Copied %s value %s to clipboard"
+				   x value)))
+	      :caller 'my/var-to-clipboard)))
 
 ;;__________________________________________________________
 ;; Move current line up and down M+arrow
@@ -2122,8 +2073,9 @@ position."
   (my/gen-delay-hook json-mode))
 
 (use-package flymake-json
-  :hook (json-mode-delay . flymake-json-load)
-  :defer t)
+  :defer t
+  :init
+  (add-hook 'json-mode-delay-hook #'flymake-json-load))
 
 ;;__________________________________________________________
 ;; Modeline
@@ -2139,8 +2091,9 @@ position."
   (my/gen-delay-hook yaml-mode))
 
 (use-package flymake-yaml
-  :hook (yaml-mode-delay . flymake-yaml-load)
-  :defer t)
+  :defer t
+  :init
+  (add-hook 'yaml-mode-delay-hook #'flymake-yaml-load))
 
 (use-package sudo-edit :defer t)
 
@@ -2165,9 +2118,11 @@ position."
 	      (set-face-attribute 'mode-line nil :background (my/named-color green)))))
 
 (use-package evil-collection
-  :custom (evil-collection-setup-minibuffer t)
-  :hook (evil-mode .  evil-collection-init)
-  :defer t)
+  :defer t
+  :custom
+  (evil-collection-setup-minibuffer t)
+  :init
+  (add-hook 'evil-mode-hook #'evil-collection-init))
 
 (use-package composable
   :diminish
