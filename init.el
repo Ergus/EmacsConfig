@@ -345,15 +345,15 @@
   :defer t)
 
 (use-package winner :ensure nil
-  :bind (:map winner-mode-map
-	      ("C-x w u" . winner-undo)
-	      ("C-x w r" . winner-redo))
   :defer 0.5  ;; this always after the bind
   :custom
   (winner-dont-bind-my-keys t)
   :init
   (which-key-add-key-based-replacements "C-x w" "winner")
   :config
+  (define-key winner-mode-map (kbd "C-x w u") #'winner-undo)
+  (define-key winner-mode-map (kbd "C-x w r") #'winner-redo)
+
   (winner-mode 1))
 
 (use-package org :ensure nil
@@ -552,9 +552,10 @@
   :custom
   (vdiff-auto-refine t)
   :init
-  (which-key-add-key-based-replacements
-    "C-c d" "vdiff"
-    "C-c d i" "vdiff-toggle"))
+  (which-key-add-key-based-replacements "C-c d" "vdiff")
+  :config
+  (which-key-add-key-based-replacements "C-c d i" "vdiff-toggle")
+  )
 
 ;;__________________________________________________________
 ;; terms
@@ -577,16 +578,17 @@
 	       '("find-file-other-window" find-file-other-window)))
 
 (use-package vterm-toggle
-  :bind (("C-c t t" . vterm-toggle-cd)
-	 :map vterm-mode-map
-	 (("<C-return>" . vterm-toggle-insert-cd)
-	  ("C-M-n" . vterm-toggle-forward)
-	  ("C-M-p" . vterm-toggle-backward)))
+  :defer t
+  :bind (("C-c t t" . vterm-toggle-cd))
   :custom
   (vterm-toggle-scope 'project)
   (vterm-toggle-project-root t)
   (vterm-toggle-fullscreen-p nil)
   :config
+  (define-key vterm-mode-map (kbd "<C-return>") #'vterm-toggle-insert-cd)
+  (define-key vterm-mode-map (kbd "C-M-n") #'vterm-toggle-forward)
+  (define-key vterm-mode-map (kbd "C-M-p") #'vterm-toggle-backward)
+
   ;; Show at bottom
   (add-to-list 'display-buffer-alist
                '((lambda (bufname _)
@@ -760,14 +762,16 @@
 
 (use-package flyspell-correct-ivy
   :diminish
+  :defer t
   :after flyspell
-  :bind (:map flyspell-basic-map
-	      ("w" . flyspell-correct-wrapper)
-	      ("f" . flyspell-correct-at-point)
-	      ("C-n" . flyspell-correct-next)
-	      ("C-p" . flyspell-correct-previous))
   :custom
-  (flyspell-correct-interface #'flyspell-correct-ivy))
+  (flyspell-correct-interface #'flyspell-correct-ivy)
+  :config
+  (define-key flyspell-basic-map (kbd "w") #'flyspell-correct-wrapper)
+  (define-key flyspell-basic-map (kbd "f") #'flyspell-correct-at-point)
+  (define-key flyspell-basic-map (kbd "C-n") #'flyspell-correct-next)
+  (define-key flyspell-basic-map (kbd "C-p") #'flyspell-correct-previous)
+  )
 
 ;;__________________________________________________________
 ;; {c/c++}-mode
@@ -787,21 +791,13 @@
 	 (setq-local company-backends
 		     (cons ,backend (remove ,backend company-backends))))))
 
+  (defun my/company-mode-delay-hook nil
+    "Load company mode if not active."
+    (unless (bound-and-true-p company-mode)
+      (company-mode 1)))
 
-  :bind (:map company-mode-map
-	      ("M-RET" . company-complete)
-	      ("M-/" . company-other-backend)                   ;; M-/
-	      ;; ([remap indent-for-tab-command] . company-indent-or-complete-common) ;; TAB
-	      :map company-active-map
-	      ("M-RET" . company-abort)
-	      ([remap dabbrev-expand] . company-other-backend)  ;; M-/
-	      ;;("C-h" . company-show-doc-buffer)               ;; this is already default
-	      ([remap xref-find-definitions] . company-show-location) ;; M-.
-	      )
   :hook ((prog-mode-delay message-mode-delay conf-mode-delay)
-	 . (lambda nil
-	     (unless (bound-and-true-p company-mode)
-	       (company-mode 1))))
+	 . my/company-mode-delay-hook)
   :defer t
   :custom
   (company-idle-delay nil)	 ;; no delay for autocomplete
@@ -815,7 +811,15 @@
 		      company-semantic
 		      company-files	 ;; company files
 		      (company-dabbrev-code company-gtags company-keywords)
-		      company-dabbrev)))
+		      company-dabbrev))
+  :config
+  (define-key company-mode-map (kbd "M-RET") #'company-complete)
+  (define-key company-mode-map (kbd "M-/") #'company-other-backend)
+
+  (define-key company-active-map (kbd "M-RET") #'company-abort)
+  (define-key company-active-map [remap dabbrev-expand] #'company-other-backend)
+  (define-key company-active-map [remap xref-find-definitions] #'company-show-location)
+  )
 
 (use-package lsp-mode
   :diminish lsp
@@ -842,26 +846,28 @@
 
 (use-package lsp-ui
   :diminish
-  :bind (:map lsp-command-map
-	      ;; peek commands
-	      (("u d" . lsp-ui-peek-find-definitions)
-	       ("u r" . lsp-ui-peek-find-references)
-	       ("u i" . lsp-ui-peek-find-implementation)
-	       ;;("s" . lsp-ui-peek-find-workspace-symbol)
-	       ("u c" . lsp-ui-peek-find-custom)
-	       ;; imenu
-	       ("u m" . lsp-ui-imenu)
-	       ;; flycheck
-	       ("u f" . lsp-ui-flycheck-list)
-	       ;; lsp-ui
-	       ("u n" . lsp-ui-find-next-reference)
-	       ("u p" . lsp-ui-find-prev-reference)))
+  :defer t
+  :after lsp-mode
   :custom
   ;;(lsp-ui-sideline-delay 1.0)
   (lsp-ui-sideline-enable nil)
   (lsp-ui-doc-enable nil)
   :config
-  (which-key-add-keymap-based-replacements lsp-command-map "C-c l u" "lsp-ui"))
+  (which-key-add-keymap-based-replacements lsp-command-map "C-c l u" "lsp-ui")
+
+  (define-key lsp-command-map "ud" #'lsp-ui-peek-find-definitions)
+  (define-key lsp-command-map "ur" #'lsp-ui-peek-find-references)
+  (define-key lsp-command-map "ui" #'lsp-ui-peek-find-implementation)
+  ;;("s" . lsp-ui-peek-find-workspace-symbol)
+  (define-key lsp-command-map "uc" #'lsp-ui-peek-find-custom)
+  ;; imenu
+  (define-key lsp-command-map "um" #'lsp-ui-imenu)
+  ;; flycheck
+  (define-key lsp-command-map "uf" #'lsp-ui-flycheck-list)
+  ;; lsp-ui
+  (define-key lsp-command-map "un" #'lsp-ui-find-next-reference)
+  (define-key lsp-command-map "up" #'lsp-ui-find-prev-reference)
+  )
 
 (use-package lsp-treemacs
   :diminish
@@ -872,9 +878,11 @@
 
 (use-package lsp-ivy
   :diminish
+  :defer t
   :after lsp-mode
-  :bind (:map lsp-mode-map
-	      ("C-c l i" . lsp-ivy-workspace-symbol)))
+  :config
+  (define-key lsp-mode-map (kbd "C-c l i") #'lsp-ivy-workspace-symbol)
+  )
 
 ;; (use-package ccls
 ;;   :defer t
@@ -1126,20 +1134,20 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; splitting
 
 (use-package windmove :ensure nil
-  :bind (:map ctl-x-map
-	      ("4 <left>" . windmove-display-left)
-	      ("4 <right>" . windmove-display-right)
-	      ("4 <up>" . windmove-display-up)
-	      ("4 <down>" . windmove-display-down)
-
-	      ("<left>" . windmove-left)
-	      ("<right>" . windmove-right)
-	      ("<down>" . windmove-down)
-	      ("<up>" . windmove-up)
-	      ("C-M-<left>" . windmove-swap-states-left)
-	      ("C-M-<right>" . windmove-swap-states-right)
-	      ("C-M-<down>" . windmove-swap-states-down)
-	      ("C-M-<up>" . windmove-swap-states-up)))
+  :defer t
+  :init
+  (define-key ctl-x-map (kbd "4<left>")  #'windmove-display-left)
+  (define-key ctl-x-map (kbd "4<right>")  #'windmove-display-right)
+  (define-key ctl-x-map (kbd "4<up>")  #'windmove-display-up)
+  (define-key ctl-x-map (kbd "4<down>")  #'windmove-display-down)
+  (define-key ctl-x-map (kbd "<left>")  #'windmove-left)
+  (define-key ctl-x-map (kbd "<right>")  #'windmove-right)
+  (define-key ctl-x-map (kbd "<down>")  #'windmove-down)
+  (define-key ctl-x-map (kbd "<up>")  #'windmove-up)
+  (define-key ctl-x-map (kbd "C-M-<left>")  #'windmove-swap-states-left)
+  (define-key ctl-x-map (kbd "C-M-<right>")  #'windmove-swap-states-right)
+  (define-key ctl-x-map (kbd "C-M-<down>")  #'windmove-swap-states-down)
+  (define-key ctl-x-map (kbd "C-M-<up>")  #'windmove-swap-states-up))
 
 (use-package repeat :ensure nil
   :defer 1
@@ -1421,14 +1429,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package python :ensure nil
   :mode ("\\.py\\'" . python-mode)
   :interpreter ("python3" . python-mode)
-  :bind (:map python-mode-map
-              ("C-c C-z" . python-shell))
   :custom
   (python-shell-interpreter "ipython3")
   (python-shell-interpreter-args "-i --simple-prompt")
   (python-shell-prompt-detect-failure-warning nil)
   (python-check-command "pyflakes")
-  (flycheck-python-flake8-executable "flake8"))
+  (flycheck-python-flake8-executable "flake8")
+  :config
+  (define-key python-mode-map (kbd "C-c C-z") #'python-shell))
 
 (use-package ein :defer t)
 
@@ -1436,11 +1444,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Dired-mode settings (file manager)
 (use-package dired :ensure nil
   :defer t
-  :bind (:map dired-mode-map
-	 ([remap dired-find-file] . dired-find-alternate-file)
-	 ([remap dired-up-directory] . (lambda nil
-					 (interactive)
-					 (find-alternate-file ".."))))
   :custom
   (dired-recursive-copies 'top)	     ;; Always ask recursive copy
   (dired-recursive-deletes 'top)     ;; Always ask recursive delete
@@ -1449,7 +1452,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (dired-listing-switches "-alh")
   :config
   (require 'dired-x)
-  (put 'dired-find-alternate-file 'disabled nil))
+  (put 'dired-find-alternate-file 'disabled nil)
+
+  (define-key dired-mode-map [remap dired-find-file] #'dired-find-alternate-file)
+  (define-key dired-mode-map [remap dired-up-directory] (lambda nil
+							  (interactive)
+							  (find-alternate-file "..")))
+  )
 
 
 (use-package dired-sidebar
@@ -1525,13 +1534,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package ivy
   :diminish
-  :bind (:map ivy-mode-map
-	      ("C-c c c" . ivy-resume)
-	      :map ivy-minibuffer-map
-	      ("TAB" . ivy-partial)
-	      ("RET" . ivy-alt-done))
-  :init
-  
+  :defer t
   :custom
   (ivy-count-format "(%d/%d) ")
   (ivy-pulse-delay nil)
@@ -1545,6 +1548,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   ;; Highlight with arrows by default.
   ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
+
+  (define-key ivy-mode-map (kbd "C-c c c") #'ivy-resume)
+  (define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
+  (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
+
   (ivy-mode 1))
 
 (use-package ivy-hydra :defer t
@@ -1570,15 +1578,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind (;;([remap isearch-forward] . swiper-isearch)
 	 ;;([remap isearch-backward] . swiper-isearch-backward)
 	 ;;([remap isearch-forward-symbol-at-point] . swiper-isearch-thing-at-point)
-	 :map swiper-map
-	 ;; TODO: Find bindings for swiper-all and swiper-all-thing-at-point
-	 ;;("M-q" . swiper-query-replace)   ;; Already default
-	 ("C-o" . swiper-isearch-toggle)
 	 :map isearch-mode-map
 	 ("C-o" . swiper-isearch-toggle))
   :custom
   (swiper-goto-start-of-match t)
-  ;; :config
+
+  :config
+  (define-key swiper-map (kbd "C-o") #'swiper-isearch-toggle)
   ;; (add-to-list 'ivy-re-builders-alist '(swiper . ivy--regex-plus))
   ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch . ivy--regex-plus))
   ;; (add-to-list 'ivy-re-builders-alist '(swiper-isearch-backward . ivy--regex-plus))
@@ -1648,9 +1654,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (counsel-gtags-use-dynamic-list nil)
   :init
   (which-key-add-key-based-replacements
-    "C-c g" "counsel-gtags"
-    "C-c g 4" "counsel-gtags-other")
+    "C-c g" "counsel-gtags")
   :config
+  (which-key-add-keymap-based-replacements counsel-gtags-mode-map
+    "C-c g 4" "counsel-gtags-other")
+
   (defun my/counsel-gtags-hook ()
     (my/company-backend-after-load #'company-gtags))
 
@@ -1663,33 +1671,35 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (counsel-gtags-mode 1))
 
 (use-package global-tags ;; gtags with xref integration
-  :after counsel-gtags
+  :after counsel-gtags   ;; don't remove this.
   :demand t
-  :bind (:map counsel-gtags-mode-map
-	      ("C-c g x c" . global-tags-create-database)
-	      ("C-c g x u" . global-tags-update-database))
-  :init
-  (which-key-add-key-based-replacements "C-c g x" "global-tags")
   :config
+  (which-key-add-keymap-based-replacements counsel-gtags-mode-map
+    "C-c g x" "global-tags")
+  ;; assert the :after counsel-gtags
+  (define-key counsel-gtags-command-map "xc" #'global-tags-create-database)
+  (define-key counsel-gtags-command-map "xu" #'global-tags-update-database)
+
   (add-to-list 'xref-backend-functions #'global-tags-xref-backend)
   (add-to-list 'project-find-functions #'global-tags-try-project-root))
 
 (use-package dumb-jump
   :bind-keymap ("C-c j" . dumb-jump-mode-map)
+  :defer t
   :init
   (which-key-add-key-based-replacements "C-c j" "dumb-jump")
   :custom
   (dumb-jump-selector 'ivy)
   (dumb-jump-disable-obsolete-warnings t)
-  :bind (:map dumb-jump-mode-map
-	      (("j" . dumb-jump-go)
-	       ("o" . dumb-jump-go-other-window)
-	       ("e" . dumb-jump-go-prefer-external)
-	       ("4" . dumb-jump-go-prefer-external-other-window)
-	       ("i" . dumb-jump-go-prompt)
-	       ("q" . dumb-jump-quick-look)
-	       ("b" . dumb-jump-back)))
   :config
+  (define-key dumb-jump-mode-map "j" #'dumb-jump-go)
+  (define-key dumb-jump-mode-map "o" #'dumb-jump-go-other-window)
+  (define-key dumb-jump-mode-map "e" #'dumb-jump-go-prefer-external)
+  (define-key dumb-jump-mode-map "4" #'dumb-jump-go-prefer-external-other-window)
+  (define-key dumb-jump-mode-map "i" #'dumb-jump-go-prompt)
+  (define-key dumb-jump-mode-map "q" #'dumb-jump-quick-look)
+  (define-key dumb-jump-mode-map "b" #'dumb-jump-back)
+
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 ;;__________________________________________________________
@@ -1979,11 +1989,11 @@ position."
 ;; Multiple Cursors
 
 (use-package iedit
-  :bind (("C-c m i" . iedit-mode)
-	 :map iedit-lib-keymap
-	 (("C-c m '" .  iedit-toggle-unmatched-lines-visible)))
+  :bind (("C-c m i" . iedit-mode))
   :custom
-  (iedit-auto-recenter nil))
+  (iedit-auto-recenter nil)
+  :config
+  (define-key iedit-lib-keymap (kbd "C-c m '") #'iedit-toggle-unmatched-lines-visible))
 
 (global-unset-key (kbd "C-c <down-mouse-1>"))
 (use-package multiple-cursors  ;; Multiple cursors package
