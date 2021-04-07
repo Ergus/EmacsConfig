@@ -403,10 +403,6 @@
 
 (use-package isearch :ensure nil
   :defer t
-  :bind (:map isearch-mode-map
-	      ([remap isearch-delete-char] . isearch-del-char)
-	      ("M-<" . isearch-beginning-of-buffer)
-	      ("M->" . isearch-end-of-buffer))
   :custom
   (search-nonincremental-instead nil) ;; No incremental if enter with empty
   ;;(lazy-highlight-no-delay-length 2)  ;; Highlight after 2 letters
@@ -418,15 +414,22 @@
   (search-default-mode t)             ;; regex search by default
   ;;(search-exit-option 'edit)        ;; Control or meta keys edit search
   (isearch-yank-on-move 'shift)       ;; Copy text from buffer with meta
-  (isearch-wrap-function #'ignore)
+  (isearch-wrap-pause nil)            ;; Disable wrapping.
   :config
-  (defun my/goto-match-beginning ()
-    (when (and isearch-forward
-	       isearch-other-end
-	       (not isearch-mode-end-hook-quit))
-      (goto-char isearch-other-end)))
+  (define-key isearch-mode-map
+    [remap isearch-delete-char] #'isearch-del-char)
 
-  (add-hook 'isearch-mode-end-hook #'my/goto-match-beginning))
+  (define-key isearch-mode-map (kbd "M-<") #'isearch-beginning-of-buffer)
+  (define-key isearch-mode-map (kbd "M->") #'isearch-end-of-buffer)
+
+  (defun my/isearch-exit-other-end ()
+    (interactive)
+    (when isearch-other-end
+      (goto-char isearch-other-end))
+    (call-interactively #'isearch-exit))
+
+  (define-key isearch-mode-map (kbd "M-RET") #'my/isearch-exit-other-end)
+  )
 
 (use-package phi-search :defer t)
 
