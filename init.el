@@ -340,8 +340,10 @@
 
 (use-package hl-line :ensure nil
   :diminish
-  :bind ("C-c h l" . hl-line-mode)
-  :hook (package-menu-mode . hl-line-mode)
+  :defer t
+  :init
+  (global-set-key (kbd "C-c h l") #'hl-line-mode)
+  (add-hook 'package-menu-mode-hook #'hl-line-mode)
   :defer t)
 
 (use-package winner :ensure nil
@@ -459,7 +461,9 @@
 (global-set-key [remap just-one-space] #'cycle-spacing)
 
 (use-package unfill
-  :bind ([remap fill-paragraph] . unfill-toggle))
+  :defer t
+  :init
+  (global-set-key [remap fill-paragraph] #'unfill-toggle))
 
 ;;__________________________________________________________
 ;; compile
@@ -579,7 +583,8 @@
 
 (use-package vterm-toggle
   :defer t
-  :bind (("C-c t t" . vterm-toggle-cd))
+  :init
+  (global-set-key (kbd "C-c t t") #'vterm-toggle-cd)
   :custom
   (vterm-toggle-scope 'project)
   (vterm-toggle-project-root t)
@@ -610,10 +615,14 @@
 ;;__________________________________________________________
 ;; Better shell (for ssh)
 (use-package better-shell
-  :bind ("C-c t b" . better-shell-shell))
+  :defer t
+  :init
+  (global-set-key (kbd "C-c t b") #'better-shell-shell))
 
 (use-package shell-command+
-  :bind ([remap shell-command] . shell-command+))
+  :defer t
+  :init
+  (global-set-key [remap shell-command] #'shell-command+))
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
@@ -693,20 +702,24 @@
 (global-set-key (kbd "C-M-/") #'undo-redo)
 
 (use-package string-inflection
-  :bind ("C-c <right>" . string-inflection-all-cycle))
+  :defer t
+  :init
+  (global-set-key (kbd "C-c <right>") #'string-inflection-all-cycle))
 
 (use-package undo-propose
-  :commands undo-propose)
+  :defer t)
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
 
 (use-package highlight-indent-guides
+  :defer t
   :diminish
-  :bind ("C-c h i" . highlight-indent-guides-mode)
   :custom
   (highlight-indent-guides-auto-enabled nil)
   (highlight-indent-guides-method 'character)
+  :init
+  (global-set-key (kbd "C-c h i") #'highlight-indent-guides-mode)
   :config
   (set-face-attribute 'highlight-indent-guides-character-face nil
 		      :foreground (my/named-color brightblack)))
@@ -714,9 +727,11 @@
 ;;__________________________________________________________
 ;; Resalta scopes entorno al cursor
 (use-package highlight-blocks
+  :defer t
   :diminish
-  :bind (("C-c h b" . highlight-blocks-now)
-	 ("C-c h B" . highlight-blocks-mode))
+  :init
+  (global-set-key (kbd "C-c h b") #'highlight-blocks-now)
+  (global-set-key (kbd "C-c h B") #'highlight-blocks-mode)
   :config
   (set-face-attribute 'highlight-blocks-depth-2-face nil :background "#262626") ;; gray15
   (set-face-attribute 'highlight-blocks-depth-3-face nil :background "#333333") ;; gray20
@@ -729,7 +744,9 @@
 
 (use-package highlight-escape-sequences
   :diminish
-  :bind ("C-c h s" . hes-mode))
+  :defer t
+  :init
+  (global-set-key (kbd "C-c h s") #'hes-mode))
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
@@ -767,10 +784,10 @@
   :custom
   (flyspell-correct-interface #'flyspell-correct-ivy)
   :config
-  (define-key flyspell-basic-map (kbd "w") #'flyspell-correct-wrapper)
-  (define-key flyspell-basic-map (kbd "f") #'flyspell-correct-at-point)
-  (define-key flyspell-basic-map (kbd "C-n") #'flyspell-correct-next)
-  (define-key flyspell-basic-map (kbd "C-p") #'flyspell-correct-previous)
+  (define-key flyspell-basic-map "w" #'flyspell-correct-wrapper)
+  (define-key flyspell-basic-map "f" #'flyspell-correct-at-point)
+  (define-key flyspell-basic-map "\C-n" #'flyspell-correct-next)
+  (define-key flyspell-basic-map "\C-p" #'flyspell-correct-previous)
   )
 
 ;;__________________________________________________________
@@ -1255,13 +1272,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Improved help buffer
 
 (use-package helpful
-  :bind (("C-h F" . helpful-function)
-	 ("C-h C" . helpful-command)
-	 ("C-h M" . helpful-macro)
-	 ("C-h L" . helpful-callable)
-	 ("C-h K" . helpful-key)
-	 ("C-h P" . helpful-at-point)
-	 ("C-h V" . helpful-variable)))
+  :defer t
+  :diminish
+  :init
+  (global-set-key (kbd "C-h F") #'helpful-function)
+  (global-set-key (kbd "C-h C") #'helpful-command)
+  (global-set-key (kbd "C-h M") #'helpful-macro)
+  (global-set-key (kbd "C-h L") #'helpful-callable)
+  (global-set-key (kbd "C-h K") #'helpful-key)
+  (global-set-key (kbd "C-h P") #'helpful-at-point)
+  (global-set-key (kbd "C-h V") #'helpful-variable))
 
 ;;__________________________________________________________
 ;; Chequeo de gramatica
@@ -1460,13 +1480,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 							  (find-alternate-file "..")))
   )
 
-
 (use-package dired-sidebar
-  :bind ("C-c b d" . dired-sidebar-toggle-sidebar)
+  :defer t
   :custom
   ;;(dired-sidebar-use-term-integration t)
   (dired-sidebar-theme 'nerd)
-  (dired-sidebar-subtree-line-prefix "."))
+  (dired-sidebar-subtree-line-prefix ".")
+  :init
+  (global-set-key (kbd "C-c b d") #'dired-sidebar-toggle-sidebar))
 
 ;; __________________________________________________________
 ;; Templates Projects
@@ -1481,19 +1502,23 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; ibuffer
 (use-package ibuffer :ensure nil
-  :bind ([remap list-buffers] . ibuffer)
-  :hook (ibuffer-mode . hl-line-mode)
+  :defer t
+  :init
+  (global-set-key [remap list-buffers] #'ibuffer)
+  (add-hook 'ibuffer-mode-hook #'hl-line-mode)
   :custom
   (ibuffer-default-sorting-mode 'alphabetic)  ;; can use recency
   )
 
 (use-package ibuffer-sidebar
-  :bind (("C-c b b" . ibuffer-sidebar-toggle-sidebar)))
+  :defer t
+  :init
+  (global-set-key (kbd "C-c b b") #'ibuffer-sidebar-toggle-sidebar))
 
 (use-package ibuffer-tramp
   :after ibuffer
-  :bind (:map ibuffer--filter-map
-	      ("G t" . ibuffer-tramp-set-filter-groups-by-tramp-connection)))
+  :config
+  (define-key ibuffer--filter-map "Gt" #'ibuffer-tramp-set-filter-groups-by-tramp-connection))
 
 (use-package ibuffer-project
   :after ibuffer
@@ -1502,13 +1527,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (interactive)
     (setq ibuffer-filter-groups (ibuffer-project-generate-filter-groups))
     (ibuffer-update nil t))
-  :bind (:map ibuffer--filter-map
-	      ("G p" . ibuffer-set-filter-groups-by-project)))
+  :config
+  (define-key ibuffer--filter-map "Gp" #'ibuffer-set-filter-groups-by-project))
 
 (use-package ibuffer-vc
   :after ibuffer
-  :bind (:map ibuffer--filter-map
-	      ("G v" . ibuffer-vc-set-filter-groups-by-vc-root)))
+  :config
+  (define-key ibuffer--filter-map "Gv" #'ibuffer-vc-set-filter-groups-by-vc-root))
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
 (defun my/sidebar-toggle ()
@@ -1523,7 +1548,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; neotree
 ;; Like dired sidebar but a bit fancier.
 (use-package neotree
-  :bind ("C-c b n" . neotree-toggle))
+  :defer t
+  :init
+  (global-set-key (kbd "C-c b n") #'neotree-toggle))
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
@@ -1562,27 +1589,31 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package ivy-avy :after ivy)
 
 (use-package ivy-xref
+  :defer t
   :init
   (which-key-add-key-based-replacements "C-c x" "xref")
   :custom
   (xref-show-definitions-function #'ivy-xref-show-defs)
   (xref-show-xrefs-function #'ivy-xref-show-xrefs)
-  :bind (("C-c x d" . xref-find-definitions)
-	 ("C-c x 4" . xref-find-definitions-other-window)
-	 ("C-c x a" . xref-find-apropos)
-	 ("C-c x b" . xref-pop-marker-stack) ;; go back
-	 ("C-c x r" . xref-find-references)
-	 ("C-c x TAB" . completion-at-point)))
+  :init
+  (easy-mmode-defmap ivy-xref-basic-map
+    `(("d" . xref-find-definitions)
+      ("4" . xref-find-definitions-other-window)
+      ("a" . xref-find-apropos)
+      ("b" . xref-pop-marker-stack) ;; go back
+      ("r" . xref-find-references)
+      (,(kbd "TAB") . completion-at-point))
+    "The base keymap for `ivy-xref'")
+
+  (global-set-key (kbd "C-c x") ivy-xref-basic-map))
 
 (use-package swiper
-  :bind (;;([remap isearch-forward] . swiper-isearch)
-	 ;;([remap isearch-backward] . swiper-isearch-backward)
-	 ;;([remap isearch-forward-symbol-at-point] . swiper-isearch-thing-at-point)
-	 :map isearch-mode-map
-	 ("C-o" . swiper-isearch-toggle))
+  :defer t
   :custom
   (swiper-goto-start-of-match t)
-
+  :init
+  (with-eval-after-load 'isearch
+    (define-key isearch-mode-map (kbd "C-o") #'swiper-isearch-toggle))
   :config
   (define-key swiper-map (kbd "C-o") #'swiper-isearch-toggle)
   ;; (add-to-list 'ivy-re-builders-alist '(swiper . ivy--regex-plus))
@@ -1591,9 +1622,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   )
 
 (use-package imenu-list
-  :bind ("C-c b i" . imenu-list-smart-toggle)
+  :defer t
   :custom
-  (imenu-list-position 'left))
+  (imenu-list-position 'left)
+  :init
+  (global-set-key (kbd "C-c b i") #'imenu-list-smart-toggle))
 
 (use-package counsel
   :diminish
@@ -1893,14 +1926,16 @@ position."
 ;; Move current line up and down M+arrow
 
 (use-package move-dup
-  :bind (("M-<up>" . move-dup-duplicate-up)
-	 ("M-<down>" . move-dup-duplicate-down)
-	 ("C-M-<up>" .  move-dup-move-lines-up)
-	 ("C-M-<down>" . move-dup-move-lines-down)
-	 ("C-M-<left>" . (lambda nil (interactive) (transpose-words -1)))
-	 ("C-M-<right>" . transpose-words)
-	 ("M-<left>" . (lambda nil (interactive) (transpose-chars -1)))
-	 ("M-<right>" . transpose-chars)))
+  :defer t
+  :init
+  (global-set-key (kbd "M-<up>") #'move-dup-duplicate-up)
+  (global-set-key (kbd "M-<down>") #'move-dup-duplicate-down)
+  (global-set-key (kbd "C-M-<up>") #'move-dup-move-lines-up)
+  (global-set-key (kbd "C-M-<down>") #'move-dup-move-lines-down)
+  (global-set-key (kbd "C-M-<left>") (lambda nil (interactive) (transpose-words -1)))
+  (global-set-key (kbd "C-M-<right>") #'transpose-words)
+  (global-set-key (kbd "M-<left>") (lambda nil (interactive) (transpose-chars -1)))
+  (global-set-key (kbd "M-<right>") #'transpose-chars))
 
 ;;__________________________________________________________
 ;; evil mode
@@ -1933,9 +1968,11 @@ position."
       ("\C-b" . avy-pop-mark)
       ("i" . avy-copy-region))
     "The base keymap for `avy-mode'.")
-  :bind (:map isearch-mode-map
-	      ("C-'" . avy-isearch))
+  :defer t
   :init
+  (with-eval-after-load 'isearch
+    (define-key isearch-mode-map (kbd"C-'") #'avy-isearch))
+
   (global-set-key (kbd "C-'") avy-basic-map)
   (which-key-add-key-based-replacements "C-'" "avy")
   :custom
@@ -1951,8 +1988,10 @@ position."
 		   (number-sequence ?A ?Z))))
 
 (use-package avy-zap
-  :bind (("M-Z". avy-zap-up-to-char-dwim)
-	 ([remap zap-to-char]. avy-zap-to-char-dwim)))
+  :defer t
+  :init
+  (global-set-key (kbd "M-Z") #'avy-zap-up-to-char-dwim)
+  (global-set-key [remap zap-to-char] #'avy-zap-to-char-dwim))
 
 ;;__________________________________________________________
 ;; Arduino Mode
@@ -1988,43 +2027,43 @@ position."
 ;;__________________________________________________________
 ;; Multiple Cursors
 
-(use-package iedit
-  :bind (("C-c m i" . iedit-mode))
-  :custom
-  (iedit-auto-recenter nil)
-  :config
-  (define-key iedit-lib-keymap (kbd "C-c m '") #'iedit-toggle-unmatched-lines-visible))
-
 (global-unset-key (kbd "C-c <down-mouse-1>"))
 (use-package multiple-cursors  ;; Multiple cursors package
-  :bind (("C-c m l" . mc/edit-lines)
-	 ("C-c m a" . mc/mark-all-like-this)
-	 ("C-c m w" . mc/mark-all-words-like-this)
-
-	 ("C-c m r" . mc/mark-all-in-region)
-	 ("C-c m s" . mc/mark-all-in-region-regexp)
-	 ("C-c m e" . mc/mark-more-like-this-extended)
-
-	 ("C-c m n" . mc/mark-next-like-this)
-	 ("C-c m p" . mc/mark-previous-like-this)
-
-	 ("C-c m M-f" . mc/mark-next-like-this-word)
-	 ("C-c m M-b" . mc/mark-previous-word-like-this)
-
-	 ("C-c m M-p" . mc/mark-pop)
-
-	 ("C-c m #" . mc/insert-numbers)
-	 ("C-c m L" . mc/insert-letters)
-
-	 ("C-c m C-a" . mc/edit-beginnings-of-lines)
-	 ("C-c m C-e" . mc/edit-ends-of-lines))
+  :defer t
   :init
-  (which-key-add-key-based-replacements "C-c m" "multiple-cursors")
+  (easy-mmode-defmap mc-basic-map
+    `(("l" . mc/edit-lines)
+      ("a" . mc/mark-all-like-this)
+      ("w" . mc/mark-all-words-like-this)
+      ("r" . mc/mark-all-in-region)
+      ("s" . mc/mark-all-in-region-regexp)
+      ("e" . mc/mark-more-like-this-extended)
+      ("n" . mc/mark-next-like-this)
+      ("p" . mc/mark-previous-like-this)
+      (,(kbd "M-f") . mc/mark-next-like-this-word)
+      (,(kbd "M-b") . mc/mark-previous-word-like-this)
+      (,(kbd "M-p") . mc/mark-pop)
+      ("#" . mc/insert-numbers)
+      ("L" . mc/insert-letters)
+      (,(kbd "C-a") . mc/edit-beginnings-of-lines)
+      (,(kbd "C-e") . mc/edit-ends-of-lines))
+    "The base keymap for `multicursor'")
 
+  (global-set-key (kbd "C-c m") mc-basic-map)
+  (which-key-add-key-based-replacements "C-c m" "multi-cursors")
   :custom
   (mc/always-run-for-all t)
   (mc/always-repeat-command t)
   (mc/edit-lines-empty-lines 'ignore))
+
+(use-package iedit
+  :defer t
+  :custom
+  (iedit-auto-recenter nil)
+  :init
+  (define-key mc-basic-map (kbd "i") #'iedit-mode)
+  :config
+  (define-key iedit-lib-keymap (kbd "C-c m '") #'iedit-toggle-unmatched-lines-visible))
 
 ;;__________________________________________________________
 ;; Web mode
