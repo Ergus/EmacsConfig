@@ -800,6 +800,13 @@
 
   ;; (when (eq major-mode 'python-mode)
   ;;   (add-hook 'python-mode-hook #'lsp-deferred))
+  :config
+  ;; Remote config for tramp and clangd
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
+                    :major-modes '(c-mode c++-mode)
+                    :remote? t
+                    :server-id 'clangd-remote))
   )
 
 (use-package lsp-ui
@@ -826,12 +833,12 @@
   (define-key lsp-command-map "up" #'lsp-ui-find-prev-reference)
   )
 
-(use-package lsp-treemacs
-  :diminish
-  :after lsp-mode
-  :custom
-  (lsp-metals-treeview-enable t)
-  (lsp-metals-treeview-show-when-views-received t))
+;; (use-package lsp-treemacs
+;;   :diminish
+;;   :after (lsp-mode treemacs)
+;;   :custom
+;;   (lsp-metals-treeview-enable t)
+;;   (lsp-metals-treeview-show-when-views-received t))
 
 (use-package lsp-ivy
   :diminish
@@ -1439,6 +1446,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (dired-sidebar-subtree-line-prefix ".")
   :init
   (global-set-key (kbd "C-c b d") #'dired-sidebar-toggle-sidebar))
+
+
+;; I don't use it, but it is an lsp dependency any way
+;; (use-package treemacs
+;;   :defer t
+;;   :init
+;;   (global-set-key (kbd "C-c b t") #'treemacs))
 
 ;; __________________________________________________________
 ;; Templates Projects
