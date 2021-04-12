@@ -385,6 +385,7 @@
 	      isearch-yank-on-move 'shift       ;; Copy text from buffer with meta
 	      ;; isearch-wrap-function #'ignore ;; Look at the emacs-major-version check
 	      isearch-wrap-pause nil            ;; Disable wrapping.
+	      isearch-repeat-on-direction-change t ;; Don't go to the other end on direction change
 	      )
 
 (with-eval-after-load 'isearch
