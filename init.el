@@ -641,7 +641,10 @@
 ;;__________________________________________________________
 ;; Undo tree
 
-(global-set-key [remap undo] #'undo-only)
+;; (global-set-key [remap undo] #'undo-only)
+
+(global-set-key (kbd "C-_") #'undo-only)
+(global-set-key (kbd "C-/") #'undo-only)
 (global-set-key (kbd "C-M-_") #'undo-redo)
 (global-set-key (kbd "C-M-/") #'undo-redo)
 
@@ -793,15 +796,10 @@
   (lsp-prefer-capf t)
   (read-process-output-max (* 1024 1024)) ;; 1mb
   ;; lsp-diagnostic-package t ;; prefer flymake
-  ;;:config
-  ;; TODO: extend this for more languages, and find a way to set this for a project
-  ;; (when (memq major-mode '(c-mode c++-mode))
-  ;;   (add-hook 'c-mode-common-hook #'lsp-deferred))
-
-  ;; (when (eq major-mode 'python-mode)
-  ;;   (add-hook 'python-mode-hook #'lsp-deferred))
+  ;; :init
+  ;; (add-hook 'c-mode-common-hook #'lsp-deferred)
+  ;; (add-hook 'python-mode-hook #'lsp-deferred)
   :config
-  ;; Remote config for tramp and clangd
   (lsp-register-client
    (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
                     :major-modes '(c-mode c++-mode)
@@ -1137,12 +1135,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (with-eval-after-load 'repeat
   (defvar undo-redo-repeat-map
     (let ((map (make-sparse-keymap)))
-      (define-key map "u" 'undo-only)
-      (define-key map "r" 'undo-redo)
+      (define-key map "u" #'undo-only)
+      (define-key map "r" #'undo-redo)
+      (define-key map "U" #'undo)
       map)
     "Keymap to repeat undo-redo key sequences.  Used in `repeat-mode'.")
   (put 'undo-only 'repeat-map 'undo-redo-repeat-map)
-  (put 'undo-redo 'repeat-map 'undo-redo-repeat-map))
+  (put 'undo-redo 'repeat-map 'undo-redo-repeat-map)
+  (put 'undo 'repeat-map 'undo-redo-repeat-map)
+  )
 
 ;; Change color selected buffers
 ;; (use-package auto-dim-other-buffers
