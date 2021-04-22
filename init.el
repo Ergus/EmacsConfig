@@ -325,13 +325,26 @@
   (diminish 'hl-line-mode))
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
 
+;; hilit-chg changes
+(easy-mmode-defmap highlight-changes-map
+  `(("c" . highlight-changes-mode)
+    ("v" . highlight-changes-visible-mode)
+    ("r" . highlight-changes-remove-highlight)
+    ("n" . highlight-changes-next-change)
+    ("p" . highlight-changes-previous-change)
+    ("f" . highlight-changes-rotate-faces)
+    ("b" . highlight-compare-buffers)
+    ("d" . highlight-compare-with-file))
+  "The base keymap for `highlight changes'.")
+(global-set-key (kbd "M-s h c") highlight-changes-map)
+(which-key-add-key-based-replacements "M-s h c" "highlight-changes")
+
 ;; winner
 (setq-default winner-dont-bind-my-keys t)
-(run-with-idle-timer 0.5 nil #'winner-mode 1)
-(with-eval-after-load 'winner
-  (which-key-add-key-based-replacements "C-x w" "winner")
-  (define-key winner-mode-map (kbd "C-x w u") #'winner-undo)
-  (define-key winner-mode-map (kbd "C-x w r") #'winner-redo))
+(winner-mode t)
+(define-key ctl-x-map (kbd "w u")  #'winner-undo)
+(define-key ctl-x-map (kbd "w r")  #'winner-redo)
+(which-key-add-key-based-replacements "C-x w" "winner")
 
 ;; Org mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
