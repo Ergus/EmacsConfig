@@ -402,6 +402,8 @@
     (call-interactively #'isearch-exit))
 
   (define-key isearch-mode-map (kbd "M-RET") #'my/isearch-exit-other-end)
+
+  (which-key-add-key-based-replacements "M-s h" "highlight")
   )
 
 (use-package phi-search :defer t)
