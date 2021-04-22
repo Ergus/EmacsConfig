@@ -251,7 +251,6 @@
   :config
   (which-key-mode t)
   (which-key-add-key-based-replacements
-    "C-c h" "highlight"
     "C-c b" "sidebars"
     "C-x r" "rectangle||register"
     "C-x n" "narrow"
@@ -321,7 +320,7 @@
 (add-hook 'text-mode-hook #'my/electric-pair-local-mode)
 
 ;; hl-line
-(global-set-key (kbd "C-c h l") #'hl-line-mode)
+(global-set-key (kbd "M-s h L") #'hl-line-mode)
 (with-eval-after-load 'hl-line
   (diminish 'hl-line-mode))
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
@@ -668,7 +667,7 @@
   (highlight-indent-guides-auto-enabled nil)
   (highlight-indent-guides-method 'character)
   :init
-  (global-set-key (kbd "C-c h i") #'highlight-indent-guides-mode)
+  (global-set-key (kbd "M-s h i") #'highlight-indent-guides-mode)
   :config
   (set-face-attribute 'highlight-indent-guides-character-face nil
 		      :foreground (my/named-color brightblack)))
@@ -679,8 +678,8 @@
   :defer t
   :diminish
   :init
-  (global-set-key (kbd "C-c h b") #'highlight-blocks-now)
-  (global-set-key (kbd "C-c h B") #'highlight-blocks-mode)
+  (global-set-key (kbd "M-s h b") #'highlight-blocks-now)
+  (global-set-key (kbd "M-s h B") #'highlight-blocks-mode)
   :config
   (set-face-attribute 'highlight-blocks-depth-2-face nil :background "#262626") ;; gray15
   (set-face-attribute 'highlight-blocks-depth-3-face nil :background "#333333") ;; gray20
@@ -695,7 +694,8 @@
   :diminish
   :defer t
   :init
-  (global-set-key (kbd "C-c h s") #'hes-mode))
+  (global-set-key (kbd "M-s h s") #'hes-mode)
+  (which-key-add-key-based-replacements "M-s h s" "highlight-escape-mode"))
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
