@@ -240,12 +240,12 @@
 
 (use-package which-key
   :diminish
-  :custom
-  (which-key-idle-delay 0.5)
+  :init
+  (setq-default which-key-idle-delay 0.5
+		which-key-idle-secondary-delay 0.01  ;; nil sets the same delay
+		which-key-dont-use-unicode t)
   ;;(which-key-idle-delay 10000) ;; To not show
   ;;(which-key-show-early-on-C-h t)
-  (which-key-idle-secondary-delay 0.01)  ;; nil sets the same delay
-  (which-key-dont-use-unicode t)
   ;;(which-key-popup-type 'minibuffer)
   ;;(which-key-separator ": ") ;which-key-idle-delay 2.0)
   :config
@@ -381,10 +381,10 @@
 
 (use-package paradox
   :defer t
-  :custom
-  (paradox-spinner-type 'progress-bar)
-  (paradox-display-download-count t)
-  (paradox-display-star-count t))
+  :init
+  (setq-default paradox-spinner-type 'progress-bar
+		paradox-display-download-count t
+		paradox-display-star-count t))
 ;;__________________________________________________________
 ;; Isearch
 
@@ -516,9 +516,8 @@
 (use-package vdiff
   :defer t
   :bind-keymap ("C-c d" . vdiff-mode-prefix-map)
-  :custom
-  (vdiff-auto-refine t)
   :init
+  (setq-default vdiff-auto-refine t)
   (which-key-add-key-based-replacements "C-c d" "vdiff")
   :config
   (which-key-add-key-based-replacements "C-c d i" "vdiff-toggle")
@@ -532,10 +531,9 @@
   :hook (vterm-mode . (lambda nil
 			(display-fill-column-indicator-mode -1)
 			(auto-fill-mode -1)))
-  :custom
-  (vterm-kill-buffer-on-exit t)
-  (vterm-max-scrollback 10000)
   :init
+  (setq-default vterm-kill-buffer-on-exit t
+		vterm-max-scrollback 10000)
   (which-key-add-key-based-replacements "C-c t" "term")
   :config
   ;; Add find-file-other-window to accepted commands
@@ -545,11 +543,10 @@
 (use-package vterm-toggle
   :defer t
   :init
+  (setq-default vterm-toggle-scope 'project
+		vterm-toggle-project-root t
+		vterm-toggle-fullscreen-p nil)
   (global-set-key (kbd "C-c t t") #'vterm-toggle-cd)
-  :custom
-  (vterm-toggle-scope 'project)
-  (vterm-toggle-project-root t)
-  (vterm-toggle-fullscreen-p nil)
   :config
   (define-key vterm-mode-map (kbd "<C-return>") #'vterm-toggle-insert-cd)
   (define-key vterm-mode-map (kbd "C-M-n") #'vterm-toggle-forward)
@@ -676,10 +673,9 @@
 (use-package highlight-indent-guides
   :defer t
   :diminish
-  :custom
-  (highlight-indent-guides-auto-enabled nil)
-  (highlight-indent-guides-method 'character)
   :init
+  (setq-default highlight-indent-guides-auto-enabled nil
+		highlight-indent-guides-method 'character)
   (global-set-key (kbd "M-s h i") #'highlight-indent-guides-mode)
   :config
   (set-face-attribute 'highlight-indent-guides-character-face nil
@@ -739,8 +735,8 @@
 (use-package flyspell-correct-ivy
   :diminish
   :after flyspell
-  :custom
-  (flyspell-correct-interface #'flyspell-correct-ivy)
+  :init
+  (setq-default flyspell-correct-interface #'flyspell-correct-ivy)
   :config
   (define-key flyspell-basic-map "w" #'flyspell-correct-wrapper)
   (define-key flyspell-basic-map "f" #'flyspell-correct-at-point)
@@ -770,24 +766,24 @@
     "Load company mode if not active."
     (unless (bound-and-true-p company-mode)
       (company-mode 1)))
+  :defer t
   :init
   (add-hook 'prog-mode-delay-hook #'my/company-mode-delay-hook)
   (add-hook 'message-mode-delay-hook #'my/company-mode-delay-hook)
   (add-hook 'conf-mode-delay-hook #'my/company-mode-delay-hook)
-  :defer t
-  :custom
-  (company-idle-delay nil)	 ;; no delay for autocomplete
-  (company-minimum-prefix-length 2)
-  (company-selection-wrap-around nil)
-  (company-show-numbers t)
-  (company-tooltip-align-annotations t)
-  (company-format-margin-function #'company-detect-icons-margin)
-  ;;company-tooltip-limit 20
-  (company-backends '(company-capf       ;; completion at point
-		      company-semantic
-		      company-files	 ;; company files
-		      (company-dabbrev-code company-gtags company-keywords)
-		      company-dabbrev))
+
+  (setq-default company-idle-delay nil	 ;; no delay for autocomplete
+		company-minimum-prefix-length 2
+		company-selection-wrap-around nil
+		company-show-numbers t
+		company-tooltip-align-annotations t
+		company-format-margin-function #'company-detect-icons-margin
+		;;company-tooltip-limit 20
+		company-backends '(company-capf       ;; completion at point
+				   company-semantic
+				   company-files	 ;; company files
+				   (company-dabbrev-code company-gtags company-keywords)
+				   company-dabbrev))
   :config
   (define-key company-mode-map (kbd "M-RET") #'company-complete)
   (define-key company-mode-map (kbd "M-/") #'company-other-backend)
@@ -803,13 +799,13 @@
 		      (my/company-backend-after-load #'company-capf)
 		      (lsp-enable-which-key-integration)))
   :defer t
-  :custom
-  (lsp-keymap-prefix (kbd "C-c l"))
-  (lsp-enable-snippet nil)
-  (lsp-eldoc-hook nil)
-  (lsp-enable-indentation nil)
-  (lsp-prefer-capf t)
-  (read-process-output-max (* 1024 1024)) ;; 1mb
+  :init
+  (setq-default lsp-keymap-prefix (kbd "C-c l")
+		lsp-enable-snippet nil
+		lsp-eldoc-hook nil
+		lsp-enable-indentation nil
+		lsp-prefer-capf t
+		read-process-output-max (* 1024 1024)) ;; 1mb
   ;; lsp-diagnostic-package t ;; prefer flymake
   ;; :init
   ;; (add-hook 'c-mode-common-hook #'lsp-deferred)
@@ -825,10 +821,10 @@
 (use-package lsp-ui
   :diminish
   :after lsp-mode
-  :custom
+  :init
   ;;(lsp-ui-sideline-delay 1.0)
-  (lsp-ui-sideline-enable nil)
-  (lsp-ui-doc-enable nil)
+  (setq-default lsp-ui-sideline-enable nil
+		lsp-ui-doc-enable nil)
   :config
   (which-key-add-keymap-based-replacements lsp-command-map "C-c l u" "lsp-ui")
 
@@ -960,8 +956,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (add-hook 'c-mode-common-hook #'preproc-font-lock-mode)
-  :custom
-  (preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
+  (setq-default preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
 
 ;; company-c-headers
 (use-package company-c-headers
@@ -1018,8 +1013,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode (("README\\.md\\'" . gfm-mode)
 	 ("\\.md\\'" . markdown-mode)
 	 ("\\.markdown\\'" . markdown-mode))
-  :custom
-  (markdown-command "multimarkdown"))
+  :init
+  (setq-default markdown-command "multimarkdown"))
 
 ;;__________________________________________________________
 ;; Restructured text
@@ -1183,11 +1178,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package yasnippet        ;; Snippets
   :diminish yas-minor-mode
-  :init
   :defer 1
-  :custom
-  (yas-verbosity 1)                 ; No need to be so verbose
-  (yas-wrap-around-region t)
+  :init
+  (setq-default yas-verbosity 1                 ; No need to be so verbose
+		yas-wrap-around-region t)
   :config
   (define-key yas-keymap [remap indent-for-tab-command] #'yas-next-field-or-maybe-expand)
 
@@ -1235,9 +1229,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (flycheck-mode 1))
   :init
   (add-hook 'prog-mode-delay-hook #'my/flycheck-mode-hook)
-  :custom
-  (flycheck-display-errors-delay 1.0)
-  (flycheck-keymap-prefix (kbd "C-c a"))
+  (setq-default flycheck-display-errors-delay 1.0
+		flycheck-keymap-prefix (kbd "C-c a"))
   :config
   (which-key-add-keymap-based-replacements flycheck-mode-map "C-c a" "flycheck")
   (define-key flycheck-command-map "a" #'counsel-flycheck)
@@ -1276,9 +1269,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Chequeo de gramatica
 (use-package langtool
   :defer t
-  :custom
-  (langtool-default-language "en")
-  (langtool-language-tool-jar "~/gits/languagetool/languagetool-standalone/target/LanguageTool-4.6-SNAPSHOT/LanguageTool-4.6-SNAPSHOT/languagetool-commandline.jar"))
+  :init
+  (setq-default langtool-default-language "en"
+		langtool-language-tool-jar "~/gits/languagetool/languagetool-standalone/target/LanguageTool-4.6-SNAPSHOT/LanguageTool-4.6-SNAPSHOT/languagetool-commandline.jar"))
 
 ;;__________________________________________________________
 ;; Email mode for mutt
@@ -1378,8 +1371,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; auctex-latexmk
 (use-package auctex-latexmk
   :defer t
-  :custom
-  (auctex-latexmk-inherit-TeX-PDF-mode t)
+  :init
+  (setq-default auctex-latexmk-inherit-TeX-PDF-mode t)
   :config
   (auctex-latexmk-setup))
 
@@ -1427,8 +1420,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package ivy-bibtex
   :defer t
-  :custom
-  (ivy-bibtex-default-action #'bibtex-completion-insert-citation))
+  :init
+  (setq-default ivy-bibtex-default-action #'bibtex-completion-insert-citation))
 
 ;;__________________________________________________________
 ;; Python mode
@@ -1464,11 +1457,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package dired-sidebar
   :defer t
-  :custom
-  ;;(dired-sidebar-use-term-integration t)
-  (dired-sidebar-theme 'nerd)
-  (dired-sidebar-subtree-line-prefix ".")
   :init
+  ;;(dired-sidebar-use-term-integration t)
+  (setq-default dired-sidebar-theme 'nerd
+		dired-sidebar-subtree-line-prefix ".")
   (global-set-key (kbd "C-c b d") #'dired-sidebar-toggle-sidebar))
 
 
@@ -1546,13 +1538,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package ivy
   :diminish
   :defer t
-  :custom
-  (ivy-count-format "(%d/%d) ")
-  (ivy-pulse-delay nil)
-  (ivy-use-selectable-prompt t)
-  (ivy-fixed-height-minibuffer t)
-  (ivy-on-del-error-function #'ignore)
-  (ivy-read-action-format-function #'ivy-read-action-format-columns)
+  :init
+  (setq-default ivy-count-format "(%d/%d) "
+		ivy-pulse-delay nil
+		ivy-use-selectable-prompt t
+		ivy-fixed-height-minibuffer t
+		ivy-on-del-error-function #'ignore
+		ivy-read-action-format-function #'ivy-read-action-format-columns)
   ;; (ivy-use-virtual-buffers t)   ;; Recent files or buffers in ivy
   ;; (ivy-height 10)
   ;; (ivy-wrap t)		      ;; cycle in minibuffer
@@ -1567,8 +1559,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ivy-mode 1))
 
 (use-package ivy-hydra :defer t
-  :custom
-  (ivy-read-action-function #'ivy-hydra-read-action))
+  :init
+  (setq-default ivy-read-action-function #'ivy-hydra-read-action))
 
 (use-package ivy-avy :after ivy)
 
@@ -1576,10 +1568,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (which-key-add-key-based-replacements "C-c x" "xref")
-  :custom
-  (xref-show-definitions-function #'ivy-xref-show-defs)
-  (xref-show-xrefs-function #'ivy-xref-show-xrefs)
   :init
+  (setq-default xref-show-definitions-function #'ivy-xref-show-defs
+		xref-show-xrefs-function #'ivy-xref-show-xrefs)
   (easy-mmode-defmap ivy-xref-basic-map
     `(("d" . xref-find-definitions)
       ("4" . xref-find-definitions-other-window)
@@ -1593,9 +1584,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package swiper
   :defer t
-  :custom
-  (swiper-goto-start-of-match t)
   :init
+  (setq-default swiper-goto-start-of-match t)
   (with-eval-after-load 'isearch
     (define-key isearch-mode-map (kbd "C-o") #'swiper-isearch-toggle))
   :config
@@ -1607,17 +1597,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package imenu-list
   :defer t
-  :custom
-  (imenu-list-position 'left)
   :init
+  (setq-default imenu-list-position 'left)
   (global-set-key (kbd "C-c b i") #'imenu-list-smart-toggle))
 
 (use-package counsel
   :diminish
   :defer 0.25
-  :custom
-  (counsel-find-file-at-point t)       ;; Select file at point
-  (counsel-preselect-current-file t)   ;; Select current file in list
+  :init
+  (setq-default counsel-find-file-at-point t       ;; Select file at point
+		counsel-preselect-current-file t)   ;; Select current file in list
   :config
   (easy-mmode-defmap counsel-basic-map
     `(;;([remap switch-to-buffer] . counsel-switch-buffer)
@@ -1667,12 +1656,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :diminish
   :load-path (lambda nil (my/load-path "~/gits/emacs_clones/emacs-counsel-gtags/"))
   :bind-keymap ("C-c g" . counsel-gtags-command-map)
-  :custom
-  (counsel-gtags-debug-mode t)
-  (counsel-gtags-use-dynamic-list nil)
   :init
-  (which-key-add-key-based-replacements
-    "C-c g" "counsel-gtags")
+  (setq-default counsel-gtags-debug-mode t
+		counsel-gtags-use-dynamic-list nil)
+  (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
   :config
   (which-key-add-keymap-based-replacements counsel-gtags-mode-map
     "C-c g 4" "counsel-gtags-other")
@@ -1705,10 +1692,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :bind-keymap ("C-c j" . dumb-jump-mode-map)
   :defer t
   :init
+  (setq-default dumb-jump-selector 'ivy
+		dumb-jump-disable-obsolete-warnings t)
   (which-key-add-key-based-replacements "C-c j" "dumb-jump")
-  :custom
-  (dumb-jump-selector 'ivy)
-  (dumb-jump-disable-obsolete-warnings t)
   :config
   (define-key dumb-jump-mode-map "j" #'dumb-jump-go)
   (define-key dumb-jump-mode-map "o" #'dumb-jump-go-other-window)
@@ -1725,9 +1711,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package magit
   :defer t
-  :custom
-  (magit-completing-read-function #'ivy-completing-read) ;; this is autoset
-  (magit-define-global-key-bindings nil)
+  :init
+  (setq-default magit-completing-read-function #'ivy-completing-read ;; this is autoset
+		magit-define-global-key-bindings nil)
   :config
   ;; (add-hook 'after-save-hook 'magit-after-save-refresh-status t)
 
@@ -1759,8 +1745,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package git-commit
   :defer t
   :mode ("COMMIT_EDITMSG" . git-commit-setup)
-  :custom
-  (git-commit-summary-max-length 68)
+  :init
+  (setq-default git-commit-summary-max-length 68)
   :config
   (add-to-list 'git-commit-style-convention-checks 'overlong-summary-line)
 
@@ -1965,17 +1951,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (global-set-key (kbd "C-'") avy-basic-map)
   (which-key-add-key-based-replacements "C-'" "avy")
-  :custom
   ;; (avy-timeout-seconds 0.75)
   ;; (avy-style 'at-full)  ;; this is already the default
-  (avy-all-windows nil)    ;; commands only in this window
-  (avy-all-windows-alt t)  ;; with prefix commands in all windows
-  (avy-case-fold-search nil)
-  ;; (avy-highlight-first t)
-  (avy-indent-line-overlay t) ;; show highlight after non-whitespace
-  (avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
-		   (number-sequence ?1 ?9)
-		   (number-sequence ?A ?Z))))
+  (setq-default avy-all-windows nil    ;; commands only in this window
+		avy-all-windows-alt t  ;; with prefix commands in all windows
+		avy-case-fold-search nil
+					; avy-highlight-first t
+		avy-indent-line-overlay t ;; show highlight after non-whitespace
+		avy-keys (nconc (number-sequence ?a ?z)	 ;; Order of proposals
+				(number-sequence ?1 ?9)
+				(number-sequence ?A ?Z))))
 
 (use-package avy-zap
   :defer t
@@ -2006,10 +1991,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package arduino-cli-mode
   :after company-arduino      ;; This is latter enough
-  :custom
-  (arduino-cli-warnings 'all)
-  (arduino-cli-verify t)
-  (arduino-cli-mode-keymap-prefix (kbd "C-c C-t"))
+  :init
+  (setq-default arduino-cli-warnings 'all
+		arduino-cli-verify t
+		arduino-cli-mode-keymap-prefix (kbd "C-c C-t"))
   :config
   (arduino-cli-mode)
   (which-key-add-key-based-replacements "C-c C-t" "arduino-cli-mode"))
@@ -2041,16 +2026,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (global-set-key (kbd "C-c m") mc-basic-map)
   (which-key-add-key-based-replacements "C-c m" "multi-cursors")
-  :custom
-  (mc/always-run-for-all t)
-  (mc/always-repeat-command t)
-  (mc/edit-lines-empty-lines 'ignore))
+
+  (setq-default mc/always-run-for-all t
+		mc/always-repeat-command t
+		mc/edit-lines-empty-lines 'ignore))
 
 (use-package iedit
   :defer t
-  :custom
-  (iedit-auto-recenter nil)
   :init
+  (setq-default iedit-auto-recenter nil)
   (define-key mc-basic-map (kbd "i") #'iedit-mode)
   :config
   (define-key iedit-lib-keymap (kbd "C-c m '") #'iedit-toggle-unmatched-lines-visible))
@@ -2074,14 +2058,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode ("\\.\\(p\\|dj\\)?html\\'"
 	 "\\(\\.tpl\\)?\\.php\\'" "\\.[agj]sp\\'"
 	 "\\.as[cp]x\\'" "\\.erb\\'")
-  :custom
-  (web-mode-markup-indent-offset tab-width)
-  (web-mode-css-indent-offset tab-width)
-  (web-mode-code-indent-offset tab-width)
-  (web-mode-enable-auto-pairing t)
-  (web-mode-enable-auto-closing t)
-  (web-mode-enable-css-colorization t)
-  )
+  :init
+  (setq-default web-mode-markup-indent-offset tab-width
+		web-mode-css-indent-offset tab-width
+		web-mode-code-indent-offset tab-width
+		web-mode-enable-auto-pairing t
+		web-mode-enable-auto-closing t
+		web-mode-enable-css-colorization t))
 
 (use-package company-web
   :hook (web-mode . (lambda nil
@@ -2138,10 +2121,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package evil
   :defer t
-  :custom
-  (evil-esc-delay 0.001)
-  (evil-want-keybinding nil)
-  (show-paren-when-point-inside-paren t)
+  :init
+  (setq-default evil-esc-delay 0.001
+		evil-want-keybinding nil
+		show-paren-when-point-inside-paren t)
   :config
   ;; Modeline color
   (defconst original-background (face-attribute 'mode-line :background))
@@ -2158,9 +2141,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package evil-collection
   :defer t
-  :custom
-  (evil-collection-setup-minibuffer t)
   :init
+  (setq-default evil-collection-setup-minibuffer t)
   (add-hook 'evil-mode-hook #'evil-collection-init))
 
 (use-package composable
@@ -2168,17 +2150,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   ;; :after which-key
   :preface
   :load-path (lambda nil (my/load-path "~/gits/composable.el/"))
-  :custom
-  (composable-mode-debug-level 3)
+  :init
+  (setq-default composable-mode-debug-level 3)
   :config
   (composable-mode)       ; Activates the default keybindings
   (composable-mark-mode)) ; Use composable with C-SPC
 
 (use-package slime
   :defer t
-  :custom
-  (inferior-lisp-program "sbcl")
-  (slime-contribs '(slime-fancy)))
+  :init
+  (setq-default inferior-lisp-program "sbcl"
+		slime-contribs '(slime-fancy)))
 
 ;; Navegacion por objetos... no lo he probado
 (use-package objed
