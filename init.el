@@ -2101,9 +2101,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Modeline
-(use-package powerline
-  :config
-  (powerline-default-theme))
+;; (use-package powerline
+;;   :config
+;;   (powerline-default-theme))
+
+;; (use-package doom-modeline
+;;   :defer t
+;;   :hook (after-init . doom-modeline-mode))
 
 ;;__________________________________________________________
 ;; yaml mode
