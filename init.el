@@ -111,6 +111,7 @@
 	      use-short-answers t                 ;; Use y or n to exit and other shorter answers.
 	      goto-line-history-local t           ;; Buffer local goto-line history
 	      switch-to-buffer-obey-display-actions t ;; switching the buffer respects display actions
+	      warning-suppress-types '(comp)      ;; don't show some warnings (long doc lines)
 	      )
 
 ;; Vertical window divider
