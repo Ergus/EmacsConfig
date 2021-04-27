@@ -302,12 +302,10 @@
   (diminish 'which-func-mode))
 
 ;; text-mode
-(eval-and-compile
-    (my/gen-delay-hook text-mode))
+(my/gen-delay-hook text-mode)
 
 ;; prog-mode
-(eval-and-compile
-  (my/gen-delay-hook prog-mode))
+(my/gen-delay-hook prog-mode)
 (add-hook 'prog-mode-delay-hook
 	  (lambda nil
 	    (setq show-trailing-whitespace t)))
@@ -374,8 +372,7 @@
 	      gdb-show-main t)
 
 ;; conf-mode
-(eval-and-compile
-    (my/gen-delay-hook conf-mode))
+(my/gen-delay-hook conf-mode)
 
 ;;__________________________________________________________
 ;; Benchmark-init
@@ -1281,8 +1278,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Asocia buffers que empiecen con messaje mode
 
 ;; message-mode
-(eval-and-compile
-  (my/gen-delay-hook message-mode))
+(my/gen-delay-hook message-mode)
 
 (setq-default message-default-mail-headers "Cc: \nBcc: \n"
 	      message-kill-buffer-on-exit t
