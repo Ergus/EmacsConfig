@@ -115,10 +115,9 @@
 	      )
 
 ;; Vertical window divider
-(dont-compile
-  (set-display-table-slot standard-display-table
-			  'vertical-border
-			  (make-glyph-code ?\u2502)))
+(set-display-table-slot standard-display-table
+			'vertical-border
+			(make-glyph-code ?\u2502))
 ;;__________________________________________________________
 ;; use-package
 
@@ -2102,10 +2101,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   :config
 ;;   (powerline-default-theme))
 
-;; (use-package doom-modeline
-;;   :defer t
-;;   :hook (after-init . doom-modeline-mode))
-
 ;;__________________________________________________________
 ;; yaml mode
 (use-package yaml-mode
@@ -2150,12 +2145,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :diminish
   ;; :after which-key
   :preface
-  :load-path (lambda nil (my/load-path "~/gits/composable.el/"))
+  :load-path (lambda nil (my/load-path "~/gits/emacs_clones/composable/"))
   :init
   (setq-default composable-mode-debug-level 3)
   :config
   (composable-mode)       ; Activates the default keybindings
-  (composable-mark-mode)) ; Use composable with C-SPC
+  (composable-mark-mode))
+					; Use composable with C-SPC
 
 (use-package slime
   :defer t
