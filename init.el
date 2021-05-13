@@ -112,6 +112,7 @@
 	      goto-line-history-local t           ;; Buffer local goto-line history
 	      switch-to-buffer-obey-display-actions t ;; switching the buffer respects display actions
 	      warning-suppress-types '(comp)      ;; don't show some warnings (long doc lines)
+	      bookmark-menu-confirm-deletion t    ;; ask confirmation to delete bookmark
 	      )
 
 ;; Vertical window divider
@@ -135,61 +136,61 @@
 				 ("melpa" . "https://melpa.org/packages/"))
 	      package-quickstart t)
 
-(eval-and-compile
-  ;; Set this BEFORE require use-package
-  (defvar my/package-initialized-p nil
-    "Set to true when package where initialized.")
+;; Set this BEFORE require use-package
+(defvar my/package-initialized-p nil
+  "Set to true when package where initialized.")
 
-  (defun my/package-install (package)
-    (when init-file-debug
-      (unless (fboundp 'package-installed-p)
-	(require 'package))
-      (unless (package-installed-p package)
-	(unless my/package-initialized-p
-	  (package-initialize)
-	  (package-refresh-contents)
-	  (setq my/package-initialized-p t))
-	(package-install package))))
+(defmacro my/package-install (package)
+  "Conditionally install PACKAGE in debug mode."
+  `(when init-file-debug
+     (unless (fboundp 'package-installed-p)
+       (require 'package))
+     (unless (package-installed-p package)
+       (unless my/package-initialized-p
+	 (package-initialize)
+	 (package-refresh-contents)
+	 (setq my/package-initialized-p t))
+       (package-install ,package))))
 
-  (defun my/load-path (path)
-    "Return the PATH if exist or nil."
-    (and (file-exists-p path) path))
+(defun my/load-path (path)
+  "Return the PATH if exist or nil."
+  (and (file-exists-p path) path))
 
-  (defmacro my/gen-delay-hook (mode-name)
-    "Generate delayed hook for MODE-NAME."
-    (let ((funame (intern (format "my/%s-hook" mode-name)))
-	  (delayhook (intern (format "%s-delay-hook" mode-name)))
-	  (modehook (intern (format "%s-hook" mode-name))))
-      `(progn
-	 (defvar ,delayhook nil)
+(defmacro my/gen-delay-hook (mode-name)
+  "Generate delayed hook for MODE-NAME."
+  (let ((funame (intern (format "my/%s-hook" mode-name)))
+	(delayhook (intern (format "%s-delay-hook" mode-name)))
+	(modehook (intern (format "%s-hook" mode-name))))
+    `(progn
+       (defvar ,delayhook nil)
 
-	 (defun ,funame ()
-	   ,(format "Delayed hook for %s." mode-name)
-	   (run-with-idle-timer 0.5 nil
-				(lambda (buf)
-				  (when (buffer-live-p buf)
-				    (with-current-buffer buf
-				      (run-hooks ',delayhook))))
-				(current-buffer)))
-	 (add-hook ',modehook (function ,funame)))))
+       (defun ,funame ()
+	 ,(format "Delayed hook for %s." mode-name)
+	 (run-with-idle-timer 0.5 nil
+			      (lambda (buf)
+				(when (buffer-live-p buf)
+				  (with-current-buffer buf
+				    (run-hooks ',delayhook))))
+			      (current-buffer)))
+       (add-hook ',modehook (function ,funame)))))
 
-  (if init-file-debug
-      (progn
-	;; Install use-package if not installed
-	(my/package-install 'use-package)
+(if init-file-debug
+    (progn
+      ;; Install use-package if not installed
+      (my/package-install 'use-package)
 
-	(setq-default use-package-always-ensure t
-		      use-package-enable-imenu-support t
-		      use-package-verbose t
-		      use-package-expand-minimally nil
-		      use-package-compute-statistics t
-		      debug-on-error t))
+      (setq-default use-package-always-ensure t
+		    use-package-enable-imenu-support t
+		    use-package-verbose t
+		    use-package-expand-minimally nil
+		    use-package-compute-statistics t
+		    debug-on-error t))
 
-    (setq-default use-package-always-ensure nil
-		  use-package-enable-imenu-support nil
-		  use-package-verbose nil
-		  use-package-expand-minimally t))
-  (require 'use-package))
+  (setq-default use-package-always-ensure nil
+		use-package-enable-imenu-support nil
+		use-package-verbose nil
+		use-package-expand-minimally t))
+(require 'use-package)
 
 ;;Commented because define-obsolete-alias api changed.
 ;;(use-package benchmark-init
@@ -310,10 +311,9 @@
 	    (setq show-trailing-whitespace t)))
 
 ;; elec-pair
-(eval-and-compile
-  (defun my/electric-pair-local-mode ()
-    "Enable electric-pair-local-mode"
-    (electric-pair-local-mode 1)))
+(defun my/electric-pair-local-mode ()
+  "Enable electric-pair-local-mode"
+  (electric-pair-local-mode 1))
 (add-hook 'prog-mode-hook #'my/electric-pair-local-mode)
 (add-hook 'text-mode-hook #'my/electric-pair-local-mode)
 
@@ -905,13 +905,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   (assq 'class-close c-syntactic-context))
 
 ;; cc-mode
-(eval-and-compile
-  (defun my/c-mode-common-hook ()
-    "my/c-mode-common common."
-    (c-toggle-auto-newline 1)
-    (c-toggle-cpp-indent-to-body 1)
-    (c-ms-space-for-alignment-mode 1)
-    (subword-mode 1)))
+(defun my/c-mode-common-hook ()
+  "my/c-mode-common common."
+  (c-toggle-auto-newline 1)
+  (c-toggle-cpp-indent-to-body 1)
+  (c-ms-space-for-alignment-mode 1)
+  (subword-mode 1))
 (add-hook 'c-mode-common-hook #'my/c-mode-common-hook)
 
 (setq-default c-default-style '((java-mode . "java")
@@ -1302,8 +1301,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Latex mode
-(eval-and-compile
-    (my/package-install 'auctex))
+(my/package-install 'auctex)
 
 (setq-default TeX-source-correlate-start-server t
 	      TeX-auto-save t
@@ -1431,8 +1429,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (define-key python-mode-map (kbd "C-c C-z") #'python-shell))
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'interpreter-mode-alist '("python3" . python-mode))
-
-(use-package ein :defer t)
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
@@ -1617,7 +1613,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       ("e" . counsel-linux-app)        ;; call application
       ("l" . counsel-find-library)     ;; Search lisp libraries
       (,(kbd "SPC") . counsel-register)     ;; list registers
-      (,(kbd "M-RET") . counsel-company)    ;; company completions
+      (,(kbd "RET") . counsel-company)    ;; company completions
       (,(kbd "C-r") . counsel-command-history) ;; command history
       ("p" . counsel-package)          ;; command history
       ("P" . counsel-list-processes)   ;; command history
@@ -1755,13 +1751,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (setq-default smerge-diff-buffer-name "*smerge-diff*"
 	      smerge-command-prefix (kbd "C-c s"))
 
-(eval-and-compile
-  (defun my/enable-smerge-maybe ()
-    "Auto-enable `smerge-mode' when merge conflict is detected."
-    (save-excursion
-      (goto-char (point-min))
-      (when (re-search-forward "^<<<<<<< " nil t)
-	(smerge-mode 1)))))
+(defun my/enable-smerge-maybe ()
+  "Auto-enable `smerge-mode' when merge conflict is detected."
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "^<<<<<<< " nil t)
+      (smerge-mode 1))))
 
 (with-eval-after-load 'smerge
   (which-key-add-keymap-based-replacements smerge-mode-map
@@ -1837,62 +1832,61 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; path
 
-(eval-and-compile
-  (defun my/point-to-abs (point)
-    "Count number of not whitespaces characters preceding POINT."
-    (save-excursion
-      (goto-char point)
-      (let ((counter 0))
-	(while (not (bobp))
-	  (skip-chars-backward " \t\n")
-	  (setq counter (- counter (skip-chars-backward "^ \t\n"))))
-	counter)))
+(defun my/point-to-abs (point)
+  "Count number of not whitespaces characters preceding POINT."
+  (save-excursion
+    (goto-char point)
+    (let ((counter 0))
+      (while (not (bobp))
+	(skip-chars-backward " \t\n")
+	(setq counter (- counter (skip-chars-backward "^ \t\n"))))
+      counter)))
 
-  (defun my/abs-to-point (value)
-    "First buffer position after VALUE non whitespaces chars."
-    (save-excursion
-      (let ((counter value)
-	    (point-min (point-min)))
-	(goto-char point-min)
-	(while (and (> counter 0)
-		    (not (eobp)))
-	  (setq counter (- counter (skip-chars-forward "^ \t\n")))
-	  (cond ((> counter 0)
-		 (skip-chars-forward " \t\n"))
-		((< counter 0)
-		 (backward-char (- counter))))))
-      (point)))
+(defun my/abs-to-point (value)
+  "First buffer position after VALUE non whitespaces chars."
+  (save-excursion
+    (let ((counter value)
+	  (point-min (point-min)))
+      (goto-char point-min)
+      (while (and (> counter 0)
+		  (not (eobp)))
+	(setq counter (- counter (skip-chars-forward "^ \t\n")))
+	(cond ((> counter 0)
+	       (skip-chars-forward " \t\n"))
+	      ((< counter 0)
+	       (backward-char (- counter))))))
+    (point)))
 
-  (defun my/shell-command-on-buffer (command)
-    "Execute shell COMMAND on buffer overwriting but preserve position."
-    (interactive (list (read-shell-command "Shell command on buffer: ")))
+(defun my/shell-command-on-buffer (command)
+  "Execute shell COMMAND on buffer overwriting but preserve position."
+  (interactive (list (read-shell-command "Shell command on buffer: ")))
 
-    (let ((abspoint (my/point-to-abs (point)))
-	  (absmark (and (region-active-p)
-			(my/point-to-abs (mark))))
-	  (deactivate-mark t)
-	  (output (save-excursion
-		    (shell-command-on-region (point-min) (point-max) command t t))))
+  (let ((abspoint (my/point-to-abs (point)))
+	(absmark (and (region-active-p)
+		      (my/point-to-abs (mark))))
+	(deactivate-mark t)
+	(output (save-excursion
+		  (shell-command-on-region (point-min) (point-max) command t t))))
 
-      (when absmark
-	(set-mark (my/abs-to-point absmark))
-	(activate-mark))
+    (when absmark
+      (set-mark (my/abs-to-point absmark))
+      (activate-mark))
 
-      (goto-char (my/abs-to-point abspoint))))
+    (goto-char (my/abs-to-point abspoint))))
 
-  (defun my/var-to-clipboard ()
-    "Put the current file name on the clipboard."
-    (interactive)
-    (ivy-read "Describe variable: " obarray
-	      :predicate #'counsel--variable-p
-	      :require-match t
-	      :preselect (ivy-thing-at-point)
-	      :action (lambda (x)
-			(let ((value (format "%s" (symbol-value (intern x)))))
-			  (kill-new value)
-			  (message "Copied %s value %s to clipboard"
-				   x value)))
-	      :caller 'my/var-to-clipboard)))
+(defun my/var-to-clipboard ()
+  "Put the current file name on the clipboard."
+  (interactive)
+  (ivy-read "Describe variable: " obarray
+	    :predicate #'counsel--variable-p
+	    :require-match t
+	    :preselect (ivy-thing-at-point)
+	    :action (lambda (x)
+		      (let ((value (format "%s" (symbol-value (intern x)))))
+			(kill-new value)
+			(message "Copied %s value %s to clipboard"
+				 x value)))
+	    :caller 'my/var-to-clipboard))
 
 ;;__________________________________________________________
 ;; Move current line up and down M+arrow
