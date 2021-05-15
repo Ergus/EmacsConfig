@@ -1705,7 +1705,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (setq-default magit-completing-read-function #'ivy-completing-read ;; this is autoset
-		magit-define-global-key-bindings nil)
+		magit-define-global-key-bindings nil
+		magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1
+		;;magit-bury-buffer-function #'magit-mode-quit-window
+		)
   :config
   ;; (add-hook 'after-save-hook 'magit-after-save-refresh-status t)
 
