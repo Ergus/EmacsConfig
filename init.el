@@ -184,12 +184,14 @@
 		    use-package-verbose t
 		    use-package-expand-minimally nil
 		    use-package-compute-statistics t
-		    debug-on-error t))
+		    debug-on-error t
+		    native-comp-async-report-warnings-errors t))
 
   (setq-default use-package-always-ensure nil
 		use-package-enable-imenu-support nil
 		use-package-verbose nil
-		use-package-expand-minimally t))
+		use-package-expand-minimally t
+		native-comp-async-report-warnings-errors 'silent))
 (require 'use-package)
 
 ;;Commented because define-obsolete-alias api changed.
@@ -1456,12 +1458,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (global-set-key (kbd "C-c b d") #'dired-sidebar-toggle-sidebar))
 
 
-;; I don't use it, but it is an lsp dependency any way
-;; (use-package treemacs
-;;   :defer t
-;;   :init
-;;   (global-set-key (kbd "C-c b t") #'treemacs))
-
 ;; __________________________________________________________
 ;; Templates Projects
 
@@ -1822,11 +1818,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (add-hook 'cmake-mode-hook #'my/cmake-font-lock))
 
-;; (use-package eldoc-cmake
-;;   :hook (cmake-mode . (lambda nil
-;; 			(run-with-idle-timer 1 nil #'eldoc-cmake-enable)))
-;;   :defer t)
-
 ;;__________________________________________________________
 ;; Cobol
 (use-package cobol-mode
@@ -1893,7 +1884,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Move current line up and down M+arrow
-
 (use-package move-dup
   :defer t
   :init
@@ -2034,19 +2024,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Web mode
-;; (use-package phps-mode
-;;   :mode ("\\.php\\'" "\\.phtml\\'")
-;;   :custom
-;;   (phps-mode-async-process t)
-;;   (phps-mode-async-process-using-async-el t)
-;;   :config
-;;   (eval-after-load 'flycheck
-;;     (phps-mode-flycheck-setup)))
-
-
-;; (use-package php-mode
-;;   :mode ("\\.php\\'"))
-
 (use-package web-mode
   :mode ("\\.\\(p\\|dj\\)?html\\'"
 	 "\\(\\.tpl\\)?\\.php\\'" "\\.[agj]sp\\'"
@@ -2166,11 +2143,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package i3wm-config-mode
   :mode "/i3/config\\'")
-
-;; (use-package ivy-posframe
-;;   :config
-;;   (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-point)))
-;;   (ivy-posframe-mode 1))
 
 (use-package mutt-mode
   :mode "muttrc")
