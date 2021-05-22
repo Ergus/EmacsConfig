@@ -111,8 +111,8 @@
 	      use-short-answers t                 ;; Use y or n to exit and other shorter answers.
 	      goto-line-history-local t           ;; Buffer local goto-line history
 	      switch-to-buffer-obey-display-actions t ;; switching the buffer respects display actions
-	      warning-suppress-types '(comp)      ;; don't show some warnings (long doc lines)
 	      bookmark-menu-confirm-deletion t    ;; ask confirmation to delete bookmark
+	      bookmark-fontify t                  ;; Colorize bookmarked lines with bookmark-face
 	      )
 
 ;; Vertical window divider
@@ -414,8 +414,7 @@
 
   (define-key isearch-mode-map (kbd "M-RET") #'my/isearch-exit-other-end)
 
-  (which-key-add-key-based-replacements "M-s h" "highlight")
-  )
+  (which-key-add-key-based-replacements "M-s h" "highlight"))
 
 (use-package phi-search :defer t)
 
@@ -1435,11 +1434,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
 
-(setq-default dired-recursive-copies 'top   ;; Always ask recursive copy
-	      dired-recursive-deletes 'top  ;; Always ask recursive delete
-	      dired-dwim-target t	   ;; Copy in split mode with p
-	      dired-auto-revert-buffer t
-	      dired-listing-switches "-alh")
+(setq-default dired-recursive-copies 'top    		   ;; Always ask recursive copy
+	      dired-recursive-deletes 'top   		   ;; Always ask recursive delete
+	      dired-dwim-target 'dired-dwim-target-recent  ;; Copy in split mode with p
+	      dired-auto-revert-buffer nil   		   ;; auto revert dired
+	      dired-listing-switches "-alh"  		   ;; commands to ls
+	      dired-hide-details-hide-symlink-targets nil  ;; don't hide linkk targets
+	      dired-maybe-use-globstar t)
 
 (with-eval-after-load 'dired
   (require 'dired-x)
