@@ -342,8 +342,8 @@
 ;; winner
 (setq-default winner-dont-bind-my-keys t)
 (winner-mode t)
-(define-key ctl-x-map (kbd "w u")  #'winner-undo)
-(define-key ctl-x-map (kbd "w r")  #'winner-redo)
+(define-key ctl-x-map "wu"  #'winner-undo)
+(define-key ctl-x-map "wr"  #'winner-redo)
 (which-key-add-key-based-replacements "C-x w" "winner")
 
 ;; Org mode
@@ -1896,7 +1896,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :preface
   (easy-mmode-defmap avy-basic-map
     `(("r" . avy-resume)
-      (,(kbd "C-'") . avy-goto-char-timer)
+      (,(kbd "M-'") . avy-goto-char-timer)
       ("'" . avy-goto-char-timer)
       ("c" . avy-goto-char)
       ("2" . avy-goto-char-2)
@@ -1923,10 +1923,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (with-eval-after-load 'isearch
-    (define-key isearch-mode-map (kbd"C-'") #'avy-isearch))
+    (define-key isearch-mode-map (kbd "M-'") #'avy-isearch))
 
-  (global-set-key (kbd "C-'") avy-basic-map)
-  (which-key-add-key-based-replacements "C-'" "avy")
+  (global-set-key (kbd "M-'") avy-basic-map)
+  (which-key-add-key-based-replacements "M-'" "avy")
   ;; (avy-timeout-seconds 0.75)
   ;; (avy-style 'at-full)  ;; this is already the default
   (setq-default avy-all-windows nil    ;; commands only in this window
@@ -1991,13 +1991,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       ("e" . mc/mark-more-like-this-extended)
       ("n" . mc/mark-next-like-this)
       ("p" . mc/mark-previous-like-this)
-      (,(kbd "M-f") . mc/mark-next-like-this-word)
-      (,(kbd "M-b") . mc/mark-previous-word-like-this)
-      (,(kbd "M-p") . mc/mark-pop)
+      ("\M-f" . mc/mark-next-like-this-word)
+      ("\M-b" . mc/mark-previous-word-like-this)
+      ("\M-p" . mc/mark-pop)
       ("#" . mc/insert-numbers)
       ("L" . mc/insert-letters)
-      (,(kbd "C-a") . mc/edit-beginnings-of-lines)
-      (,(kbd "C-e") . mc/edit-ends-of-lines))
+      ("\C-a" . mc/edit-beginnings-of-lines)
+      ("\C-e" . mc/edit-ends-of-lines))
     "The base keymap for `multicursor'")
 
   (global-set-key (kbd "C-c m") mc-basic-map)
@@ -2011,7 +2011,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (setq-default iedit-auto-recenter nil)
-  (define-key mc-basic-map (kbd "i") #'iedit-mode)
+  (define-key mc-basic-map "i" #'iedit-mode)
   :config
   (define-key iedit-lib-keymap (kbd "C-c m '") #'iedit-toggle-unmatched-lines-visible))
 
