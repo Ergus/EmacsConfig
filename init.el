@@ -145,7 +145,7 @@
   `(when init-file-debug
      (unless (fboundp 'package-installed-p)
        (require 'package))
-     (unless (package-installed-p package)
+     (unless (package-installed-p ,package)
        (unless my/package-initialized-p
 	 (package-initialize)
 	 (package-refresh-contents)
