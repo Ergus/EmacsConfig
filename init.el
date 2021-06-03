@@ -1124,14 +1124,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; splitting
-(define-key ctl-x-map (kbd "4<left>")  #'windmove-display-left)
-(define-key ctl-x-map (kbd "4<right>")  #'windmove-display-right)
-(define-key ctl-x-map (kbd "4<up>")  #'windmove-display-up)
-(define-key ctl-x-map (kbd "4<down>")  #'windmove-display-down)
+(define-key ctl-x-map (kbd "4 <left>")  #'windmove-display-left)
+(define-key ctl-x-map (kbd "4 <right>")  #'windmove-display-right)
+(define-key ctl-x-map (kbd "4 <up>")  #'windmove-display-up)
+(define-key ctl-x-map (kbd "4 <down>")  #'windmove-display-down)
+
 (define-key ctl-x-map (kbd "<left>")  #'windmove-left)
 (define-key ctl-x-map (kbd "<right>")  #'windmove-right)
 (define-key ctl-x-map (kbd "<down>")  #'windmove-down)
 (define-key ctl-x-map (kbd "<up>")  #'windmove-up)
+
 (define-key ctl-x-map (kbd "C-M-<left>")  #'windmove-swap-states-left)
 (define-key ctl-x-map (kbd "C-M-<right>")  #'windmove-swap-states-right)
 (define-key ctl-x-map (kbd "C-M-<down>")  #'windmove-swap-states-down)
