@@ -1493,6 +1493,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (setq-default ibuffer-default-sorting-mode 'alphabetic)  ;; can use recency)
 (global-set-key [remap list-buffers] #'ibuffer)
 (add-hook 'ibuffer-mode-hook #'hl-line-mode)
+(with-eval-after-load 'ibuffer
+  (which-key-add-keymap-based-replacements ibuffer--filter-map "G" "Groups"))
 
 (use-package ibuffer-sidebar
   :defer t
