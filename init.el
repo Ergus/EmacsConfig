@@ -396,12 +396,14 @@
 	      lazy-highlight-initial-delay 0
 	      isearch-allow-scroll t 	         ;; Permit scroll can be 'unlimited
 	      isearch-lazy-count t
-	      search-ring-max 64
-	      regexp-search-ring-max 64
+	      search-ring-max 256
+	      regexp-search-ring-max 256
 	      isearch-yank-on-move 'shift       ;; Copy text from buffer with meta
 	      ;; isearch-wrap-function #'ignore ;; Look at the emacs-major-version check
 	      ;;isearch-wrap-pause t            ;; Disable wrapping nil.
 	      isearch-repeat-on-direction-change t ;; Don't go to the other end on direction change
+	      isearch-regexp-lax-whitespace t   ;; swiper like fuzzy search
+	      search-whitespace-regexp ".*?"
 	      )
 
 (with-eval-after-load 'isearch
