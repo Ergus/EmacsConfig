@@ -378,7 +378,12 @@
 ;; hideif mode
 (setq-default hide-ifdef-shadow t
 	      hide-ifdef-initially t)
+(with-eval-after-load 'hideif
+  (diminish 'hide-ifdef-mode)
+  (diminish 'hide-ifdef-hiding))
 
+(with-eval-after-load 'subword
+  (diminish 'subword-mode))
 
 ;;__________________________________________________________
 ;; Benchmark-init
