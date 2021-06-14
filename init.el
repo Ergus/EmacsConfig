@@ -1932,7 +1932,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :preface
   (easy-mmode-defmap avy-basic-map
     `(("r" . avy-resume)
-      (,(kbd "M-'") . avy-goto-char-timer)
+      (,(kbd "C-'") . avy-goto-char-timer)
       ("'" . avy-goto-char-timer)
       ("c" . avy-goto-char)
       ("2" . avy-goto-char-2)
@@ -1959,10 +1959,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (with-eval-after-load 'isearch
-    (define-key isearch-mode-map (kbd "M-'") #'avy-isearch))
+    (define-key isearch-mode-map (kbd "C-'") #'avy-isearch))
 
-  (global-set-key (kbd "M-'") avy-basic-map)
-  (which-key-add-key-based-replacements "M-'" "avy")
+  (global-set-key (kbd "C-'") avy-basic-map)
+  (which-key-add-key-based-replacements "C-'" "avy")
   ;; (avy-timeout-seconds 0.75)
   ;; (avy-style 'at-full)  ;; this is already the default
   (setq-default avy-all-windows nil    ;; commands only in this window
