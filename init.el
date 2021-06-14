@@ -866,6 +866,12 @@
   (define-key lsp-mode-map (kbd "C-c l i") #'lsp-ivy-workspace-symbol)
   )
 
+(use-package tree-sitter
+  :defer t)
+
+(use-package tree-sitter-langs
+  :after tree-sitter)
+
 ;; (use-package ccls
 ;;   :defer t
 ;;   :config
