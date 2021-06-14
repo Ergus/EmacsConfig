@@ -2156,6 +2156,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (composable-mark-mode))
 					; Use composable with C-SPC
 
+(use-package automark
+  :diminish
+  ;; :after which-key
+  :load-path (lambda nil (my/load-path "~/gits/emacs_clones/automark-mode/"))
+  :config
+  (automark-mode 1))
+
 (use-package slime
   :defer t
   :init
