@@ -133,7 +133,9 @@
 ;; (advice-add 'require :around 'require--advice)
 
 (setq-default package-archives '(("gnu" . "https://elpa.gnu.org/packages/") ;; Using Melpa and Elpa
+				 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
 				 ("melpa" . "https://melpa.org/packages/"))
+	      package-native-compile t
 	      package-quickstart t)
 
 ;; Set this BEFORE require use-package
