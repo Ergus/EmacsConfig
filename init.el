@@ -1102,10 +1102,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package lua-mode
   :defer t
   :init
-  (add-to-list 'auto-mode-alist
-	       '("\\.lua\\'" . lua-mode))
-  (add-to-list 'interpreter-mode-alist
-	       '("lua" . lua-mode)))
+  (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
+  (add-to-list 'interpreter-mode-alist '("lua" . lua-mode)))
 
 (use-package company-lua
   :hook (lua-mode . (lambda nil
@@ -1126,12 +1124,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package qt-pro-mode
   :defer t
   :init
-  (add-to-list 'auto-mode-alist
-	       '("\\.pr[io]\\'" . qt-pro-mode))
-  (add-to-list 'auto-mode-alist
-	       '("\\.moc\\'" . c++-mode))
-  (add-to-list 'auto-mode-alist
-	       '("\\.ui\\'" . xml-mode)))
+  (add-to-list 'auto-mode-alist '("\\.pr[io]\\'" . qt-pro-mode))
+  (add-to-list 'auto-mode-alist '("\\.moc\\'" . c++-mode))
+  (add-to-list 'auto-mode-alist '("\\.ui\\'" . xml-mode)))
 
 ;;__________________________________________________________
 ;; javascript-mode
