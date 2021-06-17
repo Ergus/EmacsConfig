@@ -1962,9 +1962,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		avy-case-fold-search nil
 		avy-highlight-first t
 		avy-indent-line-overlay t ;; show highlight after non-whitespace
-		avy-keys (nconc (number-sequence ?1 ?9)
-				(number-sequence ?a ?z)	 ;; Order of proposals
-				(number-sequence ?A ?Z))
+		avy-keys (number-sequence ?a ?z) ;; Order of proposals
 		)
   )
 
