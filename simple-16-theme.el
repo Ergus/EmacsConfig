@@ -130,7 +130,7 @@
 
  ;; Avy
  `(avy-lead-face ((t :background ,(simple-16-theme-color blue)
-                                  :foreground ,(simple-16-theme-color red))))
+                                  :foreground ,(simple-16-theme-color brightwhite))))
 
  ;;Flycheck
  `(flycheck-error ((t :inherit nil :background nil :foreground nil :underline t)))
