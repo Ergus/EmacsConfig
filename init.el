@@ -302,8 +302,7 @@
 (add-hook 'profiler-report-mode-hook #'hl-line-mode)
 
 ;; Shows the function in spaceline
-(with-eval-after-load 'which-func
-  (diminish 'which-func-mode))
+(eval-after-load 'which-func '(diminish 'which-func-mode))
 
 ;; text-mode
 (my/gen-delay-hook text-mode)
@@ -323,8 +322,7 @@
 
 ;; hl-line
 (global-set-key (kbd "M-s h L") #'hl-line-mode)
-(with-eval-after-load 'hl-line
-  (diminish 'hl-line-mode))
+(eval-after-load 'hl-line '(diminish 'hl-line-mode))
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
 
 ;; hilit-chg changes
@@ -353,8 +351,7 @@
 
 ;; abbrev
 (which-key-add-key-based-replacements "C-x a" "abbrev")
-(with-eval-after-load 'abbrev
-  (diminish 'abbrev-mode))
+(eval-after-load 'abbrev '(diminish 'abbrev-mode))
 
 
 ;; eldoc
@@ -384,8 +381,7 @@
   (diminish 'hide-ifdef-mode)
   (diminish 'hide-ifdef-hiding))
 
-(with-eval-after-load 'subword
-  (diminish 'subword-mode))
+(eval-after-load 'subword (diminish 'subword-mode))
 
 ;;__________________________________________________________
 ;; Benchmark-init
@@ -520,9 +516,9 @@
 ;; Two options for diffs
 (setq-default ediff-window-setup-function #'ediff-setup-windows-plain
 	      ediff-split-window-function #'split-window-horizontally)
-(with-eval-after-load 'ediff
-  (with-eval-after-load 'winner
-    (add-hook 'ediff-after-quit-hook-internal #'winner-undo)))
+(eval-after-load 'ediff
+  '(eval-after-load 'winner
+     '(add-hook 'ediff-after-quit-hook-internal #'winner-undo)))
 
 ;; more like vimdiff
 (use-package vdiff
@@ -1140,6 +1136,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; splitting
+;;(setq-default windmove-display-no-select t)
+
 (easy-mmode-defmap ctl-x-0-map
   `(("0" . delete-window)
     ([left] . windmove-delete-left)
@@ -1422,8 +1420,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (add-hook 'LaTeX-mode-hook #'turn-on-reftex)
 
-(with-eval-after-load 'reftex
-  (reftex-isearch-minor-mode))
+(eval-after-load 'reftex '(reftex-isearch-minor-mode))
 
 (use-package company-reftex
   :hook (reftex-mode . (lambda nil
@@ -1455,8 +1452,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      python-check-command "pyflakes"
 	      flycheck-python-flake8-executable "flake8")
 
-(with-eval-after-load 'python
-  (define-key python-mode-map (kbd "C-c C-z") #'python-shell))
+(eval-after-load 'python
+  '(define-key python-mode-map (kbd "C-c C-z") #'python-shell))
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'interpreter-mode-alist '("python3" . python-mode))
 
@@ -1503,8 +1500,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (setq-default ibuffer-default-sorting-mode 'alphabetic)  ;; can use recency)
 (global-set-key [remap list-buffers] #'ibuffer)
 (add-hook 'ibuffer-mode-hook #'hl-line-mode)
-(with-eval-after-load 'ibuffer
-  (which-key-add-keymap-based-replacements ibuffer--filter-map "G" "Groups"))
+(eval-after-load 'ibuffer
+  '(which-key-add-keymap-based-replacements ibuffer--filter-map "G" "Groups"))
 
 (use-package ibuffer-sidebar
   :defer t
@@ -1606,8 +1603,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (setq-default swiper-goto-start-of-match t)
-  (with-eval-after-load 'isearch
-    (define-key isearch-mode-map (kbd "C-o") #'swiper-isearch-toggle))
+  (eval-after-load 'isearch
+    '(define-key isearch-mode-map (kbd "C-o") #'swiper-isearch-toggle))
   :config
   (define-key swiper-map (kbd "C-o") #'swiper-isearch-toggle)
   ;; (add-to-list 'ivy-re-builders-alist '(swiper . ivy--regex-plus))
@@ -1953,8 +1950,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "The base keymap for `avy-mode'.")
   :defer t
   :init
-  (with-eval-after-load 'isearch
-    (define-key isearch-mode-map (kbd "C-'") #'avy-isearch))
+  (eval-after-load 'isearch
+    '(define-key isearch-mode-map (kbd "C-'") #'avy-isearch))
 
   (global-set-key (kbd "C-'") avy-basic-map)
   (which-key-add-key-based-replacements "C-'" "avy")
