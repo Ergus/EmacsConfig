@@ -618,7 +618,10 @@
   (set-mouse-color "white")		  ;; Flechita del mouse en blanco
   (if (fboundp 'mouse-wheel-mode)
       (progn
-	(setq-default mouse-wheel-scroll-amount '(5 ((shift) . 1) ((control)))
+	(setq-default mouse-wheel-scroll-amount '(3             ;; No modifier
+						  ((shift) . 1) ;; in terminal does not work
+						  ((meta) . hscroll)
+						  ((control)))
 		      mouse-wheel-progressive-speed nil)
 	(mouse-wheel-mode t))
 
@@ -1172,8 +1175,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "Keymap to repeat undo-redo key sequences.  Used in `repeat-mode'.")
   (put 'undo-only 'repeat-map 'undo-redo-repeat-map)
   (put 'undo-redo 'repeat-map 'undo-redo-repeat-map)
-  (put 'undo 'repeat-map 'undo-redo-repeat-map)
-  )
+  (put 'undo 'repeat-map 'undo-redo-repeat-map))
 
 ;; Change color selected buffers
 ;; (use-package auto-dim-other-buffers
