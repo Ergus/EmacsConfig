@@ -646,10 +646,10 @@
   "Move point to first non-whitespace character or `beginning-of-line'."
   (interactive)
   (let ((oldpos (point)))
-    (back-to-indentation)
+    (call-interactively 'back-to-indentation)
     (and (<= oldpos (point))
 	 (/= (line-beginning-position) oldpos)
-	 (beginning-of-line))))
+	 (call-interactively 'beginning-of-line))))
 
 (global-set-key [remap move-beginning-of-line] #'my/smart-beginning-of-line)
 
@@ -1462,7 +1462,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      dired-auto-revert-buffer nil   		   ;; auto revert dired
 	      dired-listing-switches "-alh"  		   ;; commands to ls
 	      dired-hide-details-hide-symlink-targets nil  ;; don't hide linkk targets
-	      dired-maybe-use-globstar t)
+	      dired-maybe-use-globstar t)                  ;; use shell's globstar
 
 (with-eval-after-load 'dired
   (require 'dired-x)
