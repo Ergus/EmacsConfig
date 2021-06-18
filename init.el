@@ -1575,9 +1575,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (ivy-mode 1))
 
-(use-package ivy-hydra :defer t
-  :init
-  (setq-default ivy-read-action-function #'ivy-hydra-read-action))
+;; (use-package hydra :defer t)
+
+;; (use-package ivy-hydra
+;;   :init
+;;   (setq-default ivy-read-action-function #'ivy-hydra-read-action))
 
 (use-package ivy-avy :after ivy)
 
