@@ -43,9 +43,10 @@
 
 (setq-default vc-follow-symlinks t	    ;; Open links not open
 	      ;;tab-always-indent complete  ;; make tab key do indent only
-	      initial-scratch-message ";; Welcome Jimmy!!"
 	      ring-bell-function #'ignore
-	      user-full-name "Jimmy Aguilar Mena"
+	      user-full-name "Ergus"
+	      initial-scratch-message (format ";; Welcome %s!!" user-full-name)
+
 	      inhibit-startup-message t
 	      inhibit-startup-screen t
 	      ;;tab-width 4		    ;; Tabulador a 4
@@ -291,12 +292,6 @@
 (setq-default show-paren-delay 0
 	      blink-matching-paren nil)
 (run-with-idle-timer 0.5 nil #'show-paren-mode t)
-
-;; smtpmail
-(setq-default smtpmail-debug-info t)
-
-;; sendmail
-(setq-default send-mail-function #'smtpmail-send-it)
 
 ;; profiler
 (add-hook 'profiler-report-mode-hook #'hl-line-mode)
@@ -2161,7 +2156,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package automark
   :diminish
-  ;; :after which-key
   :load-path (lambda nil (my/load-path "~/gits/emacs_clones/automark-mode/"))
   :config
   (automark-mode 1))
