@@ -2052,9 +2052,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (setq-default iedit-auto-recenter nil)
-  (define-key mc-basic-map "i" #'iedit-mode)
-  :config
-  (define-key iedit-lib-keymap (kbd "C-c m '") #'iedit-toggle-unmatched-lines-visible))
+  (define-key mc-basic-map "i" #'iedit-mode))
 
 ;;__________________________________________________________
 ;; Web mode
