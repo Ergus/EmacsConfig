@@ -67,6 +67,7 @@
 	      ;; kill-whole-line t
 	      load-prefer-newer t
 	      ;; mark-even-if-inactive nil	    ;; no mark no region
+	      mark-ring-max 128             ;; Max number of marks in the ring
 	      next-screen-context-lines 5   ;; Lines of continuity when scrolling
 	      fast-but-imprecise-scrolling t
 	      scroll-error-top-bottom t	    ;; Move cursor before error scroll
