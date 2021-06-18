@@ -1637,8 +1637,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       ("e" . counsel-linux-app)        ;; call application
       ("l" . counsel-find-library)     ;; Search lisp libraries
       (,(kbd "SPC") . counsel-register)     ;; list registers
-      (,(kbd "RET") . counsel-company)    ;; company completions
-      (,(kbd "C-r") . counsel-command-history) ;; command history
+      (,(kbd "RET") . counsel-company)      ;; company completions
+      (,(kbd "C-SPC") . counsel-mark-ring)  ;; Mark ring history
+      ("\C-r" . counsel-command-history) ;; command history
       ("p" . counsel-package)          ;; command history
       ("P" . counsel-list-processes)   ;; command history
       ;; counsel-file commands
@@ -1969,7 +1970,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       (let ((map (make-sparse-keymap)))
 	(define-key map "p" #'avy-prev)
 	(define-key map "n" #'avy-next)
-	(define-key map "'" #'avy-resume)
+	(define-key map "r" #'avy-resume)
 	map)
       "Keymap to repeat avy key sequences.")
     (put 'avy-prev 'repeat-map 'avy-repeat-map)
