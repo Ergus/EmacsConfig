@@ -1131,7 +1131,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; splitting
-;;(setq-default windmove-display-no-select t)
+(setq-default windmove-display-no-select t)
 
 (easy-mmode-defmap ctl-x-0-map
   `(("0" . delete-window)
