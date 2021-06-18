@@ -1604,7 +1604,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package swiper
   :defer t
   :init
-  (setq-default swiper-goto-start-of-match t)
+  (setq-default swiper-goto-start-of-match t
+		swiper-verbose nil)
   (eval-after-load 'isearch
     '(define-key isearch-mode-map (kbd "C-o") #'swiper-isearch-toggle))
   :config
