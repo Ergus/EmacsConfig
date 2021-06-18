@@ -717,7 +717,7 @@
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
 (setq-default ispell-following-word t ;;Check word around point not only before
-	      ispell-quietly t)       ;; Supress messages in ispell-word
+	      ispell-quietly t)       ;; Suppress messages in ispell-word
 
 
 ;; Flyspell
@@ -1959,15 +1959,25 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (global-set-key (kbd "C-'") avy-basic-map)
   (which-key-add-key-based-replacements "C-'" "avy")
   ;; (avy-timeout-seconds 0.75)
-  ;; (avy-style 'at-full)  ;; this is already the default
-  (setq-default avy-all-windows nil    ;; commands only in this window
+  (setq-default ;;avy-style 'at        ;; default 'at-full
+		avy-all-windows nil    ;; commands only in this window
 		avy-all-windows-alt t  ;; with prefix commands in all windows
 		avy-case-fold-search nil
 		avy-highlight-first t
 		avy-indent-line-overlay t ;; show highlight after non-whitespace
 		avy-keys (number-sequence ?a ?z) ;; Order of proposals
 		)
-  )
+  :config
+  (with-eval-after-load 'repeat
+    (defvar avy-repeat-map
+      (let ((map (make-sparse-keymap)))
+	(define-key map "p" #'avy-prev)
+	(define-key map "n" #'avy-next)
+	(define-key map "'" #'avy-resume)
+	map)
+      "Keymap to repeat avy key sequences.")
+    (put 'avy-prev 'repeat-map 'avy-repeat-map)
+    (put 'avy-next 'repeat-map 'avy-repeat-map)))
 
 (use-package avy-zap
   :defer t
