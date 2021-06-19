@@ -1164,18 +1164,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (define-key ctl-x-map (kbd "C-M-<up>")  #'windmove-swap-states-up)
 
 ;; repeat-mode
-(run-with-idle-timer 0.5 nil #'repeat-mode 1)
-(with-eval-after-load 'repeat
-  (defvar undo-redo-repeat-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map "u" #'undo-only)
-      (define-key map "r" #'undo-redo)
-      (define-key map "U" #'undo)
-      map)
-    "Keymap to repeat undo-redo key sequences.  Used in `repeat-mode'.")
-  (put 'undo-only 'repeat-map 'undo-redo-repeat-map)
-  (put 'undo-redo 'repeat-map 'undo-redo-repeat-map)
-  (put 'undo 'repeat-map 'undo-redo-repeat-map))
+(repeat-mode 1)
+(defvar undo-redo-repeat-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "u" #'undo-only)
+    (define-key map "r" #'undo-redo)
+    (define-key map "U" #'undo)
+    map)
+  "Keymap to repeat undo-redo key sequences.  Used in `repeat-mode'.")
+(put 'undo-only 'repeat-map 'undo-redo-repeat-map)
+(put 'undo-redo 'repeat-map 'undo-redo-repeat-map)
+(put 'undo 'repeat-map 'undo-redo-repeat-map)
 
 ;; Change color selected buffers
 ;; (use-package auto-dim-other-buffers
