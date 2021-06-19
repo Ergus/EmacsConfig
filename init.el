@@ -287,15 +287,15 @@
 	      (replace-regexp-in-string "\\\\)\\$" "\\|^/tmp/.+\\)$"
 					save-place-ignore-files-regexp t t))
 
-;; autorevert
-(setq-default auto-revert-verbose nil	                ;; not show message when file changes
-	      auto-revert-avoid-polling t)              ;; don't do pooling for autorevert (use notifications).)
-(run-with-idle-timer 1 nil #'global-auto-revert-mode t) ;; Autoload files changed in disk
-
-;; show-paren-mode
-(setq-default show-paren-delay 0
+;; autorevert & show-parent
+(setq-default auto-revert-verbose nil	     ;; not show message when file changes
+	      auto-revert-avoid-polling t    ;; don't do pooling for autorevert (use notifications).)
+	      show-paren-delay 0
 	      blink-matching-paren nil)
-(run-with-idle-timer 0.5 nil #'show-paren-mode t)
+;; Call these two together to use a single timer
+(run-with-idle-timer 1 nil (lambda ()
+			     (global-auto-revert-mode t) ;; Autoload files changed in disk
+			     (show-paren-mode t)))       ;; Show parenthesis
 
 ;; profiler
 (add-hook 'profiler-report-mode-hook #'hl-line-mode)
@@ -303,21 +303,17 @@
 ;; Shows the function in spaceline
 (eval-after-load 'which-func '(diminish 'which-func-mode))
 
-;; text-mode
+;; delay hooks
 (my/gen-delay-hook text-mode)
-
-;; prog-mode
 (my/gen-delay-hook prog-mode)
-(add-hook 'prog-mode-delay-hook
-	  (lambda nil
-	    (setq show-trailing-whitespace t)))
 
 ;; elec-pair
-(defun my/electric-pair-local-mode ()
+(defun my/prog-text-common-hook ()
   "Enable electric-pair-local-mode"
+  (setq-local show-trailing-whitespace t)
   (electric-pair-local-mode 1))
-(add-hook 'prog-mode-hook #'my/electric-pair-local-mode)
-(add-hook 'text-mode-hook #'my/electric-pair-local-mode)
+(add-hook 'prog-mode-delay-hook #'my/prog-text-common-hook)
+(add-hook 'text-mode-delay-hook #'my/prog-text-common-hook)
 
 ;; hl-line
 (global-set-key (kbd "M-s h L") #'hl-line-mode)
