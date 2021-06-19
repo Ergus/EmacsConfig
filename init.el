@@ -282,9 +282,10 @@
 (setq-default uniquify-buffer-name-style 'post-forward)
 
 ;; saveplace
+(save-place-mode 1)                           ;; Remember point in files
 (setq-default save-place-ignore-files-regexp  ;; Modified to add /tmp/* files
-	      "\\(?:COMMIT_EDITMSG\\|hg-editor-[[:alnum:]]+\\.txt\\|svn-commit\\.tmp\\|bzr_log\\.[[:alnum:]]+\\|^/tmp/.+\\)$")
-(save-place-mode 1)              ;; Remember point in files
+	      (replace-regexp-in-string "\\\\)\\$" "\\|^/tmp/.+\\)$"
+					save-place-ignore-files-regexp t t))
 
 ;; autorevert
 (setq-default auto-revert-verbose nil	                ;; not show message when file changes
