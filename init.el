@@ -376,7 +376,7 @@
   (diminish 'hide-ifdef-mode)
   (diminish 'hide-ifdef-hiding))
 
-(eval-after-load 'subword (diminish 'subword-mode))
+(eval-after-load 'subword '(diminish 'subword-mode))
 
 ;;__________________________________________________________
 ;; Benchmark-init
