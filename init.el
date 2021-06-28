@@ -340,6 +340,16 @@
 (define-key ctl-x-map "wr"  #'winner-redo)
 (which-key-add-key-based-replacements "C-x w" "winner")
 
+(with-eval-after-load 'repeat
+  (defvar winner-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "u" #'winner-undo)
+      (define-key map "r" #'winner-redo)
+      map)
+    "Keymap to repeat winner commands.")
+  (put 'winner-undo 'repeat-map 'winner-repeat-map)
+  (put 'winner-redo 'repeat-map 'winner-repeat-map))
+
 ;; Org mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 
@@ -664,6 +674,18 @@
 (global-set-key (kbd "C-/") #'undo-only)
 (global-set-key (kbd "C-M-_") #'undo-redo)
 (global-set-key (kbd "C-M-/") #'undo-redo)
+
+(with-eval-after-load 'repeat
+  (defvar undo-redo-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map "u" #'undo-only)
+      (define-key map "r" #'undo-redo)
+      (define-key map "U" #'undo)
+      map)
+    "Keymap to repeat undo-redo key sequences.  Used in `repeat-mode'.")
+  (put 'undo-only 'repeat-map 'undo-redo-repeat-map)
+  (put 'undo-redo 'repeat-map 'undo-redo-repeat-map)
+  (put 'undo 'repeat-map 'undo-redo-repeat-map))
 
 (use-package string-inflection
   :defer t
@@ -1164,16 +1186,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;; repeat-mode
 (repeat-mode 1)
-(defvar undo-redo-repeat-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "u" #'undo-only)
-    (define-key map "r" #'undo-redo)
-    (define-key map "U" #'undo)
-    map)
-  "Keymap to repeat undo-redo key sequences.  Used in `repeat-mode'.")
-(put 'undo-only 'repeat-map 'undo-redo-repeat-map)
-(put 'undo-redo 'repeat-map 'undo-redo-repeat-map)
-(put 'undo 'repeat-map 'undo-redo-repeat-map)
 
 ;; Change color selected buffers
 ;; (use-package auto-dim-other-buffers
@@ -2158,6 +2170,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package automark
   :diminish
+  :disabled
   :load-path (lambda nil (my/load-path "~/gits/emacs_clones/automark-mode/"))
   :config
   (automark-mode 1))
