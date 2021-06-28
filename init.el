@@ -41,8 +41,7 @@
 ;; 	      display-time-default-load-average nil)
 ;; (display-time-mode t)
 
-(setq-default vc-follow-symlinks t	    ;; Open links not open
-	      ;;tab-always-indent complete  ;; make tab key do indent only
+(setq-default ;;tab-always-indent complete  ;; make tab key do indent only
 	      ring-bell-function #'ignore
 	      user-full-name "Ergus"
 	      initial-scratch-message (format ";; Welcome %s!!" user-full-name)
@@ -377,6 +376,12 @@
   (diminish 'hide-ifdef-hiding))
 
 (eval-after-load 'subword '(diminish 'subword-mode))
+
+;; vc
+
+(setq-default vc-follow-symlinks t	    ;; Open links not open
+	      vc-handled-backends '(Git Hg) ;; Only git or mercurial
+	      vc-display-status nil)        ;; No info on the modeline.
 
 ;;__________________________________________________________
 ;; Benchmark-init
