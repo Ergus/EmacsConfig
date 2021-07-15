@@ -2028,6 +2028,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (easy-mmode-defmap mc-basic-map
     `(("l" . mc/edit-lines)
       ("a" . mc/mark-all-like-this)
+      ("d" . mc/mark-all-dwim)
+      ("." . mc/mark-all-symbols-like-this)
       ("w" . mc/mark-all-words-like-this)
       ("r" . mc/mark-all-in-region)
       ("s" . mc/mark-all-in-region-regexp)
