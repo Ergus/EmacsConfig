@@ -1474,15 +1474,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      dired-auto-revert-buffer nil   		   ;; auto revert dired
 	      dired-listing-switches "-alh"  		   ;; commands to ls
 	      dired-hide-details-hide-symlink-targets nil  ;; don't hide linkk targets
-	      dired-maybe-use-globstar t)                  ;; use shell's globstar
-
-(with-eval-after-load 'dired
-  (require 'dired-x)
-  (put 'dired-find-alternate-file 'disabled nil)
-  (define-key dired-mode-map [remap dired-find-file] #'dired-find-alternate-file) ; was dired-advertised-find-file
-  (define-key dired-mode-map [remap dired-up-directory] (lambda nil               ; was dired-up-directory
-							  (interactive)
-							  (find-alternate-file ".."))))
+	      dired-maybe-use-globstar t                   ;; use shell's globstar
+	      dired-kill-when-opening-new-dired-buffer t)  ;; kill when opening a new directory.
 
 (use-package dired-sidebar
   :defer t
