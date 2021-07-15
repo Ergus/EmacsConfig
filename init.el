@@ -510,6 +510,7 @@
 	      tab-bar-close-last-tab-choice 'tab-bar-mode-disable ;; When close last
 	      tab-bar-show 1)
 (which-key-add-key-based-replacements "C-x t" "tab-bar")
+(global-set-key "\C-t" tab-prefix-map)
 
 ;;__________________________________________________________
 ;; minibuffers
