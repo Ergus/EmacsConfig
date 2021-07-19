@@ -12,7 +12,9 @@
 ;;__________________________________________________________
 ;; Internal options
 
-;; (setq-default display-line-numbers-widen t)	;; keep line numbers inside a narrow
+(setq-default display-line-numbers-widen t    ;; keep line numbers inside a narrow
+	      ;; display-line-numbers-width 4   ;; width reserved (default nil: compute dynamically)
+	      )
 (global-display-line-numbers-mode t)	;; line numbers on the left
 (global-display-fill-column-indicator-mode t)
 
@@ -54,7 +56,6 @@
 	      make-backup-files nil	    ;; Sin copias de seguridad
 	      create-lockfiles nil	    ;; No lock files, good for tramp
 	      visible-bell nil		    ;; Flash the screen (def)
-	      display-line-numbers-width 4  ;; Minimum line number width
 	      confirm-kill-processes nil    ;; no ask kill processes on exit
 	      read-key-delay 0.01
 	      recenter-redisplay nil
