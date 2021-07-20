@@ -801,6 +801,7 @@
   (add-hook 'prog-mode-delay-hook #'my/company-mode-delay-hook)
   (add-hook 'message-mode-delay-hook #'my/company-mode-delay-hook)
   (add-hook 'conf-mode-delay-hook #'my/company-mode-delay-hook)
+  (add-hook 'text-mode-delay-hook #'my/company-mode-delay-hook)
 
   (setq-default company-idle-delay nil	 ;; no delay for autocomplete
 		company-minimum-prefix-length 2
@@ -1396,7 +1397,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (add-hook 'LaTeX-mode-hook (lambda nil
 			     (flyspell-mode 1)
 			     (visual-line-mode 1)
-			     (auto-fill-mode 1)))
+			     (auto-fill-mode 1)
+			     (define-key LaTeX-mode-map (kbd "M-RET") nil)))
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
 
 
@@ -1416,7 +1418,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package company-auctex
   :hook (TeX-mode . (lambda nil
-		      (my/company-backend-after-load #'company-auctex-init)))
+		      ;; This is similar code than company-auctex-init, but setting it only locally.
+		      (my/company-backend-after-load 'company-auctex-labels)
+		      (my/company-backend-after-load 'company-auctex-bibs)
+		      (my/company-backend-after-load '(company-auctex-macros company-auctex-symbols company-auctex-environments))))
   :defer t)
 
 ;; reftex
