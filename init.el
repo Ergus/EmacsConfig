@@ -1306,11 +1306,28 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Chequeo de gramatica
-(use-package langtool
+(use-package languagetool
   :defer t
   :init
-  (setq-default langtool-default-language "en"
-		langtool-language-tool-jar "~/gits/languagetool/languagetool-standalone/target/LanguageTool-4.6-SNAPSHOT/LanguageTool-4.6-SNAPSHOT/languagetool-commandline.jar"))
+  (setq-default ;; languagetool-server-language-tool-jar "/home/ergo/gits/emacs_clones/languagetool/languagetool-standalone/target/LanguageTool-5.5-SNAPSHOT/LanguageTool-5.5-SNAPSHOT/languagetool-server.jar"
+		languagetool-language-tool-jar "/home/ergo/gits/emacs_clones/languagetool/languagetool-standalone/target/LanguageTool-5.5-SNAPSHOT/LanguageTool-5.5-SNAPSHOT/languagetool-commandline.jar"
+		languagetool-java-arguments '("-Dfile.encoding=UTF-8")
+		languagetool-default-language "en")
+
+  (easy-mmode-defmap languagetool-basic-map
+    `(("l" . languagetool-check)
+      ("c" . languagetool-clear-buffer)
+      ("." . languagetool-correct-at-point)
+      ("b" . languagetool-correct-buffer)
+      ("s" . languagetool-set-language))
+    "The base keymap for `languagetool'.")
+
+  (global-set-key (kbd "C-c l") languagetool-basic-map)
+  (which-key-add-key-based-replacements "C-c l" "languagetool")
+
+  ;; :config
+  ;; (languagetool-server-start)
+  )
 
 ;;__________________________________________________________
 ;; Email mode for mutt
