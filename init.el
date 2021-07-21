@@ -809,6 +809,7 @@
 
   (setq-default company-idle-delay nil	 ;; no delay for autocomplete
 		company-minimum-prefix-length 2
+		company-tooltip-minimum 5
 		company-selection-wrap-around nil
 		company-show-numbers t
 		company-tooltip-align-annotations t
