@@ -2147,11 +2147,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :preface
   (my/gen-delay-hook yaml-mode))
 
-(use-package flymake-yaml
-  :defer t
-  :init
-  (add-hook 'yaml-mode-delay-hook #'flymake-yaml-load))
-
 (use-package sudo-edit :defer t)
 
 (use-package evil
@@ -2182,15 +2177,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package composable
   :diminish
-  ;; :after which-key
-  :preface
   :load-path (lambda nil (my/load-path "~/gits/emacs_clones/composable/"))
   :init
   (setq-default composable-mode-debug-level (if init-file-debug 3 0))
   :config
-  (composable-mode)       ; Activates the default keybindings
-  (composable-mark-mode))
-					; Use composable with C-SPC
+  (composable-mode) 		;; Activates the default keybindings
+  (composable-mark-mode))	;; Use composable with C-SPC
 
 (use-package automark
   :diminish
