@@ -254,13 +254,12 @@
 (use-package which-key
   :diminish
   :init
-  (setq-default which-key-idle-delay 0.5
-		which-key-idle-secondary-delay 0.01  ;; nil sets the same delay
-		which-key-dont-use-unicode t)
+  (setq-default which-key-idle-delay 0.5             ;; default 1.0
+		;; which-key-idle-secondary-delay 0.01  ;; nil sets the same delay
+		which-key-dont-use-unicode t
+		which-key-is-verbose init-file-debug
+		which-key-separator ": ")            ;; default " : "
   ;;(which-key-idle-delay 10000) ;; To not show
-  ;;(which-key-show-early-on-C-h t)
-  ;;(which-key-popup-type 'minibuffer)
-  ;;(which-key-separator ": ") ;which-key-idle-delay 2.0)
   :config
   (which-key-mode t)
   (which-key-add-key-based-replacements
