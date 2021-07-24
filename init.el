@@ -271,7 +271,10 @@
     "C-x @" "event-apply-modifier"
     "C-x ESC" "repeat-command"
     "C-x 8" "unicode"
-    "C-x x" "buffer"))
+    "C-x x" "buffer"
+    "C-x 4" "other-window"
+    "C-x 5" "other-frame"
+    ))
 
 ;;__________________________________________________________
 ;; Some internal packages to defer them
