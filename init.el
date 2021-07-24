@@ -695,10 +695,23 @@
   (put 'undo-redo 'repeat-map 'undo-redo-repeat-map)
   (put 'undo 'repeat-map 'undo-redo-repeat-map))
 
+;;__________________________________________________________
+;; Cycle string capitalization for programming:
+;; "foo_bar => FOO_BAR => FooBar => fooBar => foo-bar => Foo_Bar => foo_bar"
 (use-package string-inflection
   :defer t
   :init
-  (global-set-key (kbd "C-c <right>") #'string-inflection-all-cycle))
+  (global-set-key (kbd "C-c SPC") #'string-inflection-all-cycle)
+
+  :config
+  (defvar string-inflection-repeat-map
+    (let ((map (make-sparse-keymap)))
+      (define-key map (kbd "SPC") #'string-inflection-all-cycle)
+      map)
+    "Keymap to repeat inflection. Used in `string-inflection-all-cycle'.")
+
+  (put 'string-inflection-all-cycle 'repeat-map 'string-inflection-repeat-map)
+)
 
 (use-package undo-propose
   :defer t)
