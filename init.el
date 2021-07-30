@@ -274,6 +274,7 @@
     "C-x x" "buffer"
     "C-x 4" "other-window"
     "C-x 5" "other-frame"
+    "C-x C-k" "kmacro"
     ))
 
 ;;__________________________________________________________
@@ -399,7 +400,7 @@
 (setq-default vc-follow-symlinks t	    ;; Open links not open
 	      vc-handled-backends '(Git Hg) ;; Only git or mercurial
 	      vc-display-status nil)        ;; No info on the modeline.
-
+(which-key-add-key-based-replacements "C-x v" "vc")
 ;;__________________________________________________________
 ;; Benchmark-init
 
