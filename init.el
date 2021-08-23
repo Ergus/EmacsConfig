@@ -424,8 +424,6 @@
 	      isearch-lazy-count t
 	      search-ring-max 256
 	      regexp-search-ring-max 256
-	      isearch-yank-on-move 'shift       ;; Copy text from buffer with meta
-	      ;; isearch-wrap-function #'ignore ;; Look at the emacs-major-version check
 	      isearch-yank-on-move 'shift        ;; Copy text from buffer with meta
 	      ;; isearch-wrap-function #'ignore     ;; Look at the emacs-major-version check
 	      ;; isearch-wrap-pause t               ;; Disable wrapping nil.
@@ -651,8 +649,8 @@
 	(mouse-wheel-mode t))
 
     ;; Else set them manually
-    (global-set-key (kbd "<mouse-4>") #'scroll-down-command)
-    (global-set-key (kbd "<mouse-5>") #'scroll-up-command)))
+    (global-set-key [mouse-4] #'scroll-down-command)
+    (global-set-key [mouse-5] #'scroll-up-command)))
 
 
 (defun my/scroll-up-command (&optional arg)
@@ -694,8 +692,10 @@
 (with-eval-after-load 'repeat
   (defvar undo-redo-repeat-map
     (let ((map (make-sparse-keymap)))
-      (define-key map "u" #'undo-only)
-      (define-key map "r" #'undo-redo)
+      (define-key map "_" #'undo-only)
+      (define-key map "/" #'undo-only)
+      (define-key map "M-_" #'undo-redo)
+      (define-key map "M-/" #'undo-redo)
       (define-key map "U" #'undo)
       map)
     "Keymap to repeat undo-redo key sequences.  Used in `repeat-mode'.")
@@ -1965,14 +1965,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package move-dup
   :defer t
   :init
-  (global-set-key (kbd "M-<up>") #'move-dup-duplicate-up)
-  (global-set-key (kbd "M-<down>") #'move-dup-duplicate-down)
-  (global-set-key (kbd "C-M-<up>") #'move-dup-move-lines-up)
-  (global-set-key (kbd "C-M-<down>") #'move-dup-move-lines-down)
-  (global-set-key (kbd "C-M-<left>") (lambda nil (interactive) (transpose-words -1)))
-  (global-set-key (kbd "C-M-<right>") #'transpose-words)
-  (global-set-key (kbd "M-<left>") (lambda nil (interactive) (transpose-chars -1)))
-  (global-set-key (kbd "M-<right>") #'transpose-chars))
+  (global-set-key [M-up] #'move-dup-duplicate-up)
+  (global-set-key [M-down] #'move-dup-duplicate-down)
+  (global-set-key [C-M-up] #'move-dup-move-lines-up)
+  (global-set-key [C-M-down] #'move-dup-move-lines-down)
+  (global-set-key [C-M-left] (lambda nil (interactive) (transpose-words -1)))
+  (global-set-key [C-M-right] #'transpose-words)
+  (global-set-key [M-left] (lambda nil (interactive) (transpose-chars -1)))
+  (global-set-key [M-right] #'transpose-chars))
 
 ;;__________________________________________________________
 ;; evil mode
