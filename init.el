@@ -345,15 +345,19 @@
 ;; winner
 (setq-default winner-dont-bind-my-keys t)
 (winner-mode t)
-(define-key ctl-x-map "wu"  #'winner-undo)
-(define-key ctl-x-map "wr"  #'winner-redo)
+(define-key ctl-x-4-map (kbd "_")  #'winner-undo)
+(define-key ctl-x-4-map (kbd "/")  #'winner-undo)
+(define-key ctl-x-4-map (kbd "M-_")  #'winner-redo)
+(define-key ctl-x-4-map (kbd "M-/")  #'winner-redo)
 (which-key-add-key-based-replacements "C-x w" "winner")
 
 (with-eval-after-load 'repeat
   (defvar winner-repeat-map
     (let ((map (make-sparse-keymap)))
-      (define-key map "u" #'winner-undo)
-      (define-key map "r" #'winner-redo)
+      (define-key map (kbd "_") #'winner-undo)
+      (define-key map (kbd "/") #'winner-undo)
+      (define-key map (kbd "M-_") #'winner-redo)
+      (define-key map (kbd "M-/") #'winner-redo)
       map)
     "Keymap to repeat winner commands.")
   (put 'winner-undo 'repeat-map 'winner-repeat-map)
