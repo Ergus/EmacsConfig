@@ -706,8 +706,7 @@
       map)
     "Keymap to repeat inflection. Used in `string-inflection-all-cycle'.")
 
-  (put 'string-inflection-all-cycle 'repeat-map 'string-inflection-repeat-map)
-)
+  (put 'string-inflection-all-cycle 'repeat-map 'string-inflection-repeat-map))
 
 (use-package undo-propose
   :defer t)
@@ -852,7 +851,7 @@
 		lsp-eldoc-hook nil
 		lsp-enable-indentation nil
 		lsp-prefer-capf t
-		read-process-output-max (* 1024 1024)) ;; 1mb
+		read-process-output-max (* 1024 1024)) ;; 1mb (data read from a process)
   ;; lsp-diagnostic-package t ;; prefer flymake
   ;; :init
   ;; (add-hook 'c-mode-common-hook #'lsp-deferred)
