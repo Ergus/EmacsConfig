@@ -401,6 +401,10 @@
 	      vc-handled-backends '(Git Hg) ;; Only git or mercurial
 	      vc-display-status nil)        ;; No info on the modeline.
 (which-key-add-key-based-replacements "C-x v" "vc")
+
+;; Context Menu
+(context-menu-mode 1)
+
 ;;__________________________________________________________
 ;; Benchmark-init
 
