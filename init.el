@@ -314,14 +314,18 @@
 ;; delay hooks
 (my/gen-delay-hook text-mode)
 (my/gen-delay-hook prog-mode)
+(my/gen-delay-hook conf-mode)
 
 ;; elec-pair
-(defun my/prog-text-common-hook ()
+(defun my/delayed-common-hook ()
   "Enable electric-pair-local-mode"
   (setq-local show-trailing-whitespace t)
   (electric-pair-local-mode 1))
-(add-hook 'prog-mode-delay-hook #'my/prog-text-common-hook)
-(add-hook 'text-mode-delay-hook #'my/prog-text-common-hook)
+
+(add-hook 'prog-mode-delay-hook #'my/delayed-common-hook)
+(add-hook 'text-mode-delay-hook #'my/delayed-common-hook)
+(add-hook 'conf-mode-delay-hook #'my/delayed-common-hook)
+
 
 ;; hl-line
 (global-set-key (kbd "M-s h L") #'hl-line-mode)
@@ -382,9 +386,6 @@
 (setq-default gdb-debug-log-max nil   ;; no limit log
 	      gdb-many-windows nil
 	      gdb-show-main t)
-
-;; conf-mode
-(my/gen-delay-hook conf-mode)
 
 ;; hideif mode
 (setq-default hide-ifdef-shadow t
