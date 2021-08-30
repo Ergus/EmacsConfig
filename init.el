@@ -2218,6 +2218,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package e2ansi
   :defer t)
 
+(use-package crdt
+  :defer t)
+
 (use-package i3wm-config-mode
   :mode "/i3/config\\'")
 
