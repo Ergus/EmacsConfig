@@ -431,14 +431,15 @@
 	      isearch-repeat-on-direction-change t ;; Don't go to the other end on direction change
 	      isearch-regexp-lax-whitespace t      ;; swiper like fuzzy search
 	      search-whitespace-regexp ".*?"
+	      ;; Emacs version > 28
+	      lazy-highlight-no-delay-length 1     ;; use this instead of lazy-highlight-initial-delay
+	      isearch-allow-motion t
+	      ;; isearch-motion-changes-direction t
 	      )
 
 (with-eval-after-load 'isearch
   (define-key isearch-mode-map
     [remap isearch-delete-char] #'isearch-del-char)
-
-  (define-key isearch-mode-map (kbd "M-<") #'isearch-beginning-of-buffer)
-  (define-key isearch-mode-map (kbd "M->") #'isearch-end-of-buffer)
 
   (defun my/isearch-exit-other-end ()
     (interactive)
