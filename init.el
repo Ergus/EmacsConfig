@@ -2027,11 +2027,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (put 'avy-prev 'repeat-map 'avy-repeat-map)
     (put 'avy-next 'repeat-map 'avy-repeat-map)))
 
+
+(global-set-key (kbd "M-Z") #'zap-up-to-char)
+
 (use-package avy-zap
   :defer t
+  :after avy
   :init
-  (global-set-key (kbd "M-Z") #'avy-zap-up-to-char-dwim)
-  (global-set-key [remap zap-to-char] #'avy-zap-to-char-dwim))
+  (define-key avy-basic-map "z" #'avy-zap-to-char-dwim)
+  (define-key avy-basic-map "u" #'avy-zap-up-to-char-dwim))
 
 ;;__________________________________________________________
 ;; Arduino Mode
