@@ -419,8 +419,8 @@
 ;; Isearch
 
 (setq-default search-nonincremental-instead nil    ;; No incremental if enter & empty
-	      ;; lazy-highlight-initial-delay 0
-	      lazy-highlight-no-delay-length 1     ;; use this instead of lazy-highlight-initial-delay
+	      lazy-highlight-no-delay-length 1     ;; normal delay
+	      ;; lazy-highlight-initial-delay 0       ;; old config replaced by lazy-highlight-no-delay-length
 	      isearch-allow-scroll t 	           ;; Permit scroll can be 'unlimited
 	      isearch-lazy-count t
 	      search-ring-max 256
