@@ -303,7 +303,10 @@
 ;; Call these two together to use a single timer
 (run-with-idle-timer 1 nil (lambda ()
 			     (global-auto-revert-mode t) ;; Autoload files changed in disk
-			     (show-paren-mode t)))       ;; Show parenthesis
+			     (if (< emacs-major-version 28)
+				 (show-paren-mode t)
+			       (show-paren-local-mode t))       ;; Show parenthesis
+			     (recentf-mode 1)))
 
 ;; profiler
 (add-hook 'profiler-report-mode-hook #'hl-line-mode)
