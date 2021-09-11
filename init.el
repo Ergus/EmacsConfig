@@ -303,8 +303,11 @@
 ;; Call these two together to use a single timer
 (run-with-idle-timer 1 nil (lambda ()
 			     (global-auto-revert-mode t) ;; Autoload files changed in disk
-			     (show-paren-local-mode t)   ;; Show parenthesis
-			     (recentf-mode 1)))
+			     (show-paren-local-mode t))) ;; Show parenthesis
+
+;; recentf (is loaded by counsel, so not call it in the run-with-idle-timer)
+(with-eval-after-load 'recentf
+  (recentf-mode 1))
 
 ;; profiler
 (add-hook 'profiler-report-mode-hook #'hl-line-mode)
@@ -405,6 +408,9 @@
 
 ;; Context Menu
 (context-menu-mode 1)
+
+;; transient
+;; (setq-default transient-enable-popup-navigation t)
 
 ;;__________________________________________________________
 ;; Benchmark-init
@@ -650,10 +656,9 @@
 		      mouse-wheel-progressive-speed nil)
 	(mouse-wheel-mode t))
 
-    ;; Else set them manually
+    ;; Else set them manually, will be overridden latter.
     (global-set-key [mouse-4] #'scroll-down-command)
     (global-set-key [mouse-5] #'scroll-up-command)))
-
 
 (defun my/scroll-up-command (&optional arg)
   "Scroll up single line or ARG."
@@ -1711,10 +1716,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package amx :defer t) ;; Complete history
 
-;; recentf
-(with-eval-after-load 'recentf
-  (recentf-mode 1))
-
  ;; Complete history
 
 
@@ -2004,13 +2005,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (global-set-key (kbd "C-'") avy-basic-map)
   (which-key-add-key-based-replacements "C-'" "avy")
-  (setq-default ;; avy-style 'at             ;; default 'at-full
+  (setq-default ;; avy-style 'at               ;; default 'at-full
 		;; avy-all-windows nil         ;; commands only in this window
-		avy-timeout-seconds 0.3     ;; timeout for avy timer
 		;; avy-all-windows-alt t       ;; with prefix commands in all windows
-		;; avy-case-fold-search nil ;; Non-nil ignore case
+		;; avy-case-fold-search nil    ;; Non-nil ignore case
+		avy-timeout-seconds 0.3      ;; timeout for avy timer
 		avy-highlight-first t
-		avy-indent-line-overlay t   ;; show highlight after non-whitespace
+		avy-indent-line-overlay t    ;; show highlight after non-whitespace
 		avy-keys '(?z ?x ?c ?v ?b ?n ?m
 			      ?a ?s ?d ?f ?g ?h ?j ?k ?l
 			      ?q ?w ?e ?r ?t ?y ?u ?i ?o ?p) ;; Order of proposals
