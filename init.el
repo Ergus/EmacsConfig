@@ -303,9 +303,7 @@
 ;; Call these two together to use a single timer
 (run-with-idle-timer 1 nil (lambda ()
 			     (global-auto-revert-mode t) ;; Autoload files changed in disk
-			     (if (< emacs-major-version 28)
-				 (show-paren-mode t)
-			       (show-paren-local-mode t))       ;; Show parenthesis
+			     (show-paren-local-mode t)   ;; Show parenthesis
 			     (recentf-mode 1)))
 
 ;; profiler
@@ -400,7 +398,6 @@
 (eval-after-load 'subword '(diminish 'subword-mode))
 
 ;; vc
-
 (setq-default vc-follow-symlinks t	    ;; Open links not open
 	      vc-handled-backends '(Git Hg) ;; Only git or mercurial
 	      vc-display-status nil)        ;; No info on the modeline.
