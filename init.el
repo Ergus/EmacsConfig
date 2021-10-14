@@ -692,9 +692,8 @@
 ;;__________________________________________________________
 ;; Undo tree
 
-;; (global-set-key [remap undo] #'undo-only)
-(global-set-key (kbd "C-M-/") #'undo-redo)
-(global-set-key (kbd "C-M-_") #'undo-redo)
+(global-set-key (kbd "C-M-/") #'undo-redo)  ;; For gui; in tty "C-M-/" == "C-M-_"
+;; (global-set-key (kbd "C-M-_") #'undo-redo) already set by default
 
 (with-eval-after-load 'repeat
   (defvar undo-redo-repeat-map
