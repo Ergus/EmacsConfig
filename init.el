@@ -587,8 +587,8 @@
   (global-set-key (kbd "C-c t t") #'vterm-toggle-cd)
   :config
   (define-key vterm-mode-map (kbd "<C-return>") #'vterm-toggle-insert-cd)
-  (define-key vterm-mode-map (kbd "C-M-n") #'vterm-toggle-forward)
-  (define-key vterm-mode-map (kbd "C-M-p") #'vterm-toggle-backward)
+  ;; (define-key vterm-mode-map (kbd "C-M-n") #'vterm-toggle-forward)
+  ;; (define-key vterm-mode-map (kbd "C-M-p") #'vterm-toggle-backward)
 
   ;; Show at bottom
   (add-to-list 'display-buffer-alist
@@ -596,7 +596,7 @@
 		   (with-current-buffer bufname
 		     (equal major-mode 'vterm-mode)))
                  ;; (display-buffer-reuse-window display-buffer-at-bottom)
-                 (display-buffer-reuse-window display-buffer-in-direction)
+                 (display-buffer-reuse-window bufname display-buffer-in-direction)
                  ;;display-buffer-in-direction/direction/dedicated is added in emacs27
                  (direction . bottom)
                  (dedicated . t) ;dedicated is supported in emacs27
