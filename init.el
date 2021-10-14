@@ -642,6 +642,12 @@
 
 ;;__________________________________________________________
 ;; xterm mouse
+(setq-default mouse-wheel-scroll-amount '(1             ;; No modifier
+					  ((shift) . 3) ;; in terminal does not work
+					  ((meta) . hscroll)
+					  ((control)))
+	      mouse-wheel-progressive-speed nil)
+
 (unless (or (display-graphic-p)
 	    (string-equal (getenv "TERM") "linux"))
   (setq-default mouse-sel-mode t          ;; Mouse selection
@@ -652,13 +658,7 @@
   (set-cursor-color "white")
   (set-mouse-color "white")		  ;; Flechita del mouse en blanco
   (if (fboundp 'mouse-wheel-mode)
-      (progn
-	(setq-default mouse-wheel-scroll-amount '(3             ;; No modifier
-						  ((shift) . 1) ;; in terminal does not work
-						  ((meta) . hscroll)
-						  ((control)))
-		      mouse-wheel-progressive-speed nil)
-	(mouse-wheel-mode t))
+      (mouse-wheel-mode t)
 
     ;; Else set them manually, will be overridden latter.
     (global-set-key [mouse-4] #'scroll-down-command)
