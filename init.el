@@ -306,9 +306,7 @@
 	      show-paren-delay 0
 	      blink-matching-paren nil)
 ;; Call these two together to use a single timer
-(run-with-idle-timer 1 nil (lambda ()
-			     (global-auto-revert-mode t) ;; Autoload files changed in disk
-			     (show-paren-local-mode t))) ;; Show parenthesis
+(run-with-idle-timer 1 nil #'global-auto-revert-mode 1) ;; Autoload files changed in disk
 
 ;; recentf (is loaded by counsel, so not call it in the run-with-idle-timer)
 (with-eval-after-load 'recentf
