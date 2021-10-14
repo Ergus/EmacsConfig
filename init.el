@@ -111,11 +111,15 @@
 
 	      ;; M-x show context-local commands
 	      read-extended-command-predicate  #'command-completion-default-include-p
+	      completions-detailed t              ;; show more detailed completions
 	      use-short-answers t                 ;; Use y or n to exit and other shorter answers.
 	      goto-line-history-local t           ;; Buffer local goto-line history
 	      switch-to-buffer-obey-display-actions t ;; switching the buffer respects display actions
 	      bookmark-menu-confirm-deletion t    ;; ask confirmation to delete bookmark
 	      bookmark-fontify t                  ;; Colorize bookmarked lines with bookmark-face
+	      ;;idle-update-delay 0.25
+
+	      translate-upper-case-key-bindings nil ;; Make keybindings case sensitive
 	      )
 
 ;; Vertical window divider
