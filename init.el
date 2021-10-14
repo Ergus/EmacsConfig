@@ -337,16 +337,16 @@
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
 
 ;; hilit-chg changes
-(easy-mmode-defmap highlight-changes-map
-  `(("c" . highlight-changes-mode)
-    ("v" . highlight-changes-visible-mode)
-    ("r" . highlight-changes-remove-highlight)
-    ("n" . highlight-changes-next-change)
-    ("p" . highlight-changes-previous-change)
-    ("f" . highlight-changes-rotate-faces)
-    ("b" . highlight-compare-buffers)
-    ("d" . highlight-compare-with-file))
-  "The base keymap for `highlight changes'.")
+(defvar-keymap highlight-changes-map
+  :doc "The base keymap for `highlight changes'."
+  "c" #'highlight-changes-mode
+  "v" #'highlight-changes-visible-mode
+  "r" #'highlight-changes-remove-highlight
+  "n" #'highlight-changes-next-change
+  "p" #'highlight-changes-previous-change
+  "f" #'highlight-changes-rotate-faces
+  "b" #'highlight-compare-buffers
+  "d" #'highlight-compare-with-file)
 (global-set-key (kbd "M-s h c") highlight-changes-map)
 (which-key-add-key-based-replacements "M-s h c" "highlight-changes")
 
@@ -779,11 +779,11 @@
 (add-hook 'text-mode-delay-hook #'turn-on-flyspell)
 
 (with-eval-after-load 'flyspell
-  (easy-mmode-defmap flyspell-basic-map
-    `(("r" . flyspell-region)
-      ("b" . flyspell-buffer)
-      ("n" . flyspell-goto-next-error))
-    "The base keymap for `flyspell-mode'")
+  (defvar-keymap flyspell-basic-map
+    :doc "The base keymap for `flyspell-mode'"
+    "r" #'flyspell-region
+    "b" #'flyspell-buffer
+    "n" #'flyspell-goto-next-error)
 
   (setf (cdr flyspell-mode-map) nil)  ;; clear yas minor map
   (define-key flyspell-mode-map (kbd "C-c f") flyspell-basic-map)
@@ -1190,13 +1190,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; splitting
 (setq-default windmove-display-no-select t)
 
-(easy-mmode-defmap ctl-x-0-map
-  `(("0" . delete-window)
-    ([left] . windmove-delete-left)
-    ([right] . windmove-delete-right)
-    ([up] . windmove-delete-up)
-    ([down] . windmove-delete-down))
-  "The base keymap for `highlight changes'.")
+(defvar-keymap ctl-x-0-map
+  :doc "The base keymap for `highlight changes'."
+  "0" #'delete-window
+  [left] #'windmove-delete-left
+  [right] #'windmove-delete-right
+  [up] #'windmove-delete-up
+  [down] #'windmove-delete-down)
 
 (define-key ctl-x-map "0" ctl-x-0-map)
 (which-key-add-key-based-replacements "C-x 0" "windmove-delete")
@@ -1254,16 +1254,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (or (call-interactively #'yas-expand)
 	(call-interactively #'yas-insert-snippet)))
 
-  (easy-mmode-defmap yas-minor-basic-map
-    '(("d" . yas-load-directory)
-      ("i" . yas-insert-snippet)
-      ("f" . yas-visit-snippet-file)
-      ("n" . yas-new-snippet)
-      ("t" . yas-tryout-snippet)
-      ("l" . yas-describe-tables)
-      ("x" . yas-expand)
-      ("y" . yas-expand-or-insert))
-    "The keymap used when `yas-minor-mode' is active.")
+  (defvar-keymap yas-minor-basic-map
+    :doc "The keymap used when `yas-minor-mode' is active."
+    "d" #'yas-load-directory
+    "i" #'yas-insert-snippet
+    "f" #'yas-visit-snippet-file
+    "n" #'yas-new-snippet
+    "t" #'yas-tryout-snippet
+    "l" #'yas-describe-tables
+    "x" #'yas-expand
+    "y" #'yas-expand-or-insert)
 
   (setf (cdr yas-minor-mode-map) nil)  ;; clear yas minor map
   (define-key yas-minor-mode-map (kbd "C-c y") yas-minor-basic-map)
@@ -1302,13 +1302,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (with-eval-after-load 'flymake
   (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
-  (easy-mmode-defmap flymake-basic-map
-    `(("n" . flymake-goto-next-error)
-      ("p" . flymake-goto-prev-error)
-      ("d" . flymake-show-diagnostic)
-      ("b" . flymake-show-diagnostic-buffer)
-      ("l" . flymake-switch-to-log-buffer))
-    "The base keymap for `flymake-mode'.")
+  (defvar-keymap flymake-basic-map
+    :doc "The base keymap for `flymake-mode'."
+    "n" #'flymake-goto-next-error
+    "p" #'flymake-goto-prev-error
+    "d" #'flymake-show-diagnostic
+    "b" #'flymake-show-diagnostic-buffer
+    "l" #'flymake-switch-to-log-buffer)
 
   (define-key flymake-mode-map (kbd "C-c k") flymake-basic-map)
   (which-key-add-keymap-based-replacements flymake-mode-map "C-c k" "flymake")
@@ -1339,13 +1339,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		languagetool-java-arguments '("-Dfile.encoding=UTF-8")
 		languagetool-default-language "en")
 
-  (easy-mmode-defmap languagetool-basic-map
-    `(("l" . languagetool-check)
-      ("c" . languagetool-clear-buffer)
-      ("." . languagetool-correct-at-point)
-      ("b" . languagetool-correct-buffer)
-      ("s" . languagetool-set-language))
-    "The base keymap for `languagetool'.")
+  (defvar-keymap languagetool-basic-map
+    :doc "The base keymap for `languagetool'."
+    "l" #'languagetool-check
+    "c" #'languagetool-clear-buffer
+    "." #'languagetool-correct-at-point
+    "b" #'languagetool-correct-buffer
+    "s" #'languagetool-set-language)
 
   (global-set-key (kbd "C-c l") languagetool-basic-map)
   (which-key-add-key-based-replacements "C-c l" "languagetool")
@@ -1644,14 +1644,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (setq-default xref-show-definitions-function #'ivy-xref-show-defs
 		xref-show-xrefs-function #'ivy-xref-show-xrefs)
-  (easy-mmode-defmap ivy-xref-basic-map
-    `(("d" . xref-find-definitions)
-      ("4" . xref-find-definitions-other-window)
-      ("a" . xref-find-apropos)
-      ("b" . xref-pop-marker-stack) ;; go back
-      ("r" . xref-find-references)
-      (,(kbd "TAB") . completion-at-point))
-    "The base keymap for `ivy-xref'")
+  (defvar-keymap ivy-xref-basic-map
+    :doc "The base keymap for `ivy-xref'"
+    "d" #'xref-find-definitions
+    "4" #'xref-find-definitions-other-window
+    "a" #'xref-find-apropos
+    "b" #'xref-pop-marker-stack ;; go back
+    "r" #'xref-find-references
+    (kbd "TAB") #'completion-at-point)
 
   (global-set-key (kbd "C-c x") ivy-xref-basic-map))
 
@@ -1678,32 +1678,32 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq-default counsel-find-file-at-point t       ;; Select file at point
 		counsel-preselect-current-file t)   ;; Select current file in list
   :config
-  (easy-mmode-defmap counsel-basic-map
-    `(;;([remap switch-to-buffer] . counsel-switch-buffer)
-      ;;([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
-      ("c" . ivy-resume)               ;; resume ivy
-      ("a" . counsel-ag)
-      ("b" . counsel-ibuffer)          ;; like ibuffer + switch-to-buffer
-      ("i" . counsel-imenu)
-      ("r" . counsel-rg)	       ;; like git grep
-      ("g" . counsel-grep)             ;; grep in local file
-      ("G" . counsel-git-grep)         ;; grep in current git repo
-      ("e" . counsel-linux-app)        ;; call application
-      ("l" . counsel-find-library)     ;; Search lisp libraries
-      (,(kbd "SPC") . counsel-register)     ;; list registers
-      (,(kbd "RET") . counsel-company)      ;; company completions
-      (,(kbd "C-SPC") . counsel-mark-ring)  ;; Mark ring history
-      ("\C-r" . counsel-command-history) ;; command history
-      ("p" . counsel-package)          ;; command history
-      ("P" . counsel-list-processes)   ;; command history
-      ;; counsel-file commands
-      ("fg" . counsel-git)             ;; find file in git rempo
-      ("fj" . counsel-file-jump)       ;; file in subdir
-      ("fl" . counsel-locate)          ;; locate command (como search)
-      ("fr" . counsel-recentf)
-      ("fz" . counsel-fzf)
-      ("fb" . counsel-buffer-or-recentf))
-    "The base keymap for `counsel-mode'.")
+  (defvar-keymap counsel-basic-map
+    :doc "The base keymap for `counsel-mode'."
+    ;;([remap switch-to-buffer] . counsel-switch-buffer)
+    ;;([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
+    "c" #'ivy-resume               ;; resume ivy
+    "a" #'counsel-ag
+    "b" #'counsel-ibuffer          ;; like ibuffer + switch-to-buffer
+    "i" #'counsel-imenu
+    "r" #'counsel-rg	       ;; like git grep
+    "g" #'counsel-grep             ;; grep in local file
+    "G" #'counsel-git-grep         ;; grep in current git repo
+    "e" #'counsel-linux-app        ;; call application
+    "l" #'counsel-find-library     ;; Search lisp libraries
+    (kbd "SPC") #'counsel-register     ;; list registers
+    (kbd "RET") #'counsel-company      ;; company completions
+    (kbd "C-SPC") #'counsel-mark-ring  ;; Mark ring history
+    "\C-r" #'counsel-command-history ;; command history
+    "p" #'counsel-package          ;; command history
+    "P" #'counsel-list-processes   ;; command history
+    ;; counsel-file commands
+    "fg" #'counsel-git             ;; find file in git rempo
+    "fj" #'counsel-file-jump       ;; file in subdir
+    "fl" #'counsel-locate          ;; locate command como search)
+    "fr" #'counsel-recentf
+    "fz" #'counsel-fzf
+    "fb" #'counsel-buffer-or-recentf)
 
   (define-key counsel-mode-map (kbd "C-c c") counsel-basic-map)
   (which-key-add-keymap-based-replacements counsel-mode-map
@@ -1972,32 +1972,32 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package avy
   :preface
-  (easy-mmode-defmap avy-basic-map
-    `(("r" . avy-resume)
-      (,(kbd "C-'") . avy-goto-char-timer)
-      ("'" . avy-goto-char-timer)
-      ("c" . avy-goto-char)
-      ("2" . avy-goto-char-2)
-      ("\C-f" . avy-goto-char-in-line)
-      ("w" . avy-goto-word-or-subword-1) ;; Alternative avy-goto-word
-      ("W" . avy-goto-word-0)            ;; All words, no initial char
-      ("\C-s" . avy-goto-word-1-below)
-      ("\C-r" . avy-goto-word-1-above)
-      ("\M-b" . avy-goto-word-0-above)
-      ("\M-f" . avy-goto-word-0-below)
-      ("p" . avy-prev)
-      ("n" . avy-next)
-      ("s" . avy-goto-symbol-1)
-      ("\C-a" . avy-goto-line)
-      ("\C-e" . avy-goto-end-of-line)
-      ("\C-n" . avy-goto-line-below)
-      ("\C-p" . avy-goto-line-above)
-      ("\C-w" . avy-move-region)
-      ("\C-k" . avy-kill-region)
-      ("\M-w" . avy-kill-ring-save-region)
-      ("\C-b" . avy-pop-mark)
-      ("i" . avy-copy-region))
-    "The base keymap for `avy-mode'.")
+  (defvar-keymap avy-basic-map
+    :doc "The base keymap for `avy-mode'."
+    "r" #'avy-resume
+    (kbd "C-'") #'avy-goto-char-timer
+    "'" #'avy-goto-char-timer
+    "c" #'avy-goto-char
+    "2" #'avy-goto-char-2
+    "\C-f" #'avy-goto-char-in-line
+    "w" #'avy-goto-word-or-subword-1 ;; Alternative avy-goto-word
+    "W" #'avy-goto-word-0            ;; All words, no initial char
+    "\C-s" #'avy-goto-word-1-below
+    "\C-r" #'avy-goto-word-1-above
+    "\M-b" #'avy-goto-word-0-above
+    "\M-f" #'avy-goto-word-0-below
+    "p" #'avy-prev
+    "n" #'avy-next
+    "s" #'avy-goto-symbol-1
+    "\C-a" #'avy-goto-line
+    "\C-e" #'avy-goto-end-of-line
+    "\C-n" #'avy-goto-line-below
+    "\C-p" #'avy-goto-line-above
+    "\C-w" #'avy-move-region
+    "\C-k" #'avy-kill-region
+    "\M-w" #'avy-kill-ring-save-region
+    "\C-b" #'avy-pop-mark
+    "i" #'avy-copy-region)
   :defer t
   :init
   (eval-after-load 'isearch
@@ -2076,25 +2076,25 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package multiple-cursors  ;; Multiple cursors package
   :defer t
   :init
-  (easy-mmode-defmap mc-basic-map
-    `(("l" . mc/edit-lines)
-      ("a" . mc/mark-all-like-this)
-      ("d" . mc/mark-all-dwim)
-      ("." . mc/mark-all-symbols-like-this)
-      ("w" . mc/mark-all-words-like-this)
-      ("r" . mc/mark-all-in-region)
-      ("s" . mc/mark-all-in-region-regexp)
-      ("e" . mc/mark-more-like-this-extended)
-      ("n" . mc/mark-next-like-this)
-      ("p" . mc/mark-previous-like-this)
-      ("\M-f" . mc/mark-next-like-this-word)
-      ("\M-b" . mc/mark-previous-word-like-this)
-      ("\M-p" . mc/mark-pop)
-      ("#" . mc/insert-numbers)
-      ("L" . mc/insert-letters)
-      ("\C-a" . mc/edit-beginnings-of-lines)
-      ("\C-e" . mc/edit-ends-of-lines))
-    "The base keymap for `multicursor'")
+  (defvar-keymap mc-basic-map
+    :doc "The base keymap for `multicursor'"
+    "l" #'mc/edit-lines
+    "a" #'mc/mark-all-like-this
+    "d" #'mc/mark-all-dwim
+    "." #'mc/mark-all-symbols-like-this
+    "w" #'mc/mark-all-words-like-this
+    "r" #'mc/mark-all-in-region
+    "s" #'mc/mark-all-in-region-regexp
+    "e" #'mc/mark-more-like-this-extended
+    "n" #'mc/mark-next-like-this
+    "p" #'mc/mark-previous-like-this
+    "\M-f" #'mc/mark-next-like-this-word
+    "\M-b" #'mc/mark-previous-word-like-this
+    "\M-p" #'mc/mark-pop
+    "#" #'mc/insert-numbers
+    "L" #'mc/insert-letters
+    "\C-a" #'mc/edit-beginnings-of-lines
+    "\C-e" #'mc/edit-ends-of-lines)
 
   (global-set-key (kbd "C-c m") mc-basic-map)
   (which-key-add-key-based-replacements "C-c m" "multi-cursors")
