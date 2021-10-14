@@ -291,7 +291,8 @@
 	      imenu-max-item-length 256)
 
 ;; uniquify
-(setq-default uniquify-buffer-name-style 'post-forward)
+;; (setq-default uniquify-buffer-name-style 'post-forward)  ;; default 'forward
+(setq-default uniquify-buffer-name-style 'forward)
 
 ;; saveplace
 (save-place-mode 1)                           ;; Remember point in files
