@@ -335,7 +335,7 @@
 
 
 ;; hl-line
-(global-set-key (kbd "M-s h L") #'hl-line-mode)
+(global-set-key ["M-s h L"] #'hl-line-mode)
 (eval-after-load 'hl-line '(diminish 'hl-line-mode))
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
 
@@ -350,7 +350,7 @@
   "f" #'highlight-changes-rotate-faces
   "b" #'highlight-compare-buffers
   "d" #'highlight-compare-with-file)
-(global-set-key (kbd "M-s h c") highlight-changes-map)
+(global-set-key ["M-s h c"] highlight-changes-map)
 (which-key-add-key-based-replacements "M-s h c" "highlight-changes")
 
 ;; winner
@@ -456,7 +456,7 @@
       (goto-char isearch-other-end))
     (call-interactively #'isearch-exit))
 
-  (define-key isearch-mode-map (kbd "M-RET") #'my/isearch-exit-other-end)
+  (define-key isearch-mode-map ["M-RET"] #'my/isearch-exit-other-end)
 
   (which-key-add-key-based-replacements "M-s h" "highlight"))
 
@@ -584,9 +584,9 @@
   (setq-default vterm-toggle-scope 'project
 		vterm-toggle-project-root t
 		vterm-toggle-fullscreen-p nil)
-  (global-set-key (kbd "C-c t t") #'vterm-toggle-cd)
+  (global-set-key ["C-c t t"] #'vterm-toggle-cd)
   :config
-  (define-key vterm-mode-map (kbd "<C-return>") #'vterm-toggle-insert-cd)
+  (define-key vterm-mode-map ["<C-return>"] #'vterm-toggle-insert-cd)
   ;; (define-key vterm-mode-map (kbd "C-M-n") #'vterm-toggle-forward)
   ;; (define-key vterm-mode-map (kbd "C-M-p") #'vterm-toggle-backward)
 
@@ -613,7 +613,7 @@
 (use-package better-shell
   :defer t
   :init
-  (global-set-key (kbd "C-c t b") #'better-shell-shell))
+  (global-set-key ["C-c t b"] #'better-shell-shell))
 
 (use-package shell-command+
   :defer t
@@ -692,7 +692,7 @@
 ;;__________________________________________________________
 ;; Undo tree
 
-(global-set-key (kbd "C-M-/") #'undo-redo)  ;; For gui; in tty "C-M-/" == "C-M-_"
+(global-set-key ["C-M-/"] #'undo-redo)  ;; For gui; in tty "C-M-/" == "C-M-_"
 ;; (global-set-key (kbd "C-M-_") #'undo-redo) already set by default
 
 (with-eval-after-load 'repeat
@@ -700,7 +700,7 @@
     (let ((map (make-sparse-keymap)))
       (define-key map "u" #'undo-only)
       (define-key map "r" #'undo-redo)
-      (define-key map (kbd "C-u") #'undo)
+      (define-key map ["C-u"] #'undo)
       map)
     "Keymap to repeat undo-redo key sequences.")
   (put 'undo-only 'repeat-map 'undo-redo-repeat-map)
@@ -713,12 +713,12 @@
 (use-package string-inflection
   :defer t
   :init
-  (global-set-key (kbd "C-c SPC") #'string-inflection-all-cycle)
+  (global-set-key ["C-c SPC"] #'string-inflection-all-cycle)
 
   :config
   (defvar string-inflection-repeat-map
     (let ((map (make-sparse-keymap)))
-      (define-key map (kbd "SPC") #'string-inflection-all-cycle)
+      (define-key map ["SPC"] #'string-inflection-all-cycle)
       map)
     "Keymap to repeat inflection. Used in `string-inflection-all-cycle'.")
 
@@ -736,7 +736,7 @@
   :init
   (setq-default highlight-indent-guides-auto-enabled nil
 		highlight-indent-guides-method 'character)
-  (global-set-key (kbd "M-s h i") #'highlight-indent-guides-mode)
+  (global-set-key ["M-s h i"] #'highlight-indent-guides-mode)
   :config
   (set-face-attribute 'highlight-indent-guides-character-face nil
 		      :foreground (my/named-color brightblack)))
@@ -747,8 +747,8 @@
   :defer t
   :diminish
   :init
-  (global-set-key (kbd "M-s h b") #'highlight-blocks-now)
-  (global-set-key (kbd "M-s h B") #'highlight-blocks-mode)
+  (global-set-key ["M-s h b"] #'highlight-blocks-now)
+  (global-set-key ["M-s h B"] #'highlight-blocks-mode)
   :config
   (set-face-attribute 'highlight-blocks-depth-2-face nil :background "#262626") ;; gray15
   (set-face-attribute 'highlight-blocks-depth-3-face nil :background "#333333") ;; gray20
@@ -763,7 +763,7 @@
   :diminish
   :defer t
   :init
-  (global-set-key (kbd "M-s h s") #'hes-mode)
+  (global-set-key ["M-s h s"] #'hes-mode)
   (which-key-add-key-based-replacements "M-s h s" "highlight-escape-mode"))
 
 ;;__________________________________________________________
@@ -788,7 +788,7 @@
     "n" #'flyspell-goto-next-error)
 
   (setf (cdr flyspell-mode-map) nil)  ;; clear yas minor map
-  (define-key flyspell-mode-map (kbd "C-c f") flyspell-basic-map)
+  (define-key flyspell-mode-map ["C-c f"] flyspell-basic-map)
   (which-key-add-keymap-based-replacements flyspell-mode-map "C-c f" "flyspell")
   (diminish 'flyspell-mode))
 
@@ -847,10 +847,10 @@
 				   (company-dabbrev-code company-gtags company-keywords)
 				   company-dabbrev))
   :config
-  (define-key company-mode-map (kbd "M-RET") #'company-complete)
-  (define-key company-mode-map (kbd "M-/") #'company-other-backend)
+  (define-key company-mode-map ["M-RET"] #'company-complete)
+  (define-key company-mode-map ["M-/"] #'company-other-backend)
 
-  (define-key company-active-map (kbd "M-RET") #'company-abort)
+  (define-key company-active-map ["M-RET"] #'company-abort)
   (define-key company-active-map [remap dabbrev-expand] #'company-other-backend)
   (define-key company-active-map [remap xref-find-definitions] #'company-show-location)
   )
@@ -915,7 +915,7 @@
   :diminish
   :after lsp-mode
   :config
-  (define-key lsp-mode-map (kbd "C-c l i") #'lsp-ivy-workspace-symbol)
+  (define-key lsp-mode-map ["C-c l i"] #'lsp-ivy-workspace-symbol)
   )
 
 (use-package tree-sitter
@@ -1268,7 +1268,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "y" #'yas-expand-or-insert)
 
   (setf (cdr yas-minor-mode-map) nil)  ;; clear yas minor map
-  (define-key yas-minor-mode-map (kbd "C-c y") yas-minor-basic-map)
+  (define-key yas-minor-mode-map ["C-c y"] yas-minor-basic-map)
   (which-key-add-keymap-based-replacements yas-minor-mode-map "C-c y" "yasnippet")
 
   (yas-global-mode 1))
@@ -1312,7 +1312,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "b" #'flymake-show-diagnostic-buffer
     "l" #'flymake-switch-to-log-buffer)
 
-  (define-key flymake-mode-map (kbd "C-c k") flymake-basic-map)
+  (define-key flymake-mode-map ["C-c k"] flymake-basic-map)
   (which-key-add-keymap-based-replacements flymake-mode-map "C-c k" "flymake")
   (diminish 'flymake-mode))
 
@@ -1323,13 +1323,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :diminish
   :init
-  (global-set-key (kbd "C-h F") #'helpful-function)
-  (global-set-key (kbd "C-h C") #'helpful-command)
-  (global-set-key (kbd "C-h M") #'helpful-macro)
-  (global-set-key (kbd "C-h L") #'helpful-callable)
-  (global-set-key (kbd "C-h K") #'helpful-key)
-  (global-set-key (kbd "C-h P") #'helpful-at-point)
-  (global-set-key (kbd "C-h V") #'helpful-variable))
+  (global-set-key ["C-h F"] #'helpful-function)
+  (global-set-key ["C-h C"] #'helpful-command)
+  (global-set-key ["C-h M"] #'helpful-macro)
+  (global-set-key ["C-h L"] #'helpful-callable)
+  (global-set-key ["C-h K"] #'helpful-key)
+  (global-set-key ["C-h P"] #'helpful-at-point)
+  (global-set-key ["C-h V"] #'helpful-variable))
 
 ;;__________________________________________________________
 ;; Chequeo de gramatica
@@ -1349,7 +1349,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "b" #'languagetool-correct-buffer
     "s" #'languagetool-set-language)
 
-  (global-set-key (kbd "C-c l") languagetool-basic-map)
+  (global-set-key ["C-c l"] languagetool-basic-map)
   (which-key-add-key-based-replacements "C-c l" "languagetool")
 
   ;; :config
@@ -1446,7 +1446,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 			     (flyspell-mode 1)
 			     (visual-line-mode 1)
 			     (auto-fill-mode 1)
-			     (define-key LaTeX-mode-map (kbd "M-RET") nil)))
+			     (define-key LaTeX-mode-map ["M-RET"] nil)))
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
 
 
@@ -1516,7 +1516,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      flycheck-python-flake8-executable "flake8")
 
 (eval-after-load 'python
-  '(define-key python-mode-map (kbd "C-c C-z") #'python-shell))
+  '(define-key python-mode-map ["C-c C-z"] #'python-shell))
 (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
 (add-to-list 'interpreter-mode-alist '("python3" . python-mode))
 
@@ -1538,7 +1538,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   ;;(dired-sidebar-use-term-integration t)
   (setq-default dired-sidebar-theme 'nerd
 		dired-sidebar-subtree-line-prefix ".")
-  (global-set-key (kbd "C-c b d") #'dired-sidebar-toggle-sidebar))
+  (global-set-key ["C-c b d"] #'dired-sidebar-toggle-sidebar))
 
 
 ;; __________________________________________________________
@@ -1562,7 +1562,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package ibuffer-sidebar
   :defer t
   :init
-  (global-set-key (kbd "C-c b b") #'ibuffer-sidebar-toggle-sidebar))
+  (global-set-key ["C-c b b"] #'ibuffer-sidebar-toggle-sidebar))
 
 (use-package ibuffer-tramp
   :after ibuffer
@@ -1591,7 +1591,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ibuffer-sidebar-toggle-sidebar)
   (dired-sidebar-toggle-sidebar))
 
-(global-set-key (kbd "C-c b s") #'my/sidebar-toggle)
+(global-set-key ["C-c b s"] #'my/sidebar-toggle)
 
 ;;__________________________________________________________
 ;; neotree
@@ -1599,7 +1599,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package neotree
   :defer t
   :init
-  (global-set-key (kbd "C-c b n") #'neotree-toggle))
+  (global-set-key ["C-c b n"] #'neotree-toggle))
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
@@ -1625,9 +1625,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   ;; Highlight with arrows by default.
   ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
 
-  (define-key ivy-mode-map (kbd "C-c c c") #'ivy-resume)
-  (define-key ivy-minibuffer-map (kbd "TAB") #'ivy-partial)
-  (define-key ivy-minibuffer-map (kbd "RET") #'ivy-alt-done)
+  (define-key ivy-mode-map ["C-c c c"] #'ivy-resume)
+  (define-key ivy-minibuffer-map ["TAB"] #'ivy-partial)
+  (define-key ivy-minibuffer-map ["RET"] #'ivy-alt-done)
 
   (ivy-mode 1))
 
@@ -1653,9 +1653,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "a" #'xref-find-apropos
     "b" #'xref-pop-marker-stack ;; go back
     "r" #'xref-find-references
-    (kbd "TAB") #'completion-at-point)
+    ["TAB"] #'completion-at-point)
 
-  (global-set-key (kbd "C-c x") ivy-xref-basic-map))
+  (global-set-key ["C-c x"] ivy-xref-basic-map))
 
 (use-package swiper
   :defer t
@@ -1663,15 +1663,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq-default swiper-goto-start-of-match t
 		swiper-verbose nil)
   (eval-after-load 'isearch
-    '(define-key isearch-mode-map (kbd "C-o") #'swiper-isearch-toggle))
+    '(define-key isearch-mode-map ["C-o"] #'swiper-isearch-toggle))
   :config
-  (define-key swiper-map (kbd "C-o") #'swiper-isearch-toggle))
+  (define-key swiper-map ["C-o"] #'swiper-isearch-toggle))
 
 (use-package imenu-list
   :defer t
   :init
   (setq-default imenu-list-position 'left)
-  (global-set-key (kbd "C-c b i") #'imenu-list-smart-toggle))
+  (global-set-key ["C-c b i"] #'imenu-list-smart-toggle))
 
 (use-package counsel
   :diminish
@@ -1693,10 +1693,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "G" #'counsel-git-grep         ;; grep in current git repo
     "e" #'counsel-linux-app        ;; call application
     "l" #'counsel-find-library     ;; Search lisp libraries
-    (kbd "SPC") #'counsel-register     ;; list registers
-    (kbd "RET") #'counsel-company      ;; company completions
-    (kbd "C-SPC") #'counsel-mark-ring  ;; Mark ring history
-    "\C-r" #'counsel-command-history ;; command history
+    ["SPC"] #'counsel-register     ;; list registers
+    ["RET"] #'counsel-company      ;; company completions
+    ["C-SPC"] #'counsel-mark-ring  ;; Mark ring history
+    ["C-r"] #'counsel-command-history ;; command history
     "p" #'counsel-package          ;; command history
     "P" #'counsel-list-processes   ;; command history
     ;; counsel-file commands
@@ -1707,7 +1707,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "fz" #'counsel-fzf
     "fb" #'counsel-buffer-or-recentf)
 
-  (define-key counsel-mode-map (kbd "C-c c") counsel-basic-map)
+  (define-key counsel-mode-map ["C-c c"] counsel-basic-map)
   (which-key-add-keymap-based-replacements counsel-mode-map
     "C-c c" "counsel"
     "C-c c f" "counsel-file")
@@ -1977,35 +1977,35 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (defvar-keymap avy-basic-map
     :doc "The base keymap for `avy-mode'."
     "r" #'avy-resume
-    (kbd "C-'") #'avy-goto-char-timer
+    ["C-'"] #'avy-goto-char-timer
     "'" #'avy-goto-char-timer
     "c" #'avy-goto-char
     "2" #'avy-goto-char-2
-    "\C-f" #'avy-goto-char-in-line
+    ["C-f"] #'avy-goto-char-in-line
     "w" #'avy-goto-word-or-subword-1 ;; Alternative avy-goto-word
     "W" #'avy-goto-word-0            ;; All words, no initial char
-    "\C-s" #'avy-goto-word-1-below
-    "\C-r" #'avy-goto-word-1-above
-    "\M-b" #'avy-goto-word-0-above
-    "\M-f" #'avy-goto-word-0-below
+    ["C-s"] #'avy-goto-word-1-below
+    ["C-r"] #'avy-goto-word-1-above
+    ["M-b"] #'avy-goto-word-0-above
+    ["M-f"] #'avy-goto-word-0-below
     "p" #'avy-prev
     "n" #'avy-next
     "s" #'avy-goto-symbol-1
-    "\C-a" #'avy-goto-line
-    "\C-e" #'avy-goto-end-of-line
-    "\C-n" #'avy-goto-line-below
-    "\C-p" #'avy-goto-line-above
-    "\C-w" #'avy-move-region
-    "\C-k" #'avy-kill-region
-    "\M-w" #'avy-kill-ring-save-region
-    "\C-b" #'avy-pop-mark
+    ["C-a"] #'avy-goto-line
+    ["C-e"] #'avy-goto-end-of-line
+    ["C-n"] #'avy-goto-line-below
+    ["C-p"] #'avy-goto-line-above
+    ["C-w"] #'avy-move-region
+    ["C-k"] #'avy-kill-region
+    ["M-w"] #'avy-kill-ring-save-region
+    ["C-b"] #'avy-pop-mark
     "i" #'avy-copy-region)
   :defer t
   :init
   (eval-after-load 'isearch
-    '(define-key isearch-mode-map (kbd "C-'") #'avy-isearch))
+    '(define-key isearch-mode-map ["C-'"] #'avy-isearch))
 
-  (global-set-key (kbd "C-'") avy-basic-map)
+  (global-set-key ["C-'"] avy-basic-map)
   (which-key-add-key-based-replacements "C-'" "avy")
   (setq-default ;; avy-style 'at               ;; default 'at-full
 		;; avy-all-windows nil         ;; commands only in this window
@@ -2031,7 +2031,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (put 'avy-next 'repeat-map 'avy-repeat-map)))
 
 
-(global-set-key (kbd "M-Z") #'zap-up-to-char)
+(global-set-key ["M-Z"] #'zap-up-to-char)
 
 (use-package avy-zap
   :defer t
@@ -2098,7 +2098,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "\C-a" #'mc/edit-beginnings-of-lines
     "\C-e" #'mc/edit-ends-of-lines)
 
-  (global-set-key (kbd "C-c m") mc-basic-map)
+  (global-set-key ["C-c m"] mc-basic-map)
   (which-key-add-key-based-replacements "C-c m" "multi-cursors")
 
   (setq-default mc/always-run-for-all t
