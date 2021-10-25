@@ -2177,8 +2177,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (setq-default evil-esc-delay 0.001
-		evil-want-keybinding nil
-		show-paren-when-point-inside-paren t)
+		evil-want-keybinding nil)
   :config
   ;; Modeline color
   (defconst original-background (face-attribute 'mode-line :background))
