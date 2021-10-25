@@ -1798,15 +1798,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (add-hook 'magit-log-mode-hook (lambda nil
 				   (setq-local show-trailing-whitespace nil
 					       tab-width 4))))
-
-(use-package gitattributes-mode
-  :mode "\\.gitattributes\\'")
-
-(use-package gitconfig-mode
-  :mode "\\.gitconfig\\'")
-
-(use-package gitignore-mode
-  :mode "\\.gitignore\\'")
+(use-package git-modes
+  :mode (("\\.gitattributes\\'" . gitattributes-mode)
+	 ("\\.gitconfig\\'" . gitconfig-mode)
+	 ("\\.gitignore\\'" . gitignore-mode)))
 
 (use-package git-timemachine
   :defer t)
