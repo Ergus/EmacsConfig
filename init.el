@@ -300,12 +300,16 @@
 	      (replace-regexp-in-string "\\\\)\\$" "\\|^/tmp/.+\\)$"
 					save-place-ignore-files-regexp t t))
 
-;; autorevert & show-parent
+;; show-parent
+(setq-default show-paren-delay 0
+	      show-paren-context-when-offscreen t
+	      show-paren-when-point-inside-paren t)
+
+;; autorevert
 (setq-default auto-revert-verbose nil	     ;; not show message when file changes
 	      auto-revert-avoid-polling t    ;; don't do pooling for autorevert (use notifications).)
-	      show-paren-delay 0
 	      blink-matching-paren nil)
-;; Call these two together to use a single timer
+
 (run-with-idle-timer 1 nil #'global-auto-revert-mode 1) ;; Autoload files changed in disk
 
 ;; recentf (is loaded by counsel, so not call it in the run-with-idle-timer)
