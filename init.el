@@ -1655,7 +1655,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "d" #'xref-find-definitions
     "4" #'xref-find-definitions-other-window
     "a" #'xref-find-apropos
-    "b" #'xref-pop-marker-stack ;; go back
+    "b" #'xref-go-back
+    "n" #'xref-go-forward
     "r" #'xref-find-references
     ["TAB"] #'completion-at-point)
 
