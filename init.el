@@ -120,6 +120,7 @@
 	      ;;idle-update-delay 0.25
 
 	      translate-upper-case-key-bindings nil ;; Make keybindings case sensitive
+	      outline-minor-mode-use-buttons t      ;; Use buttons to hide/show outlines
 	      )
 
 ;; Vertical window divider
