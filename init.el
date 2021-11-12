@@ -180,7 +180,7 @@
 			      (lambda (buf)
 				(when (buffer-live-p buf)
 				  (with-current-buffer buf
-				    (when init-file-debug
+				    (if init-file-debug
 				      (message "Running delay hook for %s: %s"
 					       `,mode-name
 					       ,delayhook))
