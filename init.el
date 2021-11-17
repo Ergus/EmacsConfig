@@ -365,12 +365,10 @@
 (define-key ctl-x-4-map "r"  #'winner-redo)
 
 (with-eval-after-load 'repeat
-  (defvar winner-repeat-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map "u" #'winner-undo)
-      (define-key map "r" #'winner-redo)
-      map)
-    "Keymap to repeat winner commands.")
+  (defvar-keymap winner-repeat-map
+    :doc "Keymap to repeat winner commands."
+    "u" #'winner-undo
+    "r" #'winner-redo)
   (put 'winner-undo 'repeat-map 'winner-repeat-map)
   (put 'winner-redo 'repeat-map 'winner-repeat-map))
 
@@ -701,13 +699,11 @@
 ;; (global-set-key (kbd "C-M-_") #'undo-redo) already set by default
 
 (with-eval-after-load 'repeat
-  (defvar undo-redo-repeat-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map "u" #'undo-only)
-      (define-key map "r" #'undo-redo)
-      (define-key map ["C-u"] #'undo)
-      map)
-    "Keymap to repeat undo-redo key sequences.")
+  (defvar-keymap undo-redo-repeat-map
+    :doc "Keymap to repeat undo-redo key sequences."
+    "u" #'undo-only
+    "r" #'undo-redo
+    "C-u" #'undo)
   (put 'undo-only 'repeat-map 'undo-redo-repeat-map)
   (put 'undo-redo 'repeat-map 'undo-redo-repeat-map)
   (put 'undo 'repeat-map 'undo-redo-repeat-map))
@@ -805,8 +801,8 @@
   :config
   (define-key flyspell-basic-map "w" #'flyspell-correct-wrapper)
   (define-key flyspell-basic-map "f" #'flyspell-correct-at-point)
-  (define-key flyspell-basic-map "\C-n" #'flyspell-correct-next)
-  (define-key flyspell-basic-map "\C-p" #'flyspell-correct-previous)
+  (define-key flyspell-basic-map ["C-n"] #'flyspell-correct-next)
+  (define-key flyspell-basic-map ["C-p"] #'flyspell-correct-previous)
   )
 
 ;;__________________________________________________________
@@ -857,8 +853,7 @@
 
   (define-key company-active-map ["M-RET"] #'company-abort)
   (define-key company-active-map [remap dabbrev-expand] #'company-other-backend)
-  (define-key company-active-map [remap xref-find-definitions] #'company-show-location)
-  )
+  (define-key company-active-map [remap xref-find-definitions] #'company-show-location))
 
 (use-package lsp-mode
   :diminish lsp
@@ -1200,10 +1195,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (defvar-keymap ctl-x-0-map
   :doc "The base keymap for `highlight changes'."
   "0" #'delete-window
-  [left] #'windmove-delete-left
-  [right] #'windmove-delete-right
-  [up] #'windmove-delete-up
-  [down] #'windmove-delete-down)
+  "<left>" #'windmove-delete-left
+  "<right>" #'windmove-delete-right
+  "<up>" #'windmove-delete-up
+  "<down>" #'windmove-delete-down)
 
 (define-key ctl-x-map "0" ctl-x-0-map)
 (which-key-add-key-based-replacements "C-x 0" "windmove-delete")
@@ -1215,8 +1210,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (define-key ctl-x-4-map [left]  #'windmove-display-left)
 (define-key ctl-x-4-map [right]  #'windmove-display-right)
-(define-key ctl-x-4-map [up]  #'windmove-display-up)
 (define-key ctl-x-4-map [down]  #'windmove-display-down)
+(define-key ctl-x-4-map [up]  #'windmove-display-up)
 
 (define-key ctl-x-map [M-left]  #'windmove-swap-states-left)
 (define-key ctl-x-map [M-right]  #'windmove-swap-states-right)
@@ -1660,7 +1655,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "b" #'xref-go-back
     "n" #'xref-go-forward
     "r" #'xref-find-references
-    ["TAB"] #'completion-at-point)
+    "TAB" #'completion-at-point)
 
   (global-set-key ["C-c x"] ivy-xref-basic-map))
 
@@ -1700,19 +1695,19 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "G" #'counsel-git-grep         ;; grep in current git repo
     "e" #'counsel-linux-app        ;; call application
     "l" #'counsel-find-library     ;; Search lisp libraries
-    ["SPC"] #'counsel-register     ;; list registers
-    ["RET"] #'counsel-company      ;; company completions
-    ["C-SPC"] #'counsel-mark-ring  ;; Mark ring history
-    ["C-r"] #'counsel-command-history ;; command history
+    "SPC" #'counsel-register     ;; list registers
+    "RET" #'counsel-company      ;; company completions
+    "C-SPC" #'counsel-mark-ring  ;; Mark ring history
+    "C-r" #'counsel-command-history ;; command history
     "p" #'counsel-package          ;; command history
     "P" #'counsel-list-processes   ;; command history
     ;; counsel-file commands
-    "fg" #'counsel-git             ;; find file in git rempo
-    "fj" #'counsel-file-jump       ;; file in subdir
-    "fl" #'counsel-locate          ;; locate command como search)
-    "fr" #'counsel-recentf
-    "fz" #'counsel-fzf
-    "fb" #'counsel-buffer-or-recentf)
+    "f g" #'counsel-git             ;; find file in git rempo
+    "f j" #'counsel-file-jump       ;; file in subdir
+    "f l" #'counsel-locate          ;; locate command como search)
+    "f r" #'counsel-recentf
+    "f z" #'counsel-fzf
+    "f b" #'counsel-buffer-or-recentf)
 
   (define-key counsel-mode-map ["C-c c"] counsel-basic-map)
   (which-key-add-keymap-based-replacements counsel-mode-map
@@ -1823,7 +1818,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;; smerge
 (setq-default smerge-diff-buffer-name "*smerge-diff*"
-	      smerge-command-prefix (kbd "C-c s"))
+	      smerge-command-prefix "C-c s")
 
 (defun my/enable-smerge-maybe ()
   "Auto-enable `smerge-mode' when merge conflict is detected."
@@ -1979,28 +1974,28 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (defvar-keymap avy-basic-map
     :doc "The base keymap for `avy-mode'."
     "r" #'avy-resume
-    ["C-'"] #'avy-goto-char-timer
+    "C-'" #'avy-goto-char-timer
     "'" #'avy-goto-char-timer
     "c" #'avy-goto-char
     "2" #'avy-goto-char-2
-    ["C-f"] #'avy-goto-char-in-line
+    "C-f" #'avy-goto-char-in-line
     "w" #'avy-goto-word-or-subword-1 ;; Alternative avy-goto-word
     "W" #'avy-goto-word-0            ;; All words, no initial char
-    ["C-s"] #'avy-goto-word-1-below
-    ["C-r"] #'avy-goto-word-1-above
-    ["M-b"] #'avy-goto-word-0-above
-    ["M-f"] #'avy-goto-word-0-below
+    "C-s" #'avy-goto-word-1-below
+    "C-r" #'avy-goto-word-1-above
+    "M-b" #'avy-goto-word-0-above
+    "M-f" #'avy-goto-word-0-below
     "p" #'avy-prev
     "n" #'avy-next
     "s" #'avy-goto-symbol-1
-    ["C-a"] #'avy-goto-line
-    ["C-e"] #'avy-goto-end-of-line
-    ["C-n"] #'avy-goto-line-below
-    ["C-p"] #'avy-goto-line-above
-    ["C-w"] #'avy-move-region
-    ["C-k"] #'avy-kill-region
-    ["M-w"] #'avy-kill-ring-save-region
-    ["C-b"] #'avy-pop-mark
+    "C-a" #'avy-goto-line
+    "C-e" #'avy-goto-end-of-line
+    "C-n" #'avy-goto-line-below
+    "C-p" #'avy-goto-line-above
+    "C-w" #'avy-move-region
+    "C-k" #'avy-kill-region
+    "M-w" #'avy-kill-ring-save-region
+    "C-b" #'avy-pop-mark
     "i" #'avy-copy-region)
   :defer t
   :init
@@ -2022,16 +2017,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		)
   :config
   (with-eval-after-load 'repeat
-    (defvar avy-repeat-map
-      (let ((map (make-sparse-keymap)))
-	(define-key map "p" #'avy-prev)
-	(define-key map "n" #'avy-next)
-	(define-key map "r" #'avy-resume)
-	map)
-      "Keymap to repeat avy key sequences.")
+    (defvar-keymap avy-repeat-map
+      :doc "Keymap to repeat avy key sequences."
+      "p" #'avy-prev
+      "n" #'avy-next
+      "r" #'avy-resume)
     (put 'avy-prev 'repeat-map 'avy-repeat-map)
     (put 'avy-next 'repeat-map 'avy-repeat-map)))
-
 
 (global-set-key ["M-Z"] #'zap-up-to-char)
 
@@ -2092,13 +2084,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "e" #'mc/mark-more-like-this-extended
     "n" #'mc/mark-next-like-this
     "p" #'mc/mark-previous-like-this
-    "\M-f" #'mc/mark-next-like-this-word
-    "\M-b" #'mc/mark-previous-word-like-this
-    "\M-p" #'mc/mark-pop
+    "M-f" #'mc/mark-next-like-this-word
+    "M-b" #'mc/mark-previous-word-like-this
+    "M-p" #'mc/mark-pop
     "#" #'mc/insert-numbers
     "L" #'mc/insert-letters
-    "\C-a" #'mc/edit-beginnings-of-lines
-    "\C-e" #'mc/edit-ends-of-lines)
+    "C-a" #'mc/edit-beginnings-of-lines
+    "C-e" #'mc/edit-ends-of-lines)
 
   (global-set-key ["C-c m"] mc-basic-map)
   (which-key-add-key-based-replacements "C-c m" "multi-cursors")
