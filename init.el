@@ -477,7 +477,7 @@
 (load-theme 'simple-16)
 
 (if (display-graphic-p)
-    (set-face-attribute 'default nil :family "Hack" :height 110))
+    (set-face-attribute 'default nil :family "Hack" :height 105))
 
 (defalias 'my/named-color 'simple-16-theme-color)
 
