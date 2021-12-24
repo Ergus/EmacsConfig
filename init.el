@@ -536,8 +536,8 @@
 (setq-default tab-bar-tab-hints t  ;; show tab numbers
 	      tab-bar-close-last-tab-choice 'tab-bar-mode-disable ;; When close last
 	      tab-bar-show 1)
-(which-key-add-key-based-replacements "C-x t" "tab-bar")
-(global-set-key "\C-t" tab-prefix-map)
+(which-key-add-key-based-replacements "C-x t" "tab-bar")  ;; by default
+(global-set-key ["C-t"] tab-prefix-map)
 
 ;;__________________________________________________________
 ;; minibuffers
@@ -585,26 +585,12 @@
   :defer t
   :init
   (setq-default vterm-toggle-scope 'project
-		vterm-toggle-project-root t
-		vterm-toggle-fullscreen-p nil)
+		vterm-toggle-project-root t    ;; Already default
+		vterm-toggle-fullscreen-p nil  ;; Already default
+		)
   (global-set-key ["C-c t t"] #'vterm-toggle-cd)
   :config
-  (define-key vterm-mode-map ["<C-return>"] #'vterm-toggle-insert-cd)
-  ;; (define-key vterm-mode-map (kbd "C-M-n") #'vterm-toggle-forward)
-  ;; (define-key vterm-mode-map (kbd "C-M-p") #'vterm-toggle-backward)
-
-  ;; Show at bottom
-  (add-to-list 'display-buffer-alist
-               '((lambda (bufname _)
-		   (with-current-buffer bufname
-		     (equal major-mode 'vterm-mode)))
-                 ;; (display-buffer-reuse-window display-buffer-at-bottom)
-                 (display-buffer-reuse-window bufname display-buffer-in-direction)
-                 ;;display-buffer-in-direction/direction/dedicated is added in emacs27
-                 (direction . bottom)
-                 (dedicated . t) ;dedicated is supported in emacs27
-                 (reusable-frames . visible)
-                 (window-height . 0.3))))
+  (define-key vterm-mode-map ["M-RET"] #'vterm-toggle-insert-cd))
 
 (use-package emamux :defer t)
 
@@ -717,16 +703,13 @@
   (global-set-key ["C-c SPC"] #'string-inflection-all-cycle)
 
   :config
-  (defvar string-inflection-repeat-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map ["SPC"] #'string-inflection-all-cycle)
-      map)
-    "Keymap to repeat inflection. Used in `string-inflection-all-cycle'.")
+  (defvar-keymap string-inflection-repeat-map
+    :doc "Keymap to repeat inflection. Used in `string-inflection-all-cycle'."
+    "SPC" #'string-inflection-all-cycle)
 
   (put 'string-inflection-all-cycle 'repeat-map 'string-inflection-repeat-map))
 
-(use-package undo-propose
-  :defer t)
+(use-package undo-propose :defer t)
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
@@ -783,7 +766,7 @@
 
 (with-eval-after-load 'flyspell
   (defvar-keymap flyspell-basic-map
-    :doc "The base keymap for `flyspell-mode'"
+    :doc "The base keymap for `flyspell-mode'."
     "r" #'flyspell-region
     "b" #'flyspell-buffer
     "n" #'flyspell-goto-next-error)
@@ -1648,7 +1631,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq-default xref-show-definitions-function #'ivy-xref-show-defs
 		xref-show-xrefs-function #'ivy-xref-show-xrefs)
   (defvar-keymap ivy-xref-basic-map
-    :doc "The base keymap for `ivy-xref'"
+    :doc "The base keymap for `ivy-xref'."
     "d" #'xref-find-definitions
     "4" #'xref-find-definitions-other-window
     "a" #'xref-find-apropos
@@ -1726,6 +1709,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package counsel-gtags
   :diminish
   :load-path (lambda nil (my/load-path "~/gits/emacs_clones/emacs-counsel-gtags/"))
+  :defer t
   :bind-keymap ("C-c g" . counsel-gtags-command-map)
   :init
   (setq-default counsel-gtags-debug-mode t
@@ -2073,7 +2057,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (defvar-keymap mc-basic-map
-    :doc "The base keymap for `multicursor'"
+    :doc "The base keymap for `multicursor'."
     "l" #'mc/edit-lines
     "a" #'mc/mark-all-like-this
     "d" #'mc/mark-all-dwim
