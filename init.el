@@ -1749,15 +1749,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (setq-default dumb-jump-selector 'ivy
 		dumb-jump-disable-obsolete-warnings t)
-  (which-key-add-key-based-replacements "C-c j" "dumb-jump")
+  (which-key-add-key-based-replacements
+    "C-c j" "dumb-jump"
+    "C-c j 4" "other-window")
   :config
   (define-key dumb-jump-mode-map "j" #'dumb-jump-go)
-  (define-key dumb-jump-mode-map "o" #'dumb-jump-go-other-window)
+  (define-key dumb-jump-mode-map "4j" #'dumb-jump-go-other-window)
   (define-key dumb-jump-mode-map "e" #'dumb-jump-go-prefer-external)
-  (define-key dumb-jump-mode-map "4" #'dumb-jump-go-prefer-external-other-window)
+  (define-key dumb-jump-mode-map "4e" #'dumb-jump-go-prefer-external-other-window)
   (define-key dumb-jump-mode-map "i" #'dumb-jump-go-prompt)
-  (define-key dumb-jump-mode-map "q" #'dumb-jump-quick-look)
-  (define-key dumb-jump-mode-map "b" #'dumb-jump-back)
+  (define-key dumb-jump-mode-map "l" #'dumb-jump-quick-look)
+  (define-key dumb-jump-mode-map "p" #'dumb-jump-back)
 
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
