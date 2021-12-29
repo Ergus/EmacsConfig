@@ -1649,6 +1649,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		swiper-verbose nil)
   (eval-after-load 'isearch
     '(define-key isearch-mode-map ["C-o"] #'swiper-isearch-toggle))
+  (global-set-key ["M-s o"] #'swiper-isearch-thing-at-point)
   :config
   (define-key swiper-map ["C-o"] #'swiper-isearch-toggle))
 
