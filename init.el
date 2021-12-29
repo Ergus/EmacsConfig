@@ -1805,7 +1805,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;; smerge
 (setq-default smerge-diff-buffer-name "*smerge-diff*"
-	      smerge-command-prefix "C-c s")
+	      smerge-command-prefix "\C-cs")
 
 (defun my/enable-smerge-maybe ()
   "Auto-enable `smerge-mode' when merge conflict is detected."
@@ -1814,7 +1814,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (when (re-search-forward "^<<<<<<< " nil t)
       (smerge-mode 1))))
 
-(with-eval-after-load 'smerge
+(with-eval-after-load 'smerge-mode
   (which-key-add-keymap-based-replacements smerge-mode-map
     "C-c s" "smerge"
     "C-c s =" "smerge-diff"))
