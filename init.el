@@ -329,6 +329,9 @@
 (my/gen-delay-hook conf-mode)
 
 ;; elec-pair
+(eval-after-load 'elec-pair
+  '(add-to-list 'electric-pair-pairs '(?< . ?>) t))
+
 (defun my/delayed-common-hook ()
   "Enable electric-pair-local-mode"
   (setq-local show-trailing-whitespace t)
@@ -1730,18 +1733,20 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (counsel-gtags-mode 1))
 
-(use-package global-tags ;; gtags with xref integration
-  :after counsel-gtags   ;; don't remove this.
-  :demand t
-  :config
-  (which-key-add-keymap-based-replacements counsel-gtags-mode-map
-    "C-c g x" "global-tags")
-  ;; assert the :after counsel-gtags
-  (define-key counsel-gtags-command-map "xc" #'global-tags-create-database)
-  (define-key counsel-gtags-command-map "xu" #'global-tags-update-database)
+;; (use-package global-tags ;; gtags with xref integration
+;;   :after counsel-gtags   ;; don't remove this.
+;;   :demand t
+;;   :config
+;;   (which-key-add-keymap-based-replacements counsel-gtags-mode-map
+;;     "C-c g x" "global-tags")
+;;   ;; assert the :after counsel-gtags
+;;   (define-key counsel-gtags-command-map "xc" #'global-tags-create-database)
+;;   (define-key counsel-gtags-command-map "xu" #'global-tags-update-database)
 
-  (add-to-list 'xref-backend-functions #'global-tags-xref-backend)
-  (add-to-list 'project-find-functions #'global-tags-try-project-root))
+;;   (add-to-list 'xref-backend-functions #'global-tags-xref-backend)
+;;   (add-to-list 'project-find-functions #'global-tags-try-project-root)
+;;   (setq imenu-create-index-function #'global-tags-create-imenu-index)
+;;   )
 
 (use-package dumb-jump
   :bind-keymap ("C-c j" . dumb-jump-mode-map)
