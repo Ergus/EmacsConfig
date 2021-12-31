@@ -341,7 +341,6 @@
 (add-hook 'text-mode-delay-hook #'my/delayed-common-hook)
 (add-hook 'conf-mode-delay-hook #'my/delayed-common-hook)
 
-
 ;; hl-line
 (keymap-global-set "M-s h L" #'hl-line-mode)
 (eval-after-load 'hl-line '(diminish 'hl-line-mode))
@@ -372,8 +371,8 @@
     :doc "Keymap to repeat winner commands."
     "u" #'winner-undo
     "r" #'winner-redo)
-  (put 'winner-undo 'repeat-map 'winner-repeat-map)
-  (put 'winner-redo 'repeat-map 'winner-repeat-map))
+  (put #'winner-undo 'repeat-map 'winner-repeat-map)
+  (put #'winner-redo 'repeat-map 'winner-repeat-map))
 
 ;; Org mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
@@ -692,9 +691,9 @@
     "u" #'undo-only
     "r" #'undo-redo
     "C-u" #'undo)
-  (put 'undo-only 'repeat-map 'undo-redo-repeat-map)
-  (put 'undo-redo 'repeat-map 'undo-redo-repeat-map)
-  (put 'undo 'repeat-map 'undo-redo-repeat-map))
+  (put #'undo-only 'repeat-map 'undo-redo-repeat-map)
+  (put #'undo-redo 'repeat-map 'undo-redo-repeat-map)
+  (put #'undo 'repeat-map 'undo-redo-repeat-map))
 
 ;;__________________________________________________________
 ;; Cycle string capitalization for programming:
@@ -709,7 +708,7 @@
     :doc "Keymap to repeat inflection. Used in `string-inflection-all-cycle'."
     "SPC" #'string-inflection-all-cycle)
 
-  (put 'string-inflection-all-cycle 'repeat-map 'string-inflection-repeat-map))
+  (put #'string-inflection-all-cycle 'repeat-map 'string-inflection-repeat-map))
 
 (use-package undo-propose :defer t)
 
@@ -1175,7 +1174,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; splitting
-(setq-default windmove-display-no-select t)
+(setq-default windmove-display-no-select t) ;; select windows after displaying it
 
 (defvar-keymap ctl-x-0-map
   :doc "The base keymap for `highlight changes'."
@@ -1188,22 +1187,23 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (keymap-set ctl-x-map "0" ctl-x-0-map)
 (which-key-add-key-based-replacements "C-x 0" "windmove-delete")
 
-(keymap-set ctl-x-map "<left>" #'windmove-left)
-(keymap-set ctl-x-map "<right>" #'windmove-right)
-(keymap-set ctl-x-map "<down>" #'windmove-down)
-(keymap-set ctl-x-map "<up>" #'windmove-up)
+(keymap-global-set "M-<left>" #'windmove-left)
+(keymap-global-set "M-<right>" #'windmove-right)
+(keymap-global-set "M-<down>" #'windmove-down)
+(keymap-global-set "M-<up>" #'windmove-up)
+
+(keymap-global-set "M-S-<left>"  #'windmove-swap-states-left)
+(keymap-global-set "M-S-<right>"  #'windmove-swap-states-right)
+(keymap-global-set "M-S-<down>"  #'windmove-swap-states-down)
+(keymap-global-set "M-S-<up>"  #'windmove-swap-states-up)
 
 (keymap-set ctl-x-4-map "<left>" #'windmove-display-left)
 (keymap-set ctl-x-4-map "<right>" #'windmove-display-right)
 (keymap-set ctl-x-4-map "<down>" #'windmove-display-down)
 (keymap-set ctl-x-4-map "<up>" #'windmove-display-up)
 
-(keymap-set ctl-x-map "M-<left>"  #'windmove-swap-states-left)
-(keymap-set ctl-x-map "M-<right>"  #'windmove-swap-states-right)
-(keymap-set ctl-x-map "M-<down>"  #'windmove-swap-states-down)
-(keymap-set ctl-x-map "M-<up>"  #'windmove-swap-states-up)
-
 ;; repeat-mode
+(setq-default repeat-check-key nil)
 (repeat-mode 1)
 
 ;; Change color selected buffers
@@ -1944,18 +1944,40 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	    :caller 'my/var-to-clipboard))
 
 ;;__________________________________________________________
-;; Move current line up and down M+arrow
+(defvar-keymap transpose-map
+  :doc "The keymap for `transpose' commands."
+  "C-M-<left>" #'my/untranspose-words
+  "C-M-<right>" #'transpose-words
+  "M-<left>" #'my/untranspose-chars
+  "M-<right>" #'transpose-chars)
+
+(defun my/untranspose-words (arg)
+  (interactive "*p")
+  (transpose-words (- arg)))
+
+(defun my/untranspose-chars (arg)
+  (interactive "*p")
+  (transpose-chars (- arg)))
+
+(keymap-set ctl-x-map "C-M-<left>" #'my/untranspose-words)
+(keymap-set ctl-x-map "C-M-<right>" #'transpose-words)
+(keymap-set ctl-x-map "M-<left>" #'my/untranspose-chars)
+(keymap-set ctl-x-map "M-<right>" #'transpose-chars)
+
+(put #'my/untranspose-words 'repeat-map 'transpose-map)
+(put #'transpose-words 'repeat-map 'transpose-map)
+(put #'my/untranspose-chars 'repeat-map 'transpose-map)
+(put #'transpose-chars 'repeat-map 'transpose-map)
+
+;;__________________________________________________________
+;; Move current line up and down C-M-<arrow> and duplicate
 (use-package move-dup
   :defer t
   :init
   (keymap-global-set "M-<up>" #'move-dup-duplicate-up)
   (keymap-global-set "M-<down>" #'move-dup-duplicate-down)
   (keymap-global-set "C-M-<up>" #'move-dup-move-lines-up)
-  (keymap-global-set "C-M-<down>" #'move-dup-move-lines-down)
-  (keymap-global-set "C-M-<left>" (lambda nil (interactive) (transpose-words -1)))
-  (keymap-global-set "C-M-<right>" #'transpose-words)
-  (keymap-global-set "M-<left>" (lambda nil (interactive) (transpose-chars -1)))
-  (keymap-global-set "M-<right>" #'transpose-chars))
+  (keymap-global-set "C-M-<down>" #'move-dup-move-lines-down))
 
 ;;__________________________________________________________
 ;; evil mode
@@ -2013,8 +2035,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       "p" #'avy-prev
       "n" #'avy-next
       "r" #'avy-resume)
-    (put 'avy-prev 'repeat-map 'avy-repeat-map)
-    (put 'avy-next 'repeat-map 'avy-repeat-map)))
+    (put #'avy-prev 'repeat-map 'avy-repeat-map)
+    (put #'avy-next 'repeat-map 'avy-repeat-map)))
 
 (keymap-global-set "M-Z" #'zap-up-to-char)
 
