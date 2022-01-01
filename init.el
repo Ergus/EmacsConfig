@@ -1944,40 +1944,57 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	    :caller 'my/var-to-clipboard))
 
 ;;__________________________________________________________
-(defvar-keymap transpose-map
-  :doc "The keymap for `transpose' commands."
-  "C-M-<left>" #'my/untranspose-words
-  "C-M-<right>" #'transpose-words
-  "M-<left>" #'my/untranspose-chars
-  "M-<right>" #'transpose-chars)
+;; Move current line up and down C-M-<arrow> and duplicate
 
-(defun my/untranspose-words (arg)
-  (interactive "*p")
-  (transpose-words (- arg)))
+(with-eval-after-load 'repeat
+  (defun my/untranspose-words (arg)
+    (interactive "*p")
+    (transpose-words (- arg)))
 
-(defun my/untranspose-chars (arg)
-  (interactive "*p")
-  (transpose-chars (- arg)))
+  (defun my/untranspose-chars (arg)
+    (interactive "*p")
+    (transpose-chars (- arg)))
+
+  (defvar-keymap transpose-repeat-map
+    :doc "The keymap for `transpose-repeat' commands."
+    "C-M-<left>" #'my/untranspose-words
+    "C-M-<right>" #'transpose-words
+    "M-<left>" #'my/untranspose-chars
+    "M-<right>" #'transpose-chars)
+
+  (put #'my/untranspose-words 'repeat-map 'transpose-repeat-map)
+  (put #'transpose-words 'repeat-map 'transpose-repeat-map)
+  (put #'my/untranspose-chars 'repeat-map 'transpose-repeat-map)
+  (put #'transpose-chars 'repeat-map 'transpose-repeat-map)
+  )
 
 (keymap-set ctl-x-map "C-M-<left>" #'my/untranspose-words)
 (keymap-set ctl-x-map "C-M-<right>" #'transpose-words)
 (keymap-set ctl-x-map "M-<left>" #'my/untranspose-chars)
 (keymap-set ctl-x-map "M-<right>" #'transpose-chars)
 
-(put #'my/untranspose-words 'repeat-map 'transpose-map)
-(put #'transpose-words 'repeat-map 'transpose-map)
-(put #'my/untranspose-chars 'repeat-map 'transpose-map)
-(put #'transpose-chars 'repeat-map 'transpose-map)
-
 ;;__________________________________________________________
 ;; Move current line up and down C-M-<arrow> and duplicate
 (use-package move-dup
   :defer t
+  :preface
+  (defvar-keymap move-dup-repeat-map
+    :doc "The keymap for `move-dup-repeat' commands."
+    "C-M-<up>" #'move-dup-move-lines-up
+    "C-M-<down>" #'move-dup-move-lines-down
+    "M-<up>" #'move-dup-duplicate-up
+    "M-<down>" #'move-dup-duplicate-down)
   :init
-  (keymap-global-set "M-<up>" #'move-dup-duplicate-up)
-  (keymap-global-set "M-<down>" #'move-dup-duplicate-down)
-  (keymap-global-set "C-M-<up>" #'move-dup-move-lines-up)
-  (keymap-global-set "C-M-<down>" #'move-dup-move-lines-down))
+  (keymap-set ctl-x-map "C-M-<up>" #'move-dup-move-lines-up)
+  (keymap-set ctl-x-map "C-M-<down>" #'move-dup-move-lines-down)
+  (keymap-set ctl-x-map "M-<up>" #'move-dup-duplicate-up)
+  (keymap-set ctl-x-map "M-<down>" #'move-dup-duplicate-down)
+  :config
+  (put #'move-dup-move-lines-up 'repeat-map move-dup-repeat-map)
+  (put #'move-dup-move-lines-down 'repeat-map move-dup-repeat-map)
+  (put #'move-dup-duplicate-up 'repeat-map move-dup-repeat-map)
+  (put #'move-dup-duplicate-down 'repeat-map move-dup-repeat-map)
+  )
 
 ;;__________________________________________________________
 ;; evil mode
