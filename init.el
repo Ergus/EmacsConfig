@@ -2092,7 +2092,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		arduino-cli-verify t
 		arduino-cli-mode-keymap-prefix (kbd "C-c C-t"))
   :config
-  (arduino-cli-mode)
+  (arduino-cli-mode 1)
   (which-key-add-key-based-replacements "C-c C-t" "arduino-cli-mode"))
 
 ;;__________________________________________________________
