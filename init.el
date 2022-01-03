@@ -466,11 +466,11 @@
 
 (use-package phi-search :defer t)
 
-(use-package phi-search-mc
-  :after multiple-cursors
-  :config
-  (phi-search-mc/setup-keys)
-  (add-hook 'isearch-mode-mode #'phi-search-from-isearch-mc/setup-keys))
+;; (use-package phi-search-mc
+;;   :after multiple-cursors
+;;   :config
+;;   (phi-search-mc/setup-keys)
+;;   (add-hook 'isearch-mode-mode #'phi-search-from-isearch-mc/setup-keys))
 
 ;;__________________________________________________________
 ;; The Colors I am using my own theme
