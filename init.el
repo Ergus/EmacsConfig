@@ -260,12 +260,12 @@
 (use-package which-key
   :diminish
   :init
-  (setq-default which-key-idle-delay 0.5             ;; default 1.0
-		;; which-key-idle-secondary-delay 0.01  ;; nil sets the same delay
+  (setq-default which-key-idle-delay 10000             ;; default 1.0, 1000 to not show
+		which-key-show-early-on-C-h t          ;; Show which-key on C-h
+		which-key-idle-secondary-delay 0.01    ;; nil sets the same delay, use when which-key-show-early-on-C-h
 		which-key-dont-use-unicode t
 		which-key-is-verbose init-file-debug
 		which-key-separator ": ")            ;; default " : "
-  ;;(which-key-idle-delay 10000) ;; To not show
   :config
   (which-key-mode t)
   (which-key-add-key-based-replacements
