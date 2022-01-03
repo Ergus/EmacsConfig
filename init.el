@@ -2105,8 +2105,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (defvar-keymap mc-basic-map
     :doc "The base keymap for `multicursor'."
     "l" #'mc/edit-lines
-    "a" #'mc/mark-all-like-this
-    "d" #'mc/mark-all-dwim
+    "a" #'mc/mark-all-dwim
+    "d" #'mc/mark-all-like-this-dwim
     "." #'mc/mark-all-symbols-like-this
     "w" #'mc/mark-all-words-like-this
     "r" #'mc/mark-all-in-region
