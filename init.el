@@ -647,18 +647,16 @@
 (keymap-global-set "<remap> <move-beginning-of-line>" #'my/smart-beginning-of-line)
 
 ;;__________________________________________________________
-;; Undo tree
-
+;; Undo
+(setq-default undo-only t)               ;; undo does not go throw redo entries
 (keymap-global-set "C-M-/" #'undo-redo)  ;; For gui; in tty "C-M-/" == "C-M-_"
 ;; (global-set-key (kbd "C-M-_") #'undo-redo) already set by default
 
 (with-eval-after-load 'repeat
   (defvar-keymap undo-redo-repeat-map
     :doc "Keymap to repeat undo-redo key sequences."
-    "u" #'undo-only
-    "r" #'undo-redo
-    "C-u" #'undo)
-  (put #'undo-only 'repeat-map 'undo-redo-repeat-map)
+    "u" #'undo
+    "r" #'undo-redo)
   (put #'undo-redo 'repeat-map 'undo-redo-repeat-map)
   (put #'undo 'repeat-map 'undo-redo-repeat-map))
 
