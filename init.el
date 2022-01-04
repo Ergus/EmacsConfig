@@ -71,13 +71,18 @@
 	      set-mark-command-repeat-pop t ;; Repeat pop mark with C-SPC
 	      next-screen-context-lines 5   ;; Lines of continuity when scrolling
 	      fast-but-imprecise-scrolling t
-	      scroll-error-top-bottom t	    ;; Move cursor before error scroll
+	      redisplay-skip-fontification-on-input t ;; Skip ‘fontification_functions‘ when there is input pending.
+	      jit-lock-defer-time 0                   ;; similar to redisplay-skip-fontification-on-input
+	                                              ;; This should make input smoother
+
+	      scroll-error-top-bottom t	          ;; Move cursor before error scroll
 	      scroll-preserve-screen-position t	  ;; Cursor keeps screen pos
-	      scroll-margin 1		    ;; Margen al borde
-	      scroll-step 1		    ;; Scroll step (better conservatively)
+	      scroll-margin 1		          ;; Margen al borde
+	      scroll-step 1		          ;; Scroll step (better conservatively)
 	      scroll-conservatively 1000
-	      window-combination-resize t   ;; Windows resize proportional
-	      x-wait-for-event-timeout nil  ;; Espera por eventos en X
+	      window-combination-resize t     ;; Windows resize proportional
+	      x-wait-for-event-timeout nil    ;; Not wait for events in X (when built with X)
+	      pgtk-wait-for-event-timeout nil ;; Not wait for events in pgtk
 	      jit-lock-stealth-load 60
 	      jit-lock-stealth-time 4
 	      inhibit-default-init t	    ;; Avoid emacs default init
@@ -98,7 +103,7 @@
 	      eval-expression-print-level nil
 	      enable-remote-dir-locals t      ;; Open remote dir locals.
 
-	      ;; suggest-key-bindings t       ;; Ivy ya hace lo que esta opcion
+	      suggest-key-bindings t          ;; Ivy ya hace lo que esta opcion
 	      ;; uniquify-min-dir-content 0
 	      truncate-lines t
 	      ;; auto-hscroll-mode 'current-line       ;; scroll horizontally 1 line not all
