@@ -80,15 +80,16 @@
 	      scroll-margin 1                     ;; Margen al borde
 	      scroll-step 1                       ;; Scroll step (better conservatively)
 	      scroll-conservatively 1000
-	      window-combination-resize t     ;; Windows resize proportional
-	      x-wait-for-event-timeout nil    ;; Not wait for events in X (when built with X)
-	      pgtk-wait-for-event-timeout nil ;; Not wait for events in pgtk
-	      jit-lock-stealth-load 60
-	      jit-lock-stealth-time 4
-	      inhibit-default-init t	    ;; Avoid emacs default init
-	      term-suppress-hard-newline t  ;; Text can resize
-	      echo-keystrokes 0.01	    ;; Muestra binds in echo area
-	      confirm-kill-emacs nil        ;; No confirm exit emacs
+	      window-combination-resize t         ;; Windows resize proportional
+	      x-wait-for-event-timeout nil        ;; Not wait for events in X (when built with X)
+	      pgtk-wait-for-event-timeout nil     ;; Not wait for events in pgtk
+	      ;; jit-lock-stealth-load 60           ;; load of fontification (def: 200)
+	      jit-lock-stealth-nice 0.2           ;; Time between fortifications (def: 0.5)
+	      jit-lock-stealth-time 2             ;; Time to wait before fortifications (def: nil)
+	      inhibit-default-init t              ;; Avoid emacs default init
+	      term-suppress-hard-newline t        ;; Text can resize
+	      echo-keystrokes 0.01                ;; Muestra binds in echo area
+	      confirm-kill-emacs nil              ;; No confirm exit emacs
 	      disabled-command-function nil
 	      auto-save-default nil               ;; No autosave
 	      auto-save-list-file-name nil
