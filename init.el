@@ -15,22 +15,22 @@
 (setq-default display-line-numbers-widen t    ;; keep line numbers inside a narrow
 	      ;; display-line-numbers-width 4   ;; width reserved (default nil: compute dynamically)
 	      )
-(global-display-line-numbers-mode t)	;; line numbers on the left
+(global-display-line-numbers-mode t)    ;; line numbers on the left
 (global-display-fill-column-indicator-mode t)
 
-(savehist-mode t)			;; Historial
-(auto-compression-mode t)		;; Uncompress on the fly
+(savehist-mode t)                       ;; Historial
+(auto-compression-mode t)               ;; Uncompress on the fly
 
-(size-indication-mode t)		;; Muestra el tamanno en modeline
-(delete-selection-mode t)		;; Sobreescribe seleccion al pegar
+(size-indication-mode t)                ;; Muestra el tamanno en modeline
+(delete-selection-mode t)               ;; Sobreescribe seleccion al pegar
 
-(prefer-coding-system 'utf-8)	        ;; Encoding
+(prefer-coding-system 'utf-8)           ;; Encoding
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 
-(column-number-mode t)			;; Numero de la columna
-(line-number-mode t)			;; Numero de linea modeline
+(column-number-mode t)                  ;; Numero de la columna
+(line-number-mode t)                    ;; Numero de linea modeline
 
 ;; Break long lines.
 ;;(global-visual-line-mode t)
@@ -50,12 +50,12 @@
 
 	      inhibit-startup-message t
 	      inhibit-startup-screen t
-	      ;;tab-width 4		    ;; Tabulador a 4
-	      ;;indent-tabs-mode t	    ;; Indent with tabs
-	      ;;fill-column 80		    ;; default is 70
-	      make-backup-files nil	    ;; Sin copias de seguridad
-	      create-lockfiles nil	    ;; No lock files, good for tramp
-	      visible-bell nil		    ;; Flash the screen (def)
+	      ;;tab-width 4                 ;; Tabulador a 4
+	      ;;indent-tabs-mode t          ;; Indent with tabs
+	      ;;fill-column 80              ;; default is 70
+	      make-backup-files nil         ;; Sin copias de seguridad
+	      create-lockfiles nil          ;; No lock files, good for tramp
+	      visible-bell nil              ;; Flash the screen (def)
 	      confirm-kill-processes nil    ;; no ask kill processes on exit
 	      ;; read-key-delay 0.01           ;; already default
 	      recenter-redisplay nil
@@ -66,7 +66,7 @@
 	      ;; split-width-threshold 160  ;; Limite para split vertical
 	      ;; kill-whole-line t
 	      load-prefer-newer t
-	      ;; mark-even-if-inactive nil	    ;; no mark no region
+	      ;; mark-even-if-inactive nil     ;; no mark no region
 	      mark-ring-max 128             ;; Max number of marks in the ring
 	      set-mark-command-repeat-pop t ;; Repeat pop mark with C-SPC
 	      next-screen-context-lines 5   ;; Lines of continuity when scrolling
@@ -75,10 +75,10 @@
 	      jit-lock-defer-time 0                   ;; similar to redisplay-skip-fontification-on-input
 	                                              ;; This should make input smoother
 
-	      scroll-error-top-bottom t	          ;; Move cursor before error scroll
-	      scroll-preserve-screen-position t	  ;; Cursor keeps screen pos
-	      scroll-margin 1		          ;; Margen al borde
-	      scroll-step 1		          ;; Scroll step (better conservatively)
+	      scroll-error-top-bottom t           ;; Move cursor before error scroll
+	      scroll-preserve-screen-position t   ;; Cursor keeps screen pos
+	      scroll-margin 1                     ;; Margen al borde
+	      scroll-step 1                       ;; Scroll step (better conservatively)
 	      scroll-conservatively 1000
 	      window-combination-resize t     ;; Windows resize proportional
 	      x-wait-for-event-timeout nil    ;; Not wait for events in X (when built with X)
@@ -90,20 +90,20 @@
 	      echo-keystrokes 0.01	    ;; Muestra binds in echo area
 	      confirm-kill-emacs nil        ;; No confirm exit emacs
 	      disabled-command-function nil
-	      auto-save-default nil         ;; No autosave
+	      auto-save-default nil               ;; No autosave
 	      auto-save-list-file-name nil
 	      ;; minibuffer interaction
 	      minibuffer-message-timeout 1
-	      read-quoted-char-radix 16       ;; Read number of chars with C-q
-	      ;; kill-buffer-query-functions nil ;; Functions to call before quering a buffer (nil default)
-	                                      ;; Default asks if process running.
-	      kill-do-not-save-duplicates t   ;; duplicate kill ring entries
+	      read-quoted-char-radix 16           ;; Read number of chars with C-q
+	      ;; kill-buffer-query-functions nil     ;; Functions to call before quering a buffer (nil default)
+	                                          ;; Default asks if process running.
+	      kill-do-not-save-duplicates t       ;; duplicate kill ring entries
 
 	      eval-expression-print-length nil
 	      eval-expression-print-level nil
-	      enable-remote-dir-locals t      ;; Open remote dir locals.
+	      enable-remote-dir-locals t          ;; Open remote dir locals.
 
-	      suggest-key-bindings t          ;; Ivy ya hace lo que esta opcion
+	      suggest-key-bindings t              ;; Ivy ya hace lo que esta opcion
 	      ;; uniquify-min-dir-content 0
 	      truncate-lines t
 	      ;; auto-hscroll-mode 'current-line       ;; scroll horizontally 1 line not all
@@ -116,13 +116,13 @@
 
 	      ;; M-x show context-local commands
 	      read-extended-command-predicate  #'command-completion-default-include-p
-	      completions-detailed t              ;; show more detailed completions
-	      use-short-answers t                 ;; Use y or n to exit and other shorter answers.
-	      goto-line-history-local t           ;; Buffer local goto-line history
+	      completions-detailed t                  ;; show more detailed completions
+	      use-short-answers t                     ;; Use y or n to exit and other shorter answers.
+	      goto-line-history-local t               ;; Buffer local goto-line history
 	      switch-to-buffer-obey-display-actions t ;; switching the buffer respects display actions
-	      bookmark-menu-confirm-deletion t    ;; ask confirmation to delete bookmark
-	      bookmark-fontify t                  ;; Colorize bookmarked lines with bookmark-face
-	      ;;idle-update-delay 0.25
+	      bookmark-menu-confirm-deletion t        ;; ask confirmation to delete bookmark
+	      bookmark-fontify t                      ;; Colorize bookmarked lines with bookmark-face
+	      idle-update-delay 0.25                  ;; idle to update screen
 
 	      translate-upper-case-key-bindings nil ;; Make keybindings case sensitive
 	      outline-minor-mode-use-buttons t      ;; Use buttons to hide/show outlines
@@ -252,7 +252,7 @@
 ;;__________________________________________________________
 ;; which-key
 (use-package diminish :defer t)   ;; if you use :diminish
-(use-package bind-key :defer t)	  ;; if you use any :bind variant
+(use-package bind-key :defer t)   ;; if you use any :bind variant
 
 (use-package which-key
   :diminish
@@ -303,7 +303,7 @@
 	      show-paren-when-point-inside-paren t)
 
 ;; autorevert
-(setq-default auto-revert-verbose nil	     ;; not show message when file changes
+(setq-default auto-revert-verbose nil        ;; not show message when file changes
 	      auto-revert-avoid-polling t    ;; don't do pooling for autorevert (use notifications).)
 	      blink-matching-paren nil)
 
@@ -406,7 +406,7 @@
 (eval-after-load 'subword '(diminish 'subword-mode))
 
 ;; vc
-(setq-default vc-follow-symlinks t	    ;; Open links not open
+(setq-default vc-follow-symlinks t          ;; Open links not open
 	      vc-handled-backends '(Git Hg) ;; Only git or mercurial
 	      vc-display-status nil)        ;; No info on the modeline.
 (which-key-add-key-based-replacements "C-x v" "vc")
@@ -432,13 +432,13 @@
 (setq-default search-nonincremental-instead nil    ;; No incremental if enter & empty
 	      lazy-highlight-no-delay-length 1     ;; normal delay
 	      ;; lazy-highlight-initial-delay 0       ;; old config replaced by lazy-highlight-no-delay-length
-	      isearch-allow-scroll t 	           ;; Permit scroll can be 'unlimited
+	      isearch-allow-scroll t               ;; Permit scroll can be 'unlimited
 	      isearch-lazy-count t
 	      search-ring-max 256
 	      regexp-search-ring-max 256
 	      isearch-yank-on-move 'shift          ;; Copy text from buffer with meta
-	      ;; isearch-wrap-function #'ignore     ;; Look at the emacs-major-version check
-	      ;; isearch-wrap-pause t               ;; Disable wrapping nil.
+	      ;; isearch-wrap-function #'ignore       ;; Look at the emacs-major-version check
+	      ;; isearch-wrap-pause t                 ;; Disable wrapping nil.
 	      isearch-repeat-on-direction-change t ;; Don't go to the other end on direction change
 	      isearch-regexp-lax-whitespace t      ;; swiper like fuzzy search
 	      search-whitespace-regexp ".*?"
@@ -623,16 +623,17 @@
   (setq-default mouse-sel-mode t          ;; Mouse selection
 		mouse-scroll-delay 0)
 
-  (xterm-mouse-mode t)			  ;; mover el cursor al click
+  (xterm-mouse-mode t)                    ;; mover el cursor al click
   ;; (defun track-mouse (e))
   (set-cursor-color "white")
-  (set-mouse-color "white")		  ;; Flechita del mouse en blanco
+  (set-mouse-color "white")               ;; Flechita del mouse en blanco
   (if (fboundp 'mouse-wheel-mode)
       (mouse-wheel-mode t)
 
     ;; Else set them manually, will be overridden latter.
     (keymap-global-set "<mouse-4>" #'scroll-down-command)
     (keymap-global-set "<mouse-5>" #'scroll-up-command)))
+
 
 (keymap-global-set "<remap> <scroll-up-command>" #'scroll-up-line)
 (keymap-global-set "<remap> <scroll-down-command>" #'scroll-down-line)
@@ -788,7 +789,7 @@
   (add-hook 'conf-mode-delay-hook #'my/company-mode-delay-hook)
   (add-hook 'text-mode-delay-hook #'my/company-mode-delay-hook)
 
-  (setq-default company-idle-delay nil	 ;; no delay for autocomplete
+  (setq-default company-idle-delay nil                ;; no delay for autocomplete
 		company-minimum-prefix-length 2
 		company-tooltip-minimum 5
 		company-selection-wrap-around nil
@@ -798,7 +799,7 @@
 		;;company-tooltip-limit 20
 		company-backends '(company-capf       ;; completion at point
 				   company-semantic
-				   company-files	 ;; company files
+				   company-files      ;; company files
 				   (company-dabbrev-code company-gtags company-keywords)
 				   company-dabbrev))
   :config
@@ -1449,11 +1450,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
 
-(setq-default dired-recursive-copies 'top    		   ;; Always ask recursive copy
-	      dired-recursive-deletes 'top   		   ;; Always ask recursive delete
+(setq-default dired-recursive-copies 'top                  ;; Always ask recursive copy
+	      dired-recursive-deletes 'top                 ;; Always ask recursive delete
 	      dired-dwim-target 'dired-dwim-target-recent  ;; Copy in split mode with p
-	      dired-auto-revert-buffer nil   		   ;; auto revert dired
-	      ;; dired-listing-switches "-alh"  		   ;; commands to ls
+	      dired-auto-revert-buffer nil                 ;; auto revert dired
+	      ;; dired-listing-switches "-alh"                ;; commands to ls
 	      dired-listing-switches "-agho --group-directories-first"
 	      dired-hide-details-hide-symlink-targets nil  ;; don't hide linkk targets
 	      dired-maybe-use-globstar t                   ;; use shell's globstar
@@ -1546,7 +1547,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		ivy-read-action-format-function #'ivy-read-action-format-columns)
   ;; (ivy-use-virtual-buffers t)   ;; Recent files or buffers in ivy
   ;; (ivy-height 10)
-  ;; (ivy-wrap t)		      ;; cycle in minibuffer
+  ;; (ivy-wrap t)                  ;; cycle in minibuffer
   :config
   ;; Highlight with arrows by default.
   ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
@@ -1612,21 +1613,21 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     :doc "The base keymap for `counsel-mode'."
     ;;([remap switch-to-buffer] . counsel-switch-buffer)
     ;;([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
-    "c" #'ivy-resume               ;; resume ivy
+    "c" #'ivy-resume                ;; resume ivy
     "a" #'counsel-ag
-    "b" #'counsel-ibuffer          ;; like ibuffer + switch-to-buffer
+    "b" #'counsel-ibuffer           ;; like ibuffer + switch-to-buffer
     "i" #'counsel-imenu
-    "r" #'counsel-rg	       ;; like git grep
-    "g" #'counsel-grep             ;; grep in local file
-    "G" #'counsel-git-grep         ;; grep in current git repo
-    "e" #'counsel-linux-app        ;; call application
-    "l" #'counsel-find-library     ;; Search lisp libraries
-    "SPC" #'counsel-register     ;; list registers
-    "RET" #'counsel-company      ;; company completions
-    "C-SPC" #'counsel-mark-ring  ;; Mark ring history
+    "r" #'counsel-rg                ;; like git grep
+    "g" #'counsel-grep              ;; grep in local file
+    "G" #'counsel-git-grep          ;; grep in current git repo
+    "e" #'counsel-linux-app         ;; call application
+    "l" #'counsel-find-library      ;; Search lisp libraries
+    "SPC" #'counsel-register        ;; list registers
+    "RET" #'counsel-company         ;; company completions
+    "C-SPC" #'counsel-mark-ring     ;; Mark ring history
     "C-r" #'counsel-command-history ;; command history
-    "p" #'counsel-package          ;; command history
-    "P" #'counsel-list-processes   ;; command history
+    "p" #'counsel-package           ;; command history
+    "P" #'counsel-list-processes    ;; command history
     ;; counsel-file commands
     "f g" #'counsel-git             ;; find file in git rempo
     "f j" #'counsel-file-jump       ;; file in subdir
