@@ -728,9 +728,13 @@
 
 
 ;; Flyspell
-(setq-default flyspell-use-meta-tab nil      ;; Not correct with M-TAB
-	      flyspell-mode-line-string nil  ;; Not show Fly in modeline
-	      flyspell-delay 2)              ;; default 3
+(setq-default flyspell-use-meta-tab nil       ;; Not correct with M-TAB
+	      flyspell-mode-line-string nil   ;; Not show Fly in modeline
+	      flyspell-delay 1                ;; default 3
+	      flyspell-sort-corrections t     ;; Alphabetically sort corrections
+	      flyspell-issue-welcome-flag nil ;; no message on start
+	      flyspell-issue-message-flag nil ;; no message when checking
+	      )
 
 (add-hook 'prog-mode-delay-hook #'flyspell-prog-mode)
 (add-hook 'text-mode-delay-hook #'turn-on-flyspell)
