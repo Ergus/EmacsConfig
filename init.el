@@ -1202,6 +1202,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (keymap-set ctl-x-4-map "<down>" #'windmove-display-down)
 (keymap-set ctl-x-4-map "<up>" #'windmove-display-up)
 
+;;__________________________________________________________
 ;; repeat-mode
 (setq-default repeat-check-key nil)
 (repeat-mode 1)
@@ -1946,27 +1947,25 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Move current line up and down C-M-<arrow> and duplicate
 
-(with-eval-after-load 'repeat
-  (defun my/untranspose-words (arg)
-    (interactive "*p")
-    (transpose-words (- arg)))
+(defun my/untranspose-words (arg)
+  (interactive "*p")
+  (transpose-words (- arg)))
 
-  (defun my/untranspose-chars (arg)
-    (interactive "*p")
-    (transpose-chars (- arg)))
+(defun my/untranspose-chars (arg)
+  (interactive "*p")
+  (transpose-chars (- arg)))
 
-  (defvar-keymap transpose-repeat-map
-    :doc "The keymap for `transpose-repeat' commands."
-    "C-M-<left>" #'my/untranspose-words
-    "C-M-<right>" #'transpose-words
-    "M-<left>" #'my/untranspose-chars
-    "M-<right>" #'transpose-chars)
+(defvar-keymap transpose-repeat-map
+  :doc "The keymap for `transpose-repeat' commands."
+  "C-M-<left>" #'my/untranspose-words
+  "C-M-<right>" #'transpose-words
+  "M-<left>" #'my/untranspose-chars
+  "M-<right>" #'transpose-chars)
 
-  (put #'my/untranspose-words 'repeat-map 'transpose-repeat-map)
-  (put #'transpose-words 'repeat-map 'transpose-repeat-map)
-  (put #'my/untranspose-chars 'repeat-map 'transpose-repeat-map)
-  (put #'transpose-chars 'repeat-map 'transpose-repeat-map)
-  )
+(put #'my/untranspose-words 'repeat-map 'transpose-repeat-map)
+(put #'transpose-words 'repeat-map 'transpose-repeat-map)
+(put #'my/untranspose-chars 'repeat-map 'transpose-repeat-map)
+(put #'transpose-chars 'repeat-map 'transpose-repeat-map)
 
 (keymap-set ctl-x-map "C-M-<left>" #'my/untranspose-words)
 (keymap-set ctl-x-map "C-M-<right>" #'transpose-words)
