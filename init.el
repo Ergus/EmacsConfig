@@ -311,6 +311,9 @@
 (run-with-idle-timer 1 nil #'global-auto-revert-mode 1) ;; Autoload files changed in disk
 
 ;; recentf (is loaded by counsel, so not call it in the run-with-idle-timer)
+(setq-default recentf-max-saved-items 48    ;; Max items saved
+	      recentf-auto-cleanup 10)      ;; Make cleanup when idle for 10 seconds. (default 'mode
+                                            ;; cleans when the mode is loades)
 (with-eval-after-load 'recentf
   (recentf-mode 1))
 
