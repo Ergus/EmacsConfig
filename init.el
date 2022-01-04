@@ -665,6 +665,8 @@
   (put #'undo-redo 'repeat-map 'undo-redo-repeat-map)
   (put #'undo 'repeat-map 'undo-redo-repeat-map))
 
+;; (use-package undo-propose :defer t)
+
 ;;__________________________________________________________
 ;; Cycle string capitalization for programming:
 ;; "foo_bar => FOO_BAR => FooBar => fooBar => foo-bar => Foo_Bar => foo_bar"
@@ -679,8 +681,6 @@
     "SPC" #'string-inflection-all-cycle)
 
   (put #'string-inflection-all-cycle 'repeat-map 'string-inflection-repeat-map))
-
-(use-package undo-propose :defer t)
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
@@ -698,28 +698,28 @@
 
 ;;__________________________________________________________
 ;; Resalta scopes entorno al cursor
-(use-package highlight-blocks
-  :defer t
-  :diminish
-  :init
-  (keymap-global-set "M-s h b" #'highlight-blocks-now)
-  (keymap-global-set "M-s h B" #'highlight-blocks-mode)
-  :config
-  (set-face-attribute 'highlight-blocks-depth-2-face nil :background "#262626") ;; gray15
-  (set-face-attribute 'highlight-blocks-depth-3-face nil :background "#333333") ;; gray20
-  (set-face-attribute 'highlight-blocks-depth-4-face nil :background "#404040") ;; gray25
-  (set-face-attribute 'highlight-blocks-depth-5-face nil :background "#4d4d4d")
-  (set-face-attribute 'highlight-blocks-depth-6-face nil :background "#595959")
-  (set-face-attribute 'highlight-blocks-depth-7-face nil :background "#666666")
-  (set-face-attribute 'highlight-blocks-depth-8-face nil :background "#737373")
-  (set-face-attribute 'highlight-blocks-depth-9-face nil :background "#7f7f7f"))
+;; (use-package highlight-blocks
+;;   :defer t
+;;   :diminish
+;;   :init
+;;   (keymap-global-set "M-s h b" #'highlight-blocks-now)
+;;   (keymap-global-set "M-s h B" #'highlight-blocks-mode)
+;;   :config
+;;   (set-face-attribute 'highlight-blocks-depth-2-face nil :background "#262626") ;; gray15
+;;   (set-face-attribute 'highlight-blocks-depth-3-face nil :background "#333333") ;; gray20
+;;   (set-face-attribute 'highlight-blocks-depth-4-face nil :background "#404040") ;; gray25
+;;   (set-face-attribute 'highlight-blocks-depth-5-face nil :background "#4d4d4d")
+;;   (set-face-attribute 'highlight-blocks-depth-6-face nil :background "#595959")
+;;   (set-face-attribute 'highlight-blocks-depth-7-face nil :background "#666666")
+;;   (set-face-attribute 'highlight-blocks-depth-8-face nil :background "#737373")
+;;   (set-face-attribute 'highlight-blocks-depth-9-face nil :background "#7f7f7f"))
 
-(use-package highlight-escape-sequences
-  :diminish
-  :defer t
-  :init
-  (keymap-global-set "M-s h s" #'hes-mode)
-  (which-key-add-key-based-replacements "M-s h s" "highlight-escape-mode"))
+;; (use-package highlight-escape-sequences
+;;   :diminish
+;;   :defer t
+;;   :init
+;;   (keymap-global-set "M-s h s" #'hes-mode)
+;;   (which-key-add-key-based-replacements "M-s h s" "highlight-escape-mode"))
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
