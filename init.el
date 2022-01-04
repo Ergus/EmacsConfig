@@ -653,18 +653,8 @@
     (keymap-global-set "<mouse-4>" #'scroll-down-command)
     (keymap-global-set "<mouse-5>" #'scroll-up-command)))
 
-(defun my/scroll-up-command (&optional arg)
-  "Scroll up single line or ARG."
-  (interactive "^p")
-  (scroll-up-command arg))
-
-(defun my/scroll-down-command (&optional arg)
-  "Scroll down single line or ARG."
-  (interactive "^p")
-  (scroll-down-command arg))
-
-(keymap-global-set "<remap> <scroll-up-command>" #'my/scroll-up-command)
-(keymap-global-set "<remap> <scroll-down-command>" #'my/scroll-down-command)
+(keymap-global-set "<remap> <scroll-up-command>" #'scroll-up-line)
+(keymap-global-set "<remap> <scroll-down-command>" #'scroll-down-line)
 ;;__________________________________________________________
 ;; My program's mode hooks
 
