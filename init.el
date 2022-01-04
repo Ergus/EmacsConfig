@@ -944,21 +944,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (remove-hook 'c-special-indent-hook #'ms-space-for-alignment-hook t)))
 
 ;;====================
-
-;; (defun my/c-semi&comma ()
-;;   "Function to handle addition of ; in 'c-mode'."
-;;   (assq 'class-close c-syntactic-context))
-
 ;; cc-mode
-(defun my/c-mode-common-hook ()
-  "my/c-mode-common common."
-  (c-toggle-auto-newline 1)
-  (c-toggle-cpp-indent-to-body 1)
-  (c-ms-space-for-alignment-mode 1)
-  (hide-ifdef-mode 1)
-  (subword-mode 1))
-(add-hook 'c-mode-common-hook #'my/c-mode-common-hook)
-
 (setq-default c-default-style '((java-mode . "java")
 				(awk-mode . "awk")
 				(other . "mylinux")))
@@ -992,7 +978,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 				  (arglist-close . 0)
 				  ;;(innamespace . [0])
 				  ;;(access-label '-)
-				  ))))
+				  )))
+
+  (defun my/c-mode-common-hook ()
+    "my/c-mode-common common."
+    (c-toggle-auto-newline 1)
+    (c-toggle-cpp-indent-to-body 1)
+    (c-ms-space-for-alignment-mode 1)
+    (hide-ifdef-mode 1)
+    (subword-mode 1))
+  (add-hook 'c-mode-common-hook #'my/c-mode-common-hook))
 
 (use-package preproc-font-lock ;; Preprocessor
   :defer t
