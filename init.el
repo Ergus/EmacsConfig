@@ -57,7 +57,7 @@
 	      create-lockfiles nil	    ;; No lock files, good for tramp
 	      visible-bell nil		    ;; Flash the screen (def)
 	      confirm-kill-processes nil    ;; no ask kill processes on exit
-	      read-key-delay 0.01
+	      ;; read-key-delay 0.01           ;; already default
 	      recenter-redisplay nil
 	      ;;recenter-positions '(top middle bottom)
 	      ;; line-move-visual nil       ;; move cursor visual lines
@@ -88,9 +88,9 @@
 	      auto-save-default nil         ;; No autosave
 	      auto-save-list-file-name nil
 	      ;; minibuffer interaction
-	      ;;minibuffer-message-timeout 1
+	      minibuffer-message-timeout 1
 	      read-quoted-char-radix 16       ;; Read number of chars with C-q
-	      kill-buffer-query-functions nil ;; Functions to call before quering a buffer
+	      ;; kill-buffer-query-functions nil ;; Functions to call before quering a buffer (nil default)
 	                                      ;; Default asks if process running.
 	      kill-do-not-save-duplicates t   ;; duplicate kill ring entries
 
@@ -99,7 +99,7 @@
 	      enable-remote-dir-locals t      ;; Open remote dir locals.
 
 	      ;; suggest-key-bindings t       ;; Ivy ya hace lo que esta opcion
-	      ;;uniquify-min-dir-content 0
+	      ;; uniquify-min-dir-content 0
 	      truncate-lines t
 	      ;; auto-hscroll-mode 'current-line       ;; scroll horizontally 1 line not all
 	      save-interprogram-paste-before-kill t ;; Save clipboard before replace
@@ -210,14 +210,6 @@
 		native-comp-async-report-warnings-errors 'silent))
 (require 'use-package)
 
-;;Commented because define-obsolete-alias api changed.
-;;(use-package benchmark-init
-;;  :if init-file-debug
-;;  :config
-;;  (add-hook 'benchmark-init/tree-mode-hook #'hl-line-mode)
-;;  (add-hook 'benchmark-init/tabulated-mode-hook #'hl-line-mode)
-;;  (add-hook 'window-setup-hook #'benchmark-init/deactivate 0))
-
 (use-package esup :defer t)
 
 ;;__________________________________________________________
@@ -292,8 +284,7 @@
 	      imenu-max-item-length 256)
 
 ;; uniquify
-;; (setq-default uniquify-buffer-name-style 'post-forward)  ;; default 'forward
-(setq-default uniquify-buffer-name-style 'forward)
+(setq-default uniquify-buffer-name-style 'forward) ;; default 'post-forward-angle-brackets
 
 ;; saveplace
 (save-place-mode 1)                           ;; Remember point in files
@@ -406,6 +397,7 @@
   (diminish 'hide-ifdef-mode)
   (diminish 'hide-ifdef-hiding))
 
+;; subword
 (eval-after-load 'subword '(diminish 'subword-mode))
 
 ;; vc
@@ -466,15 +458,8 @@
 
 (use-package phi-search :defer t)
 
-;; (use-package phi-search-mc
-;;   :after multiple-cursors
-;;   :config
-;;   (phi-search-mc/setup-keys)
-;;   (add-hook 'isearch-mode-mode #'phi-search-from-isearch-mc/setup-keys))
-
 ;;__________________________________________________________
 ;; The Colors I am using my own theme
-
 (load-theme 'simple-16)
 
 (if (display-graphic-p)
@@ -488,17 +473,10 @@
 
 ;;__________________________________________________________
 ;; Show paren mode
-
 (keymap-global-set "<remap> <just-one-space>" #'cycle-spacing)
-
-;; (use-package unfill
-;;   :defer t
-;;   :init
-;;   (global-set-key [remap fill-paragraph] #'unfill-toggle))
 
 ;;__________________________________________________________
 ;; compile
-
 (setq-default compilation-scroll-output 'first-error
 	      compilation-always-kill t)
 
@@ -533,7 +511,6 @@
 
 ;;__________________________________________________________
 ;; tab-bar
-
 (setq-default tab-bar-tab-hints t  ;; show tab numbers
 	      tab-bar-close-last-tab-choice 'tab-bar-mode-disable ;; When close last
 	      tab-bar-show 1)
@@ -567,7 +544,6 @@
 
 ;;__________________________________________________________
 ;; terms
-
 (use-package vterm
   :defer t
   :hook (vterm-mode . (lambda nil
@@ -612,7 +588,6 @@
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
-
 (use-package xclip
   :preface
   (setq-default xclip-method
@@ -656,6 +631,7 @@
 
 (keymap-global-set "<remap> <scroll-up-command>" #'scroll-up-line)
 (keymap-global-set "<remap> <scroll-down-command>" #'scroll-down-line)
+
 ;;__________________________________________________________
 ;; My program's mode hooks
 
@@ -781,10 +757,6 @@
   )
 
 ;;__________________________________________________________
-;; {c/c++}-mode
-;;__________________________________________________________
-
-;;__________________________________________________________
 ;; LSP try for a whil
 
 (use-package eglot :defer t)
@@ -852,8 +824,7 @@
    (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
                     :major-modes '(c-mode c++-mode)
                     :remote? t
-                    :server-id 'clangd-remote))
-  )
+                    :server-id 'clangd-remote)))
 
 (use-package lsp-ui
   :diminish
@@ -879,13 +850,6 @@
   (keymap-set lsp-command-map "u p" #'lsp-ui-find-prev-reference)
   )
 
-;; (use-package lsp-treemacs
-;;   :diminish
-;;   :after (lsp-mode treemacs)
-;;   :custom
-;;   (lsp-metals-treeview-enable t)
-;;   (lsp-metals-treeview-show-when-views-received t))
-
 (use-package lsp-ivy
   :diminish
   :after lsp-mode
@@ -899,14 +863,8 @@
 (use-package tree-sitter-langs
   :after tree-sitter)
 
-;; (use-package ccls
-;;   :defer t
-;;   :config
-;;   (setq ccls-enable-skipped-ranges nil))
-
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
-
 (defun ms-space-for-alignment-hook ()
   "Make the current line use tabs for indentation and spaces for alignment.
 
@@ -1193,18 +1151,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (setq-default repeat-check-key nil)
 (repeat-mode 1)
 
-;; Change color selected buffers
-;; (use-package auto-dim-other-buffers
-;;   :defer t
-;;   :custom
-;;   (auto-dim-other-buffers-dim-on-switch-to-minibuffer nil)
-;;   (auto-dim-other-buffers-dim-on-focus-out t))
-
 ;;__________________________________________________________
 ;; Lines enabling gnuplot-mode
-;; (use-package gnuplot-mode
-;;   :mode ("\\.gp\\'" "\\.gpl\\'" "\\.plt\\'"))
-
 (use-package gnuplot
   :defer t
   :init
@@ -1212,8 +1160,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	       '("\\.\\(gpl?\\|plt\\)\\'" . gnuplot-mode)))
 
 ;;__________________________________________________________
-;; Auto completamiento
-
+;; Auto complete with snippets
 (use-package yasnippet        ;; Snippets
   :diminish yas-minor-mode
   :defer 1
@@ -1567,8 +1514,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (keymap-global-set "C-c b s" #'my/sidebar-toggle)
 
 ;;__________________________________________________________
-;; neotree
-;; Like dired sidebar but a bit fancier.
+;; neotree (Like dired sidebar but a bit fancier.)
 (use-package neotree
   :defer t
   :init
@@ -1872,7 +1818,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :mode ("\\.\\(cobc?\\|cbl\\|cpy\\)\\'"))
 
 ;;__________________________________________________________
-;; path
+;; my/ namespacs utilities.
 
 (defun my/point-to-abs (point)
   "Count number of not whitespaces characters preceding POINT."
@@ -2142,9 +2088,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		      (my/company-backend-after-load #'company-web-html)))
   :defer t)
 
-;; (use-package web-mode-edit-element
-;;   :hook (web-mode . web-mode-edit-element-minor-mode))
-
 ;;__________________________________________________________
 ;; nginx mode
 (use-package nginx-mode
@@ -2240,6 +2183,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package e2ansi
   :defer t)
 
+;; Colaborative edditing
 (use-package crdt
   :defer t)
 
