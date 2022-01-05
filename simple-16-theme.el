@@ -60,38 +60,38 @@
  `(font-lock-variable-name-face ((t :foreground ,(simple-16-theme-color white))))
 
  `(highlight ((t :background ,(simple-16-theme-color brightblack)
-                              :foreground nil)))
+                 :foreground nil)))
  `(secondary-selection ((t :background ,(simple-16-theme-color brightblack)
-                                        :foreground nil)))
+                           :foreground nil)))
 
  `(isearch ((t :background ,(simple-16-theme-color blue)
-			    :foreground nil
-			    :weight ultrabold)))
+	       :foreground nil
+	       :weight ultrabold)))
  `(lazy-highlight ((t :background ,(simple-16-theme-color brightblue))))
 
  `(region ((t :background ,(simple-16-theme-color brightblue))))
 
  `(mode-line ((t :background ,(simple-16-theme-color blue)
-			      :foreground ,(simple-16-theme-color white))))
+		 :foreground ,(simple-16-theme-color white))))
  `(mode-line-inactive ((t :background ,(simple-16-theme-color brightblack)
-			               :foreground ,(simple-16-theme-color white))))
+			  :foreground ,(simple-16-theme-color white))))
 
  `(line-number ((t :foreground ,(simple-16-theme-color brightblack))))
  `(line-number-current-line ((t :foreground ,(simple-16-theme-color green))))
  `(fill-column-indicator ((t :foreground ,(simple-16-theme-color brightblack))))
 
  `(show-paren-match ((t :background ,(simple-16-theme-color brightblue)
-                                     :inherit nil)))
+                        :inherit nil)))
 
  `(tab-bar ((t :background ,(simple-16-theme-color black)
-                            :foreground ,(simple-16-theme-color white)
-                            :inverse-video nil)))
+               :foreground ,(simple-16-theme-color white)
+               :inverse-video nil)))
  `(tab-bar-tab ((t :inherit tab-bar :weight ultra-bold)))
 
  `(tab-bar-tab-inactive ((t :background ,(simple-16-theme-color black)
-                                         :foreground ,(simple-16-theme-color brightblack)
-                                         :weight normal
-                                         :underline nil)))
+                            :foreground ,(simple-16-theme-color brightblack)
+                            :weight normal
+                            :underline nil)))
 
  `(Man-overstrike ((t :inherit font-lock-type-face :bold t)))
  `(Man-underline ((t :inherit font-lock-keyword-face :underline t)))
@@ -103,18 +103,18 @@
  ;; External packages
  ;; Company
  `(company-tooltip ((t :background ,(simple-16-theme-color brightblack)
-                                    :foreground ,(simple-16-theme-color white))))
+                       :foreground ,(simple-16-theme-color white))))
  `(company-tooltip-common ((t :inherit company-tooltip
-                                        :foreground ,(simple-16-theme-color green))))
+                              :foreground ,(simple-16-theme-color green))))
  `(company-tooltip-selection ((t :background ,(simple-16-theme-color blue)
-                                              :weight ultra-bold)))
+                                 :weight ultra-bold)))
  `(company-scrollbar-bg ((t :background ,(simple-16-theme-color brightblack))))
  `(company-scrollbar-fg ((t :background ,(simple-16-theme-color blue))))
 
  ;; Ivy
  `(ivy-current-match ((t :inherit nil
-				   :background ,(simple-16-theme-color blue)
-				   :foreground nil)))
+			 :background ,(simple-16-theme-color blue)
+			 :foreground nil)))
 
  `(ivy-minibuffer-match-face-1 ((t :inherit nil :background nil))) ;; Between matches
  ;; Ivy like lazy-highlight
@@ -130,7 +130,7 @@
 
  ;; Avy
  `(avy-lead-face ((t :background ,(simple-16-theme-color blue)
-                                  :foreground ,(simple-16-theme-color brightwhite))))
+                     :foreground ,(simple-16-theme-color brightwhite))))
 
  ;;Flycheck
  `(flycheck-error ((t :inherit nil :background nil :foreground nil :underline t)))
@@ -140,9 +140,9 @@
 
  ;;highlight-escape-sequences
  `(hes-escape-backslash-face ((t :inherit font-lock-regexp-grouping-backslash
-					   :foreground ,(simple-16-theme-color magenta))))
+				 :foreground ,(simple-16-theme-color magenta))))
  `(hes-escape-sequence-face ((t :inherit font-lock-regexp-grouping-construct
-					  :foreground ,(simple-16-theme-color magenta))))
+				:foreground ,(simple-16-theme-color magenta))))
  ;;mu4e
  `(mu4e-unread-face ((t :inherit nil :foreground ,(simple-16-theme-color blue) :weight bold)))
  `(mu4e-system-face ((t :inherit nil :foreground ,(simple-16-theme-color green))))
