@@ -43,7 +43,8 @@
 ;; 	      display-time-default-load-average nil)
 ;; (display-time-mode t)
 
-(setq-default ;;tab-always-indent complete  ;; make tab key do indent only
+(setq-default ;; tab-always-indent 'complete   ;; make tab key do indent only
+	      ;; tab-first-completion 'word
 	      ring-bell-function #'ignore
 	      user-full-name "Ergus"
 	      initial-scratch-message (format ";; Welcome %s!!" user-full-name)
@@ -497,7 +498,9 @@
 	      remote-file-name-inhibit-cache 120           ;; Default 10
 	      tramp-completion-reread-directory-timeout 120;; Default 10
 	      password-cache-expiry 3600                   ;; Cache for 1 hour
-	      tramp-default-method "scp")
+	      ;; tramp-default-method "scp"                   ;; Already default
+	      ;; tramp-verbose 3                              ;; Already default
+	      )
 
 (with-eval-after-load 'tramp
   (connection-local-set-profile-variables
