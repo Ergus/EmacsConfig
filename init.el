@@ -1603,7 +1603,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package counsel
   :diminish
-  :defer 0.25
+  :defer 0.2
   :init
   (setq-default counsel-find-file-at-point t       ;; Select file at point
 		counsel-preselect-current-file t)   ;; Select current file in list
