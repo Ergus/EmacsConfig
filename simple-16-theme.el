@@ -45,8 +45,8 @@
 
 (custom-theme-set-faces
  'simple-16
- `(default ((t (:background ,(simple-16-theme-color black)
-                            :foreground ,(simple-16-theme-color white)))))
+ `(default ((t :background ,(simple-16-theme-color black)
+               :foreground ,(simple-16-theme-color white))))
 
  `(font-lock-builtin-face ((t :foreground ,(simple-16-theme-color green))))
  `(font-lock-comment-face ((t :foreground ,(simple-16-theme-color blue))))
@@ -59,40 +59,54 @@
  `(font-lock-type-face ((t :foreground ,(simple-16-theme-color green))))
  `(font-lock-variable-name-face ((t :foreground ,(simple-16-theme-color white))))
 
- `(highlight ((t :background ,(simple-16-theme-color brightblack)
-                 :foreground nil)))
- `(secondary-selection ((t :background ,(simple-16-theme-color brightblack)
-                           :foreground nil)))
+ `(highlight ((default :background ,(simple-16-theme-color blue) :foreground nil)
+	      (((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
+
+ `(secondary-selection ((t :background ,(simple-16-theme-color blue) :foreground nil)
+			(((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
 
  `(isearch ((t :background ,(simple-16-theme-color blue)
 	       :foreground nil
 	       :weight ultrabold)))
+
  `(lazy-highlight ((t :background ,(simple-16-theme-color brightblue))))
 
  `(region ((t :background ,(simple-16-theme-color brightblue))))
 
+ ;; Modeline
  `(mode-line ((t :background ,(simple-16-theme-color blue)
 		 :foreground ,(simple-16-theme-color white))))
- `(mode-line-inactive ((t :background ,(simple-16-theme-color brightblack)
-			  :foreground ,(simple-16-theme-color white))))
 
- `(line-number ((t :foreground ,(simple-16-theme-color brightblack))))
+ `(mode-line-inactive ((default :background ,(simple-16-theme-color black)
+				:foreground ,(simple-16-theme-color white))
+		       (((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
+
+ ;; line numbers
+ `(line-number ((default :foreground ,(simple-16-theme-color white))
+		(((class color) (min-colors 16)) :foreground ,(simple-16-theme-color brightblack))))
+
  `(line-number-current-line ((t :foreground ,(simple-16-theme-color green))))
- `(fill-column-indicator ((t :foreground ,(simple-16-theme-color brightblack))))
 
- `(show-paren-match ((t :background ,(simple-16-theme-color brightblue)
-                        :inherit nil)))
+ ;; column indicator
+ `(fill-column-indicator ((default :foreground ,(simple-16-theme-color white))
+			  (((class color) (min-colors 16)) :foreground ,(simple-16-theme-color brightblack))))
 
+ `(show-paren-match ((t :background ,(simple-16-theme-color brightblue) :inherit nil)))
+
+ ;; tab-bar
  `(tab-bar ((t :background ,(simple-16-theme-color black)
                :foreground ,(simple-16-theme-color white)
                :inverse-video nil)))
+
  `(tab-bar-tab ((t :inherit tab-bar :weight ultra-bold)))
 
- `(tab-bar-tab-inactive ((t :background ,(simple-16-theme-color black)
-                            :foreground ,(simple-16-theme-color brightblack)
-                            :weight normal
-                            :underline nil)))
+ `(tab-bar-tab-inactive ((default :background ,(simple-16-theme-color black)
+				  :foreground ,(simple-16-theme-color white)
+				  :weight normal
+				  :underline nil)
+			 (((class color) (min-colors 16)) :foreground ,(simple-16-theme-color brightblack))))
 
+ ;; Some others
  `(Man-overstrike ((t :inherit font-lock-type-face :bold t)))
  `(Man-underline ((t :inherit font-lock-keyword-face :underline t)))
 
@@ -102,13 +116,17 @@
 
  ;; External packages
  ;; Company
- `(company-tooltip ((t :background ,(simple-16-theme-color brightblack)
-                       :foreground ,(simple-16-theme-color white))))
+ `(company-tooltip ((default :background ,(simple-16-theme-color blue)
+			     :foreground ,(simple-16-theme-color white))
+		    (((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
+
  `(company-tooltip-common ((t :inherit company-tooltip
                               :foreground ,(simple-16-theme-color green))))
  `(company-tooltip-selection ((t :background ,(simple-16-theme-color blue)
                                  :weight ultra-bold)))
- `(company-scrollbar-bg ((t :background ,(simple-16-theme-color brightblack))))
+ `(company-scrollbar-bg ((default :background ,(simple-16-theme-color blue))
+			 (((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
+
  `(company-scrollbar-fg ((t :background ,(simple-16-theme-color blue))))
 
  ;; Ivy
@@ -130,20 +148,20 @@
 
  ;; Avy
  `(avy-lead-face ((t :background ,(simple-16-theme-color blue)
-                     :foreground ,(simple-16-theme-color brightwhite))))
+		     :foreground ,(simple-16-theme-color brightwhite))))
 
- ;;Flycheck
+ ;; Flycheck
  `(flycheck-error ((t :inherit nil :background nil :foreground nil :underline t)))
 
- ;;Flymake
+ ;; Flymake
  `(flymake-error ((t :inherit nil :background nil :foreground nil :underline t)))
 
- ;;highlight-escape-sequences
+ ;; highlight-escape-sequences
  `(hes-escape-backslash-face ((t :inherit font-lock-regexp-grouping-backslash
 				 :foreground ,(simple-16-theme-color magenta))))
  `(hes-escape-sequence-face ((t :inherit font-lock-regexp-grouping-construct
 				:foreground ,(simple-16-theme-color magenta))))
- ;;mu4e
+ ;; mu4e
  `(mu4e-unread-face ((t :inherit nil :foreground ,(simple-16-theme-color blue) :weight bold)))
  `(mu4e-system-face ((t :inherit nil :foreground ,(simple-16-theme-color green))))
  `(mu4e-trashed-face ((t :inherit nil :foreground ,(simple-16-theme-color red))))
