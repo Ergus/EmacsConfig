@@ -379,11 +379,10 @@ M-<left>' and repeat with M-<left>."
 (setq-default winner-dont-bind-my-keys t)
 (winner-mode t)
 
-(with-eval-after-load 'repeat
-  (my/repeat-keymap winner-repeat-map ctl-x-4-map
-    :doc "Repeat map for `winner' commands."
-    "u"  #'winner-undo
-    "r"  #'winner-redo))
+(my/repeat-keymap winner-repeat-map ctl-x-4-map
+  :doc "Repeat map for `winner' commands."
+  "u"  #'winner-undo
+  "r"  #'winner-redo)
 
 ;; Org mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
@@ -671,13 +670,12 @@ M-<left>' and repeat with M-<left>."
 (keymap-global-set "C-M-/" #'undo-redo)  ;; For gui; in tty "C-M-/" == "C-M-_"
 ;; (global-set-key (kbd "C-M-_") #'undo-redo) already set by default
 
-(with-eval-after-load 'repeat
-  (defvar-keymap undo-redo-repeat-map
-    :doc "Keymap to repeat undo-redo key sequences."
-    "u" #'undo
-    "r" #'undo-redo)
-  (put #'undo-redo 'repeat-map 'undo-redo-repeat-map)
-  (put #'undo 'repeat-map 'undo-redo-repeat-map))
+(defvar-keymap undo-redo-repeat-map
+  :doc "Keymap to repeat undo-redo key sequences."
+  "u" #'undo
+  "r" #'undo-redo)
+(put #'undo-redo 'repeat-map 'undo-redo-repeat-map)
+(put #'undo 'repeat-map 'undo-redo-repeat-map)
 
 ;; (use-package undo-propose :defer t)
 
