@@ -159,7 +159,7 @@
 (defmacro my/package-install (package)
   "Conditionally install PACKAGE in debug mode."
   `(when init-file-debug
-     (unless (fboundp 'package-installed-p)
+     (unless (fboundp #'package-installed-p)
        (require 'package))
      (unless (package-installed-p ,package)
        (unless my/package-initialized-p
@@ -619,7 +619,7 @@
 	    (string-equal (getenv "TERM") "linux"))
   (xterm-mouse-mode t))                    ;; mover el cursor al click
 
-(if (fboundp 'mouse-wheel-mode)
+(if (fboundp #'mouse-wheel-mode)
     (progn
       (setq-default mouse-wheel-scroll-amount '(1             ;; No modifier
 						((control) . 5)
