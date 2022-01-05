@@ -24,13 +24,8 @@
 (size-indication-mode t)                ;; Muestra el tamanno en modeline
 (delete-selection-mode t)               ;; Sobreescribe seleccion al pegar
 
-(prefer-coding-system 'utf-8)           ;; Encoding
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-
 (column-number-mode t)                  ;; Numero de la columna
-(line-number-mode t)                    ;; Numero de linea modeline
+;; (line-number-mode t)                    ;; Numero de linea modeline (already default)
 
 ;; Break long lines.
 ;;(global-visual-line-mode t)
@@ -472,7 +467,8 @@
 ;; The Colors I am using my own theme
 (load-theme 'simple-16)
 
-(if (display-graphic-p)
+(if (and (display-graphic-p)
+	 (member "Hack" (font-family-list)))
     (set-face-attribute 'default nil :family "Hack" :height 105))
 
 (defalias 'my/named-color 'simple-16-theme-color)
