@@ -192,6 +192,25 @@
 			      (current-buffer)))
        (add-hook ',modehook (function ,funame)))))
 
+(defmacro my/repeat-keymap (keymap-name keymap &rest defs)
+  "Generate a keymap as repeat-map and then add it to a another keymap.
+
+This is inteded to add the same bindings to a keymap like `C-x
+M-<left>' and repeat with M-<left>."
+  (declare (indent 2))
+  `(progn
+     ;; This also takes care of an even number of arguments
+     (defvar-keymap ,keymap-name ,@defs)
+     ,@(let ((sets) (puts) (key) (val))
+	 (while defs
+	   (setq key (pop defs)
+		 val (pop defs))
+
+	   (unless (eq key :doc)
+	     (push `(keymap-set ,keymap ,key ,val) sets)
+	     (push `(put ,val 'repeat-map ',keymap-name) puts)))
+	 (append sets puts))))
+
 (if init-file-debug
     (progn
       ;; Install use-package if not installed
@@ -359,16 +378,12 @@
 ;; winner
 (setq-default winner-dont-bind-my-keys t)
 (winner-mode t)
-(keymap-set ctl-x-4-map "u"  #'winner-undo)
-(keymap-set ctl-x-4-map "r"  #'winner-redo)
 
 (with-eval-after-load 'repeat
-  (defvar-keymap winner-repeat-map
-    :doc "Keymap to repeat winner commands."
-    "u" #'winner-undo
-    "r" #'winner-redo)
-  (put #'winner-undo 'repeat-map 'winner-repeat-map)
-  (put #'winner-redo 'repeat-map 'winner-repeat-map))
+  (my/repeat-keymap winner-repeat-map ctl-x-4-map
+    :doc "Repeat map for `winner' commands."
+    "u"  #'winner-undo
+    "r"  #'winner-redo))
 
 ;; Org mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
@@ -1142,15 +1157,23 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (keymap-global-set "M-<down>" #'windmove-down)
 (keymap-global-set "M-<up>" #'windmove-up)
 
-(keymap-global-set "M-S-<left>"  #'windmove-swap-states-left)
-(keymap-global-set "M-S-<right>"  #'windmove-swap-states-right)
-(keymap-global-set "M-S-<down>"  #'windmove-swap-states-down)
-(keymap-global-set "M-S-<up>"  #'windmove-swap-states-up)
+(keymap-set ctl-x-map "<left>" #'windmove-left)
+(keymap-set ctl-x-map "<right>" #'windmove-right)
+(keymap-set ctl-x-map "<down>" #'windmove-down)
+(keymap-set ctl-x-map "<up>" #'windmove-up)
 
 (keymap-set ctl-x-4-map "<left>" #'windmove-display-left)
 (keymap-set ctl-x-4-map "<right>" #'windmove-display-right)
 (keymap-set ctl-x-4-map "<down>" #'windmove-display-down)
 (keymap-set ctl-x-4-map "<up>" #'windmove-display-up)
+
+
+(my/repeat-keymap windmove-swap-repeat-map ctl-x-map
+  :doc "Repeat map for `windmove-swap' commands."
+  "M-S-<left>"  #'windmove-swap-states-left
+  "M-S-<right>"  #'windmove-swap-states-right
+  "M-S-<down>"  #'windmove-swap-states-down
+  "M-S-<up>"  #'windmove-swap-states-up)
 
 ;;__________________________________________________________
 ;; repeat-mode
@@ -1893,45 +1916,24 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (interactive "*p")
   (transpose-chars (- arg)))
 
-(defvar-keymap transpose-repeat-map
+(my/repeat-keymap transpose-repeat-map ctl-x-map
   :doc "The keymap for `transpose-repeat' commands."
   "C-M-<left>" #'my/untranspose-words
   "C-M-<right>" #'transpose-words
   "M-<left>" #'my/untranspose-chars
   "M-<right>" #'transpose-chars)
 
-(put #'my/untranspose-words 'repeat-map 'transpose-repeat-map)
-(put #'transpose-words 'repeat-map 'transpose-repeat-map)
-(put #'my/untranspose-chars 'repeat-map 'transpose-repeat-map)
-(put #'transpose-chars 'repeat-map 'transpose-repeat-map)
-
-(keymap-set ctl-x-map "C-M-<left>" #'my/untranspose-words)
-(keymap-set ctl-x-map "C-M-<right>" #'transpose-words)
-(keymap-set ctl-x-map "M-<left>" #'my/untranspose-chars)
-(keymap-set ctl-x-map "M-<right>" #'transpose-chars)
-
 ;;__________________________________________________________
 ;; Move current line up and down C-M-<arrow> and duplicate
 (use-package move-dup
   :defer t
-  :preface
-  (defvar-keymap move-dup-repeat-map
+  :init
+  (my/repeat-keymap move-dup-repeat-map ctl-x-map
     :doc "The keymap for `move-dup-repeat' commands."
     "C-M-<up>" #'move-dup-move-lines-up
     "C-M-<down>" #'move-dup-move-lines-down
     "M-<up>" #'move-dup-duplicate-up
-    "M-<down>" #'move-dup-duplicate-down)
-  :init
-  (keymap-set ctl-x-map "C-M-<up>" #'move-dup-move-lines-up)
-  (keymap-set ctl-x-map "C-M-<down>" #'move-dup-move-lines-down)
-  (keymap-set ctl-x-map "M-<up>" #'move-dup-duplicate-up)
-  (keymap-set ctl-x-map "M-<down>" #'move-dup-duplicate-down)
-  :config
-  (put #'move-dup-move-lines-up 'repeat-map move-dup-repeat-map)
-  (put #'move-dup-move-lines-down 'repeat-map move-dup-repeat-map)
-  (put #'move-dup-duplicate-up 'repeat-map move-dup-repeat-map)
-  (put #'move-dup-duplicate-down 'repeat-map move-dup-repeat-map)
-  )
+    "M-<down>" #'move-dup-duplicate-down))
 
 ;;__________________________________________________________
 ;; evil mode
@@ -1940,7 +1942,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :preface
   (defvar-keymap avy-basic-map
     :doc "The base keymap for `avy-mode'."
-    "r" #'avy-resume
     "C-'" #'avy-goto-char-timer
     "'" #'avy-goto-char-timer
     "c" #'avy-goto-char
@@ -1952,8 +1953,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "C-r" #'avy-goto-word-1-above
     "M-b" #'avy-goto-word-0-above
     "M-f" #'avy-goto-word-0-below
-    "p" #'avy-prev
-    "n" #'avy-next
     "s" #'avy-goto-symbol-1
     "C-a" #'avy-goto-line
     "C-e" #'avy-goto-end-of-line
@@ -1982,15 +1981,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 			      ?a ?s ?d ?f ?g ?h ?j ?k ?l
 			      ?q ?w ?e ?r ?t ?y ?u ?i ?o ?p) ;; Order of proposals
 		)
-  :config
-  (with-eval-after-load 'repeat
-    (defvar-keymap avy-repeat-map
-      :doc "Keymap to repeat avy key sequences."
-      "p" #'avy-prev
-      "n" #'avy-next
-      "r" #'avy-resume)
-    (put #'avy-prev 'repeat-map 'avy-repeat-map)
-    (put #'avy-next 'repeat-map 'avy-repeat-map)))
+
+  (my/repeat-keymap avy-repeat-map avy-basic-map
+    :doc "Keymap to repeat some avy key sequences."
+    "p" #'avy-prev
+    "n" #'avy-next
+    "r" #'avy-resume))
 
 (keymap-global-set "M-Z" #'zap-up-to-char)
 
