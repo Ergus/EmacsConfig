@@ -1253,11 +1253,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
   (defvar-keymap flymake-basic-map
     :doc "The base keymap for `flymake-mode'."
-    "n" #'flymake-goto-next-error
-    "p" #'flymake-goto-prev-error
     "d" #'flymake-show-diagnostic
-    "b" #'flymake-show-diagnostic-buffer
+    "b" #'flymake-show-buffer-diagnostics
     "l" #'flymake-switch-to-log-buffer)
+
+  (my/repeat-keymap flymake-repeat-map flymake-basic-map
+    "n" #'flymake-goto-next-error
+    "p" #'flymake-goto-prev-error)
 
   (keymap-set flymake-mode-map "C-c k" flymake-basic-map)
   (which-key-add-keymap-based-replacements flymake-mode-map "C-c k" "flymake")
@@ -1753,8 +1755,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("\\.gitconfig\\'" . gitconfig-mode)
 	 ("\\.gitignore\\'" . gitignore-mode)))
 
-(use-package git-timemachine
-  :defer t)
+(use-package git-timemachine :defer t)
 
 (use-package git-commit
   :defer t
