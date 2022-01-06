@@ -1600,10 +1600,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "d" #'xref-find-definitions
     "4" #'xref-find-definitions-other-window
     "a" #'xref-find-apropos
-    "b" #'xref-go-back
-    "n" #'xref-go-forward
     "r" #'xref-find-references
     "TAB" #'completion-at-point)
+
+  (my/repeat-keymap ivy-xref-repeat-map ivy-xref-basic-map
+    "p" #'xref-go-back
+    "n" #'xref-go-forward)
+
+  (put #'xref-find-definitions 'repeat-map ivy-xref-repeat-map)
+  (put #'xref-find-references 'repeat-map ivy-xref-repeat-map)
 
   (keymap-global-set "C-c x" ivy-xref-basic-map))
 
@@ -1782,6 +1787,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       (smerge-mode 1))))
 
 (with-eval-after-load 'smerge-mode
+  (my/repeat-keymap smerge-repeat-map smerge-basic-map
+    "n" #'smerge-next
+    "p" #'smerge-prev
+    "a" #'smerge-keep-all
+    "b" #'smerge-keep-base
+    "l" #'smerge-keep-lower
+    "u" #'smerge-keep-upper)
+
   (which-key-add-keymap-based-replacements smerge-mode-map
     "C-c s" "smerge"
     "C-c s =" "smerge-diff"))
