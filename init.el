@@ -98,18 +98,13 @@
 
 	      eval-expression-print-length nil
 	      eval-expression-print-level nil
-	      enable-remote-dir-locals t          ;; Open remote dir locals.
+	      enable-remote-dir-locals t              ;; Open remote dir locals.
 
-	      suggest-key-bindings t              ;; Ivy ya hace lo que esta opcion
-	      ;; uniquify-min-dir-content 0
+	      suggest-key-bindings t                  ;; Ivy ya hace lo que esta opcion
 	      truncate-lines t
-	      ;; auto-hscroll-mode 'current-line       ;; scroll horizontally 1 line not all
-	      save-interprogram-paste-before-kill t ;; Save clipboard before replace
+	      ;; auto-hscroll-mode 'current-line         ;; scroll horizontally 1 line not all
+	      save-interprogram-paste-before-kill t   ;; Save clipboard before replace
 	      minibuffer-eldef-shorten-default t
-
-	      ;; These two must be enabled/disabled together
-	      ;; (setq enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
-	      ;; (minibuffer-depth-indicate-mode 1)    ;; Mostrar nivel de nesting en minibuffer
 
 	      ;; M-x show context-local commands
 	      read-extended-command-predicate  #'command-completion-default-include-p
@@ -547,6 +542,10 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; minibuffers
+
+;; These two must be enabled/disabled together
+(setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
+(minibuffer-depth-indicate-mode 1)        ;; Mostrar nivel de nesting en minibuffer
 
 (add-hook 'minibuffer-setup-hook #'my/unset-gc)
 (add-hook 'minibuffer-exit-hook #'my/restore-gc)
