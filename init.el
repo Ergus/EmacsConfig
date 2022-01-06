@@ -297,6 +297,11 @@ M-<left>' and repeat with M-<left>."
     "C-x C-k" "kmacro"
     ))
 
+(defvar-keymap my/sidebar-map
+  :doc "Keymap to toggle sidebars.")
+
+(keymap-global-set "C-c b" my/sidebar-map)
+
 ;;__________________________________________________________
 ;; Some internal packages to defer them
 
@@ -877,11 +882,9 @@ M-<left>' and repeat with M-<left>."
   (keymap-set lsp-mode-map "C-c l i" #'lsp-ivy-workspace-symbol)
   )
 
-(use-package tree-sitter
-  :defer t)
+(use-package tree-sitter :defer t)
 
-(use-package tree-sitter-langs
-  :after tree-sitter)
+(use-package tree-sitter-langs :after tree-sitter)
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
@@ -1220,8 +1223,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (yas-global-mode 1))
 
-(use-package yasnippet-snippets
-  :after yasnippet)
+(use-package yasnippet-snippets :after yasnippet)
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
@@ -1488,7 +1490,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   ;;(dired-sidebar-use-term-integration t)
   (setq-default dired-sidebar-theme 'nerd
 		dired-sidebar-subtree-line-prefix ".")
-  (keymap-global-set "C-c b d" #'dired-sidebar-toggle-sidebar))
+  (keymap-set my/sidebar-map "d" #'dired-sidebar-toggle-sidebar))
 
 
 ;; __________________________________________________________
@@ -1512,7 +1514,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package ibuffer-sidebar
   :defer t
   :init
-  (keymap-global-set "C-c b b" #'ibuffer-sidebar-toggle-sidebar))
+  (keymap-set my/sidebar-map "b" #'ibuffer-sidebar-toggle-sidebar))
 
 (use-package ibuffer-tramp
   :after ibuffer
@@ -1541,14 +1543,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (ibuffer-sidebar-toggle-sidebar)
   (dired-sidebar-toggle-sidebar))
 
-(keymap-global-set "C-c b s" #'my/sidebar-toggle)
+(keymap-set my/sidebar-map "s" #'my/sidebar-toggle)
 
 ;;__________________________________________________________
 ;; neotree (Like dired sidebar but a bit fancier.)
 (use-package neotree
   :defer t
   :init
-  (keymap-global-set "C-c b n" #'neotree-toggle))
+  (keymap-set my/sidebar-map "n" #'neotree-toggle))
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
@@ -1627,7 +1629,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (setq-default imenu-list-position 'left)
-  (keymap-global-set "C-c b i" #'imenu-list-smart-toggle))
+  (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle))
 
 (use-package counsel
   :diminish
