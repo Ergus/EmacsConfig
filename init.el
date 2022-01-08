@@ -225,6 +225,7 @@ M-<left>' and repeat with M-<left>."
 		use-package-verbose nil
 		use-package-expand-minimally t
 		native-comp-async-report-warnings-errors 'silent))
+
 (require 'use-package)
 
 (use-package esup :defer t)
@@ -269,7 +270,7 @@ M-<left>' and repeat with M-<left>."
 (use-package which-key
   :diminish
   :init
-  (setq-default which-key-idle-delay 10000             ;; default 1.0, 1000 to not show
+  (setq-default which-key-idle-delay 3.0               ;; default 1.0, 1000 to not show
 		which-key-show-early-on-C-h t          ;; Show which-key on C-h
 		which-key-idle-secondary-delay 0.01    ;; nil sets the same delay, use when which-key-show-early-on-C-h
 		which-key-dont-use-unicode t
