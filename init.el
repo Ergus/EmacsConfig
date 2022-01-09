@@ -657,7 +657,7 @@ M-<left>' and repeat with M-<left>."
 (keymap-global-set "<remap> <scroll-down-command>" #'scroll-down-line)
 
 ;;__________________________________________________________
-;; My program's mode hooks
+;; Redefine and remap some commands.
 
 (defun my/smart-beginning-of-line ()
   "Move point to first non-whitespace character or `beginning-of-line'."
@@ -1595,6 +1595,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   (setq-default ivy-read-action-function #'ivy-hydra-read-action))
 
 (use-package ivy-avy :after ivy)
+
+(setq-default xref-search-program 'ripgrep)
 
 (use-package ivy-xref
   :defer t
