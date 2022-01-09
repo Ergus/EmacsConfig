@@ -784,7 +784,10 @@ M-<left>' and repeat with M-<left>."
 ;;__________________________________________________________
 ;; LSP try for a whil
 
-(use-package eglot :defer t)
+(use-package eglot :defer t
+  :init
+  (setq-default eglot-stay-out-of '(eldoc)))
+
 
 (use-package company
   ;; :load-path (lambda nil (my/load-path "~/gits/company-mode/"))
