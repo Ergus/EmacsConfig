@@ -2142,6 +2142,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (add-hook 'json-mode-delay-hook #'flymake-json-load))
 
 ;;__________________________________________________________
+;; Protobuf mode
+(use-package protobuf-mode :defer t)
+
+;;__________________________________________________________
 ;; Modeline
 (use-package powerline
   :config
