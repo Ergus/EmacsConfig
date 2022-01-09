@@ -1730,7 +1730,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :defer t
   :init
   (setq-default dumb-jump-selector 'ivy
-		dumb-jump-disable-obsolete-warnings t)
+		dumb-jump-disable-obsolete-warnings t
+		dumb-jump-prefer-searcher 'rg
+		dumb-jump-quiet (not init-file-debug)
+		dumb-jump-debug init-file-debug
+		)
   (which-key-add-key-based-replacements
     "C-c j" "dumb-jump"
     "C-c j 4" "other-window")
