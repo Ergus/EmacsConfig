@@ -445,8 +445,7 @@ M-<left>' and repeat with M-<left>."
 ;;__________________________________________________________
 ;; Benchmark-init
 
-(use-package paradox
-  :defer t
+(use-package paradox :defer t
   :init
   (setq-default paradox-spinner-type 'progress-bar
 		paradox-display-download-count t
@@ -574,8 +573,7 @@ M-<left>' and repeat with M-<left>."
      '(add-hook 'ediff-after-quit-hook-internal #'winner-undo)))
 
 ;; more like vimdiff
-(use-package vdiff
-  :defer t
+(use-package vdiff :defer t
   :bind-keymap ("C-c d" . vdiff-mode-prefix-map)
   :init
   (setq-default vdiff-auto-refine t)
@@ -586,8 +584,7 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; terms
-(use-package vterm
-  :defer t
+(use-package vterm :defer t
   :hook (vterm-mode . (lambda nil
 			(display-fill-column-indicator-mode -1)
 			(auto-fill-mode -1)))
@@ -600,8 +597,7 @@ M-<left>' and repeat with M-<left>."
   (add-to-list 'vterm-eval-cmds
 	       '("find-file-other-window" find-file-other-window)))
 
-(use-package vterm-toggle
-  :defer t
+(use-package vterm-toggle :defer t
   :init
   (setq-default vterm-toggle-scope 'project
 		vterm-toggle-project-root t    ;; Already default
@@ -618,13 +614,11 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; Better shell (for ssh)
-(use-package better-shell
-  :defer t
+(use-package better-shell :defer t
   :init
   (keymap-global-set "C-c t b" #'better-shell-shell))
 
-(use-package shell-command+
-  :defer t
+(use-package shell-command+ :defer t
   :init
   (keymap-global-set "<remap> <shell-command>" #'shell-command+))
 
@@ -702,8 +696,7 @@ M-<left>' and repeat with M-<left>."
 ;;__________________________________________________________
 ;; Cycle string capitalization for programming:
 ;; "foo_bar => FOO_BAR => FooBar => fooBar => foo-bar => Foo_Bar => foo_bar"
-(use-package string-inflection
-  :defer t
+(use-package string-inflection :defer t
   :init
   (keymap-global-set "C-c SPC" #'string-inflection-all-cycle)
 
@@ -717,8 +710,7 @@ M-<left>' and repeat with M-<left>."
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
 
-(use-package highlight-indent-guides
-  :defer t
+(use-package highlight-indent-guides :defer t
   :diminish
   :init
   (setq-default highlight-indent-guides-auto-enabled nil
@@ -803,7 +795,7 @@ M-<left>' and repeat with M-<left>."
   (setq-default eglot-stay-out-of '(eldoc)))
 
 
-(use-package company
+(use-package company :defer t
   ;; :load-path (lambda nil (my/load-path "~/gits/company-mode/"))
   :preface
   (defmacro my/company-backend-after-load (backend)
@@ -816,7 +808,6 @@ M-<left>' and repeat with M-<left>."
     "Load company mode if not active."
     (unless (bound-and-true-p company-mode)
       (company-mode 1)))
-  :defer t
   :init
   (add-hook 'prog-mode-delay-hook #'my/company-mode-delay-hook)
   (add-hook 'message-mode-delay-hook #'my/company-mode-delay-hook)
@@ -844,12 +835,11 @@ M-<left>' and repeat with M-<left>."
   (keymap-set company-active-map "<remap> <dabbrev-expand>" #'company-other-backend)
   (keymap-set company-active-map "<remap> <xref-find-definitions>" #'company-show-location))
 
-(use-package lsp-mode
+(use-package lsp-mode :defer t
   :diminish lsp
   :hook (lsp-mode . (lambda nil
 		      (my/company-backend-after-load #'company-capf)
 		      (lsp-enable-which-key-integration t)))
-  :defer t
   :init
   (setq-default lsp-keymap-prefix (kbd "C-c l")
 		lsp-enable-snippet nil
@@ -988,18 +978,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (subword-mode 1))
   (add-hook 'c-mode-common-hook #'my/c-mode-common-hook))
 
-(use-package preproc-font-lock ;; Preprocessor
-  :defer t
+(use-package preproc-font-lock :defer t ;; Preprocessor
   :init
   (add-hook 'c-mode-common-hook #'preproc-font-lock-mode)
   (setq-default preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
 
 ;; company-c-headers
-(use-package company-c-headers
+(use-package company-c-headers :defer t
   :preface
   (defun my/c-mode-hook ()
     (my/company-backend-after-load #'company-c-headers))
-  :defer t
   :init
   (add-hook 'c-mode #'my/c-mode-hook)
   (add-hook 'c++-mode #'my/c-mode-hook)
@@ -1009,9 +997,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; C++ mode
-(use-package modern-cpp-font-lock
+(use-package modern-cpp-font-lock :defer t
   :diminish modern-c++-font-lock-mode
-  :defer t
   :init
   (add-hook 'c++-mode #'modern-c++-font-lock-mode))
 
@@ -1054,8 +1041,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Restructured text
-(use-package sphinx-mode
-  :defer t
+(use-package sphinx-mode :defer t
   :init
   (add-hook 'rst-mode-hook #'sphinx-mode))
 
@@ -1064,13 +1050,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (setq-default ruby-indent-level 2)
 (add-to-list 'auto-mode-alist '("\\.rjs\\'" . ruby-mode))
 
-(use-package ruby-tools
-  :defer t
+(use-package ruby-tools :defer t
   :init
   (add-hook 'ruby-mode-hook #'ruby-tools-mode))
 
-(use-package ruby-electric
-  :defer t
+(use-package ruby-electric :defer t
   :init
   (add-hook 'ruby-mode-hook  #'ruby-electric-mode))
 
@@ -1079,8 +1063,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package julia-mode
   :mode "\\.jl\\'")
 
-(use-package flycheck-julia
-  :defer t
+(use-package flycheck-julia :defer t
   :init
   (add-hook 'julia-mode-hook #'flycheck-julia-setup))
 
@@ -1089,44 +1072,38 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package rust-mode
   :mode "\\.rs\\'")
 
-(use-package flycheck-rust
-  :defer t
+(use-package flycheck-rust :defer t
   :init
   (add-hook 'rust-mode-hook #'flycheck-rust-setup))
 
 ;;__________________________________________________________
 ;; Ocaml Mode
-(use-package caml
-  :defer t
+(use-package caml :defer t
   :init
   (add-to-list 'auto-mode-alist '("\\.ml[iylp]?\\'" . caml-mode)))
 
 ;;__________________________________________________________
 ;; D languaje
-(use-package d-mode
-  :defer t
+(use-package d-mode :defer t
   :init
   (add-to-list 'auto-mode-alist '("\\.d\\'" . d-mode)))
 
 ;;__________________________________________________________
 ;; Go languaje
-(use-package go-mode
-  :defer t
+(use-package go-mode :defer t
   :init
   (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode)))
 
 ;;__________________________________________________________
 ;; lua language
-(use-package lua-mode
-  :defer t
+(use-package lua-mode :defer t
   :init
   (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
   (add-to-list 'interpreter-mode-alist '("lua" . lua-mode)))
 
-(use-package company-lua
+(use-package company-lua :defer t
   :hook (lua-mode . (lambda nil
-		      (my/company-backend-after-load #'company-lua)))
-  :defer t)
+		      (my/company-backend-after-load #'company-lua))))
 
 ;;__________________________________________________________
 ;; groovy language
@@ -1139,8 +1116,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Use for Qt's .pro and .pri files
-(use-package qt-pro-mode
-  :defer t
+(use-package qt-pro-mode :defer t
   :init
   (add-to-list 'auto-mode-alist '("\\.pr[io]\\'" . qt-pro-mode))
   (add-to-list 'auto-mode-alist '("\\.moc\\'" . c++-mode))
@@ -1201,8 +1177,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Lines enabling gnuplot-mode
-(use-package gnuplot
-  :defer t
+(use-package gnuplot :defer t
   :init
   (add-to-list 'auto-mode-alist
 	       '("\\.\\(gpl?\\|plt\\)\\'" . gnuplot-mode)))
@@ -1244,10 +1219,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
-(use-package flycheck
+(use-package flycheck :defer t
   :diminish
   :when (< (buffer-size) 200000)
-  :defer t
   :preface
   (defun my/flycheck-mode-hook ()
     "Hook to enable flycheck-mode."
@@ -1287,8 +1261,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Improved help buffer
 
-(use-package helpful
-  :defer t
+(use-package helpful :defer t
   :diminish
   :init
   (keymap-global-set "C-h F" #'helpful-function)
@@ -1301,8 +1274,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Chequeo de gramatica
-(use-package languagetool
-  :defer t
+(use-package languagetool :defer t
   :init
   (setq-default ;; languagetool-server-language-tool-jar "/home/ergo/gits/emacs_clones/languagetool/languagetool-standalone/target/LanguageTool-5.5-SNAPSHOT/LanguageTool-5.5-SNAPSHOT/languagetool-server.jar"
 		languagetool-language-tool-jar "/home/ergo/gits/emacs_clones/languagetool/languagetool-standalone/target/LanguageTool-5.5-SNAPSHOT/LanguageTool-5.5-SNAPSHOT/languagetool-commandline.jar"
@@ -1347,12 +1319,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (add-to-list 'auto-mode-alist '("neomutt-Ergus-" . message-mode))
 (add-to-list 'auto-mode-alist '("draft" . message-mode))
 
-(use-package notmuch
+(use-package notmuch :defer t
   :init
   (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
   :hook (message-mode . (lambda nil
-			  (my/company-backend-after-load #'notmuch-company)))
-  :defer t)
+			  (my/company-backend-after-load #'notmuch-company))))
 
 ;;__________________________________________________________
 ;; Latex mode
@@ -1419,26 +1390,23 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 
 ;; auctex-latexmk
-(use-package auctex-latexmk
-  :defer t
+(use-package auctex-latexmk :defer t
   :init
   (setq-default auctex-latexmk-inherit-TeX-PDF-mode t)
   :config
   (auctex-latexmk-setup))
 
-(use-package company-math
+(use-package company-math :defer t
   :hook (TeX-mode . (lambda nil
 		      (my/company-backend-after-load
-		       '(company-math-symbols-latex company-latex-commands))))
-  :defer t)
+		       '(company-math-symbols-latex company-latex-commands)))))
 
-(use-package company-auctex
+(use-package company-auctex :defer t
   :hook (TeX-mode . (lambda nil
 		      ;; This is similar code than company-auctex-init, but setting it only locally.
 		      (my/company-backend-after-load 'company-auctex-labels)
 		      (my/company-backend-after-load 'company-auctex-bibs)
-		      (my/company-backend-after-load '(company-auctex-macros company-auctex-symbols company-auctex-environments))))
-  :defer t)
+		      (my/company-backend-after-load '(company-auctex-macros company-auctex-symbols company-auctex-environments)))))
 
 ;; reftex
 (setq-default reftex-cite-prompt-optional-args t   ; Prompt for empty optional arguments in cite
@@ -1453,11 +1421,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (eval-after-load 'reftex '(reftex-isearch-minor-mode))
 
-(use-package company-reftex
+(use-package company-reftex :defer t
   :hook (reftex-mode . (lambda nil
 			 (my/company-backend-after-load
-			  '(company-reftex-labels company-reftex-citations))))
-  :defer t)
+			  '(company-reftex-labels company-reftex-citations)))))
 
 ;;__________________________________________________________
 ;;bibtex mode set use biblatex
@@ -1465,13 +1432,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (setq-default bibtex-dialect 'biblatex)
 (add-to-list 'auto-mode-alist '("\\.bib\\'" . bibtex-mode))
 
-(use-package company-bibtex
+(use-package company-bibtex :defer t
   :hook (bibtex-mode . (lambda nil
-			 (my/company-backend-after-load #'company-bibtex)))
-  :defer t)
+			 (my/company-backend-after-load #'company-bibtex))))
 
-(use-package ivy-bibtex
-  :defer t
+(use-package ivy-bibtex :defer t
   :init
   (setq-default ivy-bibtex-default-action #'bibtex-completion-insert-citation))
 
@@ -1507,8 +1472,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (eval-after-load 'dired
   '(keymap-set dired-mode-map "<mouse-2>" #'dired-mouse-find-file))
 
-(use-package dired-sidebar
-  :defer t
+(use-package dired-sidebar :defer t
   :init
   ;;(dired-sidebar-use-term-integration t)
   (setq-default dired-sidebar-theme 'nerd
@@ -1519,8 +1483,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; __________________________________________________________
 ;; Templates Projects
 
-(use-package ptemplate
-  :defer t)
+(use-package ptemplate :defer t)
 
 (use-package ptemplate-templates
   :after ptemplate
@@ -1534,8 +1497,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (eval-after-load 'ibuffer
   '(which-key-add-keymap-based-replacements ibuffer--filter-map "G" "Groups"))
 
-(use-package ibuffer-sidebar
-  :defer t
+(use-package ibuffer-sidebar :defer t
   :init
   (keymap-set my/sidebar-map "b" #'ibuffer-sidebar-toggle-sidebar))
 
@@ -1570,8 +1532,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; neotree (Like dired sidebar but a bit fancier.)
-(use-package neotree
-  :defer t
+(use-package neotree :defer t
   :init
   (keymap-set my/sidebar-map "n" #'neotree-toggle))
 
@@ -1582,9 +1543,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package flx :defer t)
 
-(use-package ivy
+(use-package ivy :defer t
   :diminish
-  :defer t
   :init
   (setq-default ivy-count-format "(%d/%d) "
 		ivy-pulse-delay nil
@@ -1615,8 +1575,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (setq-default xref-search-program 'ripgrep)
 
-(use-package ivy-xref
-  :defer t
+(use-package ivy-xref :defer t
   :init
   (which-key-add-key-based-replacements "C-c x" "xref")
   :init
@@ -1639,8 +1598,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (keymap-global-set "C-c x" ivy-xref-basic-map))
 
-(use-package swiper
-  :defer t
+(use-package swiper :defer t
   :init
   (setq-default swiper-goto-start-of-match t
 		swiper-verbose nil)
@@ -1650,8 +1608,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (keymap-set swiper-map "C-o" #'swiper-isearch-toggle))
 
-(use-package imenu-list
-  :defer t
+(use-package imenu-list :defer t
   :init
   (setq-default imenu-list-position 'left)
   (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle))
@@ -1704,11 +1661,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
  ;; Complete history
 
 
-(use-package counsel-gtags
+(use-package counsel-gtags :defer t
   :diminish
   :preface
   (my/load-path "~/gits/emacs_clones/emacs-counsel-gtagss/")
-  :defer t
   :bind-keymap ("C-c g" . counsel-gtags-command-map)
   :init
   (setq-default counsel-gtags-debug-mode t
@@ -1744,9 +1700,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   (setq imenu-create-index-function #'global-tags-create-imenu-index)
 ;;   )
 
-(use-package dumb-jump
+(use-package dumb-jump :defer t
   :bind-keymap ("C-c j" . dumb-jump-mode-map)
-  :defer t
   :init
   (setq-default dumb-jump-selector 'ivy
 		dumb-jump-disable-obsolete-warnings t
@@ -1793,8 +1748,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package git-timemachine :defer t)
 
-(use-package git-commit
-  :defer t
+(use-package git-commit :defer t
   :mode ("COMMIT_EDITMSG" . git-commit-setup)
   :init
   (setq-default git-commit-summary-max-length 68)
@@ -1834,7 +1788,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (add-hook 'magit-diff-visit-file-hook #'my/enable-smerge-maybe)
 
 ;; diff-hl
-(use-package diff-hl
+(use-package diff-hl :defer t
   :preface
   (defun my/diff-hl-mode ()
     (when (or (and buffer-file-name
@@ -1843,7 +1797,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       (turn-on-diff-hl-mode)
       (unless (display-graphic-p)
 	(diff-hl-margin-mode 1))))
-  :defer t
   :init
   (add-hook 'prog-mode-delay-hook #'my/diff-hl-mode)
   (add-hook 'vc-dir-mode-hook #'my/diff-hl-mode)
@@ -1862,21 +1815,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package nasm-mode
   :mode ("\\.asm\\'" "\\.s\\'"))
 
-(use-package flymake-nasm
-  :defer t
+(use-package flymake-nasm :defer t
   :init
   (add-hook 'asm-mode-hook-hook #'flymake-nasm-setup))
 
 ;;__________________________________________________________
 ;; CMake
-(use-package cmake-mode
-  :defer t
+(use-package cmake-mode :defer t
   :init
   (add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
   (add-to-list 'auto-mode-alist '("\\.cmake(.in)?\\'" . cmake-mode)))
 
-(use-package cmake-font-lock
-  :defer t
+(use-package cmake-font-lock :defer t
   :preface
   (defun my/cmake-font-lock ()
     (let ((auto-refresh-defaults (boundp 'font-lock-keywords)))
@@ -1970,8 +1920,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Move current line up and down C-M-<arrow> and duplicate
-(use-package move-dup
-  :defer t
+(use-package move-dup :defer t
   :init
   (my/repeat-keymap move-dup-repeat-map ctl-x-map
     :doc "The keymap for `move-dup-repeat' commands."
@@ -1983,7 +1932,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; evil mode
 
-(use-package avy
+(use-package avy :defer t
   :preface
   (defvar-keymap avy-basic-map
     :doc "The base keymap for `avy-mode'."
@@ -2008,7 +1957,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "M-w" #'avy-kill-ring-save-region
     "C-SPC" #'avy-pop-mark
     "i" #'avy-copy-region)
-  :defer t
   :init
   (eval-after-load 'isearch
     '(keymap-set isearch-mode-map "C-'" #'avy-isearch))
@@ -2035,8 +1983,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (keymap-global-set "M-Z" #'zap-up-to-char)
 
-(use-package avy-zap
-  :defer t
+(use-package avy-zap :defer t
   :after avy
   :init
   (keymap-set avy-basic-map "z" #'avy-zap-to-char-dwim)
@@ -2048,11 +1995,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package arduino-mode
   :mode ("\\.ino\\'" "\\.pde\\'"))
 
-(use-package company-arduino
+(use-package company-arduino :defer t
   :hook (arduino-mode . (lambda nil
 			  (eval-after-load 'company
 			    #'company-arduino-turn-on)))
-  :defer t
   :config
   ;; This package already loads 'company-c-headers.
   (defconst initial-company-c-headers-path-system company-c-headers-path-system)
@@ -2077,8 +2023,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Multiple Cursors
 
 (global-unset-key (kbd "C-c <down-mouse-1>"))
-(use-package multiple-cursors  ;; Multiple cursors package
-  :defer t
+(use-package multiple-cursors :defer t
   :init
   (defvar-keymap mc-basic-map
     :doc "The base keymap for `multicursor'."
@@ -2107,8 +2052,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		mc/always-repeat-command t
 		mc/edit-lines-empty-lines 'ignore))
 
-(use-package iedit
-  :defer t
+(use-package iedit :defer t
   :commands iedit-mode-from-isearch
   :init
   (setq-default iedit-toggle-key-default nil) ;; this avoids calling iedit-update-key-bindings
@@ -2130,20 +2074,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		web-mode-enable-auto-closing t
 		web-mode-enable-css-colorization t))
 
-(use-package company-web
+(use-package company-web :defer t
   :hook (web-mode . (lambda nil
-		      (my/company-backend-after-load #'company-web-html)))
-  :defer t)
+		      (my/company-backend-after-load #'company-web-html))))
 
 ;;__________________________________________________________
 ;; nginx mode
 (use-package nginx-mode
   :mode ("sites-\\(?:available\\|enabled\\)\\'" "nginx\\.config\\'"))
 
-(use-package company-nginx
+(use-package company-nginx :defer t
   :hook (nginx-mode . (lambda nil
-			(my/company-backend-after-load #'company-nginx)))
-  :defer t)
+			(my/company-backend-after-load #'company-nginx))))
 
 (use-package lice :defer t)
 (use-package lorem-ipsum :defer t)
@@ -2155,8 +2097,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :preface
   (my/gen-delay-hook json-mode))
 
-(use-package flymake-json
-  :defer t
+(use-package flymake-json :defer t
   :init
   (add-hook 'json-mode-delay-hook #'flymake-json-load))
 
@@ -2179,8 +2120,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package sudo-edit :defer t)
 
-(use-package evil
-  :defer t
+(use-package evil :defer t
   :init
   (setq-default evil-esc-delay 0.001
 		evil-want-keybinding nil)
@@ -2198,8 +2138,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	    (lambda nil
 	      (set-face-attribute 'mode-line nil :background (my/named-color green)))))
 
-(use-package evil-collection
-  :defer t
+(use-package evil-collection :defer t
   :init
   (setq-default evil-collection-setup-minibuffer t)
   (add-hook 'evil-mode-hook #'evil-collection-init))
@@ -2222,8 +2161,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   :config
 ;;   (automark-mode 1))
 
-(use-package slime
-  :defer t
+(use-package slime :defer t
   :init
   (setq-default inferior-lisp-program "sbcl"
 		slime-contribs '(slime-fancy)))
@@ -2233,12 +2171,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :commands objed-mode)
 
 ;; Emacs en less y otros comandos
-(use-package e2ansi
-  :defer t)
+(use-package e2ansi :defer t)
 
 ;; Colaborative edditing
-(use-package crdt
-  :defer t)
+(use-package crdt :defer t)
 
 (use-package i3wm-config-mode
   :mode "/i3/config\\'")
