@@ -95,6 +95,7 @@
 	      ;; kill-buffer-query-functions nil     ;; Functions to call before quering a buffer (nil default)
 	                                          ;; Default asks if process running.
 	      kill-do-not-save-duplicates t       ;; duplicate kill ring entries
+	      kill-ring-max (* kill-ring-max 2)   ;; increase kill ring
 
 	      eval-expression-print-length nil
 	      eval-expression-print-level nil
@@ -114,10 +115,15 @@
 	      switch-to-buffer-obey-display-actions t ;; switching the buffer respects display actions
 	      bookmark-menu-confirm-deletion t        ;; ask confirmation to delete bookmark
 	      bookmark-fontify t                      ;; Colorize bookmarked lines with bookmark-face
+	      bookmark-save-flag 1                    ;; Save bookmarks immediately when added
 	      idle-update-delay 0.25                  ;; idle to update screen
 
 	      translate-upper-case-key-bindings nil ;; Make keybindings case sensitive
 	      outline-minor-mode-use-buttons t      ;; Use buttons to hide/show outlines
+
+	      ffap-machine-p-known 'reject          ;; stop ffap from pinging random hosts
+	      help-window-select t                  ;; always select help windoes
+	      history-delete-duplicates t           ;; delete duplicates in commands history
 	      )
 
 ;; Vertical window divider
@@ -351,7 +357,9 @@ M-<left>' and repeat with M-<left>."
 
 (defun my/delayed-common-hook ()
   "Enable electric-pair-local-mode"
-  (setq-local show-trailing-whitespace t)
+  (setq-local show-trailing-whitespace t  ;; Show trailing whitespaces
+	      indicate-empty-lines t      ;; Show empty lines at end of file
+	      )
   (electric-pair-local-mode 1))
 
 (add-hook 'prog-mode-delay-hook #'my/delayed-common-hook)
@@ -554,8 +562,13 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; Two options for diffs
-(setq-default ediff-window-setup-function #'ediff-setup-windows-plain
-	      ediff-split-window-function #'split-window-horizontally)
+(setq-default
+ ediff-window-setup-function #'ediff-setup-windows-plain
+ ;; default ediff-split-window-function #'split-window-vertically
+ ediff-split-window-function  (lambda (&optional arg)
+				(if (> (frame-width) 150)
+				    (split-window-horizontally arg)
+				  (split-window-vertically arg))))
 (eval-after-load 'ediff
   '(eval-after-load 'winner
      '(add-hook 'ediff-after-quit-hook-internal #'winner-undo)))
@@ -1481,9 +1494,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (setq-default dired-recursive-copies 'top                  ;; Always ask recursive copy
 	      dired-recursive-deletes 'top                 ;; Always ask recursive delete
 	      dired-dwim-target 'dired-dwim-target-recent  ;; Copy in split mode with p
-	      dired-auto-revert-buffer nil                 ;; auto revert dired
+	      dired-auto-revert-buffer (lambda (dirname)
+					 (and (not (file-remote-p dirname))
+					      (dired-directory-changed-p dirname))) ;; auto revert dired
 	      ;; dired-listing-switches "-alh"                ;; commands to ls
 	      dired-listing-switches "-agho --group-directories-first"
+	      dired-isearch-filenames 'dwim
 	      dired-hide-details-hide-symlink-targets nil  ;; don't hide linkk targets
 	      dired-maybe-use-globstar t                   ;; use shell's globstar
 	      dired-kill-when-opening-new-dired-buffer t)  ;; kill when opening a new directory.
@@ -1990,7 +2006,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "C-w" #'avy-move-region
     "C-k" #'avy-kill-region
     "M-w" #'avy-kill-ring-save-region
-    "C-b" #'avy-pop-mark
+    "C-SPC" #'avy-pop-mark
     "i" #'avy-copy-region)
   :defer t
   :init
@@ -1998,7 +2014,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     '(keymap-set isearch-mode-map "C-'" #'avy-isearch))
 
   (keymap-global-set "C-'" avy-basic-map)
-  (which-key-add-key-based-replacements "C-'" "avy")
+  ;; (which-key-add-key-based-replacements "C-'" "avy")
   (setq-default ;; avy-style 'at               ;; default 'at-full
 		;; avy-all-windows nil         ;; commands only in this window
 		;; avy-all-windows-alt t       ;; with prefix commands in all windows
