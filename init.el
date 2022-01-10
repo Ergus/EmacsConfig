@@ -397,6 +397,7 @@ M-<left>' and repeat with M-<left>."
 ;; eldoc
 (setq-default eldoc-idle-delay 2                              ;; default 0.5
 	      eldoc-print-after-edit t                        ;; only show after edit
+	      eldoc-minor-mode-string nil                     ;; nothing in the modeline
 	      eldoc-echo-area-display-truncation-message nil) ;; Not verbose when truncated)
 (with-eval-after-load 'eldoc
   (diminish 'eldoc-mode)
@@ -834,7 +835,7 @@ M-<left>' and repeat with M-<left>."
   :diminish lsp
   :hook (lsp-mode . (lambda nil
 		      (my/company-backend-after-load #'company-capf)
-		      (lsp-enable-which-key-integration)))
+		      (lsp-enable-which-key-integration t)))
   :defer t
   :init
   (setq-default lsp-keymap-prefix (kbd "C-c l")
