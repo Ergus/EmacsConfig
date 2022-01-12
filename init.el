@@ -442,6 +442,9 @@ M-<left>' and repeat with M-<left>."
 ;; transient
 ;; (setq-default transient-enable-popup-navigation t)
 
+;; Man
+(setq-default Man-notify-method 'pushy)
+
 ;;__________________________________________________________
 ;; Benchmark-init
 
