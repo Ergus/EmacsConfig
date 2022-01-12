@@ -989,9 +989,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (defun my/c-mode-hook ()
     (my/company-backend-after-load #'company-c-headers))
   :init
-  (add-hook 'c-mode #'my/c-mode-hook)
-  (add-hook 'c++-mode #'my/c-mode-hook)
-  (add-hook 'objc-mode #'my/c-mode-hook))
+  (add-hook 'c-mode-hook #'my/c-mode-hook)
+  (add-hook 'c++-mode-hook #'my/c-mode-hook)
+  (add-hook 'objc-mode-hook #'my/c-mode-hook))
 
 (use-package clang-format :defer t)
 
@@ -1000,7 +1000,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package modern-cpp-font-lock :defer t
   :diminish modern-c++-font-lock-mode
   :init
-  (add-hook 'c++-mode #'modern-c++-font-lock-mode))
+  (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
 
 ;;__________________________________________________________
 ;; elisp mode (all after the company declaration)
