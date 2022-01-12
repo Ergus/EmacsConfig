@@ -810,20 +810,30 @@ M-<left>' and repeat with M-<left>."
   (defun my/company-mode-delay-hook nil
     "Load company mode if not active."
     (unless (bound-and-true-p company-mode)
-      (company-mode 1)))
+      (company-mode 1)
+      ;; (company-tng-mode 1) ;; complete with tabs only (no common part, so unconfortable)
+      ))
   :init
   (add-hook 'prog-mode-delay-hook #'my/company-mode-delay-hook)
   (add-hook 'message-mode-delay-hook #'my/company-mode-delay-hook)
   (add-hook 'conf-mode-delay-hook #'my/company-mode-delay-hook)
   (add-hook 'text-mode-delay-hook #'my/company-mode-delay-hook)
 
-  (setq-default company-idle-delay nil                ;; no delay for autocomplete
-		company-minimum-prefix-length 2
+  (setq-default company-minimum-prefix-length 1
 		company-tooltip-minimum 5
 		company-selection-wrap-around nil
 		company-show-quick-access 'left       ;; How hints
 		company-tooltip-align-annotations t
 		company-format-margin-function #'company-detect-icons-margin
+		company-require-match nil
+
+		company-idle-delay 0                ;; no delay for company (includes show common)
+		company-tooltip-idle-delay 10       ;; delay until the tooltip is shown.
+		company-frontends '(;;company-complete-common-or-show-delayed-tooltip
+				    company-pseudo-tooltip-unless-just-one-frontend-with-delay
+				    company-preview-frontend
+				    company-echo-metadata-frontend)
+
 		;;company-tooltip-limit 20
 		company-backends '(company-capf       ;; completion at point
 				   company-semantic
