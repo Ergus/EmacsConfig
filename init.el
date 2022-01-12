@@ -818,7 +818,7 @@ M-<left>' and repeat with M-<left>."
 		company-minimum-prefix-length 2
 		company-tooltip-minimum 5
 		company-selection-wrap-around nil
-		company-show-numbers t
+		company-show-quick-access 'left       ;; How hints
 		company-tooltip-align-annotations t
 		company-format-margin-function #'company-detect-icons-margin
 		;;company-tooltip-limit 20
