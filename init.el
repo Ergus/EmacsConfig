@@ -90,7 +90,7 @@
 	      auto-save-default nil               ;; No autosave
 	      auto-save-list-file-name nil
 	      ;; minibuffer interaction
-	      minibuffer-message-timeout 1
+	      ;; minibuffer-message-timeout 1     ;; default 2
 	      read-quoted-char-radix 16           ;; Read number of chars with C-q
 	      ;; kill-buffer-query-functions nil     ;; Functions to call before quering a buffer (nil default)
 	                                          ;; Default asks if process running.
