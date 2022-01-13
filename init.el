@@ -826,6 +826,7 @@ M-<left>' and repeat with M-<left>."
 		company-tooltip-align-annotations t
 		company-format-margin-function #'company-detect-icons-margin
 		company-require-match nil
+		;; company-lighter-base "cpn"          ;; modeline message
 
 		company-idle-delay 0                ;; no delay for company (includes show common)
 		company-tooltip-idle-delay 100      ;; delay until the tooltip is shown.
@@ -864,6 +865,16 @@ M-<left>' and repeat with M-<left>."
       (and company-candidates
            (company-call-frontends 'post-command))))
 
+  (defun my/company-complete-common ()
+    (interactive)
+    (if (company-tooltip-visible-p)
+	(company-select-next-or-abort)
+      (let ((old-tick (buffer-chars-modified-tick)))
+	(call-interactively 'company-complete-common)
+	(when (eq old-tick (buffer-chars-modified-tick))
+          (company-abort)
+	  (company--unread-this-command-keys)))))
+
   (keymap-set company-mode-map "M-RET" #'my/company-complete)
   (keymap-set company-mode-map "M-/" #'company-other-backend)
 
@@ -871,15 +882,16 @@ M-<left>' and repeat with M-<left>."
 	      #'(menu-item "" company-select-next-or-abort :filter my/filter-with-ptwd))
   (keymap-set company-active-map "<remap> <company-select-previous-or-abort>"
 	      #'(menu-item "" company-select-previous-or-abort :filter my/filter-with-ptwd))
+  (keymap-set company-active-map "<remap> <xref-find-definitions>"
+	      #'(menu-item "" company-show-location :filter my/filter-with-ptwd))
+
+  (keymap-set company-active-map "M-/" #'company-other-backend) ;; M-/
 
   (keymap-set company-active-map "M-RET"
 	      #'(menu-item "" my/company-complete :filter my/reverse-filter-with-ptwd))
 
-  (keymap-set company-active-map "<remap> <company-complete-common>"
-	      #'(menu-item "" company-complete-common-or-show-delayed-tooltip :filter my/reverse-filter-with-ptwd))
-
-  (keymap-set company-active-map "<remap> <dabbrev-expand>" #'company-other-backend)
-  (keymap-set company-active-map "<remap> <xref-find-definitions>" #'company-show-location)
+  (keymap-set company-active-map "<remap> <company-complete-common>" #'my/company-complete-common)
+  (keymap-set company-active-map "<remap> <completion-at-point>" #'company-select-previous-or-abort)
   )
 
 (use-package lsp-mode :defer t
