@@ -867,11 +867,11 @@ M-<left>' and repeat with M-<left>."
 
   (defun my/company-complete-common ()
     (interactive)
-    (if (company-tooltip-visible-p)
-	(company-select-next-or-abort)
-      (let ((old-tick (buffer-chars-modified-tick)))
-	(call-interactively 'company-complete-common)
-	(when (eq old-tick (buffer-chars-modified-tick))
+    (let ((old-tick (buffer-chars-modified-tick)))
+      (call-interactively 'company-complete-common)
+      (when (eq old-tick (buffer-chars-modified-tick))
+	(if (company-tooltip-visible-p)
+	    (company-select-next-or-abort)
           (company-abort)
 	  (company--unread-this-command-keys)))))
 
