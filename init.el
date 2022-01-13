@@ -852,13 +852,6 @@ M-<left>' and repeat with M-<left>."
 	(company-abort)
 	(company--unread-this-command-keys))))
 
-  (defun my/company-complete-iam ()
-    "Show tooltip unconditionally, or abort if visible."
-    (interactive)
-    (if (company-tooltip-visible-p)
-	(company-select-next-or-abort)
-      (company-complete-common-or-show-delayed-tooltip)))
-
   (defun my/company-complete ()
     (interactive)
     (let ((company-tooltip-idle-delay 0.0))
