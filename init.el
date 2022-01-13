@@ -828,11 +828,12 @@ M-<left>' and repeat with M-<left>."
 		company-require-match nil
 
 		company-idle-delay 0                ;; no delay for company (includes show common)
-		company-tooltip-idle-delay 10       ;; delay until the tooltip is shown.
+		company-tooltip-idle-delay 100      ;; delay until the tooltip is shown.
 		company-frontends '(;;company-complete-common-or-show-delayed-tooltip
 				    company-pseudo-tooltip-unless-just-one-frontend-with-delay
-				    company-preview-frontend
-				    company-echo-metadata-frontend)
+				    company-preview-common-frontend
+				    ;; company-echo-metadata-frontend
+				    )
 
 		;;company-tooltip-limit 20
 		company-backends '(company-capf       ;; completion at point
@@ -841,12 +842,49 @@ M-<left>' and repeat with M-<left>."
 				   (company-dabbrev-code company-gtags company-keywords)
 				   company-dabbrev))
   :config
-  (keymap-set company-mode-map "M-RET" #'company-complete)
+  (defun my/filter-with-ptwd (command)
+    "Return a COMMAND if a tooltip is shown; otherwise return nil."
+    (if (and (boundp 'company-pseudo-tooltip-overlay)
+             (overlayp company-pseudo-tooltip-overlay))
+	command
+      (lambda ()
+	(interactive)
+	(company-abort)
+	(company--unread-this-command-keys))))
+
+  (defun my/company-complete-iam ()
+    "Show tooltip unconditionally, or abort if visible."
+    (interactive)
+    (if (company-tooltip-visible-p)
+	(company-select-next-or-abort)
+      (company-complete-common-or-show-delayed-tooltip)))
+
+  (defun my/company-complete ()
+    (interactive)
+    (let ((company-tooltip-idle-delay 0.0))
+      (company-complete)
+      (and company-candidates
+           (company-call-frontends 'post-command))))
+
+  (defun my/company-toggle ()
+    (interactive)
+    (if (company-tooltip-visible-p)
+	(company-abort)
+      (my/company-complete)))
+
+  (keymap-set company-mode-map "M-RET" #'my/company-complete)
   (keymap-set company-mode-map "M-/" #'company-other-backend)
 
-  (keymap-set company-active-map "M-RET" #'company-abort)
+  (keymap-set company-active-map "<remap> <company-select-next-or-abort>"
+	      #'(menu-item "" company-select-next-or-abort :filter my/filter-with-ptwd))
+  (keymap-set company-active-map "<remap> <company-select-previous-or-abort>"
+	      #'(menu-item "" company-select-previous-or-abort :filter my/filter-with-ptwd))
+
+  (keymap-set company-active-map "M-RET" #'my/company-toggle)
   (keymap-set company-active-map "<remap> <dabbrev-expand>" #'company-other-backend)
-  (keymap-set company-active-map "<remap> <xref-find-definitions>" #'company-show-location))
+  (keymap-set company-active-map "<remap> <xref-find-definitions>" #'company-show-location)
+  (keymap-set company-active-map "<remap> <company-complete-common>" #'my/company-toggle)
+  )
 
 (use-package lsp-mode :defer t
   :diminish lsp
