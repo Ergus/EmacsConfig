@@ -91,7 +91,8 @@
  `(fill-column-indicator ((default :foreground ,(simple-16-theme-color white))
 			  (((class color) (min-colors 16)) :foreground ,(simple-16-theme-color brightblack))))
 
- `(show-paren-match ((t :background ,(simple-16-theme-color brightblue) :inherit nil)))
+ `(show-paren-match ((default :background ,(simple-16-theme-color blue))
+		     (((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
 
  ;; tab-bar
  `(tab-bar ((t :background ,(simple-16-theme-color black)

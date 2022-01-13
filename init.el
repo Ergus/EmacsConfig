@@ -323,13 +323,14 @@ M-<left>' and repeat with M-<left>."
 
 ;; show-parent
 (setq-default show-paren-delay 0
-	      show-paren-context-when-offscreen t
-	      show-paren-when-point-inside-paren t)
+	      show-paren-context-when-offscreen t ;; show context in the echo area
+	      ;; show-paren-when-point-inside-paren t
+	      blink-matching-paren nil)      ;; not show matching parent in echo when closing
 
 ;; autorevert
 (setq-default auto-revert-verbose nil        ;; not show message when file changes
 	      auto-revert-avoid-polling t    ;; don't do pooling for autorevert (use notifications).)
-	      blink-matching-paren nil)
+	      )
 
 (run-with-idle-timer 1 nil #'global-auto-revert-mode 1) ;; Autoload files changed in disk
 
