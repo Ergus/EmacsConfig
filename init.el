@@ -844,13 +844,18 @@ M-<left>' and repeat with M-<left>."
   :config
   (defun my/filter-with-ptwd (command)
     "Return a COMMAND if a tooltip is shown; otherwise return nil."
-    (if (and (boundp 'company-pseudo-tooltip-overlay)
-             (overlayp company-pseudo-tooltip-overlay))
+    (if (company-tooltip-visible-p)
 	command
       (lambda ()
 	(interactive)
 	(company-abort)
 	(company--unread-this-command-keys))))
+
+  (defun my/reverse-filter-with-ptwd (command)
+    "Return a COMMAND if a tooltip is shown; otherwise return nil."
+    (if (company-tooltip-visible-p)
+	#'company-abort
+      command))
 
   (defun my/company-complete ()
     (interactive)
@@ -858,12 +863,6 @@ M-<left>' and repeat with M-<left>."
       (company-complete)
       (and company-candidates
            (company-call-frontends 'post-command))))
-
-  (defun my/company-toggle ()
-    (interactive)
-    (if (company-tooltip-visible-p)
-	(company-abort)
-      (my/company-complete)))
 
   (keymap-set company-mode-map "M-RET" #'my/company-complete)
   (keymap-set company-mode-map "M-/" #'company-other-backend)
@@ -873,10 +872,14 @@ M-<left>' and repeat with M-<left>."
   (keymap-set company-active-map "<remap> <company-select-previous-or-abort>"
 	      #'(menu-item "" company-select-previous-or-abort :filter my/filter-with-ptwd))
 
-  (keymap-set company-active-map "M-RET" #'my/company-toggle)
+  (keymap-set company-active-map "M-RET"
+	      #'(menu-item "" my/company-complete :filter my/reverse-filter-with-ptwd))
+
+  (keymap-set company-active-map "<remap> <company-complete-common>"
+	      #'(menu-item "" company-complete-common-or-show-delayed-tooltip :filter my/reverse-filter-with-ptwd))
+
   (keymap-set company-active-map "<remap> <dabbrev-expand>" #'company-other-backend)
   (keymap-set company-active-map "<remap> <xref-find-definitions>" #'company-show-location)
-  (keymap-set company-active-map "<remap> <company-complete-common>" #'my/company-toggle)
   )
 
 (use-package lsp-mode :defer t
