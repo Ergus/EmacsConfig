@@ -1404,48 +1404,41 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		 (latex-mode)
 		 :help "Run makeglossaries, will choose xindy or makeindex")
 	       t)
-  (with-eval-after-load 'latex
+  (with-eval-after-load 'latex ;; needed for LaTeX-indent-environment-list
     (defun my/LaTeX-indent-item nil "Syntactic indentation for itemize like environments to add extra offsets."
 	   (save-match-data
-	     (let*
-		 ((offset
-		   (+ LaTeX-indent-level LaTeX-item-indent))
-		  (re-beg "\\\\begin{")
-		  (re-end "\\\\end{")
-		  (re-env "\\(itemize\\|\\enumerate\\|description\\)")
-		  (indent (save-excursion
-			    (when
-				(looking-at
-				 (concat re-beg re-env "}"))
-			      (end-of-line))
-			    (LaTeX-find-matching-begin)
-			    (current-column))))
+	     (let* ((offset (+ LaTeX-indent-level LaTeX-item-indent))
+		    (re-beg "\\\\begin{")
+		    (re-end "\\\\end{")
+		    (re-env "\\(itemize\\|\\enumerate\\|description\\)")
+		    (indent (save-excursion
+			      (when (looking-at (concat re-beg re-env "}"))
+				(end-of-line))
+			      (LaTeX-find-matching-begin)
+			      (current-column))))
 	       (cond
 		((looking-at (concat re-beg re-env "}"))
-		 (or (save-excursion
-		       (beginning-of-line)
-		       (ignore-errors
-			 (LaTeX-find-matching-begin)
-			 (+ (current-column)
-			    (if (looking-at (concat re-beg re-env "}"))
-				offset
-			      LaTeX-indent-level)))
-		       indent)))
-		((looking-at (concat re-end re-env "}"))
-		 indent)
-		((looking-at "\\\\item")
-		 (+ indent offset))
-		(t
-		 (+ indent offset LaTeX-indent-level))))))
+		 ((save-excursion
+		    (beginning-of-line)
+		    (ignore-errors
+		      (LaTeX-find-matching-begin)
+		      (+ (current-column)
+			 (if (looking-at (concat re-beg re-env "}"))
+			     offset
+			   LaTeX-indent-level)))
+		    indent)))
+		((looking-at (concat re-end re-env "}")) indent)
+		((looking-at "\\\\item") (+ indent offset))
+		(t (+ indent offset LaTeX-indent-level))))))
     (add-to-list 'LaTeX-indent-environment-list '("itemize" my/LaTeX-indent-item))
     (add-to-list 'LaTeX-indent-environment-list '("enumerate" my/LaTeX-indent-item))
     (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item))))
 
-(add-hook 'LaTeX-mode-hook (lambda nil
-			     (flyspell-mode 1)
-			     (visual-line-mode 1)
-			     (auto-fill-mode 1)
-			     (keymap-set LaTeX-mode-map "M-RET" nil)))
+(add-hook 'TeX-mode-hook (lambda nil
+			   (flyspell-mode 1)
+			   (visual-line-mode 1)
+			   (auto-fill-mode 1)
+			   (keymap-set LaTeX-mode-map "M-RET" nil)))
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
 
 
