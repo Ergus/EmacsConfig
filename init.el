@@ -456,7 +456,7 @@ M-<left>' and repeat with M-<left>."
 	(boundp 'dabbrev-friend-buffer-function)
 	(funcall dabbrev-friend-buffer-function buffer))))
 
-(setq-default dabbrev-check-all-buffers nil
+(setq-default dabbrev-check-all-buffers t
 	      dabbrev-ignored-buffer-regexps "^[ *]"
 	      dabbrev-select-buffers-function #'my/dabbrev--select-project-buffers)
 
@@ -1846,6 +1846,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (add-hook 'after-save-hook (lambda nil
 			       (unless (file-remote-p default-directory)
+				 (message "Refreshing magit for: %s" default-directory)
 				 (magit-after-save-refresh-status))))
 
   (add-hook 'magit-log-mode-hook (lambda nil
