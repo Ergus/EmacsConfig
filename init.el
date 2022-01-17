@@ -827,7 +827,8 @@ M-<left>' and repeat with M-<left>."
 		company-tooltip-align-annotations t
 		company-format-margin-function #'company-detect-icons-margin
 		company-require-match nil
-		;; company-lighter-base "cpn"          ;; modeline message
+		company-dabbrev-code-other-buffers nil ;; disable dabbrev in other buffers
+		;; company-lighter-base "cpn"             ;; modeline message
 
 		company-idle-delay 0                ;; no delay for company (includes show common)
 		company-tooltip-idle-delay 100      ;; delay until the tooltip is shown.
