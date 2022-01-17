@@ -1429,9 +1429,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      TeX-auto-save t
 	      TeX-parse-self t
 	      LaTeX-babel-hyphen nil
-	      TeX-master nil ;; Multidocument
+	      TeX-master nil         ;; Multidocument
 	      LaTeX-indent-level 4
-	      LaTeX-item-indent 0)
+	      LaTeX-item-indent 0
+	      ;; TeX-view-program-list '(("Evince" "evince --page-index=%(outpage) %o"))
+	      ;; TeX-PDF-mode t          ;; Already default t
+	      ;; TeX-show-compilation t  ;; Show compilation buffer.
+	      )
 
 (with-eval-after-load 'tex
   (add-to-list 'TeX-command-list
