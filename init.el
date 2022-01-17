@@ -265,7 +265,7 @@ M-<left>' and repeat with M-<left>."
 ;; System Lisp dir
 (defconst syslisp-dir "/usr/share/emacs/site-lisp")
 (when (file-exists-p syslisp-dir)
-  (add-to-list 'load-path syslisp-dir))
+  (add-to-list 'load-path syslisp-dir t))
 
 
 ;;__________________________________________________________
