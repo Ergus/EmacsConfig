@@ -1074,10 +1074,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (subword-mode 1))
   (add-hook 'c-mode-common-hook #'my/c-mode-common-hook))
 
-(use-package preproc-font-lock :defer t ;; Preprocessor
-  :init
-  (add-hook 'c-mode-common-hook #'preproc-font-lock-mode)
-  (setq-default preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
+;; (use-package preproc-font-lock :defer t ;; Preprocessor
+;;   :init
+;;   (add-hook 'c-mode-common-hook #'preproc-font-lock-mode)
+;;   (setq-default preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
 
 ;; company-c-headers
 (use-package company-c-headers :defer t
@@ -1146,9 +1146,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (setq-default ruby-indent-level 2)
 (add-to-list 'auto-mode-alist '("\\.rjs\\'" . ruby-mode))
 
-(use-package ruby-tools :defer t
-  :init
-  (add-hook 'ruby-mode-hook #'ruby-tools-mode))
+;; (use-package ruby-tools :defer t
+;;   :init
+;;   (add-hook 'ruby-mode-hook #'ruby-tools-mode))
 
 (use-package ruby-electric :defer t
   :init
@@ -1211,12 +1211,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package systemd :defer t)
 
 ;;__________________________________________________________
-;; Use for Qt's .pro and .pri files
-(use-package qt-pro-mode :defer t
-  :init
-  (add-to-list 'auto-mode-alist '("\\.pr[io]\\'" . qt-pro-mode))
-  (add-to-list 'auto-mode-alist '("\\.moc\\'" . c++-mode))
-  (add-to-list 'auto-mode-alist '("\\.ui\\'" . xml-mode)))
+;; Use for Qt's .pro and .pri files (QT uses cmake now)
+
+;; (use-package qt-pro-mode :defer t
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("\\.pr[io]\\'" . qt-pro-mode))
+;;   (add-to-list 'auto-mode-alist '("\\.moc\\'" . c++-mode))
+;;   (add-to-list 'auto-mode-alist '("\\.ui\\'" . xml-mode)))
 
 ;;__________________________________________________________
 ;; javascript-mode
@@ -1632,7 +1633,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
 
-(use-package headlong :defer t)
+;; Long time unmaintained (since 2015)
+;; (use-package headlong :defer t)
 
 (use-package flx :defer t)
 
@@ -2088,19 +2090,20 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package arduino-mode
   :mode ("\\.ino\\'" "\\.pde\\'"))
 
-(use-package company-arduino :defer t
-  :hook (arduino-mode . (lambda nil
-			  (eval-after-load 'company
-			    #'company-arduino-turn-on)))
-  :config
-  ;; This package already loads 'company-c-headers.
-  (defconst initial-company-c-headers-path-system company-c-headers-path-system)
+;; Long time unmaintained and depends of irony
+;; (use-package company-arduino :defer t
+;;   :hook (arduino-mode . (lambda nil
+;; 			  (eval-after-load 'company
+;; 			    #'company-arduino-turn-on)))
+;;   :config
+;;   ;; This package already loads 'company-c-headers.
+;;   (defconst initial-company-c-headers-path-system company-c-headers-path-system)
 
-  (defun my/company-c-headers-get-system-path ()
-    "Return the system include path for the current buffer plus arduino headers"
-    (company-arduino-append-include-dirs initial-company-c-headers-path-system t))
+;;   (defun my/company-c-headers-get-system-path ()
+;;     "Return the system include path for the current buffer plus arduino headers"
+;;     (company-arduino-append-include-dirs initial-company-c-headers-path-system t))
 
-  (setq company-c-headers-path-system #'my/company-c-headers-get-system-path))
+;;   (setq company-c-headers-path-system #'my/company-c-headers-get-system-path))
 
 (use-package arduino-cli-mode
   :after company-arduino      ;; This is latter enough
