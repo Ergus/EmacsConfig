@@ -1434,7 +1434,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      LaTeX-item-indent 0)
 
 (with-eval-after-load 'tex
-  (TeX-source-correlate-mode 1)
   (add-to-list 'TeX-command-list
 	       '("Makeglossaries" "makeglossaries %s" TeX-run-command nil
 		 (latex-mode)
@@ -1470,11 +1469,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (add-to-list 'LaTeX-indent-environment-list '("enumerate" my/LaTeX-indent-item))
     (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item))))
 
-(add-hook 'TeX-mode-hook (lambda nil
-			   (flyspell-mode 1)
-			   (visual-line-mode 1)
+(add-hook 'TeX-mode-hook (lambda ()
+			   (LaTeX-math-mode 1)
 			   (auto-fill-mode 1)
-			   (keymap-set LaTeX-mode-map "M-RET" nil)))
+			   (TeX-source-correlate-mode 1))) ;; open PDF in the edditing page
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
 
 
@@ -1507,7 +1505,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      reftex-enable-partial-scans t
 	      reftex-use-multiple-selection-buffers t)
 
-(add-hook 'LaTeX-mode-hook #'turn-on-reftex)
+(add-hook 'TeX-mode-hook #'turn-on-reftex)
 
 (eval-after-load 'reftex '(reftex-isearch-minor-mode))
 
