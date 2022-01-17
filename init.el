@@ -813,6 +813,41 @@ M-<left>' and repeat with M-<left>."
   (setq-default eglot-stay-out-of '(eldoc)))
 
 
+(use-package cape
+  ;; Bind dedicated completion commands
+  :defer 0.2
+  :init
+  (defvar-keymap cape-basic-map
+    :doc "The keymap used when `cape-basic-map' is active."
+    "p" #'completion-at-point ;; capf
+    "t" #'complete-tag        ;; etags
+    "d" #'cape-dabbrev        ;; or dabbrev-completion
+    "f" #'cape-file
+    "k" #'cape-keyword
+    "s" #'cape-symbol
+    "a" #'cape-abbrev
+    "i" #'cape-ispell
+    "l" #'cape-line
+    "w" #'cape-dict
+    "x" #'cape-tex
+    "g" #'cape-sgml
+    "r" #'cape-rfc1345)
+
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-keyword)
+
+  (keymap-global-set "C-c p" cape-basic-map)
+
+  (add-hook 'TeX-mode-hook
+	    (lambda nil
+	      (add-to-list 'completion-at-point-functions #'cape-tex)))
+
+  (add-hook 'text-mode-delay-hook
+	    (lambda nil
+	      (add-to-list 'completion-at-point-functions #'cape-ispell))))
+
+
 (use-package company :defer t
   ;; :load-path (lambda nil (my/load-path "~/gits/company-mode/"))
   :preface
@@ -908,41 +943,6 @@ M-<left>' and repeat with M-<left>."
 
   (keymap-set company-active-map "<remap> <company-complete-common>" #'my/company-complete-common)
   (keymap-set company-active-map "<remap> <completion-at-point>" #'company-select-previous-or-abort)
-  )
-
-(use-package cape
-  ;; Bind dedicated completion commands
-  :defer 0.2
-  :init
-  (defvar-keymap cape-basic-map
-    :doc "The keymap used when `cape-basic-map' is active."
-    "p" #'completion-at-point ;; capf
-    "t" #'complete-tag        ;; etags
-    "d" #'cape-dabbrev        ;; or dabbrev-completion
-    "f" #'cape-file
-    "k" #'cape-keyword
-    "s" #'cape-symbol
-    "a" #'cape-abbrev
-    "i" #'cape-ispell
-    "l" #'cape-line
-    "w" #'cape-dict
-    "x" #'cape-tex
-    "g" #'cape-sgml
-    "r" #'cape-rfc1345)
-
-  (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  (add-to-list 'completion-at-point-functions #'cape-keyword)
-
-  (keymap-global-set "C-c p" cape-basic-map)
-
-  (add-hook 'TeX-mode-hook
-	    (lambda nil
-	      (add-to-list 'completion-at-point-functions #'cape-tex)))
-
-  (add-hook 'text-mode-delay-hook
-	    (lambda nil
-	      (add-to-list 'completion-at-point-functions #'cape-ispell)))
   )
 
 (use-package lsp-mode :defer t
