@@ -1440,31 +1440,32 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		 :help "Run makeglossaries, will choose xindy or makeindex")
 	       t)
   (with-eval-after-load 'latex ;; needed for LaTeX-indent-environment-list
-    (defun my/LaTeX-indent-item nil "Syntactic indentation for itemize like environments to add extra offsets."
-	   (save-match-data
-	     (let* ((offset (+ LaTeX-indent-level LaTeX-item-indent))
-		    (re-beg "\\\\begin{")
-		    (re-end "\\\\end{")
-		    (re-env "\\(itemize\\|\\enumerate\\|description\\)")
-		    (indent (save-excursion
-			      (when (looking-at (concat re-beg re-env "}"))
-				(end-of-line))
-			      (LaTeX-find-matching-begin)
-			      (current-column))))
-	       (cond
-		((looking-at (concat re-beg re-env "}"))
-		 ((save-excursion
-		    (beginning-of-line)
-		    (ignore-errors
-		      (LaTeX-find-matching-begin)
-		      (+ (current-column)
-			 (if (looking-at (concat re-beg re-env "}"))
-			     offset
-			   LaTeX-indent-level)))
-		    indent)))
-		((looking-at (concat re-end re-env "}")) indent)
-		((looking-at "\\\\item") (+ indent offset))
-		(t (+ indent offset LaTeX-indent-level))))))
+    (defun my/LaTeX-indent-item ()
+      "Syntactic indentation for itemize like environments to add extra offsets."
+      (save-match-data
+	(let* ((offset (+ LaTeX-indent-level LaTeX-item-indent)) ;; item indent
+	       (re-beg "\\\\begin{")
+	       (re-end "\\\\end{")
+	       (re-env "\\(itemize\\|\\enumerate\\|description\\)")
+	       (indent (save-excursion
+			 (when (looking-at (concat re-beg re-env "}"))
+			   (end-of-line))
+			 (LaTeX-find-matching-begin)
+			 (current-column))))
+	  (cond
+	   ((looking-at (concat re-beg re-env "}"))
+	    ((save-excursion
+	       (beginning-of-line)
+	       (ignore-errors
+		 (LaTeX-find-matching-begin)
+		 (+ (current-column)
+		    (if (looking-at (concat re-beg re-env "}"))
+			offset
+		      LaTeX-indent-level)))
+	       indent)))
+	   ((looking-at (concat re-end re-env "}")) indent)
+	   ((looking-at "\\\\item") (+ indent offset))
+	   (t (+ indent offset LaTeX-indent-level))))))
     (add-to-list 'LaTeX-indent-environment-list '("itemize" my/LaTeX-indent-item))
     (add-to-list 'LaTeX-indent-environment-list '("enumerate" my/LaTeX-indent-item))
     (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item))))
