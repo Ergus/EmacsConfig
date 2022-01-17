@@ -890,9 +890,10 @@ M-<left>' and repeat with M-<left>."
 		;;company-tooltip-limit 20
 		company-backends '(company-capf       ;; completion at point
 				   company-semantic
-				   company-files      ;; company files
-				   (company-dabbrev-code company-gtags company-keywords)
-				   company-dabbrev))
+				   ;; company-files      ;; company files
+				   ;; (company-dabbrev-code company-gtags company-keywords)
+				   ;; company-dabbrev
+				   ))
   :config
   (defun my/filter-with-ptwd (command)
     "Return a COMMAND if a tooltip is shown; otherwise return nil."
