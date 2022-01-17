@@ -499,7 +499,7 @@ M-<left>' and repeat with M-<left>."
       (goto-char isearch-other-end))
     (call-interactively #'isearch-exit))
 
-  (keymap-set isearch-mode-map "M-RET" #'my/isearch-exit-other-end)
+  (keymap-set isearch-mode-map "C-RET" #'my/isearch-exit-other-end)
 
   (which-key-add-key-based-replacements "M-s h" "highlight"))
 
