@@ -450,14 +450,14 @@ M-<left>' and repeat with M-<left>."
 (defun my/dabbrev--select-project-buffers ()
   "Dabbrev list of buffers in the same project and apply the filters."
   (dabbrev-filter-elements
-   buffer (project-buffers (project-current t))
+   buffer (project-buffers (project-current))
    (and (not (eq (current-buffer) buffer))
 	(not (dabbrev--ignore-buffer-p buffer))
 	(boundp 'dabbrev-friend-buffer-function)
 	(funcall dabbrev-friend-buffer-function buffer))))
 
 (setq-default dabbrev-check-all-buffers t
-	      dabbrev-ignored-buffer-regexps "^[ *]"
+	      dabbrev-ignored-buffer-regexps "\\`[ *]"
 	      dabbrev-select-buffers-function #'my/dabbrev--select-project-buffers)
 
 ;;__________________________________________________________
@@ -876,7 +876,8 @@ M-<left>' and repeat with M-<left>."
 		company-tooltip-align-annotations t
 		company-format-margin-function #'company-detect-icons-margin
 		company-require-match nil
-		company-dabbrev-code-other-buffers nil ;; disable dabbrev in other buffers
+		company-dabbrev-other-buffers t
+		company-dabbrev-code-other-buffers t ;; disable dabbrev in other buffers
 		;; company-lighter-base "cpn"             ;; modeline message
 
 		company-idle-delay 0                ;; no delay for company (includes show common)
