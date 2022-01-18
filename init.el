@@ -906,12 +906,13 @@ M-<left>' and repeat with M-<left>."
 	(company--unread-this-command-keys))))
 
   (defun my/reverse-filter-with-ptwd (command)
-    "Return a COMMAND if a tooltip is shown; otherwise return nil."
+    "Abort company if a tooltip is shown; otherwise return COMMAND."
     (if (company-tooltip-visible-p)
 	#'company-abort
       command))
 
   (defun my/company-complete ()
+    "Force show tooltip even if delayed."
     (interactive)
     (let ((company-tooltip-idle-delay 0.0))
       (company-complete)
@@ -919,9 +920,10 @@ M-<left>' and repeat with M-<left>."
            (company-call-frontends 'post-command))))
 
   (defun my/company-complete-common ()
+    "Complete common if pending, else abort company or move to next."
     (interactive)
     (let ((old-tick (buffer-chars-modified-tick)))
-      (call-interactively 'company-complete-common)
+      (call-interactively #'company-complete-common)
       (when (eq old-tick (buffer-chars-modified-tick))
 	(if (company-tooltip-visible-p)
 	    (company-select-next-or-abort)
