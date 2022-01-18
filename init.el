@@ -1151,7 +1151,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 ("\\.md\\'" . markdown-mode)
 	 ("\\.markdown\\'" . markdown-mode))
   :init
-  (setq-default markdown-command "multimarkdown"))
+  (setq-default markdown-indent-on-enter nil))
 
 ;;__________________________________________________________
 ;; Restructured text
