@@ -567,6 +567,14 @@ M-<left>' and repeat with M-<left>."
 (which-key-add-key-based-replacements "C-x t" "tab-bar")  ;; by default
 (keymap-global-set "C-t" tab-prefix-map)
 
+(with-eval-after-load 'tab-bar
+  (my/repeat-keymap tab-bar-repeat-map tab-prefix-map
+    :doc "Repeat map for tab prefix"
+    "<left>" #'tab-previous
+    "<right>" #'tab-next
+    "S-<left>" #'tab-bar-move-tab-backward
+    "S-<right>" #'tab-bar-move-tab))
+
 ;;__________________________________________________________
 ;; minibuffers
 
@@ -1847,6 +1855,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		;;magit-bury-buffer-function #'magit-mode-quit-window
 		)
   :config
+  (keymap-unset magit-section-mode-map "C-<tab>" t) ;; magit-section-cycle shadows tab next
+
   (add-hook 'after-save-hook (lambda nil
 			       (unless (file-remote-p default-directory)
 				 (message "Refreshing magit for: %s" default-directory)
