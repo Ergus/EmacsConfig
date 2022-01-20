@@ -1295,7 +1295,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; repeat-mode
-(setq-default repeat-check-key nil)
+(setq-default repeat-check-key nil
+	      repeat-exit-key (kbd "RET"))
 (repeat-mode 1)
 
 ;;__________________________________________________________
