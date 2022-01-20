@@ -573,7 +573,10 @@ M-<left>' and repeat with M-<left>."
     "<left>" #'tab-previous
     "<right>" #'tab-next
     "S-<left>" #'tab-bar-move-tab-backward
-    "S-<right>" #'tab-bar-move-tab))
+    "S-<right>" #'tab-bar-move-tab)
+  (keymap-unset tab-prefix-map "0")
+  (keymap-set tab-prefix-map "0 0" #'tab-close)
+  )
 
 ;;__________________________________________________________
 ;; minibuffers
