@@ -1448,9 +1448,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package notmuch :defer t
   :init
-  (setenv "NOTMUCH_CONFIG" "/home/ergo/almacen/mail/notmuch-config")
+  (setenv "NOTMUCH_CONFIG" (expand-file-name "~/almacen/mail/notmuch-config"))
   :hook (message-mode . (lambda nil
 			  (my/company-backend-after-load #'notmuch-company))))
+
+(with-eval-after-load 'notmuch-company
+  ;; This is requires because of an issue in notmuch-company not
+  ;; loading notmuch-address.
+  (require 'notmuch-address))
 
 ;;__________________________________________________________
 ;; Latex mode
