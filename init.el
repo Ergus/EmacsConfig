@@ -2282,7 +2282,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :preface
   (my/load-path "~/gits/emacs_clones/composable/")
   :init
-  (setq-default composable-mode-debug-level (if init-file-debug 3 0))
+  (setq-default composable-mode-debug-level (if init-file-debug 3 0)
+		composable-mode-line-color "green")
   :config
   (composable-mode) 		;; Activates the default keybindings
   (composable-mark-mode))	;; Use composable with C-SPC
