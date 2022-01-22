@@ -2186,13 +2186,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		mc/always-repeat-command t
 		mc/edit-lines-empty-lines 'ignore))
 
-;; (use-package iedit :defer t
-;;   :commands iedit-mode-from-isearch
-;;   :init
-;;   (setq-default iedit-toggle-key-default nil) ;; this avoids calling iedit-update-key-bindings
-;;   (keymap-set mc-basic-map "i" #'iedit-mode)
-;;   (keymap-set isearch-mode-map "C-c m i" #'iedit-mode-from-isearch)
-;;   )
+(use-package iedit :defer t
+  :commands iedit-mode-from-isearch
+  :init
+  (setq-default iedit-toggle-key-default nil) ;; this avoids calling iedit-update-key-bindings
+  (keymap-set mc-basic-map "i" #'iedit-mode)
+  (keymap-set isearch-mode-map "C-c m i" #'iedit-mode-from-isearch)
+  )
 
 ;;__________________________________________________________
 ;; Web mode
