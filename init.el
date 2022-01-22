@@ -1432,10 +1432,20 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; message-mode
 (my/gen-delay-hook message-mode)
 
-(setq-default message-default-mail-headers "Cc: \nBcc: \n"
+(setq-default send-mail-function #'smtpmail-send-it
+	      smtpmail-default-smtp-server "smtp.aol.com"
+	      smtpmail-local-domain "aol.com"
+	      smtpmail-stream-type  'ssl
+	      smtpmail-smtp-service 465
+	      smtpmail-debug-info init-file-debug   ;; show delivery info
+	      ;; smtpmail-debug-verb init-file-debug   ;; instruct the server to be verbose
+	      message-default-mail-headers "Cc: \nBcc: \n"
 	      message-kill-buffer-on-exit t
 	      message-send-mail-function #'message-use-send-mail-function
-	      mail-header-separator "")
+	      mail-header-separator ""
+	      auth-sources '("~/almacen/mail/authinfo.gpg")
+	      user-mail-address "spacibba@aol.com"
+	      )
 
 (with-eval-after-load 'message-mode
   (auto-fill-mode t)
