@@ -1302,6 +1302,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      repeat-exit-key (kbd "RET"))
 (repeat-mode 1)
 
+;; Bind repeat to next-prev buffer
+(my/repeat-keymap my/next-prev-repeat-map ctl-x-map
+  :doc "Repeat map for `next|prev-buffer' commands."
+  "C-<left>" #'previous-buffer
+  "C-<right>" #'next-buffer)
+
 ;;__________________________________________________________
 ;; Lines enabling gnuplot-mode
 (use-package gnuplot :defer t
