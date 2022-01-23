@@ -482,6 +482,7 @@ M-<left>' and repeat with M-<left>."
 	      ;; isearch-wrap-function #'ignore       ;; Look at the emacs-major-version check
 	      ;; isearch-wrap-pause t                 ;; Disable wrapping nil.
 	      isearch-repeat-on-direction-change t ;; Don't go to the other end on direction change
+	      isearch-lax-whitespace t
 	      isearch-regexp-lax-whitespace t      ;; swiper like fuzzy search
 	      search-whitespace-regexp ".*?"
 	      ;; Emacs version > 28
