@@ -69,7 +69,8 @@
 	       :foreground nil
 	       :weight ultrabold)))
 
- `(lazy-highlight ((t :background ,(simple-16-theme-color brightblue))))
+ `(lazy-highlight ((default :background ,(simple-16-theme-color cyan))
+		   (((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
 
  `(region ((t :background ,(simple-16-theme-color brightblue))))
 
