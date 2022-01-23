@@ -615,6 +615,10 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; terms
+(defvar-keymap my/term-keymap
+  :doc "Keymap for terminal commands")
+(keymap-global-set "C-c t" my/term-keymap)
+
 (use-package vterm :defer t
   :hook (vterm-mode . (lambda nil
 			(display-fill-column-indicator-mode -1)
@@ -634,7 +638,7 @@ M-<left>' and repeat with M-<left>."
 		vterm-toggle-project-root t    ;; Already default
 		vterm-toggle-fullscreen-p nil  ;; Already default
 		)
-  (keymap-global-set "C-c t t" #'vterm-toggle-cd)
+  (keymap-set my/term-keymap "t" #'vterm-toggle-cd)
   :config
   (keymap-set vterm-mode-map "M-RET" #'vterm-toggle-insert-cd))
 
@@ -647,7 +651,7 @@ M-<left>' and repeat with M-<left>."
 ;; Better shell (for ssh)
 (use-package better-shell :defer t
   :init
-  (keymap-global-set "C-c t b" #'better-shell-shell))
+  (keymap-set my/term-keymap "b" #'better-shell-shell))
 
 (use-package shell-command+ :defer t
   :init
