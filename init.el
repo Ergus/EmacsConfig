@@ -449,12 +449,13 @@ M-<left>' and repeat with M-<left>."
 ;; dabbrev
 (defun my/dabbrev--select-project-buffers ()
   "Dabbrev list of buffers in the same project and apply the filters."
-  (dabbrev-filter-elements
-   buffer (project-buffers (project-current))
-   (and (not (eq (current-buffer) buffer))
-	(not (dabbrev--ignore-buffer-p buffer))
-	(boundp 'dabbrev-friend-buffer-function)
-	(funcall dabbrev-friend-buffer-function buffer))))
+  (let ((pr project-current))
+    (dabbrev-filter-elements
+     buffer (if pr (project-buffers pr) (buffer-list))
+     (and (not (eq (current-buffer) buffer))
+	  (not (dabbrev--ignore-buffer-p buffer))
+	  (boundp 'dabbrev-friend-buffer-function)
+	  (funcall dabbrev-friend-buffer-function buffer)))))
 
 (setq-default dabbrev-check-all-buffers t
 	      dabbrev-ignored-buffer-regexps "\\`[ *]"
