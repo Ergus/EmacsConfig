@@ -1291,10 +1291,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (my/repeat-keymap windmove-swap-repeat-map ctl-x-map
   :doc "Repeat map for `windmove-swap' commands."
-  "S-<left>"  #'windmove-swap-states-left
-  "S-<right>"  #'windmove-swap-states-right
-  "S-<down>"  #'windmove-swap-states-down
-  "S-<up>"  #'windmove-swap-states-up)
+  "S-<left>" #'windmove-swap-states-left
+  "S-<right>" #'windmove-swap-states-right
+  "S-<down>" #'windmove-swap-states-down
+  "S-<up>" #'windmove-swap-states-up)
 
 ;;__________________________________________________________
 ;; repeat-mode
