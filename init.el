@@ -537,6 +537,7 @@ M-<left>' and repeat with M-<left>."
 	      remote-file-name-inhibit-cache 120           ;; Default 10
 	      tramp-completion-reread-directory-timeout 120;; Default 10
 	      password-cache-expiry 3600                   ;; Cache for 1 hour
+	      tramp-use-scp-direct-remote-copying t        ;; copy directly between remote hosts
 	      ;; tramp-default-method "scp"                   ;; Already default
 	      ;; tramp-verbose 3                              ;; Already default
 	      )
