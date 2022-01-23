@@ -118,7 +118,7 @@
 	      bookmark-save-flag 1                    ;; Save bookmarks immediately when added
 	      idle-update-delay 0.25                  ;; idle to update screen
 
-	      translate-upper-case-key-bindings nil ;; Make keybindings case sensitive
+	      ;; translate-upper-case-key-bindings nil ;; Make keybindings case sensitive (inhibit binding translation)
 	      outline-minor-mode-use-buttons t      ;; Use buttons to hide/show outlines
 
 	      ffap-machine-p-known 'reject          ;; stop ffap from pinging random hosts
