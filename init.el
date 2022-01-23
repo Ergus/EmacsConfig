@@ -643,7 +643,32 @@ M-<left>' and repeat with M-<left>."
   :config
   (keymap-set vterm-mode-map "M-RET" #'vterm-toggle-insert-cd))
 
-(use-package emamux :defer t)
+(use-package emamux :defer t
+  :bind-keymap (("C-c u" . emamux:keymap))
+  :init
+  (which-key-add-key-based-replacements "C-c u" "emamux")
+  :config
+  (setq emamux:keymap (make-sparse-keymap))
+  (if (emamux:in-tmux-p)
+      (progn
+	(keymap-set emamux:keymap "u" #'emamux:run-command)
+	(keymap-set emamux:keymap "r" #'emamux:run-region)
+	(keymap-set emamux:keymap "0" #'emamux:close-panes)
+	(keymap-set emamux:keymap "k" #'emamux:close-panes)
+	(keymap-set emamux:keymap "i" #'emamux:inspect-runner)
+	(keymap-set emamux:keymap "k" #'emamux:interrupt-runner)
+	(keymap-set emamux:keymap "s" #'emamux:send-command)
+	(keymap-set emamux:keymap "<up>" #'emamux:run-last-command)
+	(keymap-set emamux:keymap "C-y" #'emamux:yank-from-list-buffers)
+	;; (keymap-set emamux_keymap "M-k" #'emamux:clear-runner-history)
+	;; (keymap-set emamux_keymap "c"   #'emamux:new-window)
+	;; (keymap-set emamux_keymap "C"   #'emamux:clone-current-frame)
+	;; (keymap-set emamux_keymap "2"   #'emamux:split-window)
+	;; (keymap-set emamux_keymap "3"   #'emamux:split-window-horizontally)
+	)
+    (message "TMUX not running in this terminal")
+    (keymap-global-unset "C-c u")
+    ))
 
 (use-package pkgbuild-mode
   :mode "/PKGBUILD$")
