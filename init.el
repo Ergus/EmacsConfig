@@ -1752,6 +1752,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (eval-after-load 'isearch
     '(keymap-set isearch-mode-map "C-o" #'swiper-isearch-toggle))
   (keymap-global-set "M-s o" #'swiper-isearch-thing-at-point)
+  (keymap-global-set "M-s s" #'swiper-isearch)
   :config
   (keymap-set swiper-map "C-o" #'swiper-isearch-toggle))
 
