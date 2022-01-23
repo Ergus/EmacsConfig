@@ -2336,6 +2336,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package mutt-mode
   :mode "muttrc")
 
+(use-package debbugs :defer t)
+
 (provide 'init)
 
 ;;; init.el ends here
