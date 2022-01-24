@@ -170,6 +170,8 @@
   (and (file-exists-p path)
        `(add-to-list 'load-path ,path)))
 
+;; (debug-on-entry #'package--download-one-archive)
+
 (defmacro my/gen-delay-hook (mode-name)
   "Generate delayed hook for MODE-NAME."
   (let ((funame (intern (format "my/%s-hook" mode-name)))
@@ -1973,24 +1975,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package diff-hl :defer t
   :preface
   (defun my/diff-hl-mode ()
-    (when (or (and buffer-file-name
-		   (not (file-remote-p buffer-file-name)))
-	      (eq major-mode 'vc-dir-mode))
-      (turn-on-diff-hl-mode)
-      (unless (display-graphic-p)
-	(diff-hl-margin-mode 1))))
+    (turn-on-diff-hl-mode)
+    (unless (display-graphic-p)
+      (diff-hl-margin-mode 1)))
   :init
+  (setq-default diff-hl-disable-on-remote t)
   (add-hook 'prog-mode-delay-hook #'my/diff-hl-mode)
   (add-hook 'vc-dir-mode-hook #'my/diff-hl-mode)
   (add-hook 'dired-mode-hook #'diff-hl-dired-mode-unless-remote)
   :config
   ;; Add the hook only after the package is loaded because they are not autoloads.
-  (add-hook 'magit-pre-refresh-hook (lambda nil
-				      (unless (file-remote-p default-directory)
-					(diff-hl-magit-pre-refresh))))
-  (add-hook 'magit-post-refresh-hook (lambda nil
-				       (unless (file-remote-p default-directory)
-					 (diff-hl-magit-post-refresh)))))
+  (add-hook 'magit-pre-refresh-hook #'diff-hl-magit-pre-refresh)
+  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh))
 
 ;;__________________________________________________________
 ;; Ensamblador nasm
