@@ -570,7 +570,7 @@ M-<left>' and repeat with M-<left>."
 	      tab-bar-close-last-tab-choice 'tab-bar-mode-disable ;; When close last
 	      tab-bar-show 1)
 (which-key-add-key-based-replacements "C-x t" "tab-bar")  ;; by default
-(keymap-global-set "C-t" tab-prefix-map)
+(keymap-global-set "C-z" tab-prefix-map)
 
 (with-eval-after-load 'tab-bar
   (my/repeat-keymap tab-bar-repeat-map tab-prefix-map
