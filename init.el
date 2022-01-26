@@ -84,7 +84,7 @@
 	      jit-lock-stealth-time 2             ;; Time to wait before fortifications (def: nil)
 	      inhibit-default-init t              ;; Avoid emacs default init
 	      term-suppress-hard-newline t        ;; Text can resize
-	      echo-keystrokes 0.01                ;; Muestra binds in echo area
+	      echo-keystrokes 0.001                ;; Unfinished bindings in the echo area
 	      confirm-kill-emacs nil              ;; No confirm exit emacs
 	      disabled-command-function nil
 	      auto-save-default nil               ;; No autosave
@@ -278,12 +278,13 @@ M-<left>' and repeat with M-<left>."
 (use-package which-key
   :diminish
   :init
-  (setq-default which-key-idle-delay 3.0               ;; default 1.0, 1000 to not show
+  (setq-default which-key-idle-delay 2.0               ;; default 1.0, 1000 to not show
 		which-key-show-early-on-C-h t          ;; Show which-key on C-h
 		which-key-idle-secondary-delay 0.01    ;; nil sets the same delay, use when which-key-show-early-on-C-h
 		which-key-dont-use-unicode t
 		which-key-is-verbose init-file-debug
-		which-key-separator ": ")            ;; default " : "
+		which-key-lighter nil                  ;; Not show in modeline
+		which-key-separator ": ")              ;; default " : "
   :config
   (which-key-mode t)
   (which-key-add-key-based-replacements
