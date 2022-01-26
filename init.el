@@ -576,12 +576,14 @@ M-<left>' and repeat with M-<left>."
 (with-eval-after-load 'tab-bar
   (my/repeat-keymap tab-bar-repeat-map tab-prefix-map
     :doc "Repeat map for tab prefix"
-    "<left>" #'tab-previous
-    "<right>" #'tab-next
-    "S-<left>" #'tab-bar-move-tab-backward
-    "S-<right>" #'tab-bar-move-tab)
+    "C-<left>" #'tab-previous
+    "C-<right>" #'tab-next
+    "M-S-<left>" #'tab-bar-move-tab-backward
+    "M-S-<right>" #'tab-bar-move-tab)
+
   (keymap-unset tab-prefix-map "0")
-  (keymap-set tab-prefix-map "0 0" #'tab-close)
+  (keymap-set tab-prefix-map "i" #'tab-new)
+  (keymap-set tab-prefix-map "C-z" tab-prefix-map)
   )
 
 ;;__________________________________________________________
@@ -1308,6 +1310,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (keymap-set ctl-x-map "0" ctl-x-0-map)
 (which-key-add-key-based-replacements "C-x 0" "windmove-delete")
 
+;; Direct shortcut without prefix.
 (keymap-global-set "M-<left>" #'windmove-left)
 (keymap-global-set "M-<right>" #'windmove-right)
 (keymap-global-set "M-<down>" #'windmove-down)
