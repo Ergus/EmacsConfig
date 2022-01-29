@@ -1735,7 +1735,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		ivy-use-selectable-prompt t
 		ivy-fixed-height-minibuffer t
 		ivy-on-del-error-function #'ignore
-		ivy-read-action-format-function #'ivy-read-action-format-columns)
+		ivy-ignore-buffers '("\\` " "\\`\\*") ;; Ignore files starting with spaces or *
+		;; ivy-read-action-format-function #'ivy-read-action-format-columns
+		ivy-read-action-function #'ivy-read-action-ivy ;; use arrows to read actions
+		;; ivy-format-functions-alist '((t . ivy-format-function-arrow)) ;; Breakd swiper
+		)
   ;; (ivy-use-virtual-buffers t)   ;; Recent files or buffers in ivy
   ;; (ivy-height 10)
   ;; (ivy-wrap t)                  ;; cycle in minibuffer
