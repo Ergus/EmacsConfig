@@ -714,8 +714,8 @@ M-<left>' and repeat with M-<left>."
 
 (if (fboundp #'mouse-wheel-mode)
     (progn
-      (setq-default mouse-wheel-scroll-amount '(1             ;; No modifier
-						((control) . 5)
+      (setq-default mouse-wheel-scroll-amount '(3             ;; No modifier
+						((control) . 6)
 						((meta) . hscroll)
 						((shift) . text-scale)) ;; in terminal does not work
 		    mouse-wheel-tilt-scroll t          ;; horizontal scrolling with touchpad
