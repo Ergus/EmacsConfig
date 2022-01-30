@@ -583,6 +583,7 @@ M-<left>' and repeat with M-<left>."
 
   (keymap-unset tab-prefix-map "0")
   (keymap-set tab-prefix-map "i" #'tab-new)
+  (keymap-set tab-prefix-map "k" #'tab-close)
   (keymap-set tab-prefix-map "C-z" tab-prefix-map)
   )
 
