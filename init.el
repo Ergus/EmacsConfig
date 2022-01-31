@@ -566,26 +566,68 @@ M-<left>' and repeat with M-<left>."
 	 ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
 
 ;;__________________________________________________________
+;; splitting
+(setq-default windmove-display-no-select t) ;; select windows after displaying it
+
+(defvar-keymap my/0-map
+  :doc "The base keymap for `highlight changes'."
+  "0" #'delete-window
+  "<left>" #'windmove-delete-left
+  "<right>" #'windmove-delete-right
+  "<up>" #'windmove-delete-up
+  "<down>" #'windmove-delete-down)
+
+;; (keymap-set ctl-x-map "0" my/0-map)
+;; (which-key-add-key-based-replacements "C-x 0" "windmove-delete")
+
+;; Direct shortcut without prefix.
+(keymap-global-set "M-<left>" #'windmove-left)
+(keymap-global-set "M-<right>" #'windmove-right)
+(keymap-global-set "M-<down>" #'windmove-down)
+(keymap-global-set "M-<up>" #'windmove-up)
+
+(keymap-set ctl-x-4-map "<left>" #'windmove-display-left)
+(keymap-set ctl-x-4-map "<right>" #'windmove-display-right)
+(keymap-set ctl-x-4-map "<down>" #'windmove-display-down)
+(keymap-set ctl-x-4-map "<up>" #'windmove-display-up)
+
+;;__________________________________________________________
 ;; tab-bar
 (setq-default tab-bar-tab-hints t  ;; show tab numbers
 	      tab-bar-close-last-tab-choice 'tab-bar-mode-disable ;; When close last
 	      tab-bar-show 1)
 (which-key-add-key-based-replacements "C-x t" "tab-bar")  ;; by default
-(keymap-global-set "C-z" tab-prefix-map)
 
-(with-eval-after-load 'tab-bar
-  (my/repeat-keymap tab-bar-repeat-map tab-prefix-map
-    :doc "Repeat map for tab prefix"
-    "C-<left>" #'tab-previous
-    "C-<right>" #'tab-next
-    "M-S-<left>" #'tab-bar-move-tab-backward
-    "M-S-<right>" #'tab-bar-move-tab)
+(defvar-keymap my/tmux-like-keymap
+  :doc "A keymap that emulates some of the tmux bindings."
+  :parent tab-prefix-map
+  "i" #'tab-new
+  "k" #'tab-close
+  "0" my/0-map
+  "v" #'split-window-below
+  "h" #'split-window-right
 
-  (keymap-unset tab-prefix-map "0")
-  (keymap-set tab-prefix-map "i" #'tab-new)
-  (keymap-set tab-prefix-map "k" #'tab-close)
-  (keymap-set tab-prefix-map "C-z" tab-prefix-map)
-  )
+  "<left>" #'windmove-left
+  "<right>" #'windmove-right
+  "<down>" #'windmove-down
+  "<up>" #'windmove-up)
+
+(my/repeat-keymap my/tmux-repeat-map my/tmux-like-keymap
+  :doc "Repeat map for tmux prefix"
+  "C-<left>" #'tab-previous
+  "C-<right>" #'tab-next
+  "M-S-<left>" #'tab-bar-move-tab-backward
+  "M-S-<right>" #'tab-bar-move-tab
+
+  "S-<left>" #'windmove-swap-states-left
+  "S-<right>" #'windmove-swap-states-right
+  "S-<down>" #'windmove-swap-states-down
+  "S-<up>" #'windmove-swap-states-up)
+
+(keymap-global-set "C-z" my/tmux-like-keymap)
+(which-key-add-key-based-replacements
+  "C-z" "tmux-like-keymap"
+  "C-z 0" "windmove-delete")
 
 ;;__________________________________________________________
 ;; minibuffers
@@ -1295,46 +1337,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; xml-mode
 (add-to-list 'auto-mode-alist
 	     '("\\.\\(ipe\\|qrc\\|svn\\)\\'" . xml-mode))
-
-;;__________________________________________________________
-;; splitting
-(setq-default windmove-display-no-select t) ;; select windows after displaying it
-
-(defvar-keymap ctl-x-0-map
-  :doc "The base keymap for `highlight changes'."
-  "0" #'delete-window
-  "<left>" #'windmove-delete-left
-  "<right>" #'windmove-delete-right
-  "<up>" #'windmove-delete-up
-  "<down>" #'windmove-delete-down)
-
-(keymap-set ctl-x-map "0" ctl-x-0-map)
-(which-key-add-key-based-replacements "C-x 0" "windmove-delete")
-
-;; Direct shortcut without prefix.
-(keymap-global-set "M-<left>" #'windmove-left)
-(keymap-global-set "M-<right>" #'windmove-right)
-(keymap-global-set "M-<down>" #'windmove-down)
-(keymap-global-set "M-<up>" #'windmove-up)
-
-(keymap-set ctl-x-map "<left>" #'windmove-left)
-(keymap-set ctl-x-map "<right>" #'windmove-right)
-(keymap-set ctl-x-map "<down>" #'windmove-down)
-(keymap-set ctl-x-map "<up>" #'windmove-up)
-
-(keymap-set ctl-x-4-map "<left>" #'windmove-display-left)
-(keymap-set ctl-x-4-map "<right>" #'windmove-display-right)
-(keymap-set ctl-x-4-map "<down>" #'windmove-display-down)
-(keymap-set ctl-x-4-map "<up>" #'windmove-display-up)
-
-
-(my/repeat-keymap windmove-swap-repeat-map ctl-x-map
-  :doc "Repeat map for `windmove-swap' commands."
-  "S-<left>" #'windmove-swap-states-left
-  "S-<right>" #'windmove-swap-states-right
-  "S-<down>" #'windmove-swap-states-down
-  "S-<up>" #'windmove-swap-states-up)
-
 ;;__________________________________________________________
 ;; repeat-mode
 (setq-default repeat-check-key nil
