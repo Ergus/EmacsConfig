@@ -1734,8 +1734,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :diminish
   :init
   (setq-default ivy-count-format "(%d/%d) "
-		ivy-pulse-delay nil
-		ivy-use-selectable-prompt t
+		;; ivy-pulse-delay nil
+		;; ivy-use-selectable-prompt t           ;; Selectable prompt.
 		ivy-fixed-height-minibuffer t
 		ivy-on-del-error-function #'ignore
 		ivy-ignore-buffers '("\\` " "\\`\\*") ;; Ignore files starting with spaces or *
