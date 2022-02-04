@@ -99,17 +99,15 @@
 		     (((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
 
  ;; tab-bar
- `(tab-bar ((t :background ,(simple-16-theme-color black)
-               :foreground ,(simple-16-theme-color white)
-               :inverse-video nil)))
+ `(tab-bar ((t :inherit default :weight light)))
+ `(tab-bar-tab ((t :inherit tab-bar :background ,(simple-16-theme-color blue) :weight ultra-bold)))
+ `(tab-bar-tab-inactive ((t :inherit tab-bar :foreground ,(simple-16-theme-color white))))
 
- `(tab-bar-tab ((t :inherit tab-bar :weight ultra-bold)))
-
- `(tab-bar-tab-inactive ((default :background ,(simple-16-theme-color black)
-				  :foreground ,(simple-16-theme-color white)
-				  :weight normal
-				  :underline nil)
-			 (((class color) (min-colors 16)) :foreground ,(simple-16-theme-color brightblack))))
+ ;; tab-line
+ `(tab-line ((t :inherit default :weight light)))
+ `(tab-line-tab ((t :inherit tab-line)))
+ `(tab-line-tab-current ((t :inherit tab-line :background ,(simple-16-theme-color blue) :weight ultra-bold)))
+ `(tab-line-tab-inactive ((t :inherit tab-line :foreground ,(simple-16-theme-color white))))
 
  ;; Some others
  `(Man-overstrike ((t :inherit font-lock-type-face :bold t)))
