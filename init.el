@@ -1320,6 +1320,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package systemd :defer t)
 
 ;;__________________________________________________________
+;; haskell mode
+(use-package haskell-mode :defer t)
+
+;;__________________________________________________________
 ;; Use for Qt's .pro and .pri files (QT uses cmake now)
 
 ;; (use-package qt-pro-mode :defer t
