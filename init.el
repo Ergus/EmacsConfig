@@ -13,19 +13,24 @@
 ;; Internal options
 
 (setq-default display-line-numbers-widen t    ;; keep line numbers inside a narrow
+	      mode-line-position-column-line-format '(" (%l,%C)")  ;; column number start on 1
+	      mode-line-compact t                                  ;; no spaces on ml
+	      mode-line-front-space " "                            ;; no - on the very left
+	      mode-line-end-spaces " "                             ;; no ---- on the right.
+	      mode-line-mule-info ""                               ;; no UUU: on the left.
 	      ;; display-line-numbers-width 4   ;; width reserved (default nil: compute dynamically)
 	      )
+(column-number-mode t)                  ;; Numero de la columna
+(size-indication-mode t)                ;; Muestra el tamanno en modeline
+(line-number-mode t)                    ;; Numero de linea modeline (already default)
+
 (global-display-line-numbers-mode t)    ;; line numbers on the left
 (global-display-fill-column-indicator-mode t)
 
 (savehist-mode t)                       ;; Historial
 (auto-compression-mode t)               ;; Uncompress on the fly
 
-(size-indication-mode t)                ;; Muestra el tamanno en modeline
 (delete-selection-mode t)               ;; Sobreescribe seleccion al pegar
-
-(column-number-mode t)                  ;; Numero de la columna
-;; (line-number-mode t)                    ;; Numero de linea modeline (already default)
 
 ;; Break long lines.
 ;;(global-visual-line-mode t)
@@ -2304,9 +2309,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Modeline
-(use-package powerline
-  :config
-  (powerline-default-theme))
+;; (use-package powerline
+;;   :config
+;;   (powerline-default-theme))
 
 ;;__________________________________________________________
 ;; yaml mode
