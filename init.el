@@ -14,12 +14,16 @@
 ;;__________________________________________________________
 ;; Internal options
 
-(setq-default mode-line-position-column-line-format '(" (%l,%C)")  ;; column number start on 1
-	      mode-line-compact t                                  ;; no spaces on ml
-	      mode-line-front-space " "                            ;; no - on the very left
-	      mode-line-end-spaces " "                             ;; no ---- on the right.
-	      mode-line-mule-info ""                               ;; no UUU: on the left.
-	      ;; display-line-numbers-width 4   ;; width reserved (default nil: compute dynamically)
+(setq-default mode-line-format (list "%e "
+				     '(:propertize
+				       ("" mode-line-client mode-line-modified mode-line-remote)
+				       display (min-width (4.0)))
+				     '(:propertize " %12b" face (:weight bold)) ;; buffer identification
+				     '("  [%l,%C] %I")              ;; position
+				     '(vc-mode vc-mode)
+				     "  "
+				     'mode-line-modes
+				     'mode-line-misc-info)
 	      )
 (column-number-mode t)                  ;; Numero de la columna
 (size-indication-mode t)                ;; Muestra el tamanno en modeline
