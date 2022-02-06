@@ -255,25 +255,25 @@ M-<left>' and repeat with M-<left>."
 (load custom-file)
 
 ;; Personal Lisp dir
-(defconst mylisp-dir (expand-file-name "lisp" user-emacs-directory))
+;; (defconst mylisp-dir (expand-file-name "lisp" user-emacs-directory))
 
-(if (file-exists-p mylisp-dir)
-    (progn
-      (add-to-list 'load-path mylisp-dir)
+;; (if (file-exists-p mylisp-dir)
+;;     (progn
+;;       (add-to-list 'load-path mylisp-dir)
 
-      ;; Next file is in my lisp directory. it only defines mu4e
-      ;; config and a variable for the gmail calendar. It goes in the
-      ;; lisp directory.
-      (unless (require 'configmail "configmail.el" t)
-	(message "No mail config file found: ignoring")))
+;;       ;; Next file is in my lisp directory. it only defines mu4e
+;;       ;; config and a variable for the gmail calendar. It goes in the
+;;       ;; lisp directory.
+;;       (unless (require 'configmail "configmail.el" t)
+;; 	(message "No mail config file found: ignoring")))
 
-  ;; No lisp subdir so ignore.
-  (message "Subdir %s does not exist: ignoring" mylisp-dir))
+;;   ;; No lisp subdir so ignore.
+;;   (message "Subdir %s does not exist: ignoring" mylisp-dir))
 
 ;; System Lisp dir
-(defconst syslisp-dir "/usr/share/emacs/site-lisp")
-(when (file-exists-p syslisp-dir)
-  (add-to-list 'load-path syslisp-dir t))
+;; (defconst syslisp-dir "/usr/share/emacs/site-lisp")
+;; (when (file-exists-p syslisp-dir)
+;;   (add-to-list 'load-path syslisp-dir t))
 
 
 ;;__________________________________________________________
@@ -587,10 +587,10 @@ M-<left>' and repeat with M-<left>."
 ;; (which-key-add-key-based-replacements "C-x 0" "windmove-delete")
 
 ;; Direct shortcut without prefix.
-(keymap-global-set "M-<left>" #'windmove-left)
-(keymap-global-set "M-<right>" #'windmove-right)
-(keymap-global-set "M-<down>" #'windmove-down)
-(keymap-global-set "M-<up>" #'windmove-up)
+(keymap-global-set "C-x <left>" #'windmove-left)
+(keymap-global-set "C-x <right>" #'windmove-right)
+(keymap-global-set "C-x <down>" #'windmove-down)
+(keymap-global-set "C-x <up>" #'windmove-up)
 
 (keymap-set ctl-x-4-map "<left>" #'windmove-display-left)
 (keymap-set ctl-x-4-map "<right>" #'windmove-display-right)
