@@ -1934,9 +1934,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package magit :defer t
   :init
-  (setq-default magit-completing-read-function #'ivy-completing-read ;; this is autoset
-		magit-define-global-key-bindings nil
+  (setq-default magit-define-global-key-bindings nil
 		magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1
+		;; magit-completing-read-function #'ivy-completing-read ;; this is not needed anymore.
 		;;magit-bury-buffer-function #'magit-mode-quit-window
 		)
   :config
