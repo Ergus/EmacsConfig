@@ -462,9 +462,11 @@ M-<left>' and repeat with M-<left>."
 (setq-default Man-notify-method 'pushy)
 
 ;; dabbrev
-(defun my/dabbrev--select-project-buffers ()
+(autoload #'dabbrev-filter-elements "dabbrev")
+
+(defun my/dabbrev--select-project-buffersffers ()
   "Dabbrev list of buffers in the same project and apply the filters."
-  (let ((pr project-current))
+  (let ((pr (project-current nil)))
     (dabbrev-filter-elements
      buffer (if pr (project-buffers pr) (buffer-list))
      (and (not (eq (current-buffer) buffer))
@@ -472,8 +474,9 @@ M-<left>' and repeat with M-<left>."
 	  (boundp 'dabbrev-friend-buffer-function)
 	  (funcall dabbrev-friend-buffer-function buffer)))))
 
-(setq-default dabbrev-check-all-buffers t
-	      dabbrev-ignored-buffer-regexps "\\`[ *]"
+(setq-default dabbrev-check-all-buffers nil
+	      dabbrev-ignored-buffer-regexps '("\\`[ *]")
+	      ;; Buffers to add if dabbrev-check-other-buffers is non-nil
 	      dabbrev-select-buffers-function #'my/dabbrev--select-project-buffers)
 
 ;;__________________________________________________________
