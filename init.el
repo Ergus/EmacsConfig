@@ -12,8 +12,7 @@
 ;;__________________________________________________________
 ;; Internal options
 
-(setq-default display-line-numbers-widen t    ;; keep line numbers inside a narrow
-	      mode-line-position-column-line-format '(" (%l,%C)")  ;; column number start on 1
+(setq-default mode-line-position-column-line-format '(" (%l,%C)")  ;; column number start on 1
 	      mode-line-compact t                                  ;; no spaces on ml
 	      mode-line-front-space " "                            ;; no - on the very left
 	      mode-line-end-spaces " "                             ;; no ---- on the right.
@@ -24,6 +23,7 @@
 (size-indication-mode t)                ;; Muestra el tamanno en modeline
 (line-number-mode t)                    ;; Numero de linea modeline (already default)
 
+(setq-default display-line-numbers-widen t) ;; keep line numbers inside a narrow
 (global-display-line-numbers-mode t)    ;; line numbers on the left
 (global-display-fill-column-indicator-mode t)
 
@@ -129,6 +129,7 @@
 	      ffap-machine-p-known 'reject          ;; stop ffap from pinging random hosts
 	      help-window-select t                  ;; always select help windoes
 	      history-delete-duplicates t           ;; delete duplicates in commands history
+	      find-library-include-other-files nil  ;; find-library only shows libraries, not random files.
 	      )
 
 ;; Vertical window divider
