@@ -14,29 +14,6 @@
 ;;__________________________________________________________
 ;; Internal options
 
-(setq-default mode-line-format (list "%e "
-				     '(:propertize
-				       ("" mode-line-client mode-line-modified mode-line-remote)
-				       display (min-width (4.0)))
-				     '(:propertize " %12b" face (:weight bold)) ;; buffer identification
-				     '("  [%l,%C] %I")              ;; position
-				     '(vc-mode vc-mode)
-				     "  "
-				     'mode-line-modes
-				     'mode-line-misc-info)
-	      )
-(column-number-mode t)                  ;; Numero de la columna
-(size-indication-mode t)                ;; Muestra el tamanno en modeline
-(line-number-mode t)                    ;; Numero de linea modeline (already default)
-
-(setq-default display-line-numbers-widen t) ;; keep line numbers inside a narrow
-(global-display-line-numbers-mode t)    ;; line numbers on the left
-(global-display-fill-column-indicator-mode t)
-
-(savehist-mode t)                       ;; Historial
-(auto-compression-mode t)               ;; Uncompress on the fly
-
-(delete-selection-mode t)               ;; Sobreescribe seleccion al pegar
 
 ;; Break long lines.
 ;;(global-visual-line-mode t)
@@ -322,6 +299,34 @@ M-<left>' and repeat with M-<left>."
 ;;__________________________________________________________
 ;; Some internal packages to defer them
 
+;; Modeline
+(setq-default mode-line-format (list "%e "
+				     '(:propertize
+				       ("" mode-line-client mode-line-modified mode-line-remote)
+				       display (min-width (4.0)))
+				     '(:propertize " %12b" face (:weight bold)) ;; buffer identification
+				     '("  [%l,%C] %I")              ;; position
+				     '(vc-mode vc-mode)
+				     "  "
+				     'mode-line-modes
+				     'mode-line-misc-info))
+
+;; (column-number-mode t)               ;; Column number
+;; (line-number-mode t)                 ;; Line number
+;; (size-indication-mode t)             ;; Size in modeline
+
+;; Line numbers and fill column
+(setq-default display-line-numbers-widen t)     ;; keep line numbers inside a narrow
+(global-display-line-numbers-mode t)            ;; line numbers on the left
+(global-display-fill-column-indicator-mode t)
+
+;; Save history
+(savehist-mode t)
+
+;; Compress and delete selection
+(auto-compression-mode t)               ;; Uncompress on the fly
+(delete-selection-mode t)               ;; Override selection
+
 ;; imenu
 (setq-default imenu-use-markers nil
 	      imenu-auto-rescan t
@@ -331,10 +336,10 @@ M-<left>' and repeat with M-<left>."
 (setq-default uniquify-buffer-name-style 'forward) ;; default 'post-forward-angle-brackets
 
 ;; saveplace
-(save-place-mode 1)                           ;; Remember point in files
 (setq-default save-place-ignore-files-regexp  ;; Modified to add /tmp/* files
 	      (replace-regexp-in-string "\\\\)\\$" "\\|^/tmp/.+\\)$"
 					save-place-ignore-files-regexp t t))
+(save-place-mode 1)                           ;; Remember point in files
 
 ;; show-parent
 (setq-default show-paren-delay 0
@@ -353,8 +358,7 @@ M-<left>' and repeat with M-<left>."
 (setq-default recentf-max-saved-items 48    ;; Max items saved
 	      recentf-auto-cleanup 10)      ;; Make cleanup when idle for 10 seconds. (default 'mode
                                             ;; cleans when the mode is loades)
-(with-eval-after-load 'recentf
-  (recentf-mode 1))
+(eval-after-load 'recentf '(recentf-mode 1))
 
 ;; profiler
 (add-hook 'profiler-report-mode-hook #'hl-line-mode)
