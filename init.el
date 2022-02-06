@@ -14,18 +14,6 @@
 ;;__________________________________________________________
 ;; Internal options
 
-
-;; Break long lines.
-;;(global-visual-line-mode t)
-
-;; Modeline
-;; (display-battery-mode t)
-
-;; (setq-default display-time-24hr-format t
-;; 	      display-time-day-and-date t
-;; 	      display-time-default-load-average nil)
-;; (display-time-mode t)
-
 (setq-default ;; tab-always-indent 'complete   ;; make tab key do indent only
 	      ;; tab-first-completion 'word
 	      ring-bell-function #'ignore
