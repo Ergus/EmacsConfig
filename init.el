@@ -605,12 +605,13 @@ M-<left>' and repeat with M-<left>."
 
 (defvar-keymap my/tmux-like-keymap
   :doc "A keymap that emulates some of the tmux bindings."
-  :parent tab-prefix-map
   "i" #'tab-new
   "k" #'tab-close
   "0" my/0-map
   "v" #'split-window-below
   "h" #'split-window-right
+  "b" #'switch-to-buffer-other-tab
+  "d" #'dired-other-tab
 
   "<left>" #'windmove-left
   "<right>" #'windmove-right
