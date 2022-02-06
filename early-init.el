@@ -59,5 +59,7 @@
 (tooltip-mode -1)			;; Tool tip in the echo
 (electric-indent-mode -1)
 
+;; (debug-on-entry #'package-refresh-contents)
+
 (provide 'early-init)
 ;;; early-init.el ends here
