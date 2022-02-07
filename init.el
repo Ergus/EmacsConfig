@@ -483,7 +483,8 @@ M-<left>' and repeat with M-<left>."
   :init
   (setq-default paradox-spinner-type 'progress-bar
 		paradox-display-download-count t
-		paradox-display-star-count t))
+		paradox-display-star-count t
+		paradox-github-token t))
 ;;__________________________________________________________
 ;; Isearch
 
