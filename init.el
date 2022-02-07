@@ -580,6 +580,15 @@ M-<left>' and repeat with M-<left>."
 	 ("/known_hosts\\'" . ssh-known-hosts-mode)
 	 ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
 
+;; ssh deploy
+(use-package ssh-deploy
+  :bind-keymap ("C-c C-z" . ssh-deploy-prefix-map)
+  :hook ((after-save . ssh-deploy-after-save)
+         (find-file . ssh-deploy-find-file))
+  :config
+  (ssh-deploy-line-mode) ;; If you want mode-line feature
+  )
+
 ;;__________________________________________________________
 ;; splitting
 (setq-default windmove-display-no-select t) ;; select windows after displaying it
