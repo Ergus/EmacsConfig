@@ -455,9 +455,6 @@ M-<left>' and repeat with M-<left>."
 ;; Context Menu
 (context-menu-mode 1)
 
-;; transient
-;; (setq-default transient-enable-popup-navigation t)
-
 ;; Man
 (setq-default Man-notify-method 'pushy)
 
@@ -922,7 +919,7 @@ M-<left>' and repeat with M-<left>."
   )
 
 ;;__________________________________________________________
-;; LSP try for a whil
+;; Completions
 
 (use-package eglot :defer t
   :init
@@ -1372,7 +1369,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      repeat-exit-key (kbd "RET"))
 (repeat-mode 1)
 
-;; Bind repeat to next-prev buffer
+;; Bind repeat to next/prev buffer
 (my/repeat-keymap my/next-prev-repeat-map ctl-x-map
   :doc "Repeat map for `next|prev-buffer' commands."
   "C-<left>" #'previous-buffer
