@@ -72,7 +72,9 @@
  `(lazy-highlight ((default :background ,(simple-16-theme-color cyan))
 		   (((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
 
- `(region ((t :background ,(simple-16-theme-color brightblue))))
+ `(region ((default :background ,(simple-16-theme-color blue)
+		    :foreground ,(simple-16-theme-color white))
+	   (((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblue) :foreground nil)))
 
  `(trailing-whitespace ((default :background ,(simple-16-theme-color cyan))
 			(((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
