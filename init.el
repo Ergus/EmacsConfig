@@ -130,22 +130,20 @@
 (defvar my/package-initialized-p nil
   "Set to true when package where initialized.")
 
-(defmacro my/package-install (package)
+(defun my/package-install (package)
   "Conditionally install PACKAGE in debug mode."
-  `(when init-file-debug
-     (unless (fboundp #'package-installed-p)
-       (require 'package))
-     (unless (package-installed-p ,package)
-       (unless my/package-initialized-p
-	 (package-initialize)
-	 (package-refresh-contents)
-	 (setq my/package-initialized-p t))
-       (package-install ,package))))
+  (when (and init-file-debug
+	     (not (package-installed-p package)))
+    (unless my/package-initialized-p
+      (package-initialize)
+      (package-refresh-contents)
+      (setq my/package-initialized-p t))
+    (package-install package)))
 
-(defmacro my/load-path (path)
+(defun my/load-path (path)
   "Return the PATH if exist or nil."
   (and (file-exists-p path)
-       `(add-to-list 'load-path ,path)))
+       (add-to-list 'load-path path)))
 
 ;; (debug-on-entry #'package--download-one-archive)
 
@@ -967,11 +965,11 @@ M-<left>' and repeat with M-<left>."
 (use-package company :defer t
   ;; :load-path (lambda nil (my/load-path "~/gits/company-mode/"))
   :preface
-  (defmacro my/company-backend-after-load (backend)
-    `(with-eval-after-load 'company
-       (unless (eq ,backend (car company-backends))
-	 (setq-local company-backends
-		     (cons ,backend (remove ,backend company-backends))))))
+  (defun my/company-backend-after-load (backend)
+    (with-eval-after-load 'company
+      (unless (eq backend (car company-backends))
+	(setq-local company-backends
+		    (cons backend (remove backend company-backends))))))
 
   (defun my/company-mode-delay-hook nil
     "Load company mode if not active."
