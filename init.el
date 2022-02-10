@@ -523,6 +523,8 @@ M-<left>' and repeat with M-<left>."
 
 (use-package phi-search :defer t)
 
+(setq-default list-matching-lines-jump-to-current-line t)
+
 ;;__________________________________________________________
 ;; The Colors I am using my own theme
 (load-theme 'simple-16)
