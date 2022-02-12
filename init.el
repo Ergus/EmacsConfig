@@ -14,6 +14,11 @@
 ;;__________________________________________________________
 ;; Internal options
 
+(prefer-coding-system 'utf-8)	        ;; Encoding
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+
 (setq-default ;; tab-always-indent 'complete   ;; make tab key do indent only
 	      ;; tab-first-completion 'word
 	      ring-bell-function #'ignore
