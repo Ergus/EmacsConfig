@@ -512,7 +512,6 @@ M-<left>' and repeat with M-<left>."
 	      )
 
 (with-eval-after-load 'isearch
-  (keymap-set isearch-mode-map "<remap> <isearch-delete-char>" #'isearch-del-char)
 
   (defun my/isearch-exit-other-end ()
     (interactive)
@@ -520,7 +519,10 @@ M-<left>' and repeat with M-<left>."
       (goto-char isearch-other-end))
     (call-interactively #'isearch-exit))
 
+  (keymap-set isearch-mode-map "C-RET" #'my/isearch-exit-other-end)
   (keymap-set isearch-mode-map "C-<return>" #'my/isearch-exit-other-end)
+  (keymap-set isearch-mode-map "<remap> <isearch-abort>" #'isearch-cancel)
+  (keymap-set isearch-mode-map "<remap> <isearch-delete-char>" #'isearch-del-char)
 
   (which-key-add-key-based-replacements "M-s h" "highlight"))
 
