@@ -550,6 +550,17 @@ M-<left>' and repeat with M-<left>."
 		  (quit-restore-window win)
 		  (isearch-done))))))
 
+(defun my/occur ()
+  "Occur with thing at point REGEXP default to thing at point."
+  (interactive)
+  (let* ((bounds (find-tag-default-bounds))
+	 (regexp (or (and bounds
+			  (buffer-substring-no-properties (car bounds) (cdr bounds)))
+		     (occur-read-primary-args))))
+    (funcall-interactively #'occur regexp)))
+
+(keymap-global-set "<remap> <occur>" #'my/occur)
+
 ;;__________________________________________________________
 ;; The Colors I am using my own theme
 (load-theme 'simple-16)
