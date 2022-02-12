@@ -560,8 +560,11 @@ M-<left>' and repeat with M-<left>."
 ;;__________________________________________________________
 
 ;;__________________________________________________________
-;; Show paren mode
+;; Some bindings
 (keymap-global-set "<remap> <just-one-space>" #'cycle-spacing)
+(keymap-global-set "<remap> <delete-char>" #'delete-forward-char)
+(keymap-global-set "<remap> <count-words-region>" #'count-words)  ;; count on whole file or region if active
+
 
 ;;__________________________________________________________
 ;; compile
