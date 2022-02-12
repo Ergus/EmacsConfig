@@ -656,7 +656,10 @@ M-<left>' and repeat with M-<left>."
 ;; minibuffers
 
 ;; These two must be enabled/disabled together
-(setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
+(setq-default enable-recursive-minibuffers t ;; Enable nesting in minibuffer
+	      read-file-name-completion-ignore-case t
+	      read-buffer-completion-ignore-case t
+	      completion-ignore-case t)
 (minibuffer-depth-indicate-mode 1)        ;; Mostrar nivel de nesting en minibuffer
 
 (add-hook 'minibuffer-setup-hook #'my/unset-gc)
@@ -1825,8 +1828,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		swiper-verbose nil)
   (eval-after-load 'isearch
     '(keymap-set isearch-mode-map "C-o" #'swiper-isearch-toggle))
-  (keymap-global-set "M-s o" #'swiper-isearch-thing-at-point)
-  (keymap-global-set "M-s s" #'swiper-isearch)
+  (keymap-global-set "M-s C-." #'swiper-isearch-thing-at-point)
+  (keymap-global-set "M-s C-o" #'swiper-isearch)
   :config
   (keymap-set swiper-map "C-o" #'swiper-isearch-toggle))
 
