@@ -746,7 +746,13 @@ M-<left>' and repeat with M-<left>."
   :config
   ;; Add find-file-other-window to accepted commands
   (add-to-list 'vterm-eval-cmds
-	       '("find-file-other-window" find-file-other-window)))
+	       '("find-file-other-window" find-file-other-window))
+
+  (keymap-set vterm-mode-map "C-c C-x" #'vterm-send-C-x)
+  (keymap-set vterm-mode-map "C-c [" #'vterm-copy-mode)
+  (keymap-set vterm-mode-map "C-c ]" #'vterm-yank)
+  (keymap-set vterm-copy-mode-map "M-w" #'vterm-copy-mode-done)
+  )
 
 (use-package vterm-toggle :defer t
   :init
