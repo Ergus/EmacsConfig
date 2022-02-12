@@ -35,7 +35,7 @@
 	      ;; line-move-visual nil       ;; move cursor visual lines
 	      backward-delete-char-untabify-method nil ;; Don't untabify on backward delete
 
-	      ;; split-width-threshold 160  ;; Limite para split vertical
+	      split-width-threshold 140     ;; Limit for vertical split (default 160)
 	      ;; kill-whole-line t
 	      load-prefer-newer t
 	      ;; mark-even-if-inactive nil     ;; no mark no region
@@ -87,6 +87,7 @@
 	      read-extended-command-predicate  #'command-completion-default-include-p
 	      completions-detailed t                  ;; show more detailed completions
 	      use-short-answers t                     ;; Use y or n to exit and other shorter answers.
+	      y-or-n-p-use-read-key t                 ;; use readkey and not minibuffer for y or n answers
 	      goto-line-history-local t               ;; Buffer local goto-line history
 	      switch-to-buffer-obey-display-actions t ;; switching the buffer respects display actions
 	      bookmark-menu-confirm-deletion t        ;; ask confirmation to delete bookmark
@@ -101,6 +102,10 @@
 	      help-window-select t                  ;; always select help windoes
 	      history-delete-duplicates t           ;; delete duplicates in commands history
 	      find-library-include-other-files nil  ;; find-library only shows libraries, not random files.
+	      view-read-only t                      ;; buffers visiting files read-only do so in view mode
+	      kill-read-only-ok t                   ;; don’t signal an error for killing read-only text.
+	      debugger-stack-frame-as-list t        ;; display call stack frames as lists.
+	      async-shell-command-display-buffer nil ;;command buffer wait until there is output
 	      )
 
 ;; Vertical window divider
