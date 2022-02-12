@@ -523,6 +523,21 @@ M-<left>' and repeat with M-<left>."
 
 (setq-default list-matching-lines-jump-to-current-line t)
 
+(with-eval-after-load 'replace  ;; is where occur resides
+  (keymap-set occur-mode-map "SPC" #'occur-mode-display-occurrence)
+
+  (add-hook 'occur-mode-hook (lambda nil
+			       (display-line-numbers-mode -1)
+			       (switch-to-buffer-other-window "*Occur*")))
+
+  (add-hook 'occur-mode-find-occurrence-hook
+	    (lambda nil
+	      (let ((win (get-buffer-window "*Occur*")))
+		(when (and win
+			   (eq this-command #'occur-mode-goto-occurrence))
+		  (quit-restore-window win)
+		  (isearch-done))))))
+
 ;;__________________________________________________________
 ;; The Colors I am using my own theme
 (load-theme 'simple-16)
