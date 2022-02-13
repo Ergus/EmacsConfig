@@ -620,13 +620,14 @@ M-<left>' and repeat with M-<left>."
 	 ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
 
 ;; ssh deploy
-(use-package ssh-deploy
-  :bind-keymap ("C-c C-z" . ssh-deploy-prefix-map)
-  :hook ((after-save . ssh-deploy-after-save)
-         (find-file . ssh-deploy-find-file))
-  :config
-  (ssh-deploy-line-mode) ;; If you want mode-line feature
-  )
+;; (use-package ssh-deploy :defer t
+;;   :bind-keymap ("C-c C-z" . ssh-deploy-prefix-map)
+;;   :hook ((after-save . ssh-deploy-after-save)
+;;          (find-file . ssh-deploy-find-file))
+;;   :config
+;;   (debug)
+;;   (ssh-deploy-line-mode) ;; If you want mode-line feature
+;;   )
 
 ;;__________________________________________________________
 ;; splitting
@@ -2434,7 +2435,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;; (use-package automark
 ;;   :diminish
-;;   :disabled
 ;;   :preface
 ;;   (my/load-path "~/gits/emacs_clones/automark-mode/")
 ;;   :config
