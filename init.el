@@ -654,6 +654,8 @@ M-<left>' and repeat with M-<left>."
 (keymap-set ctl-x-4-map "<down>" #'windmove-display-down)
 (keymap-set ctl-x-4-map "<up>" #'windmove-display-up)
 
+(keymap-unset ctl-x-map "0")
+
 ;;__________________________________________________________
 ;; tab-bar
 (setq-default tab-bar-tab-hints t  ;; show tab numbers
@@ -748,6 +750,8 @@ M-<left>' and repeat with M-<left>."
   (add-to-list 'vterm-eval-cmds
 	       '("find-file-other-window" find-file-other-window))
 
+  (keymap-unset vterm-mode-map "C-z")
+  (keymap-set vterm-mode-map "C-c C-z" #'vterm-send-C-z)
   (keymap-set vterm-mode-map "C-c C-x" #'vterm-send-C-x)
   (keymap-set vterm-mode-map "C-c [" #'vterm-copy-mode)
   (keymap-set vterm-mode-map "C-c ]" #'vterm-yank)
