@@ -751,7 +751,8 @@ M-<left>' and repeat with M-<left>."
   (add-to-list 'vterm-eval-cmds
 	       '("find-file-other-window" find-file-other-window))
 
-  (keymap-unset vterm-mode-map "C-z")
+  (keymap-unset vterm-mode-map "C-z")  ;; I use C-x to change tab
+  (keymap-unset vterm-mode-map "M-O")  ;; Fix arrow keys in vterm
   (keymap-set vterm-mode-map "C-c C-z" #'vterm-send-C-z)
   (keymap-set vterm-mode-map "C-c C-x" #'vterm-send-C-x)
   (keymap-set vterm-mode-map "C-c [" #'vterm-copy-mode)
