@@ -596,17 +596,14 @@ M-<left>' and repeat with M-<left>."
 	      tramp-completion-reread-directory-timeout 120;; Default 10
 	      password-cache-expiry 3600                   ;; Cache for 1 hour
 	      tramp-use-scp-direct-remote-copying t        ;; copy directly between remote hosts
-	      ;; tramp-default-method "scp"                   ;; Already default
-	      ;; tramp-verbose 3                              ;; Already default
+	      ;; tramp-default-method "scp"                ;; Already default
+	      tramp-verbose (if init-file-debug 5 0)       ;; Default 3 always
+	      tramp-use-ssh-controlmaster-options nil
 	      )
 
 (with-eval-after-load 'tramp
-  (connection-local-set-profile-variables
-   'my/tramp-profile '((auth-sources . nil)
-		       (tramp-use-ssh-controlmaster-options . nil)))
-
-  (connection-local-set-profiles
-   '(:application tramp) 'my/tramp-profile)
+  (connection-local-set-profile-variables 'my/tramp-profile '((auth-sources . nil)))
+  (connection-local-set-profiles '(:application tramp) 'my/tramp-profile)
 
   ;;(tramp-change-syntax 'simplified)
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
@@ -1994,6 +1991,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (setq-default magit-define-global-key-bindings nil
 		magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1
+		;; This may help for tramp
+		auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffer-p
+
 		;; magit-completing-read-function #'ivy-completing-read ;; this is not needed anymore.
 		;;magit-bury-buffer-function #'magit-mode-quit-window
 		)
