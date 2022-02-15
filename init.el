@@ -1536,24 +1536,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Chequeo de gramatica
 (use-package languagetool :defer t
   :init
-  (setq-default ;; languagetool-server-language-tool-jar "/home/ergo/gits/emacs_clones/languagetool/languagetool-standalone/target/LanguageTool-5.5-SNAPSHOT/LanguageTool-5.5-SNAPSHOT/languagetool-server.jar"
-		languagetool-language-tool-jar "/home/ergo/gits/emacs_clones/languagetool/languagetool-standalone/target/LanguageTool-5.5-SNAPSHOT/LanguageTool-5.5-SNAPSHOT/languagetool-commandline.jar"
-		languagetool-java-arguments '("-Dfile.encoding=UTF-8")
-		languagetool-default-language "en")
-
-  (defvar-keymap languagetool-basic-map
-    :doc "The base keymap for `languagetool'."
-    "l" #'languagetool-check
-    "c" #'languagetool-clear-buffer
-    "." #'languagetool-correct-at-point
-    "b" #'languagetool-correct-buffer
-    "s" #'languagetool-set-language)
-
-  (keymap-global-set "C-c l" languagetool-basic-map)
-  (which-key-add-key-based-replacements "C-c l" "languagetool")
-
-  ;; :config
-  ;; (languagetool-server-start)
+  (setq-default languagetool-java-arguments '("-Dfile.encoding=UTF-8"
+					      "-cp" "/usr/share/languagetool:/usr/share/java/languagetool/*")
+		languagetool-console-command "org.languagetool.commandline.Main"
+		languagetool-server-command "org.languagetool.server.HTTPServer")
   )
 
 ;;__________________________________________________________
