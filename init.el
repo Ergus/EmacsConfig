@@ -652,7 +652,7 @@ M-<left>' and repeat with M-<left>."
 (keymap-set ctl-x-4-map "<down>" #'windmove-display-down)
 (keymap-set ctl-x-4-map "<up>" #'windmove-display-up)
 
-(keymap-unset ctl-x-map "0")
+(keymap-set ctl-x-map "0" my/0-map)
 
 ;;__________________________________________________________
 ;; tab-bar
