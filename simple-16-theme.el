@@ -81,11 +81,15 @@
 
  ;; Modeline
  `(mode-line ((t :background ,(simple-16-theme-color blue)
-		 :foreground ,(simple-16-theme-color white))))
+		 :foreground ,(simple-16-theme-color white)
+		 :weight bold)))
 
  `(mode-line-inactive ((default :background ,(simple-16-theme-color black)
-				:foreground ,(simple-16-theme-color white))
-		       (((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
+				:foreground ,(simple-16-theme-color white)
+				:weight normal)
+		       (((class color) (min-colors 16))
+			:background ,(simple-16-theme-color brightblack)
+			:foreground ,(simple-16-theme-color brightwhite))))
 
  ;; line numbers
  `(line-number ((default :foreground ,(simple-16-theme-color white))
