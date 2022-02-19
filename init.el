@@ -961,11 +961,9 @@ M-<left>' and repeat with M-<left>."
   (which-key-add-keymap-based-replacements flyspell-mode-map "C-c f" "flyspell")
   (diminish 'flyspell-mode))
 
-(use-package flyspell-correct-ivy
+(use-package flyspell-correct
   :diminish
   :after flyspell
-  :init
-  (setq-default flyspell-correct-interface #'flyspell-correct-ivy)
   :config
   (keymap-set flyspell-basic-map "w" #'flyspell-correct-wrapper)
   (keymap-set flyspell-basic-map "f" #'flyspell-correct-at-point)
@@ -1162,13 +1160,6 @@ M-<left>' and repeat with M-<left>."
   ;; lsp-ui
   (keymap-set lsp-command-map "u n" #'lsp-ui-find-next-reference)
   (keymap-set lsp-command-map "u p" #'lsp-ui-find-prev-reference)
-  )
-
-(use-package lsp-ivy
-  :diminish
-  :after lsp-mode
-  :config
-  (keymap-set lsp-mode-map "C-c l i" #'lsp-ivy-workspace-symbol)
   )
 
 (use-package tree-sitter :defer t)
@@ -1692,10 +1683,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (bibtex-mode . (lambda nil
 			 (my/company-backend-after-load #'company-bibtex))))
 
-(use-package ivy-bibtex :defer t
-  :init
-  (setq-default ivy-bibtex-default-action #'bibtex-completion-insert-citation))
-
 ;;__________________________________________________________
 ;; Python mode
 (setq-default python-shell-interpreter "ipython3"
@@ -1800,123 +1787,87 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package flx :defer t)
 
-(use-package ivy :defer t
-  :diminish
-  :init
-  (setq-default ivy-count-format "(%d/%d) "
-		;; ivy-pulse-delay nil
-		;; ivy-use-selectable-prompt t           ;; Selectable prompt.
-		ivy-fixed-height-minibuffer t
-		ivy-on-del-error-function #'ignore
-		ivy-ignore-buffers '("\\` " "\\`\\*") ;; Ignore files starting with spaces or *
-		;; ivy-read-action-format-function #'ivy-read-action-format-columns
-		ivy-read-action-function #'ivy-read-action-ivy ;; use arrows to read actions
-		;; ivy-format-functions-alist '((t . ivy-format-function-arrow)) ;; Breakd swiper
-		)
-  ;; (ivy-use-virtual-buffers t)   ;; Recent files or buffers in ivy
-  ;; (ivy-height 10)
-  ;; (ivy-wrap t)                  ;; cycle in minibuffer
-  :config
-  ;; Highlight with arrows by default.
-  ;;(add-to-list 'ivy-format-functions-alist '(t . ivy-format-function-arrow))
-
-  (keymap-set ivy-mode-map "C-c c c" #'ivy-resume)
-  (keymap-set ivy-minibuffer-map "TAB" #'ivy-partial)
-  (keymap-set ivy-minibuffer-map "RET" #'ivy-alt-done)
-
-  (ivy-mode 1))
-
 ;; (use-package hydra :defer t)
 
 ;; (use-package ivy-hydra
 ;;   :init
 ;;   (setq-default ivy-read-action-function #'ivy-hydra-read-action))
 
-(use-package ivy-avy :after ivy)
+(setq-default xref-search-program 'ripgrep
+)
 
-(setq-default xref-search-program 'ripgrep)
-
-(use-package ivy-xref :defer t
-  :init
-  (which-key-add-key-based-replacements "C-c x" "xref")
-  :init
-  (setq-default xref-show-definitions-function #'ivy-xref-show-defs
-		xref-show-xrefs-function #'ivy-xref-show-xrefs)
-  (defvar-keymap ivy-xref-basic-map
-    :doc "The base keymap for `ivy-xref'."
+(defvar-keymap my/xref-basic-map
+    :doc "The base keymap for `xref'."
     "d" #'xref-find-definitions
     "4" #'xref-find-definitions-other-window
     "a" #'xref-find-apropos
     "r" #'xref-find-references
     "TAB" #'completion-at-point)
 
-  (my/repeat-keymap ivy-xref-repeat-map ivy-xref-basic-map
+(my/repeat-keymap my/xref-repeat-map my/xref-basic-map
     "p" #'xref-go-back
     "n" #'xref-go-forward)
 
-  (put #'xref-find-definitions 'repeat-map ivy-xref-repeat-map)
-  (put #'xref-find-references 'repeat-map ivy-xref-repeat-map)
+(put #'xref-find-definitions 'repeat-map my/xref-repeat-map)
+  (put #'xref-find-references 'repeat-map my/xref-repeat-map)
 
-  (keymap-global-set "C-c x" ivy-xref-basic-map))
-
-(use-package swiper :defer t
-  :init
-  (setq-default swiper-goto-start-of-match t
-		swiper-verbose nil)
-  (eval-after-load 'isearch
-    '(keymap-set isearch-mode-map "C-o" #'swiper-isearch-toggle))
-  (keymap-global-set "M-s C-." #'swiper-isearch-thing-at-point)
-  (keymap-global-set "M-s C-o" #'swiper-isearch)
-  :config
-  (keymap-set swiper-map "C-o" #'swiper-isearch-toggle))
+(keymap-global-set "C-c x" my/xref-basic-map)
+(which-key-add-key-based-replacements "C-c x" "xref")
 
 (use-package imenu-list :defer t
   :init
   (setq-default imenu-list-position 'left)
   (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle))
 
-(use-package counsel
-  :diminish
-  :defer 0.2
-  :init
-  (setq-default counsel-find-file-at-point t       ;; Select file at point
-		counsel-preselect-current-file t)   ;; Select current file in list
-  :config
-  (defvar-keymap counsel-basic-map
-    :doc "The base keymap for `counsel-mode'."
-    ;;([remap switch-to-buffer] . counsel-switch-buffer)
-    ;;([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
-    "c" #'ivy-resume                ;; resume ivy
-    "a" #'counsel-ag
-    "b" #'counsel-ibuffer           ;; like ibuffer + switch-to-buffer
-    "i" #'counsel-imenu
-    "r" #'counsel-rg                ;; like git grep
-    "g" #'counsel-grep              ;; grep in local file
-    "G" #'counsel-git-grep          ;; grep in current git repo
-    "e" #'counsel-linux-app         ;; call application
-    "l" #'counsel-find-library      ;; Search lisp libraries
-    "SPC" #'counsel-register        ;; list registers
-    "RET" #'counsel-company         ;; company completions
-    "C-SPC" #'counsel-mark-ring     ;; Mark ring history
-    "C-r" #'counsel-command-history ;; command history
-    "p" #'counsel-package           ;; command history
-    "P" #'counsel-list-processes    ;; command history
-    ;; counsel-file commands
-    "f g" #'counsel-git             ;; find file in git rempo
-    "f j" #'counsel-file-jump       ;; file in subdir
-    "f l" #'counsel-locate          ;; locate command como search)
-    "f r" #'counsel-recentf
-    "f z" #'counsel-fzf
-    "f b" #'counsel-buffer-or-recentf)
+(defvar-keymap my/ctrl-c-c
+  :doc "The base keymap for `C-c c'."
+  "l" #'find-library
+  "i" #'imenu)
 
-  (keymap-set counsel-mode-map "C-c c" counsel-basic-map)
-  (which-key-add-keymap-based-replacements counsel-mode-map
-    "C-c c" "counsel"
-    "C-c c f" "counsel-file")
-  (counsel-mode 1)
-  ;; match by words
-  ;; (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
-  )
+(keymap-global-set "C-c c" my/ctrl-c-c)
+
+;; (use-package counsel
+;;   :diminish
+;;   :defer 0.2
+;;   :init
+;;   (setq-default counsel-find-file-at-point t       ;; Select file at point
+;; 		counsel-preselect-current-file t)   ;; Select current file in list
+;;   :config
+;;   (defvar-keymap counsel-basic-map
+;;     :doc "The base keymap for `counsel-mode'."
+;;     ;;([remap switch-to-buffer] . counsel-switch-buffer)
+;;     ;;([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
+;;     "c" #'ivy-resume                ;; resume ivy
+;;     "a" #'counsel-ag
+;;     "b" #'counsel-ibuffer           ;; like ibuffer + switch-to-buffer
+;;     "i" #'counsel-imenu
+;;     "r" #'counsel-rg                ;; like git grep
+;;     "g" #'counsel-grep              ;; grep in local file
+;;     "G" #'counsel-git-grep          ;; grep in current git repo
+;;     "e" #'counsel-linux-app         ;; call application
+;;     "l" #'counsel-find-library      ;; Search lisp libraries
+;;     "SPC" #'counsel-register        ;; list registers
+;;     "RET" #'counsel-company         ;; company completions
+;;     "C-SPC" #'counsel-mark-ring     ;; Mark ring history
+;;     "C-r" #'counsel-command-history ;; command history
+;;     "p" #'counsel-package           ;; command history
+;;     "P" #'counsel-list-processes    ;; command history
+;;     ;; counsel-file commands
+;;     "f g" #'counsel-git             ;; find file in git rempo
+;;     "f j" #'counsel-file-jump       ;; file in subdir
+;;     "f l" #'counsel-locate          ;; locate command como search)
+;;     "f r" #'counsel-recentf
+;;     "f z" #'counsel-fzf
+;;     "f b" #'counsel-buffer-or-recentf)
+
+;;   (keymap-set counsel-mode-map "C-c c" counsel-basic-map)
+;;   (which-key-add-keymap-based-replacements counsel-mode-map
+;;     "C-c c" "counsel"
+;;     "C-c c f" "counsel-file")
+;;   (counsel-mode 1)
+;;   ;; match by words
+;;   ;; (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
+;;   )
 
 (use-package amx :defer t) ;; Complete history
 
@@ -1965,7 +1916,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package dumb-jump :defer t
   :bind-keymap ("C-c j" . dumb-jump-mode-map)
   :init
-  (setq-default dumb-jump-selector 'ivy
+  (setq-default dumb-jump-selector 'completing-read
 		dumb-jump-disable-obsolete-warnings t
 		dumb-jump-prefer-searcher 'rg
 		dumb-jump-quiet (not init-file-debug)
@@ -2148,19 +2099,19 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
     (goto-char (my/abs-to-point abspoint))))
 
-(defun my/var-to-clipboard ()
-  "Put the current file name on the clipboard."
-  (interactive)
-  (ivy-read "Describe variable: " obarray
-	    :predicate #'counsel--variable-p
-	    :require-match t
-	    :preselect (ivy-thing-at-point)
-	    :action (lambda (x)
-		      (let ((value (format "%s" (symbol-value (intern x)))))
-			(kill-new value)
-			(message "Copied %s value %s to clipboard"
-				 x value)))
-	    :caller 'my/var-to-clipboard))
+;; (defun my/var-to-clipboard ()
+;;   "Put the current file name on the clipboard."
+;;   (interactive)
+;;   (ivy-read "Describe variable: " obarray
+;; 	    :predicate #'counsel--variable-p
+;; 	    :require-match t
+;; 	    :preselect (ivy-thing-at-point)
+;; 	    :action (lambda (x)
+;; 		      (let ((value (format "%s" (symbol-value (intern x)))))
+;; 			(kill-new value)
+;; 			(message "Copied %s value %s to clipboard"
+;; 				 x value)))
+;; 	    :caller 'my/var-to-clipboard))
 
 ;;__________________________________________________________
 ;; Move current line up and down C-M-<arrow> and duplicate
