@@ -89,8 +89,6 @@
 	      minibuffer-eldef-shorten-default t
 
 	      ;; M-x show context-local commands
-	      read-extended-command-predicate  #'command-completion-default-include-p
-	      completions-detailed t                  ;; show more detailed completions
 	      use-short-answers t                     ;; Use y or n to exit and other shorter answers.
 	      y-or-n-p-use-read-key t                 ;; use readkey and not minibuffer for y or n answers
 	      goto-line-history-local t               ;; Buffer local goto-line history
@@ -484,8 +482,28 @@ M-<left>' and repeat with M-<left>."
 	      ;; Buffers to add if dabbrev-check-other-buffers is non-nil
 	      dabbrev-select-buffers-function #'my/dabbrev--select-project-buffers)
 
+
+(setq-default completion-auto-help nil
+	      icomplete-compute-delay 0
+	      read-extended-command-predicate  #'command-completion-default-include-p
+	      completions-detailed t           ;; show more detailed completions
+	      read-file-name-completion-ignore-case t
+	      read-buffer-completion-ignore-case t
+	      completion-ignore-case t
+	      completion-styles '(basic flex)
+	      )
+(fido-vertical-mode 1)
+
+;; These two must be enabled/disabled together
+(setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
+(minibuffer-depth-indicate-mode 1)        ;; Mostrar nivel de nesting en minibuffer
+
+(add-hook 'minibuffer-setup-hook #'my/unset-gc)
+(add-hook 'minibuffer-exit-hook #'my/restore-gc)
+
+
 ;;__________________________________________________________
-;; Benchmark-init
+;; Paradox
 
 (use-package paradox :defer t
   :init
@@ -688,18 +706,6 @@ M-<left>' and repeat with M-<left>."
   "C-z" "tmux-like-keymap"
   "C-z 0" "windmove-delete")
 
-;;__________________________________________________________
-;; minibuffers
-
-;; These two must be enabled/disabled together
-(setq-default enable-recursive-minibuffers t ;; Enable nesting in minibuffer
-	      read-file-name-completion-ignore-case t
-	      read-buffer-completion-ignore-case t
-	      completion-ignore-case t)
-(minibuffer-depth-indicate-mode 1)        ;; Mostrar nivel de nesting en minibuffer
-
-(add-hook 'minibuffer-setup-hook #'my/unset-gc)
-(add-hook 'minibuffer-exit-hook #'my/restore-gc)
 
 ;;__________________________________________________________
 ;; Two options for diffs
