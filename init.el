@@ -1630,7 +1630,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (add-hook 'TeX-mode-hook (lambda ()
 			   (LaTeX-math-mode 1)
-			   (auto-fill-mode 1)
+			   ;; (auto-fill-mode 1)           ;; It causes issues and M-q saves the day.
 			   (TeX-source-correlate-mode 1))) ;; open PDF in the edditing page
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
 
