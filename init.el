@@ -2202,6 +2202,20 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (keymap-set avy-basic-map "z" #'avy-zap-to-char-dwim)
   (keymap-set avy-basic-map "u" #'avy-zap-up-to-char-dwim))
 
+;; For now doesn't work on tramp so use deadgrep
+;; (use-package rg :defer t
+;;   :preface
+;;   (my/load-path "~/gits/emacs_clones/rg.el/")
+;;   :config
+;;   (rg-enable-menu))
+
+(use-package deadgrep :defer t
+  :init
+  (keymap-set my/ctrl-c-c "r" #'deadgrep)
+  :config
+  (add-hook 'deadgrep-mode-hook (lambda ()
+				  (next-error-follow-minor-mode 1))))
+
 ;;__________________________________________________________
 ;; Arduino Mode
 
