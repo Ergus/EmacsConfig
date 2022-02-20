@@ -1937,13 +1937,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq-default imenu-list-position 'left)
   (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle))
 
-(defvar-keymap my/ctrl-c-c
-  :doc "The base keymap for `C-c c'."
-  "l" #'find-library
-  "i" #'imenu)
-
-(keymap-global-set "C-c c" my/ctrl-c-c)
-
 ;; (use-package counsel
 ;;   :diminish
 ;;   :defer 0.2
