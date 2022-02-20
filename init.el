@@ -508,6 +508,117 @@ M-<left>' and repeat with M-<left>."
 (add-hook 'minibuffer-setup-hook #'my/unset-gc)
 (add-hook 'minibuffer-exit-hook #'my/restore-gc)
 
+;; (fido-vertical-mode 1)
+
+(use-package vertico
+  :init
+  (setq-default vertico-quick1 "asdfghjklmnqp")
+  :config
+  (vertico-mode 1)
+  (vertico-mouse-mode 1)
+  ;; (vertico-indexed-mode 1)    ;; prefix does not work...
+  (keymap-set vertico-map "TAB" 'minibuffer-complete)
+  (keymap-set vertico-map "C-'" #'vertico-quick-insert) ;; like avy
+  (keymap-set vertico-map "C-q" #'vertico-quick-exit)   ;; to exit
+
+  (keymap-global-set "C-c c c" #'vertico-repeat)
+  (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
+
+  (keymap-set vertico-map "^" #'vertico-directory-up)
+  (keymap-set vertico-map "RET" #'vertico-directory-enter)
+  (keymap-set vertico-map "DEL" #'vertico-directory-delete-char)
+  (keymap-set vertico-map "M-d" #'vertico-directory-delete-word)
+  (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
+
+;; (use-package orderless
+;;   :init
+;;   (setq completion-styles '(orderless)
+;; 	completion-category-overrides '((file (styles basic partial-completion)))))
+
+(use-package consult :defer t
+  :preface
+  (defvar-keymap my/consult-mode-map
+    :doc "Map for consult commands."
+    "<remap> <switch-to-buffer>" #'consult-buffer
+    "<remap> <switch-to-buffer-other-window>" #'consult-buffer-other-window
+    "<remap> <switch-to-buffer-other-frame>" #'consult-buffer-other-frame
+    "<remap> <repeat-complex-command>" #'consult-complex-command
+    "<remap> <bookmark-jump>" #'consult-bookmark
+    "<remap> <project-switch-to-buffer>" #'consult-project-buffer
+    "<remap> <yank-pop>" #'consult-yank-pop
+    "<remap> <apropos-command>" #'consult-apropos
+    "<remap> <goto-line>" #'consult-goto-line
+    ;; Register not remapped because some are repeated
+    "C-x r s" #'consult-register-store
+    "C-x r i" #'consult-register       ;; register use interactive
+    "C-x r g" #'consult-register-load  ;; register use quick
+
+    "C-c c C-SPC" #'consult-mark         ;; pop-to-mark-command
+    "C-c c M-SPC" #'consult-global-mark  ;; pop mar but globaly
+    "<remap> <imenu>" #'consult-imenu        ;; imenu
+    "C-c c I" #'consult-imenu-multi
+    "C-c c m" #'consult-flymake
+    "C-c c m" #'consult-flycheck
+    "C-c c p" #'consult-ripgrep
+    "C-c c g" #'consult-grep
+    "C-c c G" #'consult-git-grep
+    "C-c c f" #'consult-find
+    ;; isearch integration
+    "M-s f" #'consult-focus-lines  ;; Hide not matching lines
+    "M-s l" #'consult-line
+    "M-s m" #'consult-line-multi
+    "M-s M-r" #'consult-isearch-history)
+
+  (define-minor-mode my/consult-mode
+    "Enable my consult bindings."
+    :global t
+    :init-value t
+    (cond
+     (my/consult-mode
+      (setq register-preview-delay 0.5
+	    register-preview-function #'consult-register-format)
+      (with-eval-after-load 'xref
+	(setq xref-show-xrefs-function #'consult-xref
+	      xref-show-definitions-function #'consult-xref))
+      (with-eval-after-load 'isearch
+	(keymap-set isearch-mode-map "M-s l" #'consult-line)
+	(keymap-set isearch-mode-map "M-s m" #'consult-line-multi)
+	(keymap-set isearch-mode-map "M-s C-r" #'consult-isearch-history))
+
+      (keymap-set minibuffer-local-map "C-r" #'consult-history)
+      (keymap-unset minibuffer-local-map "M-s"))))
+
+  (setq-default consult-line-start-from-top t)
+
+  (my/consult-mode 1)
+  :config
+  (consult-customize consult-theme
+		     :preview-key '(:debounce 0.2 any)
+		     consult-ripgrep consult-git-grep consult-grep
+		     consult-bookmark consult-recent-file consult-xref
+		     consult--source-bookmark consult--source-recent-file
+		     consult--source-project-recent-file
+		     :preview-key (kbd "M-.")))
+
+(use-package embark
+  :bind (("M-o" . embark-act)         ;; pick some comfortable binding
+	 ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+  :init
+  ;; Optionally replace the key help with a completing-read interface
+  (setq-default prefix-help-command #'embark-prefix-help-command)
+
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult :defer t
+  :after (embark consult)
+  :init
+  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
 ;;__________________________________________________________
 ;; Paradox
