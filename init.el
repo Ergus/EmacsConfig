@@ -490,15 +490,16 @@ M-<left>' and repeat with M-<left>."
 
 
 (setq-default completion-auto-help nil
-	      icomplete-compute-delay 0
 	      read-extended-command-predicate  #'command-completion-default-include-p
 	      completions-detailed t           ;; show more detailed completions
 	      read-file-name-completion-ignore-case t
 	      read-buffer-completion-ignore-case t
 	      completion-ignore-case t
-	      completion-styles '(basic flex)
+	      completion-category-defaults nil
+	      completion-styles '(basic substring partial-completion flex)
+	      completion-category-overrides '((file (styles basic partial-completion)))
 	      )
-(fido-vertical-mode 1)
+
 
 ;; These two must be enabled/disabled together
 (setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
