@@ -272,6 +272,7 @@ M-<left>' and repeat with M-<left>."
   (which-key-mode t)
   (which-key-add-key-based-replacements
     "C-c b" "sidebars"
+    "C-c c" "my/ctrl-c-c"
     "C-x r" "rectangle||register"
     "C-x n" "narrow"
     "C-x p" "project"
@@ -287,8 +288,13 @@ M-<left>' and repeat with M-<left>."
 
 (defvar-keymap my/sidebar-map
   :doc "Keymap to toggle sidebars.")
-
 (keymap-global-set "C-c b" my/sidebar-map)
+
+(defvar-keymap my/ctrl-c-c
+  :doc "The base keymap for `C-c c'."
+  "l" #'find-library
+  "i" #'imenu)
+(keymap-global-set "C-c c" my/ctrl-c-c)
 
 ;;__________________________________________________________
 ;; Some internal packages to defer them
