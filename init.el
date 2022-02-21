@@ -571,7 +571,7 @@ M-<left>' and repeat with M-<left>."
     "C-c c f" #'consult-find
     ;; isearch integration
     "M-s f" #'consult-focus-lines  ;; Hide not matching lines
-    "M-s l" #'consult-line
+    "M-s l" #'consult-line-symbol-at-point
     "M-s m" #'consult-line-multi
     "M-s M-r" #'consult-isearch-history)
 
