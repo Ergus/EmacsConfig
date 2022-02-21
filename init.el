@@ -1101,6 +1101,8 @@ M-<left>' and repeat with M-<left>."
   (setq-default eglot-stay-out-of '(eldoc)))
 
 
+(use-package consult-eglot :defer t)
+
 (use-package cape
   ;; Bind dedicated completion commands
   :defer 0.2
@@ -1259,6 +1261,8 @@ M-<left>' and repeat with M-<left>."
                     :major-modes '(c-mode c++-mode)
                     :remote? t
                     :server-id 'clangd-remote)))
+
+(use-package consult-lsp :defer t)
 
 (use-package lsp-ui
   :diminish
