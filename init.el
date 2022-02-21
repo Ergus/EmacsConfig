@@ -530,13 +530,19 @@ M-<left>' and repeat with M-<left>."
   (keymap-set vertico-map "M-d" #'vertico-directory-delete-word)
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
-;; (use-package orderless
-;;   :init
-;;   (setq completion-styles '(orderless)
-;; 	completion-category-overrides '((file (styles basic partial-completion)))))
+(use-package orderless
+  :after vertico
+  :config
+  (setq completion-styles '(orderless basic)
+	orderless-matching-styles '(orderless-regexp orderless-literal)
+	completion-category-overrides '((file (styles basic partial-completion)))))
 
 (use-package consult :defer t
   :preface
+  (defun consult-line-symbol-at-point ()
+    (interactive)
+    (consult-line (thing-at-point 'symbol)))
+
   (defvar-keymap my/consult-mode-map
     :doc "Map for consult commands."
     "<remap> <switch-to-buffer>" #'consult-buffer
@@ -575,11 +581,9 @@ M-<left>' and repeat with M-<left>."
     :init-value t
     (cond
      (my/consult-mode
-      (setq register-preview-delay 0.5
-	    register-preview-function #'consult-register-format)
-      (with-eval-after-load 'xref
-	(setq xref-show-xrefs-function #'consult-xref
-	      xref-show-definitions-function #'consult-xref))
+      (setq-default consult-line-start-from-top t
+		    consult-narrow-key (kbd "<"))
+
       (with-eval-after-load 'isearch
 	(keymap-set isearch-mode-map "M-s l" #'consult-line)
 	(keymap-set isearch-mode-map "M-s m" #'consult-line-multi)
