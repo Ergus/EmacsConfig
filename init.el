@@ -667,7 +667,8 @@ M-<left>' and repeat with M-<left>."
 (setq-default list-matching-lines-jump-to-current-line t)
 
 (with-eval-after-load 'replace  ;; is where occur resides
-  (keymap-set occur-mode-map "SPC" #'occur-mode-display-occurrence)
+  ;; With error follow this is pointless.
+  ;; (keymap-set occur-mode-map "SPC" #'occur-mode-display-occurrence)
 
   (add-hook 'occur-hook (lambda ()
 			  (beginning-of-line)
