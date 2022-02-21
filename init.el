@@ -1830,8 +1830,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      dired-maybe-use-globstar t                   ;; use shell's globstar
 	      dired-kill-when-opening-new-dired-buffer t)  ;; kill when opening a new directory.
 
-(eval-after-load 'dired
-  '(keymap-set dired-mode-map "<mouse-2>" #'dired-mouse-find-file))
+(with-eval-after-load 'dired
+  (require 'dired-x)
+  (keymap-set dired-mode-map "<mouse-2>" #'dired-mouse-find-file))
 
 (use-package dired-sidebar :defer t
   :init
