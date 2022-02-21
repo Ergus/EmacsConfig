@@ -592,17 +592,29 @@ M-<left>' and repeat with M-<left>."
       (keymap-set minibuffer-local-map "C-r" #'consult-history)
       (keymap-unset minibuffer-local-map "M-s"))))
 
-  (setq-default consult-line-start-from-top t)
+  (setq-default register-preview-delay 0.0
+		;; Use this only when enabled vertico.
+		completion-in-region-function #'consult-completion-in-region
+		register-preview-function #'consult-register-format
+		xref-show-xrefs-function #'consult-xref
+		xref-show-definitions-function #'consult-xref
+		)
+
+  (advice-add #'completing-read-multiple
+              :override #'consult-completing-read-multiple)
 
   (my/consult-mode 1)
   :config
   (consult-customize consult-theme
 		     :preview-key '(:debounce 0.2 any)
-		     consult-ripgrep consult-git-grep consult-grep
+		     consult-buffer consult-ripgrep consult-git-grep consult-grep
 		     consult-bookmark consult-recent-file consult-xref
 		     consult--source-bookmark consult--source-recent-file
 		     consult--source-project-recent-file
-		     :preview-key (kbd "M-.")))
+		     :preview-key (kbd "M-.")
+		     consult-buffer :group nil  ;; Hide groups titles
+		     )
+  )
 
 (use-package embark
   :bind (("M-o" . embark-act)         ;; pick some comfortable binding
