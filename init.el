@@ -606,20 +606,10 @@ M-<left>' and repeat with M-<left>."
 
 (use-package embark
   :bind (("M-o" . embark-act)         ;; pick some comfortable binding
-	 ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
-  :init
-  ;; Optionally replace the key help with a completing-read interface
-  (setq-default prefix-help-command #'embark-prefix-help-command)
-
-  :config
-  ;; Hide the mode line of the Embark live/completions buffers
-  (add-to-list 'display-buffer-alist
-               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-                 nil
-                 (window-parameters (mode-line-format . none)))))
+	 ("C-h B" . embark-bindings))) ;; alternative for `describe-bindings'
 
 ;; Consult users will also want the embark-consult package.
-(use-package embark-consult :defer t
+(use-package embark-consult
   :after (embark consult)
   :init
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
