@@ -1871,12 +1871,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package ibuffer-project
   :after ibuffer
   :preface
-  (defun ibuffer-set-filter-groups-by-project ()
+  (defun my/ibuffer-set-filter-groups-by-project ()
     (interactive)
     (setq ibuffer-filter-groups (ibuffer-project-generate-filter-groups))
     (ibuffer-update nil t))
   :config
-  (keymap-set ibuffer--filter-map "G p" #'ibuffer-set-filter-groups-by-project))
+  (keymap-set ibuffer--filter-map "G p" #'my/ibuffer-set-filter-groups-by-project))
 
 (use-package ibuffer-vc
   :after ibuffer
