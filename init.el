@@ -1610,7 +1610,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 		flycheck-keymap-prefix (kbd "C-c a"))
   :config
   (which-key-add-keymap-based-replacements flycheck-mode-map "C-c a" "flycheck")
-  (keymap-set flycheck-command-map "a" #'counsel-flycheck)
+  (keymap-set flycheck-command-map "a" #'consult-flycheck)
   )
 
 (with-eval-after-load 'flymake
@@ -1619,7 +1619,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     :doc "The base keymap for `flymake-mode'."
     "d" #'flymake-show-diagnostic
     "b" #'flymake-show-buffer-diagnostics
-    "l" #'flymake-switch-to-log-buffer)
+    "l" #'flymake-switch-to-log-buffer
+    "k" #'consult-flymake)
 
   (my/repeat-keymap flymake-repeat-map flymake-basic-map
     "n" #'flymake-goto-next-error
