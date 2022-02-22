@@ -490,14 +490,14 @@ M-<left>' and repeat with M-<left>."
 
 
 (setq-default completion-auto-help nil
-	      read-extended-command-predicate  #'command-completion-default-include-p
-	      completions-detailed t           ;; show more detailed completions
-	      read-file-name-completion-ignore-case t
-	      read-buffer-completion-ignore-case t
 	      completion-ignore-case t
 	      completion-category-defaults nil
 	      completion-styles '(basic substring partial-completion flex)
 	      completion-category-overrides '((file (styles basic partial-completion)))
+	      completions-detailed t           ;; show more detailed completions
+	      read-extended-command-predicate  #'command-completion-default-include-p
+	      read-file-name-completion-ignore-case t
+	      read-buffer-completion-ignore-case t
 	      )
 
 
