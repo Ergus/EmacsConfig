@@ -581,8 +581,17 @@ M-<left>' and repeat with M-<left>."
     :init-value t
     (cond
      (my/consult-mode
-      (setq-default consult-line-start-from-top t
-		    consult-narrow-key (kbd "<"))
+      (setq register-preview-delay 0.0
+	    ;; Use this only when enabled vertico.
+	    completion-in-region-function #'consult-completion-in-region
+	    register-preview-function #'consult-register-format
+	    xref-show-xrefs-function #'consult-xref
+	    xref-show-definitions-function #'consult-xref
+	    consult-line-start-from-top t
+	    consult-narrow-key (kbd "<"))
+
+      (advice-add #'completing-read-multiple
+		  :override #'consult-completing-read-multiple)
 
       (with-eval-after-load 'isearch
 	(keymap-set isearch-mode-map "M-s l" #'consult-line)
@@ -591,17 +600,6 @@ M-<left>' and repeat with M-<left>."
 
       (keymap-set minibuffer-local-map "C-r" #'consult-history)
       (keymap-unset minibuffer-local-map "M-s"))))
-
-  (setq-default register-preview-delay 0.0
-		;; Use this only when enabled vertico.
-		completion-in-region-function #'consult-completion-in-region
-		register-preview-function #'consult-register-format
-		xref-show-xrefs-function #'consult-xref
-		xref-show-definitions-function #'consult-xref
-		)
-
-  (advice-add #'completing-read-multiple
-              :override #'consult-completing-read-multiple)
 
   (my/consult-mode 1)
   :config
