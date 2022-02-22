@@ -1842,7 +1842,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (with-eval-after-load 'dired
   (require 'dired-x)
-  (keymap-set dired-mode-map "<mouse-2>" #'dired-mouse-find-file))
+  (keymap-set dired-mode-map "<mouse-2>" #'dired-mouse-find-file)
+  (add-hook 'dired-mode-hook #'hl-line-mode))
 
 (use-package dired-sidebar :defer t
   :init
