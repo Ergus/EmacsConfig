@@ -488,7 +488,6 @@ M-<left>' and repeat with M-<left>."
 	      ;; Buffers to add if dabbrev-check-other-buffers is non-nil
 	      dabbrev-select-buffers-function #'my/dabbrev--select-project-buffers)
 
-
 (setq-default completion-auto-help nil
 	      completion-ignore-case t
 	      completion-category-defaults nil
@@ -677,16 +676,17 @@ M-<left>' and repeat with M-<left>."
 
 (with-eval-after-load 'replace  ;; is where occur resides
   ;; With error follow this is pointless.
-  ;; (keymap-set occur-mode-map "SPC" #'occur-mode-display-occurrence)
-
+  (keymap-set occur-mode-map "SPC" #'occur-mode-display-occurrence)
   (add-hook 'occur-hook (lambda ()
 			  (beginning-of-line)
 			  (recenter nil t)))
 
   (add-hook 'occur-mode-hook (lambda nil
+			       (hl-line-mode 1)
 			       (display-line-numbers-mode -1)
 			       (switch-to-buffer-other-window "*Occur*")
-			       (next-error-follow-minor-mode 1)))
+			       ;; (next-error-follow-minor-mode 1)
+			       ))
 
   (add-hook 'occur-mode-find-occurrence-hook
 	    (lambda nil
