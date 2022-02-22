@@ -613,8 +613,7 @@ M-<left>' and repeat with M-<left>."
 		     consult--source-project-recent-file
 		     :preview-key (kbd "M-.")
 		     consult-buffer :group nil  ;; Hide groups titles
-		     )
-  )
+		     ))
 
 (use-package embark
   :bind (("M-o" . embark-act)         ;; pick some comfortable binding
@@ -1641,16 +1640,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; Improved help buffer
 
 ;; I never use it and it is having some issues.
-;; (use-package helpful :defer t
-;;   :diminish
-;;   :init
-;;   (keymap-global-set "C-h F" #'helpful-function)
-;;   (keymap-global-set "C-h C" #'helpful-command)
-;;   (keymap-global-set "C-h M" #'helpful-macro)
-;;   (keymap-global-set "C-h L" #'helpful-callable)
-;;   (keymap-global-set "C-h K" #'helpful-key)
-;;   (keymap-global-set "C-h P" #'helpful-at-point)
-;;   (keymap-global-set "C-h V" #'helpful-variable))
+(use-package helpful :defer t
+  :diminish
+  :init
+  (keymap-global-set "C-h F" #'helpful-function)
+  (keymap-global-set "C-h C" #'helpful-command)
+  (keymap-global-set "C-h M" #'helpful-macro)
+  (keymap-global-set "C-h L" #'helpful-callable)
+  (keymap-global-set "C-h K" #'helpful-key)
+  (keymap-global-set "C-h P" #'helpful-at-point)
+  (keymap-global-set "C-h V" #'helpful-variable))
 
 ;;__________________________________________________________
 ;; Chequeo de gramatica
