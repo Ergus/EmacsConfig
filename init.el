@@ -727,19 +727,19 @@ M-<left>' and repeat with M-<left>."
 (setq-default tramp-auto-save-directory
 	      (expand-file-name "tramp-autosave-dir" user-emacs-directory)
 	      tramp-default-method "scp"                   ;; Already default
-	      ;; tramp-completion-use-auth-sources t       ;; Already default
 	      remote-file-name-inhibit-cache 60            ;; Default 10
 	      tramp-completion-reread-directory-timeout 120;; Default 10
 	      password-cache-expiry 3600                   ;; Cache for 1 hour
 	      tramp-use-scp-direct-remote-copying t        ;; copy directly between remote hosts
 	      tramp-verbose (if init-file-debug 10 0)      ;; Default 3 always
-	      tramp-use-ssh-controlmaster-options nil
+	      tramp-use-ssh-controlmaster-options nil      ;; use system control master.
+	      tramp-completion-use-auth-sources nil        ;; not use auth-sources in tramp
 	      )
 
 (with-eval-after-load 'tramp
-  (connection-local-set-profile-variables 'my/tramp-profile
-					  '((auth-sources . nil)))
-  (connection-local-set-profiles '(:application tramp) 'my/tramp-profile)
+  ;; (connection-local-set-profile-variables 'my/tramp-profile
+  ;; 					  '((auth-sources . nil)))
+  ;; (connection-local-set-profiles '(:application tramp) 'my/tramp-profile)
 
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
   (add-to-list 'tramp-remote-process-environment
