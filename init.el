@@ -1,6 +1,5 @@
-;;; init.el --- init file -*- lexical-binding: t; -*-
+;;; init.el --- Emacs Initialization and Configuration -*- lexical-binding: t; -*-
 
-;;; init.el --- Emacs Initialization and Configuration
 ;; Copyright (C) 2018-2022 Jimmy Aguilar Mena
 
 ;; Author: Jimmy Aguilar Mena
