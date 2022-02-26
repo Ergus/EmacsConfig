@@ -1,4 +1,4 @@
-;;; composable.el --- composable editing -*- lexical-binding: t; -*-
+;;; init.el --- init file -*- lexical-binding: t; -*-
 
 ;;; init.el --- Emacs Initialization and Configuration
 ;; Copyright (C) 2018-2022 Jimmy Aguilar Mena
