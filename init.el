@@ -363,10 +363,12 @@ M-<left>' and repeat with M-<left>."
 (run-with-idle-timer 1 nil #'global-auto-revert-mode 1) ;; Autoload files changed in disk
 
 ;; recentf (is loaded by counsel, so not call it in the run-with-idle-timer)
-(setq-default recentf-max-saved-items 48    ;; Max items saved
-	      recentf-auto-cleanup 10)      ;; Make cleanup when idle for 10 seconds. (default 'mode
-                                            ;; cleans when the mode is loades)
-(eval-after-load 'recentf '(recentf-mode 1))
+(setq-default recentf-max-saved-items 48     ;; Max items saved
+	      recentf-auto-cleanup nil)      ;; Make cleanup when idle for 10 seconds. (default 'mode
+(with-eval-after-load 'recentf
+  (recentf-mode 1)
+  (run-with-idle-timer 10 nil #'recentf-cleanup)
+  )
 
 ;; profiler
 (add-hook 'profiler-report-mode-hook #'hl-line-mode)
