@@ -2336,8 +2336,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (keymap-set my/ctrl-c-c "r" #'deadgrep)
   :config
-  (add-hook 'deadgrep-mode-hook (lambda ()
-				  (next-error-follow-minor-mode 1))))
+  (keymap-set deadgrep-mode-map "SPC" (lambda ()
+					(interactive)
+					(next-error-follow-mode-post-command-hook))))
 
 ;;__________________________________________________________
 ;; Arduino Mode
