@@ -2441,7 +2441,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :hook (nginx-mode . (lambda nil
 			(my/company-backend-after-load #'company-nginx))))
 
-(use-package lice :defer t)
+(use-package lice :defer t
+  :init
+  (setq-default lice:copyright-holder "Jimmy Aguilar Mena"))
 (use-package lorem-ipsum :defer t)
 ;;__________________________________________________________
 ;; json mode
