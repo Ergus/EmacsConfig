@@ -1857,8 +1857,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   ;;(dired-sidebar-use-term-integration t)
   (setq-default dired-sidebar-theme 'nerd
 		dired-sidebar-subtree-line-prefix ".")
+  (add-hook 'dired-sidebar-mode-hook (lambda ()
+				       (unless (file-remote-p default-directory)
+					 (auto-revert-mode 1))))
   (keymap-set my/sidebar-map "d" #'dired-sidebar-toggle-sidebar))
-
 
 ;; __________________________________________________________
 ;; Templates Projects
