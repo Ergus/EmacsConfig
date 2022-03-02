@@ -1839,7 +1839,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      dired-isearch-filenames 'dwim
 	      dired-hide-details-hide-symlink-targets nil  ;; don't hide linkk targets
 	      dired-maybe-use-globstar t                   ;; use shell's globstar
-	      dired-kill-when-opening-new-dired-buffer t)  ;; kill when opening a new directory.
+	      dired-kill-when-opening-new-dired-buffer t   ;; kill when opening a new directory.
+	      dired-guess-shell-alist-user
+	      (list
+	       '("\\.pdf\\'" "xdg-open")
+	       '("\\.jpe?g\\'" "xdg-open")
+	       '("\\.png\\'" "xdg-open")
+	       '("\\.gif\\'" "xdg-open")
+	       ))
 
 (with-eval-after-load 'dired
   (require 'dired-x)
