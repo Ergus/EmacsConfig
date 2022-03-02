@@ -100,7 +100,6 @@
 	      ;; translate-upper-case-key-bindings nil ;; Make keybindings case sensitive (inhibit binding translation)
 	      outline-minor-mode-use-buttons t      ;; Use buttons to hide/show outlines
 
-	      ffap-machine-p-known 'reject          ;; stop ffap from pinging random hosts
 	      help-window-select t                  ;; always select help windoes
 	      history-delete-duplicates t           ;; delete duplicates in commands history
 	      find-library-include-other-files nil  ;; find-library only shows libraries, not random files.
@@ -354,12 +353,15 @@ M-<left>' and repeat with M-<left>."
 	      ;; show-paren-when-point-inside-paren t
 	      blink-matching-paren nil)      ;; not show matching parent in echo when closing
 
+;; ffap
+(setq-default ffap-machine-p-known 'reject)          ;; stop ffap from pinging random hosts
+
 ;; autorevert
 (setq-default auto-revert-verbose nil        ;; not show message when file changes
-	      auto-revert-avoid-polling t    ;; don't do pooling for autorevert (use notifications).)
-	      )
-
-(run-with-idle-timer 1 nil #'global-auto-revert-mode 1) ;; Autoload files changed in disk
+	      auto-revert-avoid-polling t)   ;; don't do pooling for autorevert (use notifications).)
+(run-with-idle-timer 1 nil #'(lambda ()
+			       (ffap-bindings)
+			       (global-auto-revert-mode 1))) ;; Autoload files changed in disk
 
 ;; recentf (is loaded by counsel, so not call it in the run-with-idle-timer)
 (setq-default recentf-max-saved-items 48     ;; Max items saved
