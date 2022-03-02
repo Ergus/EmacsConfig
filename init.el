@@ -353,23 +353,20 @@ M-<left>' and repeat with M-<left>."
 	      ;; show-paren-when-point-inside-paren t
 	      blink-matching-paren nil)      ;; not show matching parent in echo when closing
 
-;; ffap
-(setq-default ffap-machine-p-known 'reject)          ;; stop ffap from pinging random hosts
-
 ;; autorevert
-(setq-default auto-revert-verbose nil        ;; not show message when file changes
+(setq-default ffap-machine-p-known 'accept   ;; stop ffap from pinging random hosts
+	      auto-revert-verbose nil        ;; not show message when file changes
 	      auto-revert-avoid-polling t)   ;; don't do pooling for autorevert (use notifications).)
-(run-with-idle-timer 1 nil #'(lambda ()
-			       (ffap-bindings)
-			       (global-auto-revert-mode 1))) ;; Autoload files changed in disk
+(run-with-idle-timer 1 nil (lambda ()
+			     (ffap-bindings)
+			     (global-auto-revert-mode 1))) ;; Autoload files changed in disk
 
 ;; recentf (is loaded by counsel, so not call it in the run-with-idle-timer)
 (setq-default recentf-max-saved-items 48     ;; Max items saved
-	      recentf-auto-cleanup nil)      ;; Make cleanup when idle for 10 seconds. (default 'mode
+	      recentf-auto-cleanup nil)      ;; Make cleanup when idle for 10 seconds. (default 'mode)
 (with-eval-after-load 'recentf
   (recentf-mode 1)
-  (run-with-idle-timer 10 nil #'recentf-cleanup)
-  )
+  (run-with-idle-timer 10 nil #'recentf-cleanup))
 
 ;; profiler
 (add-hook 'profiler-report-mode-hook #'hl-line-mode)
