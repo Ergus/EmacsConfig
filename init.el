@@ -592,11 +592,6 @@ M-<left>' and repeat with M-<left>."
       (advice-add #'completing-read-multiple
 		  :override #'consult-completing-read-multiple)
 
-      (with-eval-after-load 'isearch
-	(keymap-set isearch-mode-map "M-s l" #'consult-line)
-	(keymap-set isearch-mode-map "M-s m" #'consult-line-multi)
-	(keymap-set isearch-mode-map "M-s C-r" #'consult-isearch-history))
-
       (keymap-set minibuffer-local-map "C-r" #'consult-history)
       (keymap-unset minibuffer-local-map "M-s"))))
 
@@ -666,9 +661,20 @@ M-<left>' and repeat with M-<left>."
   (keymap-set isearch-mode-map "C-<return>" #'my/isearch-exit-other-end)
   (keymap-set isearch-mode-map "<remap> <isearch-abort>" #'isearch-cancel)
   (keymap-set isearch-mode-map "<remap> <isearch-delete-char>" #'isearch-del-char)
-  (keymap-set isearch-mode-map "C-o" #'isearch-occur)
+  (which-key-add-key-based-replacements "M-s h" "highlight")
 
-  (which-key-add-key-based-replacements "M-s h" "highlight"))
+  ;; External packages
+  (with-eval-after-load 'consult
+    (keymap-set isearch-mode-map "M-s l" #'consult-line)
+    (keymap-set isearch-mode-map "M-s m" #'consult-line-multi)
+    (keymap-set isearch-mode-map "M-s C-r" #'consult-isearch-history))
+
+  (when (fboundp #'avy-isearch)
+    (keymap-set isearch-mode-map "C-'" #'avy-isearch))
+
+  (when (fboundp  #'iedit-mode-from-isearch)
+    (keymap-set isearch-mode-map "C-c m i" #'iedit-mode-from-isearch))
+  )
 
 (use-package phi-search :defer t)
 
@@ -2303,9 +2309,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "C-SPC" #'avy-pop-mark
     "i" #'avy-copy-region)
   :init
-  (eval-after-load 'isearch
-    '(keymap-set isearch-mode-map "C-'" #'avy-isearch))
-
   (keymap-global-set "C-'" avy-basic-map)
   ;; (which-key-add-key-based-replacements "C-'" "avy")
   (setq-default ;; avy-style 'at               ;; default 'at-full
