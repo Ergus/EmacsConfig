@@ -2401,9 +2401,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Multiple Cursors
 
+(use-package iedit :defer t
+  :init
+  (setq-default iedit-toggle-key-default nil) ;; this avoids calling iedit-update-key-bindings
+  )
+
 (global-unset-key (kbd "C-c <down-mouse-1>"))
 (use-package multiple-cursors :defer t
   :init
+  (setq-default mc/always-run-for-all t
+		mc/always-repeat-command t
+		mc/edit-lines-empty-lines 'ignore)
+
   (defvar-keymap mc-basic-map
     :doc "The base keymap for `multicursor'."
     "l" #'mc/edit-lines
@@ -2427,17 +2436,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (keymap-global-set "C-c m" mc-basic-map)
   (which-key-add-key-based-replacements "C-c m" "multi-cursors")
 
-  (setq-default mc/always-run-for-all t
-		mc/always-repeat-command t
-		mc/edit-lines-empty-lines 'ignore))
-
-(use-package iedit :defer t
-  :commands iedit-mode-from-isearch
-  :init
-  (setq-default iedit-toggle-key-default nil) ;; this avoids calling iedit-update-key-bindings
-  (keymap-set mc-basic-map "i" #'iedit-mode)
-  (keymap-set isearch-mode-map "C-c m i" #'iedit-mode-from-isearch)
-  )
+  (when (fboundp #'iedit-mode)
+    (keymap-set mc-basic-map "i" #'iedit-mode)))
 
 ;;__________________________________________________________
 ;; Web mode
