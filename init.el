@@ -510,6 +510,9 @@ M-<left>' and repeat with M-<left>."
 
 ;; (fido-vertical-mode 1)
 
+;;__________________________________________________________
+;; Completion with vertico/consult/orderless/embark
+
 (use-package vertico :defer 0.2
   :init
   (setq-default vertico-quick1 "asdfghjklmnqp")
@@ -651,7 +654,6 @@ M-<left>' and repeat with M-<left>."
 	      )
 
 (with-eval-after-load 'isearch
-
   (defun my/isearch-exit-other-end ()
     (interactive)
     (when isearch-other-end
