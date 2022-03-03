@@ -356,6 +356,7 @@ M-<left>' and repeat with M-<left>."
 ;; autorevert
 (setq-default ffap-machine-p-known 'accept   ;; stop ffap from pinging random hosts
 	      auto-revert-verbose nil        ;; not show message when file changes
+	      auto-revert-mode-text ""
 	      auto-revert-avoid-polling t)   ;; don't do pooling for autorevert (use notifications).)
 (run-with-idle-timer 1 nil (lambda ()
 			     (ffap-bindings)
