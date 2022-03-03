@@ -702,6 +702,21 @@ M-<left>' and repeat with M-<left>."
 		  (quit-restore-window win)
 		  (isearch-done))))))
 
+;; (use-package isearch-mb
+;;   :defer 1
+;;   :config
+;;   (isearch-mb-mode 1)
+;;   (add-to-list 'isearch-mb--after-exit #'my/isearch-exit-other-end)
+;;   (add-to-list 'isearch-mb--after-exit #'recenter-top-bottom)
+;;   (keymap-set isearch-mb-minibuffer-map "C-<return>" #'my/isearch-exit-other-end)
+
+;;   (with-eval-after-load 'consult
+;;     (add-to-list 'isearch-mb--after-exit #'consult-line)
+;;     (add-to-list 'isearch-mb--after-exit #'consult-line-multi)
+;;     (add-to-list 'isearch-mb--after-exit #'consult-isearch-history)
+;;     (keymap-set isearch-mb-minibuffer-map "M-s l" #'consult-line))
+;;   )
+
 ;;__________________________________________________________
 ;; The Colors I am using my own theme
 (load-theme 'simple-16)
