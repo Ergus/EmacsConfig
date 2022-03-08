@@ -801,10 +801,10 @@ M-<left>' and repeat with M-<left>."
 ;; (which-key-add-key-based-replacements "C-x 0" "windmove-delete")
 
 ;; Direct shortcut without prefix.
-(keymap-global-set "C-x <left>" #'windmove-left)
-(keymap-global-set "C-x <right>" #'windmove-right)
-(keymap-global-set "C-x <down>" #'windmove-down)
-(keymap-global-set "C-x <up>" #'windmove-up)
+(keymap-set ctl-x-map "<left>" #'windmove-left)
+(keymap-set ctl-x-map "<right>" #'windmove-right)
+(keymap-set ctl-x-map "<down>" #'windmove-down)
+(keymap-set ctl-x-map "<up>" #'windmove-up)
 
 (keymap-set ctl-x-4-map "<left>" #'windmove-display-left)
 (keymap-set ctl-x-4-map "<right>" #'windmove-display-right)
