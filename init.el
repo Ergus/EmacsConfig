@@ -2187,19 +2187,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
     (goto-char (my/abs-to-point abspoint))))
 
-;; (defun my/var-to-clipboard ()
-;;   "Put the current file name on the clipboard."
-;;   (interactive)
-;;   (ivy-read "Describe variable: " obarray
-;; 	    :predicate #'counsel--variable-p
-;; 	    :require-match t
-;; 	    :preselect (ivy-thing-at-point)
-;; 	    :action (lambda (x)
-;; 		      (let ((value (format "%s" (symbol-value (intern x)))))
-;; 			(kill-new value)
-;; 			(message "Copied %s value %s to clipboard"
-;; 				 x value)))
-;; 	    :caller 'my/var-to-clipboard))
+(defun my/var-to-clipboard (var)
+  "Put the current file name on the clipboard."
+  (interactive
+   (let* ((var-at-point (variable-at-point))
+	  (default-var (and (custom-variable-p var-at-point) var-at-point)))
+     (list (read-variable
+	    (format-prompt "Set variable" default-var) default-var))))
+  (let ((value (format "%s" (symbol-value var))))
+    (kill-new value)
+    (message "Copy value of %s to clipboard: %s " var value)))
 
 ;;__________________________________________________________
 ;; Move current line up and down C-M-<arrow> and duplicate
