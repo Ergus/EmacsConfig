@@ -489,6 +489,7 @@ M-<left>' and repeat with M-<left>."
 	      ;; Buffers to add if dabbrev-check-other-buffers is non-nil
 	      dabbrev-select-buffers-function #'my/dabbrev--select-project-buffers)
 
+;; completion
 (setq-default completion-auto-help nil
 	      completion-ignore-case t
 	      completion-category-defaults nil
@@ -1956,8 +1957,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   :init
 ;;   (setq-default ivy-read-action-function #'ivy-hydra-read-action))
 
-(setq-default xref-search-program 'ripgrep
-)
+(setq-default xref-search-program 'ripgrep)
 
 (defvar-keymap my/xref-basic-map
     :doc "The base keymap for `xref'."
