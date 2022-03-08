@@ -1982,77 +1982,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq-default imenu-list-position 'left)
   (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle))
 
-;; (use-package counsel
-;;   :diminish
-;;   :defer 0.2
-;;   :init
-;;   (setq-default counsel-find-file-at-point t       ;; Select file at point
-;; 		counsel-preselect-current-file t)   ;; Select current file in list
-;;   :config
-;;   (defvar-keymap counsel-basic-map
-;;     :doc "The base keymap for `counsel-mode'."
-;;     ;;([remap switch-to-buffer] . counsel-switch-buffer)
-;;     ;;([remap switch-to-buffer-other-window] . counsel-switch-buffer-other-window)
-;;     "c" #'ivy-resume                ;; resume ivy
-;;     "a" #'counsel-ag
-;;     "b" #'counsel-ibuffer           ;; like ibuffer + switch-to-buffer
-;;     "i" #'counsel-imenu
-;;     "r" #'counsel-rg                ;; like git grep
-;;     "g" #'counsel-grep              ;; grep in local file
-;;     "G" #'counsel-git-grep          ;; grep in current git repo
-;;     "e" #'counsel-linux-app         ;; call application
-;;     "l" #'counsel-find-library      ;; Search lisp libraries
-;;     "SPC" #'counsel-register        ;; list registers
-;;     "RET" #'counsel-company         ;; company completions
-;;     "C-SPC" #'counsel-mark-ring     ;; Mark ring history
-;;     "C-r" #'counsel-command-history ;; command history
-;;     "p" #'counsel-package           ;; command history
-;;     "P" #'counsel-list-processes    ;; command history
-;;     ;; counsel-file commands
-;;     "f g" #'counsel-git             ;; find file in git rempo
-;;     "f j" #'counsel-file-jump       ;; file in subdir
-;;     "f l" #'counsel-locate          ;; locate command como search)
-;;     "f r" #'counsel-recentf
-;;     "f z" #'counsel-fzf
-;;     "f b" #'counsel-buffer-or-recentf)
-
-;;   (keymap-set counsel-mode-map "C-c c" counsel-basic-map)
-;;   (which-key-add-keymap-based-replacements counsel-mode-map
-;;     "C-c c" "counsel"
-;;     "C-c c f" "counsel-file")
-;;   (counsel-mode 1)
-;;   ;; match by words
-;;   ;; (add-to-list 'ivy-re-builders-alist '(counsel-M-x . ivy--regex-fuzzy))
-;;   )
-
 (use-package amx :defer t) ;; Complete history
 
- ;; Complete history
-
-
-(use-package counsel-gtags :defer t
-  :diminish
-  :preface
-  (my/load-path "~/gits/emacs_clones/emacs-counsel-gtagss/")
-  :bind-keymap ("C-c g" . counsel-gtags-command-map)
-  :init
-  (setq-default counsel-gtags-debug-mode t
-		counsel-gtags-use-dynamic-list nil)
-  (which-key-add-key-based-replacements "C-c g" "counsel-gtags")
-  :config
-  (which-key-add-keymap-based-replacements counsel-gtags-mode-map
-    "C-c g 4" "counsel-gtags-other")
-
-  (defun my/counsel-gtags-hook ()
-    (my/company-backend-after-load #'company-gtags))
-
-  ;; Promote company-gtags to the beginning.
-  (add-hook 'counsel-gtags-mode-hook #'my/counsel-gtags-hook)
-  (add-hook 'c-mode-hook #'my/counsel-gtags-hook)
-  (add-hook 'c++-mode-hook #'my/counsel-gtags-hook)
-  (add-hook 'objc-mode-hook #'my/counsel-gtags-hook)
-
-  (counsel-gtags-mode 1))
+;; Complete history
 
 ;; (use-package global-tags ;; gtags with xref integration
 ;;   :after counsel-gtags   ;; don't remove this.
