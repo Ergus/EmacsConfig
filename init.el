@@ -836,6 +836,7 @@ M-<left>' and repeat with M-<left>."
   "<down>" #'windmove-down
   "<up>" #'windmove-up)
 
+;; Add repetable bindings to my/tmux-like-keymap
 (my/repeat-keymap my/tmux-repeat-map my/tmux-like-keymap
   :doc "Repeat map for tmux prefix"
   "C-<left>" #'tab-previous
@@ -863,9 +864,8 @@ M-<left>' and repeat with M-<left>."
 				(if (> (frame-width) 150)
 				    (split-window-horizontally arg)
 				  (split-window-vertically arg))))
-(eval-after-load 'ediff
-  '(eval-after-load 'winner
-     '(add-hook 'ediff-after-quit-hook-internal #'winner-undo)))
+(with-eval-after-load 'winner
+  (add-hook 'ediff-after-quit-hook-internal #'winner-undo))
 
 ;; more like vimdiff
 (use-package vdiff :defer t
