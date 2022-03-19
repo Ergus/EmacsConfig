@@ -1639,9 +1639,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq-default flycheck-display-errors-delay 1.0
 		flycheck-keymap-prefix (kbd "C-c a"))
   :config
-  (which-key-add-keymap-based-replacements flycheck-mode-map "C-c a" "flycheck")
-  (keymap-set flycheck-command-map "a" #'consult-flycheck)
-  )
+  (which-key-add-keymap-based-replacements flycheck-mode-map "C-c a" "flycheck"))
+
+(setq-default flymake-no-changes-timeout 1
+	      flymake-wrap-around nil
+	      flymake-mode-line-format nil)
 
 (with-eval-after-load 'flymake
   (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
@@ -1657,8 +1659,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "p" #'flymake-goto-prev-error)
 
   (keymap-set flymake-mode-map "C-c k" flymake-basic-map)
-  (which-key-add-keymap-based-replacements flymake-mode-map "C-c k" "flymake")
-  (diminish 'flymake-mode))
+  (which-key-add-keymap-based-replacements flymake-mode-map "C-c k" "flymake"))
 
 ;;__________________________________________________________
 ;; Improved help buffer
