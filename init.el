@@ -625,7 +625,6 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; Paradox
-
 (use-package paradox :defer t
   :init
   (setq-default paradox-spinner-type 'progress-bar
@@ -1985,23 +1984,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle))
 
 (use-package amx :defer t) ;; Complete history
-
-;; Complete history
-
-;; (use-package global-tags ;; gtags with xref integration
-;;   :after counsel-gtags   ;; don't remove this.
-;;   :demand t
-;;   :config
-;;   (which-key-add-keymap-based-replacements counsel-gtags-mode-map
-;;     "C-c g x" "global-tags")
-;;   ;; assert the :after counsel-gtags
-;;   (define-key counsel-gtags-command-map "xc" #'global-tags-create-database)
-;;   (define-key counsel-gtags-command-map "xu" #'global-tags-update-database)
-
-;;   (add-to-list 'xref-backend-functions #'global-tags-xref-backend)
-;;   (add-to-list 'project-find-functions #'global-tags-try-project-root)
-;;   (setq imenu-create-index-function #'global-tags-create-imenu-index)
-;;   )
 
 (use-package dumb-jump :defer t
   :bind-keymap ("C-c j" . dumb-jump-mode-map)
