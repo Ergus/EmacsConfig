@@ -570,7 +570,6 @@ M-<left>' and repeat with M-<left>."
     "<remap> <imenu>" #'consult-imenu        ;; imenu
     "C-c c I" #'consult-imenu-multi
     "C-c c m" #'consult-flymake
-    "C-c c m" #'consult-flycheck
     "C-c c p" #'consult-ripgrep
     "C-c c g" #'consult-grep
     "C-c c G" #'consult-git-grep
