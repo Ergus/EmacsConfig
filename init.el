@@ -737,8 +737,8 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; Some bindings
-(keymap-global-set "<remap> <just-one-space>" #'cycle-spacing)
-(keymap-global-set "<remap> <delete-char>" #'delete-forward-char)
+(keymap-global-set "<remap> <just-one-space>" #'cycle-spacing)    ;; normal -> 1 space -> 0 space
+(keymap-global-set "<remap> <delete-char>" #'delete-forward-char) ;; delete respecting with C-d
 (keymap-global-set "<remap> <count-words-region>" #'count-words)  ;; count on whole file or region if active
 
 
