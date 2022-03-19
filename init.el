@@ -2183,6 +2183,19 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     (kill-new value)
     (message "Copy value of %s to clipboard: %s " var value)))
 
+(defun my/etags-update (dir)
+  "Update etags in DIR."
+  (interactive "DDirectory: ")
+  (if-let* ((etags (executable-find "etags" t))
+	    (default-directory dir)
+	    (command (format
+		      "find %s -type f -iregex \".+\.[ch]p*\" | etags -"
+		      (file-remote-p dir 'localname))))
+      (progn
+	(message "Command: %s" command)
+	(start-file-process-shell-command "etags" " *etags-create2*" command))
+    (message "etags executable not found for %s" default-directory)))
+
 ;;__________________________________________________________
 ;; Move current line up and down C-M-<arrow> and duplicate
 
