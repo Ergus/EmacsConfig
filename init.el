@@ -959,15 +959,16 @@ M-<left>' and repeat with M-<left>."
 ;; Clipboard copy and paste with: M-w & C-c v
 (use-package xclip
   :preface
-  (setq-default xclip-method
-		(and (not (or (display-graphic-p)        ;; checks
-			      (string-equal (getenv "TERM") "linux")))
-		     (or (and (getenv "DISPLAY")         ;; x11
-			      (executable-find "xclip")
-			      'xclip)
-			 (and (getenv "WAYLAND_DISPLAY") ;; wayland
-			      (executable-find "wl-copy")
-			      'wl-copy))))
+  (setq-default xclip-method (cond
+			      ((or (display-graphic-p)  ;; graphic or linux terminal
+				   (string-equal (getenv "TERM") "linux"))
+			       nil)
+			      ((and (getenv "DISPLAY")
+				    (executable-find "xclip")) ;; x11
+			       'xclip)
+			      ((and (getenv "WAYLAND_DISPLAY")
+				    (executable-find "wl-copy")) ;; wayland
+			       'wl-copy)))
   :if xclip-method
   :defer 1
   :config
