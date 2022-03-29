@@ -1963,7 +1963,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   :init
 ;;   (setq-default ivy-read-action-function #'ivy-hydra-read-action))
 
-(setq-default xref-search-program 'ripgrep)
+(setq-default xref-search-program 'ripgrep
+	      xref-show-definitions-function #'xref-show-definitions-buffer-at-bottom
+	      xref-show-xrefs-function #'xref-show-definitions-buffer-at-bottom)
 
 (defvar-keymap my/xref-basic-map
     :doc "The base keymap for `xref'."
@@ -1978,7 +1980,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "n" #'xref-go-forward)
 
 (put #'xref-find-definitions 'repeat-map my/xref-repeat-map)
-  (put #'xref-find-references 'repeat-map my/xref-repeat-map)
+(put #'xref-find-references 'repeat-map my/xref-repeat-map)
 
 (keymap-global-set "C-c x" my/xref-basic-map)
 (which-key-add-key-based-replacements "C-c x" "xref")
