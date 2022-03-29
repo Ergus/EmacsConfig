@@ -492,17 +492,21 @@ M-<left>' and repeat with M-<left>."
 	      dabbrev-select-buffers-function #'my/dabbrev--select-project-buffers)
 
 ;; completion
-(setq-default completion-auto-help nil
-	      completion-ignore-case t
-	      completion-category-defaults nil
-	      ;; completion-styles '(basic substring partial-completion flex)
-	      ;; completion-category-overrides '((file (styles basic partial-completion)))
-	      completions-detailed t           ;; show more detailed completions
-	      read-extended-command-predicate  #'command-completion-default-include-p
+(setq-default enable-recursive-minibuffers t     ;; Enable nesting in minibuffer
+	      completion-show-help nil           ;; Don't show help in completion buffer
+	      completion-auto-help 'visible
+	      completion-auto-select 'second-tab
+	      completion-wrap-movement t
+	      completions-detailed t             ;; show more detailed completions
+	      completions-format 'one-column     ;; Vertical completion list
+	      completions-max-height 15
+	      ;; completion-styles '(basic partial-completion emacs22)
+	      completion-styles '(substring partial-completion emacs22)
+	      ;; M-x show context-local commands
+	      read-extended-command-predicate #'command-completion-default-include-p
 	      read-file-name-completion-ignore-case t
 	      read-buffer-completion-ignore-case t
-	      )
-
+	      completion-ignore-case t)
 
 ;; These two must be enabled/disabled together
 (setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
