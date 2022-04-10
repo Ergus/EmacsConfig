@@ -509,11 +509,15 @@ M-<left>' and repeat with M-<left>."
 	      completion-ignore-case t)
 
 ;; These two must be enabled/disabled together
-(setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
-(minibuffer-depth-indicate-mode 1)        ;; Mostrar nivel de nesting en minibuffer
+;; (setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
+;; (minibuffer-depth-indicate-mode 1)        ;; Mostrar nivel de nesting en minibuffer
 
 (add-hook 'minibuffer-setup-hook #'my/unset-gc)
 (add-hook 'minibuffer-exit-hook #'my/restore-gc)
+
+;; Arrows up/down search prefix in history like `history-search-backward' in bash
+(keymap-set minibuffer-local-map "<down>" #'next-complete-history-element)
+(keymap-set minibuffer-local-map "<up>" #'previous-complete-history-element)
 
 ;; (fido-vertical-mode 1)
 
