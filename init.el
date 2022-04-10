@@ -2024,11 +2024,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
-(use-package global-xref :defer t
-  :load-path "~/gits/emacs_clones/global-xref/"
-  :commands global-xref-mode
+(use-package gtags-mode :defer t
+  :load-path "~/gits/emacs_clones/gtags-mode/"
+  :commands gtags-mode
   :init
-  (setq-default global-xref-lighter ""))
+  (setq-default gtags-mode-lighter ""))
 
 ;;__________________________________________________________
 ;; Magit and git packages
