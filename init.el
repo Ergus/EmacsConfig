@@ -1970,10 +1970,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;; (use-package ivy-hydra
 ;;   :init
 ;;   (setq-default ivy-read-action-function #'ivy-hydra-read-action))
-
-(setq-default xref-search-program 'ripgrep
-	      xref-show-definitions-function #'xref-show-definitions-buffer-at-bottom
-	      xref-show-xrefs-function #'xref-show-definitions-buffer-at-bottom)
+(with-eval-after-load 'xref
+  (setq-default xref-search-program 'ripgrep
+		xref-show-definitions-function #'xref-show-definitions-buffer-at-bottom
+		xref-show-xrefs-function #'xref-show-definitions-buffer-at-bottom)
+  (add-to-list 'xref-prompt-for-identifier 'xref-find-references t))
 
 (defvar-keymap my/xref-basic-map
     :doc "The base keymap for `xref'."
