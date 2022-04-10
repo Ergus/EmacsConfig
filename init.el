@@ -655,6 +655,7 @@ M-<left>' and repeat with M-<left>."
 	      ;; Emacs version > 28
 	      lazy-highlight-no-delay-length 1     ;; use this instead of lazy-highlight-initial-delay
 	      isearch-allow-motion t
+	      isearch-forward-thing-at-point '(region symbol sexp word)
 	      ;; isearch-motion-changes-direction t
 	      )
 
@@ -669,6 +670,10 @@ M-<left>' and repeat with M-<left>."
   (keymap-set isearch-mode-map "C-<return>" #'my/isearch-exit-other-end)
   (keymap-set isearch-mode-map "<remap> <isearch-abort>" #'isearch-cancel)
   (keymap-set isearch-mode-map "<remap> <isearch-delete-char>" #'isearch-del-char)
+  (keymap-set isearch-mode-map
+	      "<remap> <isearch-forward-symbol-at-point>"
+	      #'isearch-forward-thing-at-point)
+
   (which-key-add-key-based-replacements "M-s h" "highlight")
 
   ;; External packages
