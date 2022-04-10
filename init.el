@@ -146,10 +146,11 @@
       (setq my/package-initialized-p t))
     (package-install package)))
 
-(defun my/load-path (path)
+(eval-and-compile
+  (defun my/load-path (path)
   "Return the PATH if exist or nil."
   (and (file-exists-p path)
-       (add-to-list 'load-path path)))
+       (add-to-list 'load-path path))))
 
 ;; (debug-on-entry #'package--download-one-archive)
 
@@ -492,8 +493,7 @@ M-<left>' and repeat with M-<left>."
 	      dabbrev-select-buffers-function #'my/dabbrev--select-project-buffers)
 
 ;; completion
-(setq-default enable-recursive-minibuffers t     ;; Enable nesting in minibuffer
-	      completion-show-help nil           ;; Don't show help in completion buffer
+(setq-default completion-show-help nil           ;; Don't show help in completion buffer
 	      completion-auto-help 'visible
 	      completion-auto-select 'second-tab
 	      completion-wrap-movement t
@@ -1167,10 +1167,9 @@ M-<left>' and repeat with M-<left>."
 	    (lambda nil
 	      (add-to-list 'completion-at-point-functions #'cape-ispell))))
 
-
 (use-package company :defer t
-  ;; :load-path (lambda nil (my/load-path "~/gits/company-mode/"))
   :preface
+  (my/load-path "~/gits/emacs_clones/company-mode/")
   (defun my/company-backend-after-load (backend)
     (with-eval-after-load 'company
       (unless (eq backend (car company-backends))
@@ -1990,7 +1989,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq-default imenu-list-position 'left)
   (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle))
 
-(use-package amx :defer t) ;; Complete history
+;; (use-package amx :defer t) ;; Complete history
 
 (use-package dumb-jump :defer t
   :bind-keymap ("C-c j" . dumb-jump-mode-map)
