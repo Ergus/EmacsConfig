@@ -674,17 +674,10 @@ M-<left>' and repeat with M-<left>."
   (keymap-set isearch-mode-map "C-<return>" #'my/isearch-exit-other-end)
   (keymap-set isearch-mode-map "<remap> <isearch-abort>" #'isearch-cancel)
   (keymap-set isearch-mode-map "<remap> <isearch-delete-char>" #'isearch-del-char)
-  (keymap-set isearch-mode-map
-	      "<remap> <isearch-forward-symbol-at-point>"
-	      #'isearch-forward-thing-at-point)
+
+  (keymap-set search-map "." #'isearch-forward-thing-at-point)
 
   (which-key-add-key-based-replacements "M-s h" "highlight")
-
-  ;; External packages
-  (with-eval-after-load 'consult
-    (keymap-set isearch-mode-map "M-s l" #'consult-line)
-    (keymap-set isearch-mode-map "M-s m" #'consult-line-multi)
-    (keymap-set isearch-mode-map "M-s C-r" #'consult-isearch-history))
 
   (when (fboundp #'avy-isearch)
     (keymap-set isearch-mode-map "C-'" #'avy-isearch))
