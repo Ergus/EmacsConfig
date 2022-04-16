@@ -891,9 +891,10 @@ M-<left>' and repeat with M-<left>."
 		vterm-toggle-project-root t    ;; Already default
 		vterm-toggle-fullscreen-p nil  ;; Already default
 		)
-  (keymap-set my/term-keymap "t" #'vterm-toggle-cd)
+  (keymap-set my/term-keymap "t" #'vterm-toggle)
   :config
-  (keymap-set vterm-mode-map "M-RET" #'vterm-toggle-insert-cd))
+  (keymap-set vterm-mode-map "M-RET" #'vterm-toggle-insert-cd)
+  (add-to-list 'display-buffer-alist `(,vterm-buffer-name . ,my/display-buffer-at-bottom)))
 
 (use-package emamux :defer t
   :bind-keymap (("C-c u" . emamux:keymap))
