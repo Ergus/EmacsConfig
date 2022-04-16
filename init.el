@@ -506,7 +506,19 @@ M-<left>' and repeat with M-<left>."
 (keymap-set minibuffer-local-map "<down>" #'next-complete-history-element)
 (keymap-set minibuffer-local-map "<up>" #'previous-complete-history-element)
 
-;; (fido-vertical-mode 1)
+(defun my/completion-setup-hook ()
+  "My hook for Completions window."
+  (with-current-buffer standard-output
+    (setq-local mode-line-format nil)
+    (display-line-numbers-mode -1)))
+
+(add-hook 'completion-setup-hook #'my/completion-setup-hook 10)
+
+(defconst my/display-buffer-at-bottom
+  '((display-buffer-reuse-window display-buffer-at-bottom)
+    (dedicated . t)
+    (reusable-frames . visible)
+    (window-height . 0.3)))
 
 ;;__________________________________________________________
 ;; Completion with vertico/consult/orderless/embark
@@ -736,7 +748,7 @@ M-<left>' and repeat with M-<left>."
 	      tramp-completion-reread-directory-timeout 120;; Default 10
 	      password-cache-expiry 3600                   ;; Cache for 1 hour
 	      tramp-use-scp-direct-remote-copying t        ;; copy directly between remote hosts
-	      tramp-verbose (if init-file-debug 10 0)      ;; Default 3 always
+	      tramp-verbose (if init-file-debug 10 3)      ;; Default 3 always
 	      tramp-use-ssh-controlmaster-options nil      ;; use system control master.
 	      tramp-completion-use-auth-sources nil        ;; not use auth-sources in tramp
 	      )
