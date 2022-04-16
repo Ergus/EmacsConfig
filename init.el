@@ -304,19 +304,7 @@ M-<left>' and repeat with M-<left>."
 	      mode-line-frame-identification " "                   ;; no F1 in term
               mode-line-front-space " "                            ;; no - on the very left
               mode-line-end-spaces " "                             ;; no ---- on the right.
-              mode-line-mule-info ""                               ;; no UUU: on the left.
-              )
-
-;; (setq-default mode-line-format (list "%e "
-;; 				     '(:propertize
-;; 				       ("" mode-line-client mode-line-modified mode-line-remote)
-;; 				       display (min-width (4.0)))
-;; 				     '(:propertize " %12b" face (:weight bold)) ;; buffer identification
-;; 				     '("  [%l,%C] %I")              ;; position
-;; 				     '(vc-mode vc-mode)
-;; 				     "  "
-;; 				     'mode-line-modes
-;; 				     'mode-line-misc-info))
+              mode-line-mule-info "")                               ;; no UUU: on the left.
 
 (column-number-mode t)               ;; Column number
 (line-number-mode t)                 ;; Line number
