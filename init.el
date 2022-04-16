@@ -488,7 +488,6 @@ M-<left>' and repeat with M-<left>."
 	      completions-detailed t             ;; show more detailed completions
 	      completions-format 'one-column     ;; Vertical completion list
 	      completions-max-height 15
-	      ;; completion-styles '(basic partial-completion emacs22)
 	      completion-styles '(substring partial-completion emacs22)
 	      ;; M-x show context-local commands
 	      read-extended-command-predicate #'command-completion-default-include-p
@@ -498,7 +497,7 @@ M-<left>' and repeat with M-<left>."
 
 ;; These two must be enabled/disabled together
 ;; (setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
-;; (minibuffer-depth-indicate-mode 1)        ;; Mostrar nivel de nesting en minibuffer
+;; (minibuffer-depth-indicate-mode 1)            ;; Mostrar nivel de nesting en minibuffer
 
 (add-hook 'minibuffer-setup-hook #'my/unset-gc)
 (add-hook 'minibuffer-exit-hook #'my/restore-gc)
@@ -698,22 +697,9 @@ M-<left>' and repeat with M-<left>."
 		(when (and win
 			   (eq this-command #'occur-mode-goto-occurrence))
 		  (quit-restore-window win)
-		  (isearch-done))))))
+		  (isearch-done)))))
 
-;; (use-package isearch-mb
-;;   :defer 1
-;;   :config
-;;   (isearch-mb-mode 1)
-;;   (add-to-list 'isearch-mb--after-exit #'my/isearch-exit-other-end)
-;;   (add-to-list 'isearch-mb--after-exit #'recenter-top-bottom)
-;;   (keymap-set isearch-mb-minibuffer-map "C-<return>" #'my/isearch-exit-other-end)
-
-;;   (with-eval-after-load 'consult
-;;     (add-to-list 'isearch-mb--after-exit #'consult-line)
-;;     (add-to-list 'isearch-mb--after-exit #'consult-line-multi)
-;;     (add-to-list 'isearch-mb--after-exit #'consult-isearch-history)
-;;     (keymap-set isearch-mb-minibuffer-map "M-s l" #'consult-line))
-;;   )
+  (add-to-list 'display-buffer-alist `("*Occur*" . ,my/display-buffer-at-bottom)))
 
 ;;__________________________________________________________
 ;; The Colors I am using my own theme
@@ -964,7 +950,6 @@ M-<left>' and repeat with M-<left>."
 				    (executable-find "wl-copy")) ;; wayland
 			       'wl-copy)))
   :if xclip-method
-  :defer 1
   :config
   (xclip-mode 1))
 
@@ -1121,7 +1106,7 @@ M-<left>' and repeat with M-<left>."
   (setq-default eglot-stay-out-of '(eldoc)))
 
 
-(use-package consult-eglot :defer t)
+;; (use-package consult-eglot :defer t)
 
 (use-package cape
   ;; Bind dedicated completion commands
@@ -1281,7 +1266,7 @@ M-<left>' and repeat with M-<left>."
                     :remote? t
                     :server-id 'clangd-remote)))
 
-(use-package consult-lsp :defer t)
+;; (use-package consult-lsp :defer t)
 
 (use-package lsp-ui
   :diminish
