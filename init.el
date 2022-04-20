@@ -492,6 +492,34 @@ M-<left>' and repeat with M-<left>."
 	      read-buffer-completion-ignore-case t
 	      completion-ignore-case t)
 
+;; project
+;; {previous,next}-buffer only move within this project
+(defun with-current-project (funct)
+  "Call FUNCT setting `switch-to-prev-buffer-skip'."
+  (let ((switch-to-prev-buffer-skip
+	 (lambda (_window buffer _bury-or-kill)
+	   (when-let ((pr1 (project-current)))
+	     (with-current-buffer buffer
+	       (not (and buffer-file-name
+			 (eq pr1 (project-current)))))))))
+    (call-interactively funct)))
+
+(defun project-next-buffer ()
+  "Next buffer within project."
+  (interactive)
+  (with-current-project #'next-buffer))
+
+(defun project-previous-buffer ()
+  "Previous buffer within project."
+  (interactive)
+  (with-current-project #'previous-buffer))
+
+(my/repeat-keymap my/project-prefix-map project-prefix-map
+  :doc "Next buffer in current project."
+  "C-<right>" #'project-next-buffer
+  "C-<left>" #'project-previous-buffer)
+
+
 ;; These two must be enabled/disabled together
 ;; (setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
 ;; (minibuffer-depth-indicate-mode 1)            ;; Mostrar nivel de nesting en minibuffer
@@ -1010,6 +1038,8 @@ M-<left>' and repeat with M-<left>."
 (put #'undo 'repeat-map 'undo-redo-repeat-map)
 
 ;; (use-package undo-propose :defer t)
+
+(use-package vundo :defer t)
 
 ;;__________________________________________________________
 ;; Cycle string capitalization for programming:
