@@ -270,8 +270,6 @@ M-<left>' and repeat with M-<left>."
   :config
   (which-key-mode t)
   (which-key-add-key-based-replacements
-    "C-c b" "sidebars"
-    "C-c c" "my/ctrl-c-c"
     "C-x r" "rectangle||register"
     "C-x n" "narrow"
     "C-x p" "project"
@@ -287,13 +285,13 @@ M-<left>' and repeat with M-<left>."
 
 (defvar-keymap my/sidebar-map
   :doc "Keymap to toggle sidebars.")
-(keymap-global-set "C-c b" my/sidebar-map)
+(keymap-global-set "C-c b" (cons "sidebars" my/sidebar-map))
 
 (defvar-keymap my/ctrl-c-c
   :doc "The base keymap for `C-c c'."
   "l" #'find-library
   "i" #'imenu)
-(keymap-global-set "C-c c" my/ctrl-c-c)
+(keymap-global-set "C-c c" (cons "my/ctrl-c-c" my/ctrl-c-c))
 
 ;;__________________________________________________________
 ;; Some internal packages to defer them
@@ -402,8 +400,7 @@ M-<left>' and repeat with M-<left>."
   "f" #'highlight-changes-rotate-faces
   "b" #'highlight-compare-buffers
   "d" #'highlight-compare-with-file)
-(keymap-global-set "M-s h c" highlight-changes-map)
-(which-key-add-key-based-replacements "M-s h c" "highlight-changes")
+(keymap-global-set "M-s h c" (cons "highlight-changes" highlight-changes-map))
 
 ;; winner
 (setq-default winner-dont-bind-my-keys t)
@@ -803,7 +800,7 @@ M-<left>' and repeat with M-<left>."
 (keymap-set ctl-x-4-map "<down>" #'windmove-display-down)
 (keymap-set ctl-x-4-map "<up>" #'windmove-display-up)
 
-(keymap-set ctl-x-map "0" my/0-map)
+(keymap-set ctl-x-map "0" (cons "windmove-delete" my/0-map))
 
 ;;__________________________________________________________
 ;; tab-bar
@@ -816,7 +813,7 @@ M-<left>' and repeat with M-<left>."
   :doc "A keymap that emulates some of the tmux bindings."
   "i" #'tab-new
   "k" #'tab-close
-  "0" my/0-map
+  "0" (cons "windmove-delete" my/0-map)
   "v" #'split-window-below
   "h" #'split-window-right
   "b" #'switch-to-buffer-other-tab
@@ -840,10 +837,7 @@ M-<left>' and repeat with M-<left>."
   "S-<down>" #'windmove-swap-states-down
   "S-<up>" #'windmove-swap-states-up)
 
-(keymap-global-set "C-z" my/tmux-like-keymap)
-(which-key-add-key-based-replacements
-  "C-z" "tmux-like-keymap"
-  "C-z 0" "windmove-delete")
+(keymap-global-set "C-z" `("tmux-like-keymap" . ,my/tmux-like-keymap))
 
 
 ;;__________________________________________________________
@@ -872,7 +866,7 @@ M-<left>' and repeat with M-<left>."
 ;; terms
 (defvar-keymap my/term-keymap
   :doc "Keymap for terminal commands")
-(keymap-global-set "C-c t" my/term-keymap)
+(keymap-global-set "C-c t" (cons "term" my/term-keymap))
 
 (use-package vterm :defer t
   :hook (vterm-mode . (lambda nil
@@ -1955,8 +1949,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (put #'xref-find-definitions 'repeat-map my/xref-repeat-map)
 (put #'xref-find-references 'repeat-map my/xref-repeat-map)
 
-(keymap-global-set "C-c x" my/xref-basic-map)
-(which-key-add-key-based-replacements "C-c x" "xref")
+(keymap-global-set "C-c x" (cons "xref" my/xref-basic-map))
 
 (use-package imenu-list :defer t
   :init
@@ -2326,8 +2319,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "C-a" #'mc/edit-beginnings-of-lines
     "C-e" #'mc/edit-ends-of-lines)
 
-  (keymap-global-set "C-c m" mc-basic-map)
-  (which-key-add-key-based-replacements "C-c m" "multi-cursors")
+  (keymap-global-set "C-c m" (cons "multi-cursors" mc-basic-map))
 
   (when (fboundp #'iedit-mode)
     (keymap-set mc-basic-map "i" #'iedit-mode)))
