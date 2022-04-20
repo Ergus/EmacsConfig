@@ -1666,8 +1666,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq-default languagetool-java-arguments '("-Dfile.encoding=UTF-8"
 					      "-cp" "/usr/share/languagetool:/usr/share/java/languagetool/*")
 		languagetool-console-command "org.languagetool.commandline.Main"
-		languagetool-server-command "org.languagetool.server.HTTPServer")
-  )
+		languagetool-server-command "org.languagetool.server.HTTPServer"))
 
 ;;__________________________________________________________
 ;; Email mode for mutt
@@ -1845,13 +1844,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	      dired-hide-details-hide-symlink-targets nil  ;; don't hide linkk targets
 	      dired-maybe-use-globstar t                   ;; use shell's globstar
 	      dired-kill-when-opening-new-dired-buffer t   ;; kill when opening a new directory.
-	      dired-guess-shell-alist-user
-	      (list
-	       '("\\.pdf\\'" "xdg-open")
-	       '("\\.jpe?g\\'" "xdg-open")
-	       '("\\.png\\'" "xdg-open")
-	       '("\\.gif\\'" "xdg-open")
-	       ))
+	      dired-mouse-drag-files t
+	      dired-guess-shell-alist-user '(("\\.pdf\\'" "xdg-open")
+					     ("\\.jpe?g\\'" "xdg-open")
+					     ("\\.png\\'" "xdg-open")
+					     ("\\.gif\\'" "xdg-open")))
 
 (with-eval-after-load 'dired
   (require 'dired-x)
