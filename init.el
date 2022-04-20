@@ -517,7 +517,6 @@ M-<left>' and repeat with M-<left>."
 (defconst my/display-buffer-at-bottom
   '((display-buffer-reuse-window display-buffer-at-bottom)
     (dedicated . t)
-    (reusable-frames . visible)
     (window-height . 0.3)))
 
 ;;__________________________________________________________
@@ -882,7 +881,6 @@ M-<left>' and repeat with M-<left>."
   :init
   (setq-default vterm-kill-buffer-on-exit t
 		vterm-max-scrollback 10000)
-  (which-key-add-key-based-replacements "C-c t" "term")
   :config
   ;; Add find-file-other-window to accepted commands
   (add-to-list 'vterm-eval-cmds
@@ -1680,9 +1678,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Email mode for mutt
 ;;__________________________________________________________
-
-;; Asocia buffers que empiecen con messaje mode
-
 ;; message-mode
 (my/gen-delay-hook message-mode)
 
@@ -1844,7 +1839,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
-
 (setq-default dired-recursive-copies 'top                  ;; Always ask recursive copy
 	      dired-recursive-deletes 'top                 ;; Always ask recursive delete
 	      dired-dwim-target 'dired-dwim-target-recent  ;; Copy in split mode with p
@@ -1882,7 +1876,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;; __________________________________________________________
 ;; Templates Projects
-
 (use-package ptemplate :defer t)
 
 (use-package ptemplate-templates
@@ -1939,16 +1932,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
 
-;; Long time unmaintained (since 2015)
-;; (use-package headlong :defer t)
-
 (use-package flx :defer t)
 
-;; (use-package hydra :defer t)
-
-;; (use-package ivy-hydra
-;;   :init
-;;   (setq-default ivy-read-action-function #'ivy-hydra-read-action))
 (with-eval-after-load 'xref
   (setq-default xref-search-program 'ripgrep
 		xref-show-definitions-function #'xref-show-definitions-buffer-at-bottom
@@ -2282,13 +2267,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (keymap-set avy-basic-map "z" #'avy-zap-to-char-dwim)
   (keymap-set avy-basic-map "u" #'avy-zap-up-to-char-dwim))
 
-;; For now doesn't work on tramp so use deadgrep
-;; (use-package rg :defer t
-;;   :preface
-;;   (my/load-path "~/gits/emacs_clones/rg.el/")
-;;   :config
-;;   (rg-enable-menu))
-
 (use-package deadgrep :defer t
   :init
   (keymap-set my/ctrl-c-c "r" #'deadgrep)
@@ -2302,21 +2280,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package arduino-mode
   :mode ("\\.ino\\'" "\\.pde\\'"))
-
-;; Long time unmaintained and depends of irony
-;; (use-package company-arduino :defer t
-;;   :hook (arduino-mode . (lambda nil
-;; 			  (eval-after-load 'company
-;; 			    #'company-arduino-turn-on)))
-;;   :config
-;;   ;; This package already loads 'company-c-headers.
-;;   (defconst initial-company-c-headers-path-system company-c-headers-path-system)
-
-;;   (defun my/company-c-headers-get-system-path ()
-;;     "Return the system include path for the current buffer plus arduino headers"
-;;     (company-arduino-append-include-dirs initial-company-c-headers-path-system t))
-
-;;   (setq company-c-headers-path-system #'my/company-c-headers-get-system-path))
 
 (use-package arduino-cli-mode
   :after company-arduino      ;; This is latter enough
@@ -2419,12 +2382,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Protobuf mode
 (use-package protobuf-mode :defer t)
-
-;;__________________________________________________________
-;; Modeline
-;; (use-package powerline
-;;   :config
-;;   (powerline-default-theme))
 
 ;;__________________________________________________________
 ;; yaml mode
