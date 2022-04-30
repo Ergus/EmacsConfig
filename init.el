@@ -1140,28 +1140,37 @@ M-<left>' and repeat with M-<left>."
   :init
   (setq-default eglot-stay-out-of '(eldoc)))
 
-
 ;; (use-package consult-eglot :defer t)
 
 (use-package cape
-  ;; Bind dedicated completion commands
   :defer 0.2
+  :preface
+  (defmacro my/cape-with-company (cape-func)
+    "Wrap company completion to use an specific cape backend."
+    `(lambda ()
+       (interactive)
+       (let ((completion-at-point-functions (list ,cape-func))
+	     (company-backends '(company-capf)))
+	 (my/company-complete))))
+
   :init
+  (setq-default cape-dabbrev-check-other-buffers nil) ;; default t
+
   (defvar-keymap cape-basic-map
     :doc "The keymap used when `cape-basic-map' is active."
-    "p" #'completion-at-point ;; capf
-    "t" #'complete-tag        ;; etags
-    "d" #'cape-dabbrev        ;; or dabbrev-completion
-    "f" #'cape-file
-    "k" #'cape-keyword
-    "s" #'cape-symbol
-    "a" #'cape-abbrev
-    "i" #'cape-ispell
-    "l" #'cape-line
-    "w" #'cape-dict
-    "x" #'cape-tex
-    "g" #'cape-sgml
-    "r" #'cape-rfc1345)
+    "p" (my/cape-with-company 'completion-at-point) ;; capf
+    "t" (my/cape-with-company 'complete-tag)        ;; etags
+    "d" (my/cape-with-company 'cape-dabbrev)        ;; or dabbrev-completion
+    "f" (my/cape-with-company 'cape-file)
+    "k" (my/cape-with-company 'cape-keyword)
+    "s" (my/cape-with-company 'cape-symbol)
+    "a" (my/cape-with-company 'cape-abbrev)
+    "i" (my/cape-with-company 'cape-ispell)
+    "l" (my/cape-with-company 'cape-line)
+    "w" (my/cape-with-company 'cape-dict)
+    "x" (my/cape-with-company 'cape-tex)
+    "g" (my/cape-with-company 'cape-sgml)
+    "r" (my/cape-with-company 'cape-rfc1345))
 
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
