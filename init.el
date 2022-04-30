@@ -1793,13 +1793,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
 
 
+;; auctex-latexmk is broken
 ;; auctex-latexmk
-(use-package auctex-latexmk
-  :init
-  (setq-default auctex-latexmk-inherit-TeX-PDF-mode t)
-  :after tex
-  :config
-  (auctex-latexmk-setup))
+;; (use-package auctex-latexmk
+;;   :init
+;;   (setq-default auctex-latexmk-inherit-TeX-PDF-mode t)
+;;   :after tex
+;;   :config
+;;   (auctex-latexmk-setup))
 
 (use-package company-math :defer t
   :hook (TeX-mode . (lambda nil
