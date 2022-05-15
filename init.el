@@ -1998,10 +1998,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
 (use-package gtags-mode :defer t
-  :load-path "~/gits/emacs_clones/gtags-mode/"
-  :commands gtags-mode
+  :preface
+  (my/load-path "/mnt/casa/gits/emacs_clones/gtags-mode/")
   :init
-  (setq-default gtags-mode-lighter ""))
+  (setq-default gtags-mode-lighter "")
+  :hook ((emacs-startup . gtags-mode)))
 
 ;;__________________________________________________________
 ;; Magit and git packages
