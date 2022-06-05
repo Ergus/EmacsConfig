@@ -1256,8 +1256,8 @@ M-<left>' and repeat with M-<left>."
     (interactive)
     (let ((company-tooltip-idle-delay 0.0))
       (company-complete)
-      (and company-candidates
-           (company-call-frontends 'post-command))))
+      (if company-candidates
+          (company-call-frontends 'post-command))))
 
   (defun my/company-complete-common ()
     "Complete common if pending, else abort company or move to next."
