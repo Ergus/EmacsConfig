@@ -2415,16 +2415,17 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (setq-default evil-collection-setup-minibuffer t)
   (add-hook 'evil-mode-hook #'evil-collection-init))
 
-(use-package composable
-  :diminish
-  :preface
-  (my/load-path "~/gits/emacs_clones/composable/")
-  :init
-  (setq-default composable-mode-debug-level (if init-file-debug 3 0)
-		composable-mode-line-color "green")
-  :config
-  (composable-mode) 		;; Activates the default keybindings
-  (composable-mark-mode))	;; Use composable with C-SPC
+;; (use-package composable
+;;   :diminish
+;;   :preface
+;;   (my/load-path "/mnt/casa/gits/emacs_clones/composable/")
+;;   :init
+;;   (setq-default composable-mode-debug-level (if init-file-debug 3 0)
+;; 		composable-mode-line-color "green")
+;;   :config
+;;   (composable-mode) 		;; Activates the default keybindings
+;;   (composable-mark-mode))
+;; Use composable with C-SPC
 
 ;; (use-package automark
 ;;   :diminish
