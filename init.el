@@ -1636,13 +1636,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
   (setf (cdr yas-minor-mode-map) nil)  ;; clear yas minor map
   ;; (keymap-set yas-minor-mode-map "C-c y" yas-minor-basic-map)
-  (keymap-global-set "C-c y" yas-minor-basic-map)
-  (which-key-add-keymap-based-replacements yas-minor-mode-map "C-c y" "yasnippet")
+  (keymap-global-set "C-c y" (cons "yasnippet" yas-minor-basic-map))
 
-  ;; (yas-global-mode 1)
+  (yas-global-mode 1)
   )
 
-;; (use-package yasnippet-snippets :after yasnippet)
+(use-package yasnippet-snippets :after yasnippet)
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
