@@ -101,12 +101,14 @@
 	      outline-minor-mode-use-buttons t      ;; Use buttons to hide/show outlines
 
 	      help-window-select t                  ;; always select help windoes
+	      help-window-keep-selected t           ;; Reuse *help* buffer when available
 	      history-delete-duplicates t           ;; delete duplicates in commands history
 	      find-library-include-other-files nil  ;; find-library only shows libraries, not random files.
 	      view-read-only t                      ;; buffers visiting files read-only do so in view mode
 	      kill-read-only-ok t                   ;; don’t signal an error for killing read-only text.
 	      debugger-stack-frame-as-list t        ;; display call stack frames as lists.
 	      async-shell-command-display-buffer nil ;;command buffer wait until there is output
+	      shell-kill-buffer-on-exit t
 	      )
 
 ;; Vertical window divider
@@ -265,6 +267,7 @@ M-<left>' and repeat with M-<left>."
 		which-key-idle-secondary-delay 0.01    ;; nil sets the same delay, use when which-key-show-early-on-C-h
 		which-key-dont-use-unicode t
 		which-key-is-verbose init-file-debug
+		which-key-show-remaining-keys t        ;; Show remaining keys in last slot
 		which-key-lighter nil                  ;; Not show in modeline
 		which-key-separator ": ")              ;; default " : "
   :config
@@ -289,8 +292,7 @@ M-<left>' and repeat with M-<left>."
 
 (defvar-keymap my/ctrl-c-c
   :doc "The base keymap for `C-c c'."
-  "l" #'find-library
-  "i" #'imenu)
+  "l" #'find-library)
 (keymap-global-set "C-c c" (cons "my/ctrl-c-c" my/ctrl-c-c))
 
 ;;__________________________________________________________
@@ -493,6 +495,8 @@ M-<left>' and repeat with M-<left>."
 	      completion-ignore-case t)
 
 ;; project
+(setq-default project-vc-include-untracked nil)
+
 ;; {previous,next}-buffer only move within this project
 (defun with-current-project (funct)
   "Call FUNCT setting `switch-to-prev-buffer-skip'."
@@ -720,7 +724,7 @@ M-<left>' and repeat with M-<left>."
 			  (beginning-of-line)
 			  (recenter nil t)))
 
-  (add-hook 'occur-mode-hook (lambda nil
+  (add-hook 'occur-mode-hook (lambda ()
 			       (hl-line-mode 1)
 			       (display-line-numbers-mode -1)
 			       (switch-to-buffer-other-window "*Occur*")
@@ -728,7 +732,7 @@ M-<left>' and repeat with M-<left>."
 			       ))
 
   (add-hook 'occur-mode-find-occurrence-hook
-	    (lambda nil
+	    (lambda ()
 	      (let ((win (get-buffer-window "*Occur*")))
 		(when (and win
 			   (eq this-command #'occur-mode-goto-occurrence))
@@ -753,7 +757,6 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; Some bindings
-(keymap-global-set "<remap> <just-one-space>" #'cycle-spacing)    ;; normal -> 1 space -> 0 space
 (keymap-global-set "<remap> <delete-char>" #'delete-forward-char) ;; delete respecting with C-d
 (keymap-global-set "<remap> <count-words-region>" #'count-words)  ;; count on whole file or region if active
 
@@ -988,6 +991,8 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; xterm mouse
+(setq-default mouse-drag-mode-line-buffer t)
+
 (unless (or (display-graphic-p)
 	    (string-equal (getenv "TERM") "linux"))
   (xterm-mouse-mode t))                    ;; mover el cursor al click
@@ -1188,7 +1193,6 @@ M-<left>' and repeat with M-<left>."
 
 (use-package company :defer t
   :preface
-  (my/load-path "~/gits/emacs_clones/company-mode/")
   (defun my/company-backend-after-load (backend)
     (with-eval-after-load 'company
       (unless (eq backend (car company-backends))
