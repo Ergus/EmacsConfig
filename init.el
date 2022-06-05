@@ -1124,9 +1124,7 @@ M-<left>' and repeat with M-<left>."
     "n" #'flyspell-goto-next-error)
 
   (setf (cdr flyspell-mode-map) nil)  ;; clear yas minor map
-  (keymap-set flyspell-mode-map "C-c f" flyspell-basic-map)
-  (which-key-add-keymap-based-replacements flyspell-mode-map "C-c f" "flyspell")
-  (diminish 'flyspell-mode))
+  (keymap-set flyspell-mode-map "C-c f" (cons "flyspell" flyspell-basic-map)))
 
 (use-package flyspell-correct
   :diminish
@@ -1683,8 +1681,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     "n" #'flymake-goto-next-error
     "p" #'flymake-goto-prev-error)
 
-  (keymap-set flymake-mode-map "C-c k" flymake-basic-map)
-  (which-key-add-keymap-based-replacements flymake-mode-map "C-c k" "flymake"))
+  (keymap-set flymake-mode-map "C-c k" (cons "flymake" flymake-basic-map)))
 
 ;;__________________________________________________________
 ;; Chequeo de gramatica
