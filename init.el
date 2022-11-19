@@ -1209,7 +1209,7 @@ M-<left>' and repeat with M-<left>."
   (add-hook 'conf-mode-delay-hook #'my/company-mode-delay-hook)
   (add-hook 'text-mode-delay-hook #'my/company-mode-delay-hook)
 
-  (setq-default company-minimum-prefix-length 1
+  (setq-default company-minimum-prefix-length 2
 		company-tooltip-minimum 5
 		company-selection-wrap-around nil
 		company-show-quick-access 'left       ;; How hints
@@ -1220,7 +1220,7 @@ M-<left>' and repeat with M-<left>."
 		company-dabbrev-code-other-buffers t ;; disable dabbrev in other buffers
 		;; company-lighter-base "cpn"             ;; modeline message
 
-		company-idle-delay 0                ;; no delay for company (includes show common)
+		company-idle-delay 0.5                ;; no delay for company (includes show common)
 		company-tooltip-idle-delay 100      ;; delay until the tooltip is shown.
 		company-frontends '(;;company-complete-common-or-show-delayed-tooltip
 				    company-pseudo-tooltip-unless-just-one-frontend-with-delay
@@ -1790,10 +1790,12 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;   :config
 ;;   (auctex-latexmk-setup))
 
-(use-package company-math :defer t
-  :hook (TeX-mode . (lambda nil
-		      (my/company-backend-after-load
-		       '(company-math-symbols-latex company-latex-commands)))))
+;; company-math-symbols-latex: at the end I need to search it
+;; company-latex-commands: is better company-auctex-macros
+;; (use-package company-math :defer t
+;;   :hook (TeX-mode . (lambda nil
+;; 		      (my/company-backend-after-load
+;; 		       '(company-math-symbols-latex company-latex-commands)))))
 
 (use-package company-auctex :defer t
   :hook (TeX-mode . (lambda nil
@@ -1826,9 +1828,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (setq-default bibtex-dialect 'biblatex)
 (add-to-list 'auto-mode-alist '("\\.bib\\'" . bibtex-mode))
 
-(use-package company-bibtex :defer t
-  :hook (bibtex-mode . (lambda nil
-			 (my/company-backend-after-load #'company-bibtex))))
+;; Not working or usefull
+;; (use-package company-bibtex :defer t
+;;   :hook (bibtex-mode . (lambda nil
+;; 			 (my/company-backend-after-load #'company-bibtex))))
 
 ;;__________________________________________________________
 ;; Python mode
