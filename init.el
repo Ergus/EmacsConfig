@@ -2367,7 +2367,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; csv mode
-(use-package csv-mode :defer t)
+(use-package csv-mode :defer t
+  :init
+  (setq-default csv-align-style 'auto))
 
 ;;__________________________________________________________
 ;; Protobuf mode
