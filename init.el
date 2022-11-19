@@ -2454,6 +2454,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 (use-package nftables-mode
   :mode "nftables.conf")
 
+(use-package fancy-compilation
+  :after compile
+  :config
+  (fancy-compilation-mode))
+
 (use-package debbugs :defer t)
 
 (provide 'init)
