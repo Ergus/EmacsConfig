@@ -2359,14 +2359,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; json mode
 
-(use-package json-mode
-  :mode "\\.json\\'"
-  :preface
-  (my/gen-delay-hook json-mode))
+;; There is a native mode for json files... I will try that 
+;; (use-package json-mode
+;;   :mode "\\.json\\'"
+;;   :preface
+;;   (my/gen-delay-hook json-mode))
 
-(use-package flymake-json :defer t
-  :init
-  (add-hook 'json-mode-delay-hook #'flymake-json-load))
+;; (use-package flymake-json :defer t
+;;   :init
+;;   (add-hook 'json-mode-delay-hook #'flymake-json-load))
 
 ;;__________________________________________________________
 ;; csv mode
