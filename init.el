@@ -89,7 +89,7 @@
 
 	      ;; M-x show context-local commands
 	      use-short-answers t                     ;; Use y or n to exit and other shorter answers.
-	      y-or-n-p-use-read-key t                 ;; use readkey and not minibuffer for y or n answers
+	      ;; y-or-n-p-use-read-key t                 ;; use readkey and not minibuffer for y or n answers
 	      goto-line-history-local t               ;; Buffer local goto-line history
 	      switch-to-buffer-obey-display-actions t ;; switching the buffer respects display actions
 	      bookmark-menu-confirm-deletion t        ;; ask confirmation to delete bookmark
@@ -699,7 +699,7 @@ M-<left>' and repeat with M-<left>."
 
   (keymap-set isearch-mode-map "C-RET" #'my/isearch-exit-other-end)
   (keymap-set isearch-mode-map "C-<return>" #'my/isearch-exit-other-end)
-  (keymap-set isearch-mode-map "<remap> <isearch-abort>" #'isearch-cancel)
+;;  (keymap-set isearch-mode-map "<remap> <isearch-abort>" #'isearch-exit)
   (keymap-set isearch-mode-map "<remap> <isearch-delete-char>" #'isearch-del-char)
 
   (keymap-set search-map "." #'isearch-forward-thing-at-point)
@@ -1843,8 +1843,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (eval-after-load 'python
   '(keymap-set python-mode-map "C-c C-z" #'python-shell))
-(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-(add-to-list 'interpreter-mode-alist '("python3" . python-mode))
+;;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
+;;(add-to-list 'interpreter-mode-alist '("python3" . python-mode))
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
