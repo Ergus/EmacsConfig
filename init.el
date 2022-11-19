@@ -1772,7 +1772,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 	 (t (+ indent offset LaTeX-indent-level))))))
   (add-to-list 'LaTeX-indent-environment-list '("itemize" my/LaTeX-indent-item))
   (add-to-list 'LaTeX-indent-environment-list '("enumerate" my/LaTeX-indent-item))
-  (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item)))
+  (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item))
+  (add-to-list 'TeX-command-list '("Make" "make -k" TeX-run-compile nil t))
+  )
 
 (add-hook 'TeX-mode-hook (lambda ()
 			   (LaTeX-math-mode 1)
