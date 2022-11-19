@@ -1289,54 +1289,54 @@ M-<left>' and repeat with M-<left>."
   (keymap-set company-active-map "<remap> <completion-at-point>" #'company-select-previous-or-abort)
   )
 
-(use-package lsp-mode :defer t
-  :diminish lsp
-  :hook (lsp-mode . (lambda nil
-		      (my/company-backend-after-load #'company-capf)
-		      (lsp-enable-which-key-integration t)))
-  :init
-  (setq-default lsp-keymap-prefix (kbd "C-c l")
-		lsp-enable-snippet nil
-		lsp-eldoc-hook nil
-		lsp-enable-indentation nil
-		lsp-prefer-capf t
-		read-process-output-max (* 1024 1024)) ;; 1mb (data read from a process)
-  ;; lsp-diagnostic-package t ;; prefer flymake
-  ;; :init
-  ;; (add-hook 'c-mode-common-hook #'lsp-deferred)
-  ;; (add-hook 'python-mode-hook #'lsp-deferred)
-  :config
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
-                    :major-modes '(c-mode c++-mode)
-                    :remote? t
-                    :server-id 'clangd-remote)))
+;; (use-package lsp-mode :defer t
+;;   :diminish lsp
+;;   :hook (lsp-mode . (lambda nil
+;; 		      (my/company-backend-after-load #'company-capf)
+;; 		      (lsp-enable-which-key-integration t)))
+;;   :init
+;;   (setq-default lsp-keymap-prefix (kbd "C-c l")
+;; 		lsp-enable-snippet nil
+;; 		lsp-eldoc-hook nil
+;; 		lsp-enable-indentation nil
+;; 		lsp-prefer-capf t
+;; 		read-process-output-max (* 1024 1024)) ;; 1mb (data read from a process)
+;;   ;; lsp-diagnostic-package t ;; prefer flymake
+;;   ;; :init
+;;   ;; (add-hook 'c-mode-common-hook #'lsp-deferred)
+;;   ;; (add-hook 'python-mode-hook #'lsp-deferred)
+;;   :config
+;;   (lsp-register-client
+;;    (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
+;;                     :major-modes '(c-mode c++-mode)
+;;                     :remote? t
+;;                     :server-id 'clangd-remote)))
 
 ;; (use-package consult-lsp :defer t)
 
-(use-package lsp-ui
-  :diminish
-  :after lsp-mode
-  :init
-  ;;(lsp-ui-sideline-delay 1.0)
-  (setq-default lsp-ui-sideline-enable nil
-		lsp-ui-doc-enable nil)
-  :config
-  (which-key-add-keymap-based-replacements lsp-command-map "C-c l u" "lsp-ui")
+;; (use-package lsp-ui
+;;   :diminish
+;;   :after lsp-mode
+;;   :init
+;;   ;;(lsp-ui-sideline-delay 1.0)
+;;   (setq-default lsp-ui-sideline-enable nil
+;; 		lsp-ui-doc-enable nil)
+;;   :config
+;;   (which-key-add-keymap-based-replacements lsp-command-map "C-c l u" "lsp-ui")
 
-  (keymap-set lsp-command-map "u d" #'lsp-ui-peek-find-definitions)
-  (keymap-set lsp-command-map "u r" #'lsp-ui-peek-find-references)
-  (keymap-set lsp-command-map "u i" #'lsp-ui-peek-find-implementation)
-  ;;("s" . lsp-ui-peek-find-workspace-symbol)
-  (keymap-set lsp-command-map "u c" #'lsp-ui-peek-find-custom)
-  ;; imenu
-  (keymap-set lsp-command-map "u m" #'lsp-ui-imenu)
-  ;; flycheck
-  (keymap-set lsp-command-map "u f" #'lsp-ui-flycheck-list)
-  ;; lsp-ui
-  (keymap-set lsp-command-map "u n" #'lsp-ui-find-next-reference)
-  (keymap-set lsp-command-map "u p" #'lsp-ui-find-prev-reference)
-  )
+;;   (keymap-set lsp-command-map "u d" #'lsp-ui-peek-find-definitions)
+;;   (keymap-set lsp-command-map "u r" #'lsp-ui-peek-find-references)
+;;   (keymap-set lsp-command-map "u i" #'lsp-ui-peek-find-implementation)
+;;   ;;("s" . lsp-ui-peek-find-workspace-symbol)
+;;   (keymap-set lsp-command-map "u c" #'lsp-ui-peek-find-custom)
+;;   ;; imenu
+;;   (keymap-set lsp-command-map "u m" #'lsp-ui-imenu)
+;;   ;; flycheck
+;;   (keymap-set lsp-command-map "u f" #'lsp-ui-flycheck-list)
+;;   ;; lsp-ui
+;;   (keymap-set lsp-command-map "u n" #'lsp-ui-find-next-reference)
+;;   (keymap-set lsp-command-map "u p" #'lsp-ui-find-prev-reference)
+;;   )
 
 (use-package tree-sitter :defer t)
 
