@@ -827,6 +827,11 @@ M-<left>' and repeat with M-<left>."
 (keymap-set ctl-x-map "<down>" #'windmove-down)
 (keymap-set ctl-x-map "<up>" #'windmove-up)
 
+(keymap-set ctl-x-map "S-<left>" #'windmove-swap-states-left)
+(keymap-set ctl-x-map "S-<right>" #'windmove-swap-states-right)
+(keymap-set ctl-x-map "S-<down>" #'windmove-swap-states-down)
+(keymap-set ctl-x-map "S-<up>" #'windmove-swap-states-up)
+
 (keymap-set ctl-x-4-map "<left>" #'windmove-display-left)
 (keymap-set ctl-x-4-map "<right>" #'windmove-display-right)
 (keymap-set ctl-x-4-map "<down>" #'windmove-display-down)
