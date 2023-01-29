@@ -135,18 +135,18 @@
 	      package-quickstart t)
 
 ;; Set this BEFORE require use-package
-(defvar my/package-initialized-p nil
-  "Set to true when package where initialized.")
+;; (defvar my/package-initialized-p nil
+;;   "Set to true when package where initialized.")
 
-(defun my/package-install (package)
-  "Conditionally install PACKAGE in debug mode."
-  (when (and init-file-debug
-	     (not (package-installed-p package)))
-    (unless my/package-initialized-p
-      (package-initialize)
-      (package-refresh-contents)
-      (setq my/package-initialized-p t))
-    (package-install package)))
+;; (defun my/package-install (package)
+;;   "Conditionally install PACKAGE in debug mode."
+;;   (when (and init-file-debug
+;; 	     (not (package-installed-p package)))
+;;     (unless my/package-initialized-p
+;;       (package-initialize)
+;;       (package-refresh-contents)
+;;       (setq my/package-initialized-p t))
+;;     (package-install package)))
 
 (eval-and-compile
   (defun my/load-path (path)
@@ -202,7 +202,7 @@ M-<left>' and repeat with M-<left>."
 (if init-file-debug
     (progn
       ;; Install use-package if not installed
-      (my/package-install 'use-package)
+      ;; (my/package-install 'use-package)      ;; use-package is in vanilla
 
       (setq-default use-package-always-ensure t
 		    use-package-enable-imenu-support t
@@ -218,7 +218,8 @@ M-<left>' and repeat with M-<left>."
 		use-package-expand-minimally t
 		native-comp-async-report-warnings-errors 'silent))
 
-(require 'use-package)
+;; use-package is now in vanilla
+;; (require 'use-package)
 
 (use-package esup :defer t)
 
