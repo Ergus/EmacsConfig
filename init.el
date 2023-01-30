@@ -284,6 +284,7 @@ M-<left>' and repeat with M-<left>."
     "C-x x" "buffer"
     "C-x 4" "other-window"
     "C-x 5" "other-frame"
+    "C-x w" "window"
     "C-x C-k" "kmacro"
     ))
 
@@ -373,8 +374,8 @@ M-<left>' and repeat with M-<left>."
 (my/gen-delay-hook conf-mode)
 
 ;; elec-pair
-(eval-after-load 'elec-pair
-  '(add-to-list 'electric-pair-pairs '(?< . ?>) t))
+;; (eval-after-load 'elec-pair
+;;   '(add-to-list 'electric-pair-pairs '(?< . ?>) t))
 
 (defun my/delayed-common-hook ()
   "Enable electric-pair-local-mode"
