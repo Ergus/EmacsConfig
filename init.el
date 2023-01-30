@@ -1045,12 +1045,17 @@ M-<left>' and repeat with M-<left>."
   :doc "Keymap to repeat undo-redo key sequences."
   "u" #'undo
   "r" #'undo-redo)
-(put #'undo-redo 'repeat-map 'undo-redo-repeat-map)
 (put #'undo 'repeat-map 'undo-redo-repeat-map)
+(put #'undo-redo 'repeat-map 'undo-redo-repeat-map)
 
 ;; (use-package undo-propose :defer t)
 
-(use-package vundo :defer t)
+(use-package vundo :defer t
+  :init
+  (setq-default vundo-compact-display t)
+  (keymap-set undo-redo-repeat-map "v" #'vundo)
+  :config
+  (setq vundo-glyph-alist vundo-unicode-symbols))
 
 ;;__________________________________________________________
 ;; Cycle string capitalization for programming:
