@@ -128,33 +128,19 @@
 ;;             my/require-tree)))))
 ;; (advice-add 'require :around 'require--advice)
 
+;; (debug-on-entry #'package--download-one-archive)
+
 (setq-default package-archives '(("gnu" . "https://elpa.gnu.org/packages/") ;; Using Melpa and Elpa
 				 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
 				 ("melpa" . "https://melpa.org/packages/"))
 	      package-native-compile t
 	      package-quickstart t)
 
-;; Set this BEFORE require use-package
-;; (defvar my/package-initialized-p nil
-;;   "Set to true when package where initialized.")
-
-;; (defun my/package-install (package)
-;;   "Conditionally install PACKAGE in debug mode."
-;;   (when (and init-file-debug
-;; 	     (not (package-installed-p package)))
-;;     (unless my/package-initialized-p
-;;       (package-initialize)
-;;       (package-refresh-contents)
-;;       (setq my/package-initialized-p t))
-;;     (package-install package)))
-
 (eval-and-compile
   (defun my/load-path (path)
   "Return the PATH if exist or nil."
   (and (file-exists-p path)
        (add-to-list 'load-path path))))
-
-;; (debug-on-entry #'package--download-one-archive)
 
 (defmacro my/gen-delay-hook (mode-name)
   "Generate delayed hook for MODE-NAME."
@@ -201,9 +187,6 @@ M-<left>' and repeat with M-<left>."
 
 (if init-file-debug
     (progn
-      ;; Install use-package if not installed
-      ;; (my/package-install 'use-package)      ;; use-package is in vanilla
-
       (setq-default use-package-always-ensure t
 		    use-package-enable-imenu-support t
 		    use-package-verbose t
@@ -217,9 +200,6 @@ M-<left>' and repeat with M-<left>."
 		use-package-verbose nil
 		use-package-expand-minimally t
 		native-comp-async-report-warnings-errors 'silent))
-
-;; use-package is now in vanilla
-;; (require 'use-package)
 
 (use-package esup :defer t)
 
