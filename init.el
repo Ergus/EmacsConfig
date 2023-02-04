@@ -1350,10 +1350,6 @@ M-<left>' and repeat with M-<left>."
 ;;   (keymap-set lsp-command-map "u p" #'lsp-ui-find-prev-reference)
 ;;   )
 
-(use-package tree-sitter :defer t)
-
-(use-package tree-sitter-langs :after tree-sitter)
-
 ;;__________________________________________________________
 ;; C common mode (for all c-like languajes)
 (defun ms-space-for-alignment-hook ()
@@ -1413,8 +1409,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 				 brace-elseif-brace ;; } else if {
 				 defun-close-semi   ;; }; after class
 				 )
-		 (c-hanging-braces-alist (defun-open before after)
-					 (brace-list-open)
+		 (c-hanging-braces-alist (defun-open before after) ;; function\n{\n
+					 (brace-list-open)         ;; brace
 					 (brace-entry-open)
 					 (substatement-open after)
 					 (namespace-open after)
@@ -1474,7 +1470,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; sh mode
-
 (defvaralias 'sh-basic-offset 'tab-width)
 
 (add-hook 'sh-mode-hook (lambda nil
@@ -1494,9 +1489,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; Markdown mode
 (use-package markdown-mode
-  :mode (("README\\.md\\'" . gfm-mode)
-	 ("\\.md\\'" . markdown-mode)
-	 ("\\.markdown\\'" . markdown-mode))
+  :mode (("README\\.md\\'" . gfm-mode))
   :init
   (setq-default markdown-indent-on-enter nil))
 
@@ -1508,16 +1501,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; ruby-mode
+;; Remap ruby-mode with the tree-sitter alternative
 (setq-default ruby-indent-level 2)
 (add-to-list 'auto-mode-alist '("\\.rjs\\'" . ruby-mode))
 
-;; (use-package ruby-tools :defer t
+;; (use-package ruby-electric :defer t
 ;;   :init
-;;   (add-hook 'ruby-mode-hook #'ruby-tools-mode))
-
-(use-package ruby-electric :defer t
-  :init
-  (add-hook 'ruby-mode-hook  #'ruby-electric-mode))
+;;   (add-hook 'ruby-mode-hook  #'ruby-electric-mode))
 
 ;;__________________________________________________________
 ;; Julia Mode
@@ -1530,12 +1520,13 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Rust Mode
-(use-package rust-mode
-  :mode "\\.rs\\'")
+;; There is a tree-sitter module for this, I will try that
+;; (use-package rust-mode
+;;   :mode "\\.rs\\'")
 
-(use-package flycheck-rust :defer t
-  :init
-  (add-hook 'rust-mode-hook #'flycheck-rust-setup))
+;; (use-package flycheck-rust :defer t
+;;   :init
+;;   (add-hook 'rust-mode-hook #'flycheck-rust-setup))
 
 ;;__________________________________________________________
 ;; Ocaml Mode
@@ -1551,9 +1542,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Go languaje
-(use-package go-mode :defer t
-  :init
-  (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode)))
+;; (use-package go-mode :defer t
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode)))
 
 ;;__________________________________________________________
 ;; lua language
@@ -1578,20 +1569,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; haskell mode
 (use-package haskell-mode :defer t)
-
-;;__________________________________________________________
-;; Use for Qt's .pro and .pri files (QT uses cmake now)
-
-;; (use-package qt-pro-mode :defer t
-;;   :init
-;;   (add-to-list 'auto-mode-alist '("\\.pr[io]\\'" . qt-pro-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.moc\\'" . c++-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.ui\\'" . xml-mode)))
-
-;;__________________________________________________________
-;; javascript-mode
-;; (use-package js-mode :ensure nil
-;;   :mode ("\\.js\\'"))
 
 ;;__________________________________________________________
 ;; xml-mode
@@ -1849,16 +1826,16 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Python mode
-(setq-default python-shell-interpreter "ipython3"
-	      python-shell-interpreter-args "-i --simple-prompt"
-	      python-shell-prompt-detect-failure-warning nil
+;; There is a tree-sitter module for this, I will try that
+
+(setq-default python-shell-interpreter "ipython"
+              python-shell-interpreter-args "-i --simple-prompt"
+	      ;;python-shell-prompt-detect-failure-warning nil
 	      python-check-command "pyflakes"
 	      flycheck-python-flake8-executable "flake8")
 
 (eval-after-load 'python
   '(keymap-set python-mode-map "C-c C-z" #'python-shell))
-;;(add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode))
-;;(add-to-list 'interpreter-mode-alist '("python3" . python-mode))
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
@@ -2113,20 +2090,20 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; CMake
-(use-package cmake-mode :defer t
-  :init
-  (add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
-  (add-to-list 'auto-mode-alist '("\\.cmake(.in)?\\'" . cmake-mode)))
+;; (use-package cmake-mode :defer t
+;;   :init
+;;   (add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
+;;   (add-to-list 'auto-mode-alist '("\\.cmake(.in)?\\'" . cmake-mode)))
 
-(use-package cmake-font-lock :defer t
-  :preface
-  (defun my/cmake-font-lock ()
-    (let ((auto-refresh-defaults (boundp 'font-lock-keywords)))
-      (cmake-font-lock-activate)
-      (when auto-refresh-defaults
-	(font-lock-refresh-defaults))))
-  :init
-  (add-hook 'cmake-mode-hook #'my/cmake-font-lock))
+;; (use-package cmake-font-lock :defer t
+;;   :preface
+;;   (defun my/cmake-font-lock ()
+;;     (let ((auto-refresh-defaults (boundp 'font-lock-keywords)))
+;;       (cmake-font-lock-activate)
+;;       (when auto-refresh-defaults
+;; 	(font-lock-refresh-defaults))))
+;;   :init
+;;   (add-hook 'cmake-mode-hook #'my/cmake-font-lock))
 
 ;;__________________________________________________________
 ;; Cobol
@@ -2341,21 +2318,22 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Web mode
-(use-package web-mode
-  :mode ("\\.\\(p\\|dj\\)?html\\'"
-	 "\\(\\.tpl\\)?\\.php\\'" "\\.[agj]sp\\'"
-	 "\\.as[cp]x\\'" "\\.erb\\'")
-  :init
-  (setq-default web-mode-markup-indent-offset tab-width
-		web-mode-css-indent-offset tab-width
-		web-mode-code-indent-offset tab-width
-		web-mode-enable-auto-pairing t
-		web-mode-enable-auto-closing t
-		web-mode-enable-css-colorization t))
+;; I will use the tree-sitter alternative because web-mode is very intrusive
+;; (use-package web-mode
+;;   :mode ("\\.\\(p\\|dj\\)?html\\'"
+;; 	 "\\(\\.tpl\\)?\\.php\\'" "\\.[agj]sp\\'"
+;; 	 "\\.as[cp]x\\'" "\\.erb\\'")
+;;   :init
+;;   (setq-default web-mode-markup-indent-offset tab-width
+;; 		web-mode-css-indent-offset tab-width
+;; 		web-mode-code-indent-offset tab-width
+;; 		web-mode-enable-auto-pairing t
+;; 		web-mode-enable-auto-closing t
+;; 		web-mode-enable-css-colorization t))
 
-(use-package company-web :defer t
-  :hook (web-mode . (lambda nil
-		      (my/company-backend-after-load #'company-web-html))))
+;; (use-package company-web :defer t
+;;   :hook (web-mode . (lambda nil
+;; 		      (my/company-backend-after-load #'company-web-html))))
 
 ;;__________________________________________________________
 ;; nginx mode
@@ -2373,7 +2351,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 ;;__________________________________________________________
 ;; json mode
 
-;; There is a native mode for json files... I will try that 
+;; There is a tree-sitter module for this, I will try that
 ;; (use-package json-mode
 ;;   :mode "\\.json\\'"
 ;;   :preface
@@ -2395,11 +2373,14 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; yaml mode
-(use-package yaml-mode
-  :mode "\\.yaml\\'"
-  :preface
-  (my/gen-delay-hook yaml-mode))
+;; There is a tree-sitter module for this, I will try that
+;; (use-package yaml-mode
+;;   :mode "\\.yaml\\'"
+;;   :preface
+;;   (my/gen-delay-hook yaml-mode))
 
+
+;;__________________________________________________________
 (use-package sudo-edit :defer t)
 
 (use-package evil :defer t
@@ -2474,6 +2455,50 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (fancy-compilation-mode))
 
 (use-package debbugs :defer t)
+
+;;__________________________________________________________
+;; Enable tree-sitter for some modes by default if the tree-sitter
+;; directory exists
+
+(when (file-exists-p (expand-file-name "tree-sitter" user-emacs-directory))
+
+  (setq-default toml-ts-mode-indent-offset 4
+		cmake-ts-mode-indent-offset 4
+		json-ts-mode-indent-offset 4)
+
+  (add-to-list 'major-mode-remap-alist '(conf-toml-mode . toml-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(ruby-mode . ruby-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(javascript-mode . js-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(cmake-mode . cmake-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(css-mode . css-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(js-json-mode . json-ts-mode))
+
+  (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.html\\'" . html-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
+
+  (add-to-list 'auto-mode-alist '("\\.\\(ba\\)?sh\\'" . bash-ts-mode))
+
+  (add-to-list 'auto-mode-alist
+               ;; NOTE: We can't use `rx' here, as it breaks bootstrap.
+               '("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
+                 . dockerfile-ts-mode))
+
+  ;; (setq-default c-ts-mode-indent-style 'linux
+  ;; 	      c-ts-mode-indent-offset 4)
+
+  ;; (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+  ;; (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
+  ;; (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
+  ;; (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
+  ;; (add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
+  )
+
+;;__________________________________________________________
 
 (provide 'init)
 
