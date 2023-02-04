@@ -747,9 +747,15 @@ M-<left>' and repeat with M-<left>."
 ;; The Colors I am using my own theme
 (load-theme 'simple-16)
 
-(if (and (display-graphic-p)
-	 (member "Hack" (font-family-list)))
-    (set-face-attribute 'default nil :family "Hack" :height 105))
+(defun my/set-font ()
+  "Conditionally set the Hack font."
+  (and (display-graphic-p)
+       (member "Hack" (font-family-list))
+       (set-face-attribute 'default nil :family "Hack" :height 105)))
+
+(if (daemonp)
+    (add-hook 'server-after-make-frame-hook #'my/set-font)
+  (my/set-font))
 
 (defalias 'my/named-color 'simple-16-theme-color)
 
