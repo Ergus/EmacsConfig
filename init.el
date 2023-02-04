@@ -525,7 +525,6 @@ M-<left>' and repeat with M-<left>."
   "C-<right>" #'project-next-buffer
   "C-<left>" #'project-previous-buffer)
 
-
 ;; These two must be enabled/disabled together
 ;; (setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
 ;; (minibuffer-depth-indicate-mode 1)            ;; Mostrar nivel de nesting en minibuffer
@@ -789,9 +788,10 @@ M-<left>' and repeat with M-<left>."
 	      )
 
 (with-eval-after-load 'tramp
-  ;; (connection-local-set-profile-variables 'my/tramp-profile
-  ;; 					  '((auth-sources . nil)))
-  ;; (connection-local-set-profiles '(:application tramp) 'my/tramp-profile)
+  ;; Tramp don't read the auth-sources on sudo-edit
+  (connection-local-set-profile-variables 'my/tramp-profile
+					  '((auth-sources . nil)))
+  (connection-local-set-profiles '(:application tramp :protocol "sudo") 'my/tramp-profile)
 
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
   (add-to-list 'tramp-remote-process-environment
@@ -802,6 +802,9 @@ M-<left>' and repeat with M-<left>."
 	 ("/sshd?_config\\'" . ssh-config-mode)
 	 ("/known_hosts\\'" . ssh-known-hosts-mode)
 	 ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
+
+;; Edit files as sudo
+(use-package sudo-edit :defer t)
 
 ;; ssh deploy
 ;; (use-package ssh-deploy :defer t
@@ -2387,7 +2390,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 
 ;;__________________________________________________________
-(use-package sudo-edit :defer t)
 
 (use-package evil :defer t
   :init
