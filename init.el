@@ -130,17 +130,11 @@
 
 ;; (debug-on-entry #'package--download-one-archive)
 
-(setq-default package-archives '(("gnu" . "https://elpa.gnu.org/packages/") ;; Using Melpa and Elpa
-				 ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-				 ("melpa" . "https://melpa.org/packages/"))
-	      package-native-compile t
+(setq-default package-native-compile t
 	      package-quickstart t)
 
-(eval-and-compile
-  (defun my/load-path (path)
-  "Return the PATH if exist or nil."
-  (and (file-exists-p path)
-       (add-to-list 'load-path path))))
+(eval-after-load 'package
+  '(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
 (defmacro my/gen-delay-hook (mode-name)
   "Generate delayed hook for MODE-NAME."
@@ -1980,7 +1974,8 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package gtags-mode :defer t
   :preface
-  (my/load-path "/mnt/casa/gits/emacs_clones/gtags-mode/")
+  (when (file-exists-p "/mnt/casa/gits/emacs_clones/gtags-mode/")
+    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/gtags-mode/"))
   :init
   (setq-default gtags-mode-lighter "")
   :hook ((emacs-startup . gtags-mode)))
