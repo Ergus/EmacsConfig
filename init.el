@@ -641,12 +641,13 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; Paradox
-(use-package paradox :defer t
-  :init
-  (setq-default paradox-spinner-type 'progress-bar
-		paradox-display-download-count t
-		paradox-display-star-count t
-		paradox-github-token t))
+;; This package has been archived, so, not maintained anymore
+;; (use-package paradox :defer t
+;;   :init
+;;   (setq-default paradox-spinner-type 'progress-bar
+;; 		paradox-display-download-count t
+;; 		paradox-display-star-count t
+;; 		paradox-github-token t))
 ;;__________________________________________________________
 ;; Isearch
 
@@ -1423,6 +1424,9 @@ non-nil and probably assumes that `c-basic-offset' is the same as
     ;; (hide-ifdef-mode 1)
     (subword-mode 1))
   (add-hook 'c-mode-common-hook #'my/c-mode-common-hook))
+
+(use-package google-c-style :defer t
+  :after cc-mode)
 
 ;; (use-package preproc-font-lock :defer t ;; Preprocessor
 ;;   :init
