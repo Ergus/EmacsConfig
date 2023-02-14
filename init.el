@@ -835,6 +835,8 @@ M-<left>' and repeat with M-<left>."
   :doc "A keymap that emulates some of the tmux bindings."
   "i" #'tab-new
   "k" #'tab-close
+  "1" #'tab-close-other
+  "r" #'tab-rename
   "0" (cons "windmove-delete" my/0-map)
   "v" #'split-window-below
   "h" #'split-window-right
@@ -846,7 +848,7 @@ M-<left>' and repeat with M-<left>."
   "<down>" #'windmove-down
   "<up>" #'windmove-up)
 
-;; Add repetable bindings to my/tmux-like-keymap
+;; Add repeatable bindings to my/tmux-like-keymap
 (my/repeat-keymap my/tmux-repeat-map my/tmux-like-keymap
   :doc "Repeat map for tmux prefix"
   "C-<left>" #'tab-previous
@@ -859,8 +861,7 @@ M-<left>' and repeat with M-<left>."
   "S-<down>" #'windmove-swap-states-down
   "S-<up>" #'windmove-swap-states-up)
 
-(keymap-global-set "C-z" `("tmux-like-keymap" . ,my/tmux-like-keymap))
-
+(keymap-global-set "C-z" my/tmux-like-keymap)
 
 ;;__________________________________________________________
 ;; Two options for diffs
