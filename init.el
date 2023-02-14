@@ -2443,6 +2443,11 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 (use-package debbugs :defer t)
 
+(use-package goto-chg
+  :defer t
+  :init
+  (keymap-global-set "C-x r a" #'goto-last-change))
+
 ;;__________________________________________________________
 ;; Enable tree-sitter for some modes by default if the tree-sitter
 ;; directory exists
