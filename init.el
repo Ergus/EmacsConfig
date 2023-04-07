@@ -79,7 +79,7 @@
 
 	      eval-expression-print-length nil
 	      eval-expression-print-level nil
-	      enable-remote-dir-locals t              ;; Open remote dir locals.
+	      enable-remote-dir-locals t              ;; Open remote dir locals in remote files.
 
 	      suggest-key-bindings t                  ;; Ivy ya hace lo que esta opcion
 	      truncate-lines t
@@ -180,14 +180,13 @@ M-<left>' and repeat with M-<left>."
 	 (append sets puts))))
 
 (if init-file-debug
-    (progn
-      (setq-default use-package-always-ensure t
-		    use-package-enable-imenu-support t
-		    use-package-verbose t
-		    use-package-expand-minimally nil
-		    use-package-compute-statistics t
-		    debug-on-error t
-		    native-comp-async-report-warnings-errors t))
+    (setq-default use-package-always-ensure t
+		  use-package-enable-imenu-support t
+		  use-package-verbose t
+		  use-package-expand-minimally nil
+		  use-package-compute-statistics t
+		  debug-on-error t
+		  native-comp-async-report-warnings-errors t)
 
   (setq-default use-package-always-ensure nil
 		use-package-enable-imenu-support nil
@@ -384,7 +383,10 @@ M-<left>' and repeat with M-<left>."
 (setq-default winner-dont-bind-my-keys t)
 (winner-mode t)
 
-(my/repeat-keymap winner-repeat-map ctl-x-4-map
+;; There is already a winner-repeat-map with different bindings
+;; so I cannot use the same, becaus eas it is loaded latter,
+;; it will be overwritten
+(my/repeat-keymap my/winner-repeat-map ctl-x-4-map
   :doc "Repeat map for `winner' commands."
   "u"  #'winner-undo
   "r"  #'winner-redo)
@@ -456,10 +458,10 @@ M-<left>' and repeat with M-<left>."
 	      dabbrev-select-buffers-function #'my/dabbrev--select-project-buffers)
 
 ;; completion
-(setq-default completion-show-help nil           ;; Don't show help in completion buffer
-	      completion-auto-help 'visible
-	      completion-auto-select 'second-tab
-	      completion-wrap-movement t
+(setq-default completion-show-help nil           ;; Don't show help header in completion buffer
+	      completion-auto-help 'visible      ;; Update completions when visible and no hide
+	      completion-auto-select 'second-tab ;; Show completions on second tab
+	      completion-wrap-movement t         ;; wrap movement
 	      completions-detailed t             ;; show more detailed completions
 	      completions-format 'one-column     ;; Vertical completion list
 	      completions-max-height 15
