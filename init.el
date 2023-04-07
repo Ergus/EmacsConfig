@@ -723,13 +723,18 @@ M-<left>' and repeat with M-<left>."
 
 (defun my/set-font ()
   "Conditionally set the Hack font."
-  (and (display-graphic-p)
-       (member "Hack" (font-family-list))
-       (set-face-attribute 'default nil :family "Hack" :height 105)))
+  (cond
+   ((member "Hack" (font-family-list))
+    (set-face-attribute 'default nil :family "Hack" :height 105))
+   ((member "Cascadia Mono" (font-family-list))
+    (set-face-attribute 'default nil :family "Cascadia Mono" :height 105))))
 
-(if (daemonp)
-    (add-hook 'server-after-make-frame-hook #'my/set-font)
-  (my/set-font))
+(cond
+ ((daemonp) (add-hook 'server-after-make-frame-hook
+		      (lambda ()
+			(when (display-graphic-p)
+			  (my/set-font)))))
+ ((display-graphic-p) (my/set-font)))
 
 (defalias 'my/named-color 'simple-16-theme-color)
 
