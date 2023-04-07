@@ -1490,8 +1490,7 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Cuda
-(use-package cuda-mode
-  :mode "\\.cu\\'")
+(use-package cuda-mode :defer t)
 
 ;;__________________________________________________________
 ;; OpenCL Mode
@@ -1523,12 +1522,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Julia Mode
-(use-package julia-mode
-  :mode "\\.jl\\'")
+;; There is a tree-sitter mode for this, I will try that
+;; (use-package julia-mode
+;;   :mode "\\.jl\\'")
 
-(use-package flycheck-julia :defer t
-  :init
-  (add-hook 'julia-mode-hook #'flycheck-julia-setup))
+;; (use-package flycheck-julia :defer t
+;;   :init
+;;   (add-hook 'julia-mode-hook #'flycheck-julia-setup))
+
+(use-package julia-ts-mode :defer t)
 
 ;;__________________________________________________________
 ;; Rust Mode
@@ -2382,7 +2384,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
 
 ;;__________________________________________________________
 ;; Protobuf mode
-(use-package protobuf-mode :defer t)
+;; There is a tree-sitter module for this, I will try that
+;; (use-package protobuf-mode :defer t)
+
+(use-package protobuf-ts-mode :defer t)
 
 ;;__________________________________________________________
 ;; yaml mode
@@ -2465,6 +2470,10 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :after compile
   :config
   (fancy-compilation-mode))
+
+(use-package compile-multi :defer t)
+
+(use-package scopeline :defer t)
 
 (use-package debbugs :defer t)
 
