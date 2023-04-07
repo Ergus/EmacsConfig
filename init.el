@@ -325,6 +325,7 @@ M-<left>' and repeat with M-<left>."
 ;; autorevert
 (setq-default ffap-machine-p-known 'accept   ;; stop ffap from pinging random hosts
 	      ffap-require-prefix t          ;; require prefix for ffap
+	      dired-at-point-require-prefix t ;; Como ffap-require-prefix para directorios
 	      auto-revert-verbose nil        ;; not show message when file changes
 	      auto-revert-mode-text ""
 	      auto-revert-avoid-polling t)   ;; don't do pooling for autorevert (use notifications).)
@@ -538,9 +539,10 @@ M-<left>' and repeat with M-<left>."
 (add-hook 'completion-setup-hook #'my/completion-setup-hook 10)
 
 (defconst my/display-buffer-at-bottom
-  '((display-buffer-reuse-window display-buffer-at-bottom)
-    (dedicated . t)
-    (window-height . 0.3)))
+  '((display-buffer-reuse-window display-buffer-at-bottom) .
+    ((unsplittable . t)
+     (dedicated . t)
+     (window-height . 0.3))))
 
 ;;__________________________________________________________
 ;; Completion with vertico/consult/orderless/embark
@@ -771,6 +773,10 @@ M-<left>' and repeat with M-<left>."
 ;; compile
 (setq-default compilation-scroll-output 'first-error
 	      compilation-always-kill t)
+
+;;; Display compilation buffer at buttom
+(add-to-list 'display-buffer-alist
+	     `("*compilation*" . ,my/display-buffer-at-bottom))
 
 ;;__________________________________________________________
 ;; ssh
