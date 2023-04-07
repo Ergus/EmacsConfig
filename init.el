@@ -194,6 +194,11 @@ M-<left>' and repeat with M-<left>."
 		use-package-expand-minimally t
 		native-comp-async-report-warnings-errors 'silent))
 
+(defun my/find-init ()
+  "Open the init file to edit it."
+  (interactive)
+  (find-file user-init-file))
+
 (use-package esup :defer t)
 
 ;;__________________________________________________________
@@ -471,6 +476,18 @@ M-<left>' and repeat with M-<left>."
 	      read-file-name-completion-ignore-case t
 	      read-buffer-completion-ignore-case t
 	      completion-ignore-case t)
+
+(defun my/fido-mode ()
+  "Command to toggle fido-vertial-mode and disable completions."
+  (interactive)
+  (if (or fido-mode fido-vertical-mode)
+      (progn
+	(fido-vertical-mode -1)
+	(fido-mode -1)
+	(setq completion-auto-help 'visible))
+
+    (fido-vertical-mode 1)
+    (setq completion-auto-help nil)))
 
 ;; project
 (setq-default project-vc-include-untracked nil)
