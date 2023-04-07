@@ -2454,6 +2454,19 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :init
   (keymap-global-set "C-x r a" #'goto-last-change))
 
+(use-package citre :defer t
+  :commands (citre-update-tags-file
+	     citre-update-this-tags-file
+	     citre-edit-tags-file-recipe
+	     citre-create-tags-file
+	     citre-global-create-database
+	     citre-global-update-database)
+  :init
+  (with-eval-after-load 'cc-mode
+    (require 'citre-lang-c))
+  (with-eval-after-load 'dired
+    (require 'citre-lang-fileref)))
+
 ;;__________________________________________________________
 ;; Enable tree-sitter for some modes by default if the tree-sitter
 ;; directory exists
