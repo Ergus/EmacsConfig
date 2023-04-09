@@ -19,7 +19,7 @@
   (add-hook 'window-setup-hook #'profiler-stop 0))
 
 (defconst file-name-handler-alist-save file-name-handler-alist)
-(defconst my/gc-cons-threshold (* 2 gc-cons-threshold))
+(defconst my/gc-cons-threshold (* 4 gc-cons-threshold))
 
 (defsubst my/unset-gc ()
   "Disable the gc."
@@ -29,7 +29,7 @@
 (defsubst my/restore-gc ()
   "Restore the gc."
   (setq gc-cons-threshold my/gc-cons-threshold
-	gc-cons-percentage 0.1))
+	gc-cons-percentage 0.15))
 
 (setq-default file-name-handler-alist nil
 	      message-log-max 16384)
@@ -43,10 +43,11 @@
 	    ;; (garbage-collect)
 	    (let ((curtime (current-time)))
 
-	      (message "Times: init:%.06f total:%.06f gc-done:%d"
+	      (message "Times: init:%.06f total:%.06f gc-done:%d (%s)"
 		       (float-time (time-subtract after-init-time before-init-time))
 		       (float-time (time-subtract curtime before-init-time))
-		       gcs-done)))
+		       gcs-done
+		       (format-time-string "%I:%M:S %d/%m/%Y" curtime))))
 	  90)
 
 (if (fboundp #'tool-bar-mode)
