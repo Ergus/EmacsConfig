@@ -58,6 +58,12 @@
  `(font-lock-string-face ((t :foreground ,(simple-16-theme-color red))))
  `(font-lock-type-face ((t :foreground ,(simple-16-theme-color green))))
  `(font-lock-variable-name-face ((t :foreground ,(simple-16-theme-color white))))
+ ;; New ts faces
+ `(font-lock-function-call-face ((t :foreground ,(simple-16-theme-color magenta))))
+ `(font-lock-number-face ((t :foreground ,(simple-16-theme-color red))))
+ `(font-lock-variable-name-face ((t :foreground ,(simple-16-theme-color green))))
+ `(font-lock-variable-use-face ((t :foreground ,(simple-16-theme-color cyan))))
+ `(font-lock-property-name-face ((t :foreground ,(simple-16-theme-color green))))
 
  `(highlight ((default :background ,(simple-16-theme-color blue) :foreground unspecified)
 	      (((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
