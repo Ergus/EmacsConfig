@@ -1405,7 +1405,7 @@ M-<left>' and repeat with M-<left>."
 ;;   )
 
 ;;__________________________________________________________
-;; C common mode (for all c-like languajes)
+;; C common mode (for all c-like languages)
 (defun ms-space-for-alignment-hook ()
   "Make the current line use tabs for indentation and spaces for alignment.
 
@@ -1706,18 +1706,18 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   :config
   (which-key-add-keymap-based-replacements flycheck-mode-map "C-c a" "flycheck"))
 
-(setq-default flymake-no-changes-timeout 1
+(setq-default flymake-no-changes-timeout 1.0
 	      flymake-wrap-around nil
+	      flymake-show-diagnostics-at-end-of-line t  ;; I want to try that
 	      flymake-mode-line-format nil)
 
 (with-eval-after-load 'flymake
-  (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
+  ;; (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
   (defvar-keymap flymake-basic-map
     :doc "The base keymap for `flymake-mode'."
     "d" #'flymake-show-diagnostic
     "b" #'flymake-show-buffer-diagnostics
-    "l" #'flymake-switch-to-log-buffer
-    "k" #'consult-flymake)
+    "l" #'flymake-switch-to-log-buffer)
 
   (my/repeat-keymap flymake-repeat-map flymake-basic-map
     "n" #'flymake-goto-next-error
@@ -2554,13 +2554,15 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (add-to-list 'major-mode-remap-alist '(ruby-mode . ruby-ts-mode))
   (add-to-list 'major-mode-remap-alist '(javascript-mode . js-ts-mode))
   (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(cmake-mode . cmake-ts-mode))
   (add-to-list 'major-mode-remap-alist '(css-mode . css-ts-mode))
   (add-to-list 'major-mode-remap-alist '(js-json-mode . json-ts-mode))
 
+  (add-to-list 'auto-mode-alist
+               '("\\(?:CMakeLists\\.txt\\|\\.cmake\\)\\'" . cmake-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.html\\'" . html-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
+  (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
@@ -2568,7 +2570,6 @@ non-nil and probably assumes that `c-basic-offset' is the same as
   (add-to-list 'auto-mode-alist '("\\.\\(ba\\)?sh\\'" . bash-ts-mode))
 
   (add-to-list 'auto-mode-alist
-               ;; NOTE: We can't use `rx' here, as it breaks bootstrap.
                '("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
                  . dockerfile-ts-mode))
 
