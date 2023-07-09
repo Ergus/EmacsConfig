@@ -571,10 +571,13 @@ M-<left>' and repeat with M-<left>."
 (add-hook 'completion-setup-hook #'my/completion-setup-hook 10)
 
 (defconst my/display-buffer-at-bottom
-  '((display-buffer-reuse-window display-buffer-at-bottom) .
-    ((unsplittable . t)
-     (dedicated . t)
-     (window-height . 0.3))))
+  '((display-buffer-reuse-mode-window display-buffer-at-bottom)
+    (dedicated . t)
+    (window-height . 0.3)
+    (window-width . 1.0)
+    (preserve-size . (t . t))
+    (inhibit-same-window . t))
+  "Windows configuration for display-buffer-alist")
 
 ;;__________________________________________________________
 ;; Completion with vertico/consult/orderless/embark
@@ -807,8 +810,12 @@ M-<left>' and repeat with M-<left>."
 	      compilation-always-kill t)
 
 ;;; Display compilation buffer at buttom
-(add-to-list 'display-buffer-alist
-	     `("*compilation*" . ,my/display-buffer-at-bottom))
+(add-to-list 'display-buffer-alist `("*compilation*" . ,my/display-buffer-at-bottom))
+
+(with-eval-after-load 'compile
+  (add-hook 'compilation-mode-hook
+	    (lambda ()
+	      (setq window-size-fixed 'width))))
 
 ;;__________________________________________________________
 ;; ssh
