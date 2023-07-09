@@ -1450,6 +1450,34 @@ non-nil and probably assumes that `c-basic-offset' is the same as
       (add-hook 'c-special-indent-hook #'ms-space-for-alignment-hook nil t)
     (remove-hook 'c-special-indent-hook #'ms-space-for-alignment-hook t)))
 
+;;==============================
+;; Special function to (un)indent nested namespaces in C++
+
+(defun ms-unindent-nested-namespace ()
+  "Indent namespaces properly.
+Nested namespaces should not be indented with new indentations."
+  (save-excursion
+    (back-to-indentation)
+    (let ((initial-pos (point))
+          (syn-elt (car c-syntactic-context)))
+      (when (and (eq (c-langelem-sym syn-elt) 'innamespace)
+                 (looking-at-p "namespace[[:blank:]]+[[:alnum:]:]+[[:space:]]*{")
+                 (re-search-backward "namespace[[:blank:]]+[[:alnum:]:]+[[:space:]]*{" nil t))
+        (let ((end (point))
+              (start (line-beginning-position)))
+          (goto-char initial-pos)
+          (delete-horizontal-space)
+          (insert-buffer-substring-no-properties (current-buffer) start end)
+          )))))
+
+(define-minor-mode c++-unindent-namespace-mode
+  "Enable indent with tabs align with spaces."
+  :global nil
+  :init-value nil
+  (if c++-unindent-namespace-mode
+      (add-hook 'c-special-indent-hook #'ms-unindent-nested-namespace nil t)
+    (remove-hook 'c-special-indent-hook #'ms-unindent-nested-namespace t)))
+
 ;;====================
 ;; cc-mode
 (setq-default c-default-style '((java-mode . "java")
