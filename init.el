@@ -341,8 +341,40 @@ M-<left>' and repeat with M-<left>."
   (recentf-mode 1)
   (run-with-idle-timer 10 nil #'recentf-cleanup))
 
-;; profiler
+;;__________________________________________________________
+;; Profiler
 (add-hook 'profiler-report-mode-hook #'hl-line-mode)
+
+(autoload #'profiler-running-p "profiler")
+(defvar my/profile-start-time nil)
+(defvar my/profile-start-gcs-done nil)
+(defvar my/profile-start-gcs-elapsed nil)
+
+(defun my/profiler-toggle ()
+  (interactive)
+  (if (profiler-running-p 'cpu)
+      (progn
+	(profiler-stop)
+	(message "Profiled: %s secs & %s gcs-done %s gcs-elapsed"
+		 (time-subtract (current-time) my/profile-start-time)
+		 (- gcs-done my/profile-start-gcs-done)
+		 (- gc-elapsed my/profile-start-gcs-elapsed))
+	(profiler-report))
+
+    (profiler-reset)
+    (garbage-collect)
+    (setq my/profile-start-time (current-time)
+	  my/profile-start-gcs-done gcs-done
+	  my/profile-start-gcs-elapsed gc-elapsed)
+    (profiler-start 'cpu)))
+
+(keymap-global-set "M-P" 'my/profiler-toggle)
+
+(defun my/package-delete (pkg)
+  "Remove package PKG if it is installed."
+  (when (package-installed-p pkg)
+    (package-delete (package-get-descriptor pkg))))
+
 
 ;; Shows the function in spaceline
 (eval-after-load 'which-func '(diminish 'which-func-mode))
