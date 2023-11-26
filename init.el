@@ -51,6 +51,7 @@
 	      jit-lock-defer-time 0                   ;; similar to redisplay-skip-fontification-on-input
 	                                              ;; This should make input smoother
 
+	      x-stretch-cursor t                  ;; Draw cursor as wide as the gliph below
 	      scroll-error-top-bottom t           ;; Move cursor before error scroll
 	      scroll-preserve-screen-position t   ;; Cursor keeps screen pos
 	      scroll-margin 1                     ;; Margen al borde
@@ -103,12 +104,14 @@
 	      help-window-select t                  ;; always select help windoes
 	      help-window-keep-selected t           ;; Reuse *help* buffer when available
 	      history-delete-duplicates t           ;; delete duplicates in commands history
+	      history-length 200
 	      find-library-include-other-files nil  ;; find-library only shows libraries, not random files.
 	      view-read-only t                      ;; buffers visiting files read-only do so in view mode
 	      kill-read-only-ok t                   ;; don’t signal an error for killing read-only text.
 	      debugger-stack-frame-as-list t        ;; display call stack frames as lists.
 	      async-shell-command-display-buffer nil ;;command buffer wait until there is output
 	      shell-kill-buffer-on-exit t
+	      large-file-warning-threshold nil
 	      )
 
 ;; Vertical window divider
@@ -468,7 +471,11 @@ M-<left>' and repeat with M-<left>."
 ;; vc
 (setq-default vc-follow-symlinks t          ;; Open links not open
 	      vc-handled-backends '(Git Hg) ;; Only git or mercurial
-	      vc-display-status nil)        ;; No info on the modeline.
+	      vc-display-status nil         ;; No info on the modeline.
+	      vc-ignore-dir-regexp (format "\\(%s\\)\\|\\(%s\\)"
+					   vc-ignore-dir-regexp
+					   tramp-file-name-regexp)
+	      )
 (which-key-add-key-based-replacements "C-x v" "vc")
 
 ;; Context Menu
@@ -498,10 +505,11 @@ M-<left>' and repeat with M-<left>."
 ;; completion
 (setq-default completion-show-help nil           ;; Don't show help header in completion buffer
 	      completion-auto-help 'visible      ;; Update completions when visible and no hide
-	      completion-auto-select 'second-tab ;; Show completions on second tab
-	      completion-wrap-movement t         ;; wrap movement
+	      ;; completion-auto-select 'second-tab ;; Show completions on second tab (default nil)
+	      minibuffer-visible-completions t
+	      completion-auto-wrap t         ;; wrap movement
 	      completions-detailed t             ;; show more detailed completions
-	      completions-format 'one-column     ;; Vertical completion list
+	      ;; completions-format 'one-column     ;; Vertical completion list
 	      completions-max-height 15
 	      completion-styles '(substring partial-completion emacs22)
 	      ;; M-x show context-local commands
@@ -523,7 +531,8 @@ M-<left>' and repeat with M-<left>."
     (setq completion-auto-help nil)))
 
 ;; project
-(setq-default project-vc-include-untracked nil)
+(setq-default project-vc-include-untracked nil
+	      project-mode-line t)
 
 ;; {previous,next}-buffer only move within this project
 (defun with-current-project (funct)
@@ -821,13 +830,15 @@ M-<left>' and repeat with M-<left>."
 ;; ssh
 (setq-default tramp-auto-save-directory
 	      (expand-file-name "tramp-autosave-dir" user-emacs-directory)
-	      tramp-default-method "scp"                   ;; Already default
+	      tramp-default-method "ssh"                   ;; Already default
 	      remote-file-name-inhibit-cache 60            ;; Default 10
 	      tramp-completion-reread-directory-timeout 120;; Default 10
 	      password-cache-expiry 3600                   ;; Cache for 1 hour
 	      tramp-use-scp-direct-remote-copying t        ;; copy directly between remote hosts
+	      remote-file-name-inhibit-locks t          ;; I know that different Emacs sessions are not modifying the same remote file
 	      tramp-verbose (if init-file-debug 10 3)      ;; Default 3 always
-	      tramp-use-ssh-controlmaster-options nil      ;; use system control master.
+	      ;; tramp-use-ssh-controlmaster-options nil      ;; use system control master.
+	      tramp-use-connection-share nil
 	      tramp-completion-use-auth-sources nil        ;; not use auth-sources in tramp
 	      )
 
@@ -1021,6 +1032,8 @@ M-<left>' and repeat with M-<left>."
 
 (use-package pkgbuild-mode
   :mode "/PKGBUILD$")
+
+(use-package tmux-mode :defer t)
 
 ;;__________________________________________________________
 ;; Better shell (for ssh)
@@ -2291,7 +2304,7 @@ Nested namespaces should not be indented with new indentations."
     "M-<down>" #'move-dup-duplicate-down))
 
 ;;__________________________________________________________
-;; evil mode
+;; avy mode
 
 (use-package avy :defer t
   :preface
@@ -2483,7 +2496,12 @@ Nested namespaces should not be indented with new indentations."
 (use-package evil :defer t
   :init
   (setq-default evil-esc-delay 0.001
-		evil-want-keybinding nil)
+		evil-want-keybinding nil
+		evil-undo-system 'undo-redo
+
+		evil-want-C-u-scroll t
+		evil-want-fine-undo t
+		)
   :config
   ;; Modeline color
   (defconst original-background (face-attribute 'mode-line :background))
@@ -2502,6 +2520,24 @@ Nested namespaces should not be indented with new indentations."
   :init
   (setq-default evil-collection-setup-minibuffer t)
   (add-hook 'evil-mode-hook #'evil-collection-init))
+
+(use-package evil-leader :defer t
+  :init
+  (add-hook 'evil-mode-hook #'global-evil-leader-mode)
+  :config
+  (evil-leader/set-leader ",")
+  (evil-leader/set-key
+   "e" 'find-file
+   "f" 'projectile-find-file
+   "b" 'switch-to-buffer
+   "k" 'kill-buffer
+   "1" 'delete-other-windows
+   "m" 'helm-bookmarks
+   "0" 'toggle-fullscreen
+   "w" 'whitespace-mode
+   ";" 'comment-line)
+  )
+
 
 ;; (use-package composable
 ;;   :diminish
@@ -2608,8 +2644,12 @@ Nested namespaces should not be indented with new indentations."
                '("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
                  . dockerfile-ts-mode))
 
-  ;; (setq-default c-ts-mode-indent-style 'linux
-  ;; 	      c-ts-mode-indent-offset 4)
+  (add-hook 'c++-ts-mode-hook (lambda ()
+				(c-ts-mode-set-style 'linux)
+				(setq-local tab-width 4
+					    c-ts-mode-indent-offset tab-width)))
+
+  
 
   ;; (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
   ;; (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
