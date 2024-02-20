@@ -11,7 +11,7 @@
 ;;; Code:
 
 ;;__________________________________________________________
-;; Internal options
+;; Internal Options
 
 (prefer-coding-system 'utf-8)	        ;; Encoding
 (set-default-coding-systems 'utf-8)
@@ -96,6 +96,9 @@
 	      bookmark-menu-confirm-deletion t        ;; ask confirmation to delete bookmark
 	      bookmark-fontify t                      ;; Colorize bookmarked lines with bookmark-face
 	      bookmark-save-flag 1                    ;; Save bookmarks immediately when added
+
+	      register-use-preview t                  ;; newer interface to show registers
+	      eshell-history-append t                 ;; No override eshell history; append
 	      idle-update-delay 0.25                  ;; idle to update screen
 
 	      ;; translate-upper-case-key-bindings nil ;; Make keybindings case sensitive (inhibit binding translation)
@@ -183,13 +186,15 @@ M-<left>' and repeat with M-<left>."
 	 (append sets puts))))
 
 (if init-file-debug
-    (setq-default use-package-always-ensure t
-		  use-package-enable-imenu-support t
-		  use-package-verbose t
-		  use-package-expand-minimally nil
-		  use-package-compute-statistics t
-		  debug-on-error t
-		  native-comp-async-report-warnings-errors t)
+    (progn
+      (require 'use-package-ensure)
+      (setq-default use-package-always-ensure t
+		    use-package-enable-imenu-support t
+		    use-package-verbose t
+		    use-package-expand-minimally nil
+		    use-package-compute-statistics t
+		    debug-on-error t
+		    native-comp-async-report-warnings-errors t))
 
   (setq-default use-package-always-ensure nil
 		use-package-enable-imenu-support nil
@@ -503,20 +508,24 @@ M-<left>' and repeat with M-<left>."
 	      dabbrev-select-buffers-function #'my/dabbrev--select-project-buffers)
 
 ;; completion
-(setq-default completion-show-help nil           ;; Don't show help header in completion buffer
-	      completion-auto-help 'visible      ;; Update completions when visible and no hide
-	      ;; completion-auto-select 'second-tab ;; Show completions on second tab (default nil)
-	      minibuffer-visible-completions t
-	      completion-auto-wrap t         ;; wrap movement
-	      completions-detailed t             ;; show more detailed completions
-	      ;; completions-format 'one-column     ;; Vertical completion list
+(setq-default completion-show-help nil              ;; Don't show help header in completion buffer
+	      completion-auto-help 'visible         ;; Update completions when visible and no hide
+	      completion-auto-select 'second-tab    ;; Show completions on second tab (default nil)
+	      ;; minibuffer-visible-completions t      ;; Jury completions selection
+	      completion-auto-wrap t                ;; wrap movement
+	      completions-detailed t                ;; show more detailed completions
+	      ;; completions-format 'one-column        ;; Vertical completion list
 	      completions-max-height 15
 	      completion-styles '(substring partial-completion emacs22)
 	      ;; M-x show context-local commands
 	      read-extended-command-predicate #'command-completion-default-include-p
 	      read-file-name-completion-ignore-case t
 	      read-buffer-completion-ignore-case t
-	      completion-ignore-case t)
+	      completion-ignore-case t
+
+	      completion-auto-deselect t            ;; De-select completions on write
+	      completions-sort 'historical          ;; alphabetical + historical
+	      )
 
 (defun my/fido-mode ()
   "Command to toggle fido-vertial-mode and disable completions."
