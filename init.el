@@ -1062,10 +1062,10 @@ M-<left>' and repeat with M-<left>."
 			      ((or (display-graphic-p)  ;; graphic or linux terminal
 				   (string-equal (getenv "TERM") "linux"))
 			       nil)
-			      ((and (getenv "DISPLAY")
+			      ((and (string-equal "x11" (getenv "XDG_SESSION_TYPE"))
 				    (executable-find "xclip")) ;; x11
 			       'xclip)
-			      ((and (getenv "WAYLAND_DISPLAY")
+			      ((and (string-equal "wayland" (getenv "XDG_SESSION_TYPE"))
 				    (executable-find "wl-copy")) ;; wayland
 			       'wl-copy)))
   :if xclip-method
