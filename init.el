@@ -1767,7 +1767,8 @@ Nested namespaces should not be indented with new indentations."
     (flycheck-mode 1))
   :init
   (add-hook 'prog-mode-delay-hook #'my/flycheck-mode-hook)
-  (setq-default flycheck-display-errors-delay 1.0
+  (setq-default flycheck-display-errors-delay 0.5
+		flycheck-idle-change-delay 1.0
 		flycheck-keymap-prefix (kbd "C-c a"))
   :config
   (which-key-add-keymap-based-replacements flycheck-mode-map "C-c a" "flycheck"))
