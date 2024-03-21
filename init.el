@@ -2380,8 +2380,8 @@ Nested namespaces should not be indented with new indentations."
 ;;__________________________________________________________
 ;; Arduino Mode
 
-(use-package arduino-mode
-  :mode ("\\.ino\\'" "\\.pde\\'"))
+;; (use-package arduino-mode
+;;   :mode ("\\.ino\\'" "\\.pde\\'"))
 
 (use-package arduino-cli-mode
   :after company-arduino      ;; This is latter enough
