@@ -2602,6 +2602,9 @@ Nested namespaces should not be indented with new indentations."
 
 (use-package fancy-compilation
   :after compile
+  :init
+  (setq-default fancy-compilation-quiet-prelude nil
+		fancy-compilation-quiet-prolog nil)
   :config
   (fancy-compilation-mode))
 
