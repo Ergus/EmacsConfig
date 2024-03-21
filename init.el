@@ -2119,6 +2119,13 @@ Nested namespaces should not be indented with new indentations."
   (setq-default gtags-mode-lighter "")
   :hook ((emacs-startup . gtags-mode)))
 
+(use-package project-multi-mode :defer t
+  :preface
+  (when (file-exists-p "/mnt/casa/gits/emacs_clones/project-multi/")
+    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/project-multi/"))
+  :init
+  :hook ((emacs-startup . project-multi-mode)))
+
 ;;__________________________________________________________
 ;; Magit and git packages
 
