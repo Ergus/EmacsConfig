@@ -1228,10 +1228,19 @@ M-<left>' and repeat with M-<left>."
 ;; Completions
 
 (use-package eglot :defer t
-  ;; :init
+  :init
+  (setq-default eglot-events-buffer-config '(:size 2000000 :format lisp)
+		eglot-send-changes-idle-time 1.0  ;; Server idle
+		eglot-extend-to-xref t            ;; Include external headers and sources
+		eglot-ignored-server-capabilities '(:inlayHintProvider
+						    :documentRangeFormattingProvider
+						    :documentOnTypeFormattingProvider)
+		)
+
   ;; (setq-default eglot-stay-out-of '(eldoc))
   :config
-  (add-to-list 'eglot-ignored-server-capabilites :inlayHintProvider)
+  (add-to-list 'eglot-server-programs '((cuda-mode) "clangd"))
+
   (add-hook 'eglot-managed-mode-hook
 	    (lambda ()
 	      (when (eldoc--supported-p)
