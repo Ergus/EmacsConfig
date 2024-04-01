@@ -1251,33 +1251,33 @@ M-<left>' and repeat with M-<left>."
 
 (use-package cape
   :defer 0.2
-  :preface
-  (defmacro my/cape-with-company (cape-func)
-    "Wrap company completion to use an specific cape backend."
-    `(lambda ()
-       (interactive)
-       (let ((completion-at-point-functions (list ,cape-func))
-	     (company-backends '(company-capf)))
-	 (my/company-complete))))
+  ;;:preface
+  ;; (defmacro my/cape-with-company (cape-func)
+  ;;   "Wrap company completion to use an specific cape backend."
+  ;;   `(lambda ()
+  ;;      (interactive)
+  ;;      (let ((completion-at-point-functions (list ,cape-func))
+  ;; 	     (company-backends '(company-capf)))
+  ;; 	 (my/company-complete))))
 
   :init
   (setq-default cape-dabbrev-check-other-buffers nil) ;; default t
 
   (defvar-keymap my/cape-basic-map
     :doc "The keymap used when `cape-basic-map' is active."
-    "p" (my/cape-with-company 'completion-at-point) ;; capf
-    "t" (my/cape-with-company 'complete-tag)        ;; etags
-    "d" (my/cape-with-company 'cape-dabbrev)        ;; or dabbrev-completion
-    "f" (my/cape-with-company 'cape-file)
-    "k" (my/cape-with-company 'cape-keyword)
-    "s" (my/cape-with-company 'cape-symbol)
-    "a" (my/cape-with-company 'cape-abbrev)
-    "i" (my/cape-with-company 'cape-ispell)
-    "l" (my/cape-with-company 'cape-line)
-    "w" (my/cape-with-company 'cape-dict)
-    "x" (my/cape-with-company 'cape-tex)
-    "g" (my/cape-with-company 'cape-sgml)
-    "r" (my/cape-with-company 'cape-rfc1345))
+    "p" 'completion-at-point ;; capf
+    "t" 'complete-tag        ;; etags
+    "d" 'cape-dabbrev        ;; or dabbrev-completion
+    "f" 'cape-file
+    "k" 'cape-keyword
+    "s" 'cape-symbol
+    "a" 'cape-abbrev
+    "i" 'cape-ispell
+    "l" 'cape-line
+    "w" 'cape-dict
+    "x" 'cape-tex
+    "g" 'cape-sgml
+    "r" 'cape-rfc1345)
 
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
@@ -1292,106 +1292,6 @@ M-<left>' and repeat with M-<left>."
   (add-hook 'text-mode-delay-hook
 	    (lambda nil
 	      (add-to-list 'completion-at-point-functions #'cape-ispell))))
-
-(use-package company :defer t
-  :preface
-  (defun my/company-backend-after-load (backend)
-    (with-eval-after-load 'company
-      (unless (eq backend (car company-backends))
-	(setq-local company-backends
-		    (cons backend (remove backend company-backends))))))
-
-  (defun my/company-mode-delay-hook nil
-    "Load company mode if not active."
-    (unless (bound-and-true-p company-mode)
-      (company-mode 1)
-      ;; (company-tng-mode 1) ;; complete with tabs only (no common part, so unconfortable)
-      ))
-  :init
-  (add-hook 'prog-mode-delay-hook #'my/company-mode-delay-hook)
-  (add-hook 'message-mode-delay-hook #'my/company-mode-delay-hook)
-  (add-hook 'conf-mode-delay-hook #'my/company-mode-delay-hook)
-  (add-hook 'text-mode-delay-hook #'my/company-mode-delay-hook)
-
-  (setq-default company-minimum-prefix-length 2
-		company-tooltip-minimum 5
-		company-selection-wrap-around nil
-		company-show-quick-access 'left       ;; How hints
-		company-tooltip-align-annotations t
-		company-format-margin-function #'company-detect-icons-margin
-		company-require-match nil
-		company-dabbrev-other-buffers t
-		company-dabbrev-code-other-buffers t ;; disable dabbrev in other buffers
-		;; company-lighter-base "cpn"             ;; modeline message
-
-		company-idle-delay 0.5                ;; no delay for company (includes show common)
-		company-tooltip-idle-delay 100      ;; delay until the tooltip is shown.
-		company-frontends '(;;company-complete-common-or-show-delayed-tooltip
-				    company-pseudo-tooltip-unless-just-one-frontend-with-delay
-				    company-preview-common-frontend
-				    ;; company-echo-metadata-frontend
-				    )
-
-		;;company-tooltip-limit 20
-		company-backends '(company-capf       ;; completion at point
-				   company-semantic
-				   ;; company-files      ;; company files
-				   ;; (company-dabbrev-code company-gtags company-keywords)
-				   ;; company-dabbrev
-				   ))
-  :config
-  (defun my/filter-with-ptwd (command)
-    "Return a COMMAND if a tooltip is shown; otherwise return nil."
-    (if (company-tooltip-visible-p)
-	command
-      (lambda ()
-	(interactive)
-	(company-abort)
-	(company--unread-this-command-keys))))
-
-  (defun my/reverse-filter-with-ptwd (command)
-    "Abort company if a tooltip is shown; otherwise return COMMAND."
-    (if (company-tooltip-visible-p)
-	#'company-abort
-      command))
-
-  (defun my/company-complete ()
-    "Force show tooltip even if delayed."
-    (interactive)
-    (let ((company-tooltip-idle-delay 0.0))
-      (company-complete)
-      (if company-candidates
-          (company-call-frontends 'post-command))))
-
-  (defun my/company-complete-common ()
-    "Complete common if pending, else abort company or move to next."
-    (interactive)
-    (let ((old-tick (buffer-chars-modified-tick)))
-      (call-interactively #'company-complete-common)
-      (when (eq old-tick (buffer-chars-modified-tick))
-	(if (company-tooltip-visible-p)
-	    (company-select-next-or-abort)
-          (company-abort)
-	  (company--unread-this-command-keys)))))
-
-  (keymap-set company-mode-map "M-RET" #'my/company-complete)
-  (keymap-set company-mode-map "M-/" #'company-other-backend)
-
-  (keymap-set company-active-map "<remap> <company-select-next-or-abort>"
-	      #'(menu-item "" company-select-next-or-abort :filter my/filter-with-ptwd))
-  (keymap-set company-active-map "<remap> <company-select-previous-or-abort>"
-	      #'(menu-item "" company-select-previous-or-abort :filter my/filter-with-ptwd))
-  (keymap-set company-active-map "<remap> <xref-find-definitions>"
-	      #'(menu-item "" company-show-location :filter my/filter-with-ptwd))
-
-  (keymap-set company-active-map "M-/" #'company-other-backend) ;; M-/
-
-  (keymap-set company-active-map "M-RET"
-	      #'(menu-item "" my/company-complete :filter my/reverse-filter-with-ptwd))
-
-  (keymap-set company-active-map "<remap> <company-complete-common>" #'my/company-complete-common)
-  (keymap-set company-active-map "<remap> <completion-at-point>" #'company-select-previous-or-abort)
-  )
 
 ;; (use-package lsp-mode :defer t
 ;;   :diminish lsp
@@ -1564,14 +1464,14 @@ Nested namespaces should not be indented with new indentations."
 ;;   (setq-default preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
 
 ;; company-c-headers
-(use-package company-c-headers :defer t
-  :preface
-  (defun my/c-mode-hook ()
-    (my/company-backend-after-load #'company-c-headers))
-  :init
-  (add-hook 'c-mode-hook #'my/c-mode-hook)
-  (add-hook 'c++-mode-hook #'my/c-mode-hook)
-  (add-hook 'objc-mode-hook #'my/c-mode-hook))
+;; (use-package company-c-headers :defer t
+;;   :preface
+;;   (defun my/c-mode-hook ()
+;;     (my/company-backend-after-load #'company-c-headers))
+;;   :init
+;;   (add-hook 'c-mode-hook #'my/c-mode-hook)
+;;   (add-hook 'c++-mode-hook #'my/c-mode-hook)
+;;   (add-hook 'objc-mode-hook #'my/c-mode-hook))
 
 (use-package clang-format :defer t)
 
@@ -1585,11 +1485,11 @@ Nested namespaces should not be indented with new indentations."
 ;;__________________________________________________________
 ;; elisp mode (all after the company declaration)
 
-(add-hook 'emacs-lisp-mode-hook
-	  (lambda nil
-	    (when (and buffer-file-name
-		       (string-match "\\.el\\'" buffer-file-name))
-	      (my/company-backend-after-load #'company-elisp))))
+;; (add-hook 'emacs-lisp-mode-hook
+;; 	  (lambda nil
+;; 	    (when (and buffer-file-name
+;; 		       (string-match "\\.el\\'" buffer-file-name))
+;; 	      (my/company-backend-after-load #'company-elisp))))
 
 ;;__________________________________________________________
 ;; sh mode
@@ -1678,9 +1578,9 @@ Nested namespaces should not be indented with new indentations."
   (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
   (add-to-list 'interpreter-mode-alist '("lua" . lua-mode)))
 
-(use-package company-lua :defer t
-  :hook (lua-mode . (lambda nil
-		      (my/company-backend-after-load #'company-lua))))
+;; (use-package company-lua :defer t
+;;   :hook (lua-mode . (lambda nil
+;; 		      (my/company-backend-after-load #'company-lua))))
 
 ;;__________________________________________________________
 ;; groovy language
@@ -1834,13 +1734,14 @@ Nested namespaces should not be indented with new indentations."
 (use-package notmuch :defer t
   :init
   (setenv "NOTMUCH_CONFIG" (expand-file-name "/mnt/casa/mail/notmuch-config"))
-  :hook (message-mode . (lambda nil
-			  (my/company-backend-after-load #'notmuch-company))))
+  ;; :hook (message-mode . (lambda nil
+  ;; 			  (my/company-backend-after-load #'notmuch-company)))
+  )
 
-(with-eval-after-load 'notmuch-company
-  ;; This is requires because of an issue in notmuch-company not
-  ;; loading notmuch-address.
-  (require 'notmuch-address))
+;; (with-eval-after-load 'notmuch-company
+;;   ;; This is requires because of an issue in notmuch-company not
+;;   ;; loading notmuch-address.
+;;   (require 'notmuch-address))
 
 ;;__________________________________________________________
 ;; Latex mode
@@ -1897,7 +1798,6 @@ Nested namespaces should not be indented with new indentations."
 			   (TeX-source-correlate-mode 1))) ;; open PDF in the edditing page
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
 
-
 ;; auctex-latexmk is broken
 ;; auctex-latexmk
 ;; (use-package auctex-latexmk
@@ -1914,12 +1814,12 @@ Nested namespaces should not be indented with new indentations."
 ;; 		      (my/company-backend-after-load
 ;; 		       '(company-math-symbols-latex company-latex-commands)))))
 
-(use-package company-auctex :defer t
-  :hook (TeX-mode . (lambda nil
-		      ;; This is similar code than company-auctex-init, but setting it only locally.
-		      (my/company-backend-after-load 'company-auctex-labels)
-		      (my/company-backend-after-load 'company-auctex-bibs)
-		      (my/company-backend-after-load '(company-auctex-macros company-auctex-symbols company-auctex-environments)))))
+;; (use-package company-auctex :defer t
+;;   :hook (TeX-mode . (lambda nil
+;; 		      ;; This is similar code than company-auctex-init, but setting it only locally.
+;; 		      (my/company-backend-after-load 'company-auctex-labels)
+;; 		      (my/company-backend-after-load 'company-auctex-bibs)
+;; 		      (my/company-backend-after-load '(company-auctex-macros company-auctex-symbols company-auctex-environments)))))
 
 ;; reftex
 (setq-default reftex-cite-prompt-optional-args t   ; Prompt for empty optional arguments in cite
@@ -1934,10 +1834,10 @@ Nested namespaces should not be indented with new indentations."
 
 (eval-after-load 'reftex '(reftex-isearch-minor-mode))
 
-(use-package company-reftex :defer t
-  :hook (reftex-mode . (lambda nil
-			 (my/company-backend-after-load
-			  '(company-reftex-labels company-reftex-citations)))))
+;; (use-package company-reftex :defer t
+;;   :hook (reftex-mode . (lambda nil
+;; 			 (my/company-backend-after-load
+;; 			  '(company-reftex-labels company-reftex-citations)))))
 
 ;;__________________________________________________________
 ;;bibtex mode set use biblatex
@@ -2120,7 +2020,7 @@ Nested namespaces should not be indented with new indentations."
   (setq-default gtags-mode-lighter "")
   :hook ((emacs-startup . gtags-mode)))
 
-(use-package project-multi-mode :defer t
+(use-package project-multi-mode :defer t :ensure nil
   :preface
   (when (file-exists-p "/mnt/casa/gits/emacs_clones/project-multi/")
     (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/project-multi/"))
@@ -2400,8 +2300,7 @@ Nested namespaces should not be indented with new indentations."
 ;; (use-package arduino-mode
 ;;   :mode ("\\.ino\\'" "\\.pde\\'"))
 
-(use-package arduino-cli-mode
-  :after company-arduino      ;; This is latter enough
+(use-package arduino-cli-mode :defer t
   :init
   (setq-default arduino-cli-warnings 'all
 		arduino-cli-verify t
