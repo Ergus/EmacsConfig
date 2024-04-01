@@ -1263,7 +1263,7 @@ M-<left>' and repeat with M-<left>."
   :init
   (setq-default cape-dabbrev-check-other-buffers nil) ;; default t
 
-  (defvar-keymap cape-basic-map
+  (defvar-keymap my/cape-basic-map
     :doc "The keymap used when `cape-basic-map' is active."
     "p" (my/cape-with-company 'completion-at-point) ;; capf
     "t" (my/cape-with-company 'complete-tag)        ;; etags
@@ -1283,7 +1283,7 @@ M-<left>' and repeat with M-<left>."
   (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-keyword)
 
-  (keymap-global-set "C-c p" cape-basic-map)
+  (keymap-global-set "C-c p" (cons "cape" my/cape-basic-map))
 
   (add-hook 'TeX-mode-hook
 	    (lambda nil
@@ -2018,25 +2018,26 @@ Nested namespaces should not be indented with new indentations."
   :init
   (keymap-set my/sidebar-map "b" #'ibuffer-sidebar-toggle-sidebar))
 
-(use-package ibuffer-tramp
-  :after ibuffer
-  :config
-  (keymap-set ibuffer--filter-map "G t" #'ibuffer-tramp-set-filter-groups-by-tramp-connection))
+;; Uses cl which is obsolete
+;; (use-package ibuffer-tramp
+;;   :after ibuffer
+;;   :config
+;;   (keymap-set ibuffer--filter-map "G t" #'ibuffer-tramp-set-filter-groups-by-tramp-connection))
 
-(use-package ibuffer-project
-  :after ibuffer
-  :preface
-  (defun my/ibuffer-set-filter-groups-by-project ()
-    (interactive)
-    (setq ibuffer-filter-groups (ibuffer-project-generate-filter-groups))
-    (ibuffer-update nil t))
-  :config
-  (keymap-set ibuffer--filter-map "G p" #'my/ibuffer-set-filter-groups-by-project))
+;; (use-package ibuffer-project
+;;   :after ibuffer
+;;   :preface
+;;   (defun my/ibuffer-set-filter-groups-by-project ()
+;;     (interactive)
+;;     (setq ibuffer-filter-groups (ibuffer-project-generate-filter-groups))
+;;     (ibuffer-update nil t))
+;;   :config
+;;   (keymap-set ibuffer--filter-map "G p" #'my/ibuffer-set-filter-groups-by-project))
 
-(use-package ibuffer-vc
-  :after ibuffer
-  :config
-  (keymap-set ibuffer--filter-map "G v" #'ibuffer-vc-set-filter-groups-by-vc-root))
+;; (use-package ibuffer-vc
+;;   :after ibuffer
+;;   :config
+;;   (keymap-set ibuffer--filter-map "G v" #'ibuffer-vc-set-filter-groups-by-vc-root))
 
 ;; Sidebar Dired+ibuffer (de emacs defaults)
 (defun my/sidebar-toggle ()
@@ -2167,7 +2168,6 @@ Nested namespaces should not be indented with new indentations."
   (add-hook 'git-commit-setup-hook (lambda nil
 				     (setq-local fill-column 72)
 				     (git-commit-turn-on-flyspell))))
-
 
 ;; smerge
 (setq-default smerge-diff-buffer-name "*smerge-diff*"
