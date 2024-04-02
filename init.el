@@ -185,6 +185,12 @@ M-<left>' and repeat with M-<left>."
 	     (push `(put ,val 'repeat-map ',keymap-name) puts)))
 	 (append sets puts))))
 
+(defun my/package-delete (pkg)
+  "Remove PKG if it is installed."
+  (when (and init-file-debug
+	     (package-installed-p pkg))
+    (package-delete (package-get-descriptor pkg))))
+
 (if init-file-debug
     (progn
       (require 'use-package-ensure)
@@ -868,7 +874,9 @@ M-<left>' and repeat with M-<left>."
 	 ("/authorized_keys2?\\'" . ssh-authorized-keys-mode)))
 
 ;; Edit files as sudo
-(use-package sudo-edit :defer t)
+
+(my/package-delete 'sudo-edit)
+;;(use-package sudo-edit :defer t)
 
 ;; ssh deploy
 ;; (use-package ssh-deploy :defer t
@@ -980,64 +988,68 @@ M-<left>' and repeat with M-<left>."
   :doc "Keymap for terminal commands")
 (keymap-global-set "C-c t" (cons "term" my/term-keymap))
 
-(use-package vterm :defer t
-  :hook (vterm-mode . (lambda nil
-			(display-fill-column-indicator-mode -1)
-			(auto-fill-mode -1)))
-  :init
-  (setq-default vterm-kill-buffer-on-exit t
-		vterm-max-scrollback 10000)
-  :config
-  ;; Add find-file-other-window to accepted commands
-  (add-to-list 'vterm-eval-cmds
-	       '("find-file-other-window" find-file-other-window))
+(my/package-delete 'vterm-toggle)
+(my/package-delete 'vterm)
+(my/package-delete 'emamux)
 
-  (keymap-unset vterm-mode-map "C-z")  ;; I use C-x to change tab
-  (keymap-unset vterm-mode-map "M-O")  ;; Fix arrow keys in vterm
-  (keymap-set vterm-mode-map "C-c C-z" #'vterm-send-C-z)
-  (keymap-set vterm-mode-map "C-c C-x" #'vterm-send-C-x)
-  (keymap-set vterm-mode-map "C-c [" #'vterm-copy-mode)
-  (keymap-set vterm-mode-map "C-c ]" #'vterm-yank)
-  (keymap-set vterm-copy-mode-map "M-w" #'vterm-copy-mode-done)
-  )
+;; (use-package vterm :defer t
+;;   :hook (vterm-mode . (lambda nil
+;; 			(display-fill-column-indicator-mode -1)
+;; 			(auto-fill-mode -1)))
+;;   :init
+;;   (setq-default vterm-kill-buffer-on-exit t
+;; 		vterm-max-scrollback 10000)
+;;   :config
+;;   ;; Add find-file-other-window to accepted commands
+;;   (add-to-list 'vterm-eval-cmds
+;; 	       '("find-file-other-window" find-file-other-window))
 
-(use-package vterm-toggle :defer t
-  :init
-  (setq-default vterm-toggle-scope 'project
-		vterm-toggle-project-root t    ;; Already default
-		vterm-toggle-fullscreen-p nil  ;; Already default
-		)
-  (keymap-set my/term-keymap "t" #'vterm-toggle)
-  :config
-  (keymap-set vterm-mode-map "M-RET" #'vterm-toggle-insert-cd)
-  (add-to-list 'display-buffer-alist `(,vterm-buffer-name . ,my/display-buffer-at-bottom)))
+;;   (keymap-unset vterm-mode-map "C-z")  ;; I use C-x to change tab
+;;   (keymap-unset vterm-mode-map "M-O")  ;; Fix arrow keys in vterm
+;;   (keymap-set vterm-mode-map "C-c C-z" #'vterm-send-C-z)
+;;   (keymap-set vterm-mode-map "C-c C-x" #'vterm-send-C-x)
+;;   (keymap-set vterm-mode-map "C-c [" #'vterm-copy-mode)
+;;   (keymap-set vterm-mode-map "C-c ]" #'vterm-yank)
+;;   (keymap-set vterm-copy-mode-map "M-w" #'vterm-copy-mode-done)
+;;   )
 
-(use-package emamux :defer t
-  :bind-keymap (("C-c u" . emamux:keymap))
-  :init
-  (which-key-add-key-based-replacements "C-c u" "emamux")
-  :config
-  (setq emamux:keymap (make-sparse-keymap))
-  (if (emamux:in-tmux-p)
-      (progn
-	(keymap-set emamux:keymap "u" #'emamux:run-command)
-	(keymap-set emamux:keymap "r" #'emamux:run-region)
-	(keymap-set emamux:keymap "0" #'emamux:close-panes)
-	(keymap-set emamux:keymap "k" #'emamux:close-panes)
-	(keymap-set emamux:keymap "i" #'emamux:inspect-runner)
-	(keymap-set emamux:keymap "k" #'emamux:interrupt-runner)
-	(keymap-set emamux:keymap "s" #'emamux:send-command)
-	(keymap-set emamux:keymap "<up>" #'emamux:run-last-command)
-	(keymap-set emamux:keymap "C-y" #'emamux:yank-from-list-buffers)
-	;; (keymap-set emamux_keymap "M-k" #'emamux:clear-runner-history)
-	;; (keymap-set emamux_keymap "c"   #'emamux:new-window)
-	;; (keymap-set emamux_keymap "C"   #'emamux:clone-current-frame)
-	;; (keymap-set emamux_keymap "2"   #'emamux:split-window)
-	;; (keymap-set emamux_keymap "3"   #'emamux:split-window-horizontally)
-	)
-    (message "TMUX not running in this terminal")
-    (keymap-global-unset "C-c u")
-    ))
+;; (use-package vterm-toggle :defer t
+;;   :init
+;;   (setq-default vterm-toggle-scope 'project
+;; 		vterm-toggle-project-root t    ;; Already default
+;; 		vterm-toggle-fullscreen-p nil  ;; Already default
+;; 		)
+;;   (keymap-set my/term-keymap "t" #'vterm-toggle)
+;;   :config
+;;   (keymap-set vterm-mode-map "M-RET" #'vterm-toggle-insert-cd)
+;;   (add-to-list 'display-buffer-alist `(,vterm-buffer-name . ,my/display-buffer-at-bottom)))
+
+;; (use-package emamux :defer t
+;;   :bind-keymap (("C-c u" . emamux:keymap))
+;;   :init
+;;   (which-key-add-key-based-replacements "C-c u" "emamux")
+;;   :config
+;;   (setq emamux:keymap (make-sparse-keymap))
+;;   (if (emamux:in-tmux-p)
+;;       (progn
+;; 	(keymap-set emamux:keymap "u" #'emamux:run-command)
+;; 	(keymap-set emamux:keymap "r" #'emamux:run-region)
+;; 	(keymap-set emamux:keymap "0" #'emamux:close-panes)
+;; 	(keymap-set emamux:keymap "k" #'emamux:close-panes)
+;; 	(keymap-set emamux:keymap "i" #'emamux:inspect-runner)
+;; 	(keymap-set emamux:keymap "k" #'emamux:interrupt-runner)
+;; 	(keymap-set emamux:keymap "s" #'emamux:send-command)
+;; 	(keymap-set emamux:keymap "<up>" #'emamux:run-last-command)
+;; 	(keymap-set emamux:keymap "C-y" #'emamux:yank-from-list-buffers)
+;; 	;; (keymap-set emamux_keymap "M-k" #'emamux:clear-runner-history)
+;; 	;; (keymap-set emamux_keymap "c"   #'emamux:new-window)
+;; 	;; (keymap-set emamux_keymap "C"   #'emamux:clone-current-frame)
+;; 	;; (keymap-set emamux_keymap "2"   #'emamux:split-window)
+;; 	;; (keymap-set emamux_keymap "3"   #'emamux:split-window-horizontally)
+;; 	)
+;;     (message "TMUX not running in this terminal")
+;;     (keymap-global-unset "C-c u")
+;;     ))
 
 (use-package pkgbuild-mode
   :mode "/PKGBUILD$")
@@ -1046,31 +1058,36 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; Better shell (for ssh)
-(use-package better-shell :defer t
-  :init
-  (keymap-set my/term-keymap "b" #'better-shell-shell))
 
-(use-package shell-command+ :defer t
-  :init
-  (keymap-global-set "<remap> <shell-command>" #'shell-command+))
+(my/package-delete 'better-shell)
+;; (use-package better-shell :defer t
+;;   :init
+;;   (keymap-set my/term-keymap "b" #'better-shell-shell))
+
+(my/package-delete 'shell-command+)
+;; (use-package shell-command+ :defer t
+;;   :init
+;;   (keymap-global-set "<remap> <shell-command>" #'shell-command+))
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
-(use-package xclip
-  :preface
-  (setq-default xclip-method (cond
-			      ((or (display-graphic-p)  ;; graphic or linux terminal
-				   (string-equal (getenv "TERM") "linux"))
-			       nil)
-			      ((and (string-equal "x11" (getenv "XDG_SESSION_TYPE"))
-				    (executable-find "xclip")) ;; x11
-			       'xclip)
-			      ((and (string-equal "wayland" (getenv "XDG_SESSION_TYPE"))
-				    (executable-find "wl-copy")) ;; wayland
-			       'wl-copy)))
-  :if xclip-method
-  :config
-  (xclip-mode 1))
+
+(my/package-delete 'xclip)
+;; (use-package xclip
+;;   :preface
+;;   (setq-default xclip-method (cond
+;; 			      ((or (display-graphic-p)  ;; graphic or linux terminal
+;; 				   (string-equal (getenv "TERM") "linux"))
+;; 			       nil)
+;; 			      ((and (string-equal "x11" (getenv "XDG_SESSION_TYPE"))
+;; 				    (executable-find "xclip")) ;; x11
+;; 			       'xclip)
+;; 			      ((and (string-equal "wayland" (getenv "XDG_SESSION_TYPE"))
+;; 				    (executable-find "wl-copy")) ;; wayland
+;; 			       'wl-copy)))
+;;   :if xclip-method
+;;   :config
+;;   (xclip-mode 1))
 
 ;;__________________________________________________________
 ;; xterm mouse
@@ -1545,8 +1562,8 @@ Nested namespaces should not be indented with new indentations."
 ;; Cuda
 (use-package cuda-mode :defer t
   :preface
-  (when (file-exists-p "/mnt/casa/gits/emacs_clones/cuda-mode/")
-    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/cuda-mode")))
+  (when (file-exists-p (expand-file-name "mypackages/cuda-mode/" user-emacs-directory))
+    (add-to-list 'load-path (expand-file-name "mypackages/cuda-mode/" user-emacs-directory))))
 
 ;;__________________________________________________________
 ;; OpenCL Mode
@@ -1739,12 +1756,14 @@ Nested namespaces should not be indented with new indentations."
 
 ;;__________________________________________________________
 ;; Chequeo de gramatica
-(use-package languagetool :defer t
-  :init
-  (setq-default languagetool-java-arguments '("-Dfile.encoding=UTF-8"
-					      "-cp" "/usr/share/languagetool:/usr/share/java/languagetool/*")
-		languagetool-console-command "org.languagetool.commandline.Main"
-		languagetool-server-command "org.languagetool.server.HTTPServer"))
+
+(my/package-delete 'languagetool)
+;; (use-package languagetool :defer t
+;;   :init
+;;   (setq-default languagetool-java-arguments '("-Dfile.encoding=UTF-8"
+;; 					      "-cp" "/usr/share/languagetool:/usr/share/java/languagetool/*")
+;; 		languagetool-console-command "org.languagetool.commandline.Main"
+;; 		languagetool-server-command "org.languagetool.server.HTTPServer"))
 
 ;;__________________________________________________________
 ;; Email mode for mutt
@@ -1776,12 +1795,13 @@ Nested namespaces should not be indented with new indentations."
 (add-to-list 'auto-mode-alist '("neomutt-Ergus-" . message-mode))
 (add-to-list 'auto-mode-alist '("draft" . message-mode))
 
-(use-package notmuch :defer t
-  :init
-  (setenv "NOTMUCH_CONFIG" (expand-file-name "/mnt/casa/mail/notmuch-config"))
-  ;; :hook (message-mode . (lambda nil
-  ;; 			  (my/company-backend-after-load #'notmuch-company)))
-  )
+(my/package-delete 'notmuch)
+;; (use-package notmuch :defer t
+;;   :init
+;;   (setenv "NOTMUCH_CONFIG" (expand-file-name "/mnt/casa/mail/notmuch-config"))
+;;   ;; :hook (message-mode . (lambda nil
+;;   ;; 			  (my/company-backend-after-load #'notmuch-company)))
+;;   )
 
 ;; (with-eval-after-load 'notmuch-company
 ;;   ;; This is requires because of an issue in notmuch-company not
@@ -1790,58 +1810,60 @@ Nested namespaces should not be indented with new indentations."
 
 ;;__________________________________________________________
 ;; Latex mode
-(use-package auctex :defer t)
 
-(setq-default TeX-source-correlate-start-server t
-	      TeX-auto-save t
-	      TeX-parse-self t
-	      LaTeX-babel-hyphen nil
-	      TeX-master nil         ;; Multidocument
-	      LaTeX-indent-level 4
-	      LaTeX-item-indent 0
-	      ;; TeX-view-program-list '(("Evince" "evince --page-index=%(outpage) %o"))
-	      ;; TeX-PDF-mode t          ;; Already default t
-	      ;; TeX-show-compilation t  ;; Show compilation buffer.
-	      )
+(my/package-delete 'auctex)
+;; (use-package auctex :defer t)
 
-(with-eval-after-load 'latex ;; needed for LaTeX-indent-environment-list
-  (defun my/LaTeX-indent-item ()
-    "Syntactic indentation for itemize like environments to add extra offsets."
-    (save-match-data
-      (let* ((offset (+ LaTeX-indent-level LaTeX-item-indent)) ;; item indent
-	     (re-beg "\\\\begin{")
-	     (re-end "\\\\end{")
-	     (re-env "\\(itemize\\|\\enumerate\\|description\\)")
-	     (indent (save-excursion
-		       (when (looking-at (concat re-beg re-env "}"))
-			 (end-of-line))
-		       (LaTeX-find-matching-begin)
-		       (current-column))))
-	(cond
-	 ((looking-at (concat re-beg re-env "}"))
-	  ((save-excursion
-	     (beginning-of-line)
-	     (ignore-errors
-	       (LaTeX-find-matching-begin)
-	       (+ (current-column)
-		  (if (looking-at (concat re-beg re-env "}"))
-		      offset
-		    LaTeX-indent-level)))
-	     indent)))
-	 ((looking-at (concat re-end re-env "}")) indent)
-	 ((looking-at "\\\\item") (+ indent offset))
-	 (t (+ indent offset LaTeX-indent-level))))))
-  (add-to-list 'LaTeX-indent-environment-list '("itemize" my/LaTeX-indent-item))
-  (add-to-list 'LaTeX-indent-environment-list '("enumerate" my/LaTeX-indent-item))
-  (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item))
-  (add-to-list 'TeX-command-list '("Make" "make -k" TeX-run-compile nil t))
-  )
+;; (setq-default TeX-source-correlate-start-server t
+;; 	      TeX-auto-save t
+;; 	      TeX-parse-self t
+;; 	      LaTeX-babel-hyphen nil
+;; 	      TeX-master nil         ;; Multidocument
+;; 	      LaTeX-indent-level 4
+;; 	      LaTeX-item-indent 0
+;; 	      ;; TeX-view-program-list '(("Evince" "evince --page-index=%(outpage) %o"))
+;; 	      ;; TeX-PDF-mode t          ;; Already default t
+;; 	      ;; TeX-show-compilation t  ;; Show compilation buffer.
+;; 	      )
 
-(add-hook 'TeX-mode-hook (lambda ()
-			   (LaTeX-math-mode 1)
-			   ;; (auto-fill-mode 1)           ;; It causes issues and M-q saves the day.
-			   (TeX-source-correlate-mode 1))) ;; open PDF in the edditing page
-(add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
+;; (with-eval-after-load 'latex ;; needed for LaTeX-indent-environment-list
+;;   (defun my/LaTeX-indent-item ()
+;;     "Syntactic indentation for itemize like environments to add extra offsets."
+;;     (save-match-data
+;;       (let* ((offset (+ LaTeX-indent-level LaTeX-item-indent)) ;; item indent
+;; 	     (re-beg "\\\\begin{")
+;; 	     (re-end "\\\\end{")
+;; 	     (re-env "\\(itemize\\|\\enumerate\\|description\\)")
+;; 	     (indent (save-excursion
+;; 		       (when (looking-at (concat re-beg re-env "}"))
+;; 			 (end-of-line))
+;; 		       (LaTeX-find-matching-begin)
+;; 		       (current-column))))
+;; 	(cond
+;; 	 ((looking-at (concat re-beg re-env "}"))
+;; 	  ((save-excursion
+;; 	     (beginning-of-line)
+;; 	     (ignore-errors
+;; 	       (LaTeX-find-matching-begin)
+;; 	       (+ (current-column)
+;; 		  (if (looking-at (concat re-beg re-env "}"))
+;; 		      offset
+;; 		    LaTeX-indent-level)))
+;; 	     indent)))
+;; 	 ((looking-at (concat re-end re-env "}")) indent)
+;; 	 ((looking-at "\\\\item") (+ indent offset))
+;; 	 (t (+ indent offset LaTeX-indent-level))))))
+;;   (add-to-list 'LaTeX-indent-environment-list '("itemize" my/LaTeX-indent-item))
+;;   (add-to-list 'LaTeX-indent-environment-list '("enumerate" my/LaTeX-indent-item))
+;;   (add-to-list 'LaTeX-indent-environment-list '("description" my/LaTeX-indent-item))
+;;   (add-to-list 'TeX-command-list '("Make" "make -k" TeX-run-compile nil t))
+;;   )
+
+;; (add-hook 'TeX-mode-hook (lambda ()
+;; 			   (LaTeX-math-mode 1)
+;; 			   ;; (auto-fill-mode 1)           ;; It causes issues and M-q saves the day.
+;; 			   (TeX-source-correlate-mode 1))) ;; open PDF in the edditing page
+;; (add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
 
 ;; auctex-latexmk is broken
 ;; auctex-latexmk
@@ -2061,16 +2083,16 @@ Nested namespaces should not be indented with new indentations."
 
 (use-package gtags-mode :defer t
   :preface
-  (when (file-exists-p "/mnt/casa/gits/emacs_clones/gtags-mode/")
-    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/gtags-mode/"))
+  (when (file-exists-p (expand-file-name "mypackages/gtags-mode/" user-emacs-directory))
+    (add-to-list 'load-path (expand-file-name "mypackages/gtags-mode/" user-emacs-directory)))
   :init
   (setq-default gtags-mode-lighter "")
   :hook ((emacs-startup . gtags-mode)))
 
 (use-package project-multi-mode :defer t :ensure nil
   :preface
-  (when (file-exists-p "/mnt/casa/gits/emacs_clones/project-multi/")
-    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/project-multi/"))
+  (when (file-exists-p (expand-file-name "mypackages/project-multi-mode/" user-emacs-directory))
+    (add-to-list 'load-path (expand-file-name "mypackages/project-multi-mode/" user-emacs-directory)))
   :init
   :hook ((emacs-startup . project-multi-mode)))
 
@@ -2347,14 +2369,15 @@ Nested namespaces should not be indented with new indentations."
 ;; (use-package arduino-mode
 ;;   :mode ("\\.ino\\'" "\\.pde\\'"))
 
-(use-package arduino-cli-mode :defer t
-  :init
-  (setq-default arduino-cli-warnings 'all
-		arduino-cli-verify t
-		arduino-cli-mode-keymap-prefix (kbd "C-c C-t"))
-  :config
-  (arduino-cli-mode 1)
-  (which-key-add-key-based-replacements "C-c C-t" "arduino-cli-mode"))
+(my/package-delete 'arduino-cli-mode)
+;; (use-package arduino-cli-mode :defer t
+;;   :init
+;;   (setq-default arduino-cli-warnings 'all
+;; 		arduino-cli-verify t
+;; 		arduino-cli-mode-keymap-prefix (kbd "C-c C-t"))
+;;   :config
+;;   (arduino-cli-mode 1)
+;;   (which-key-add-key-based-replacements "C-c C-t" "arduino-cli-mode"))
 
 ;;__________________________________________________________
 ;; Multiple Cursors
@@ -2510,7 +2533,6 @@ Nested namespaces should not be indented with new indentations."
    ";" 'comment-line)
   )
 
-
 ;; (use-package composable
 ;;   :diminish
 ;;   :preface
@@ -2530,10 +2552,11 @@ Nested namespaces should not be indented with new indentations."
 ;;   :config
 ;;   (automark-mode 1))
 
-(use-package slime :defer t
-  :init
-  (setq-default inferior-lisp-program "sbcl"
-		slime-contribs '(slime-fancy)))
+(my/package-delete 'slime)
+;; (use-package slime :defer t
+;;   :init
+;;   (setq-default inferior-lisp-program "sbcl"
+;; 		slime-contribs '(slime-fancy)))
 
 ;; Navegacion por objetos... no lo he probado
 (use-package objed
