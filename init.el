@@ -479,8 +479,7 @@ M-<left>' and repeat with M-<left>."
 	      vc-display-status nil         ;; No info on the modeline.
 	      vc-ignore-dir-regexp (format "\\(%s\\)\\|\\(%s\\)"
 					   vc-ignore-dir-regexp
-					   tramp-file-name-regexp)
-	      )
+					   tramp-file-name-regexp))
 (which-key-add-key-based-replacements "C-x v" "vc")
 
 ;; Context Menu
@@ -526,9 +525,6 @@ M-<left>' and repeat with M-<left>."
 	      completion-auto-deselect t            ;; De-select completions on write
 	      completions-sort 'historical          ;; alphabetical + historical
 	      )
-
-;; Completion preview mode
-(completion-preview-mode 1)
 
 (defun my/fido-mode ()
   "Command to toggle fido-vertial-mode and disable completions."
@@ -1272,11 +1268,21 @@ M-<left>' and repeat with M-<left>."
   ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
   ;; be used globally (M-/).  See also the customization variable
   ;; `global-corfu-modes' to exclude certain modes.
-  :init
+  :config
   (global-corfu-mode)
   (keymap-set corfu-mode-map "M-RET" #'completion-at-point)
   (keymap-set corfu-map "M-RET" #'corfu-quit)
   )
+
+;; Completion preview mode
+(use-package completion-preview :ensure nil
+  :hook ((prog-mode-delay . completion-preview-mode)
+	 (text-mode-delay . completion-preview-mode)
+	 (conf-mode-delay . completion-preview-mode)
+	 (message-mode-delay . completion-preview-mode)
+	 (shell-mode . completion-preview-mode)
+	 (eshell-mode . completion-preview-mode)
+	 (vterm-mode . completion-preview-mode)))
 
 (use-package corfu-terminal
   :config
@@ -1534,7 +1540,10 @@ Nested namespaces should not be indented with new indentations."
 
 ;;__________________________________________________________
 ;; Cuda
-(use-package cuda-mode :defer t)
+(use-package cuda-mode :defer t
+  :preface
+  (when (file-exists-p "/mnt/casa/gits/emacs_clones/cuda-mode/")
+    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/cuda-mode")))
 
 ;;__________________________________________________________
 ;; OpenCL Mode
