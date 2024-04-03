@@ -39,7 +39,7 @@
 	      ;; line-move-visual nil       ;; move cursor visual lines
 	      backward-delete-char-untabify-method nil ;; Don't untabify on backward delete
 
-	      split-width-threshold 140     ;; Limit for vertical split (default 160)
+	      split-width-threshold 145     ;; Limit for vertical split (default 160)
 	      ;; kill-whole-line t
 	      load-prefer-newer t
 	      ;; mark-even-if-inactive nil     ;; no mark no region
@@ -50,6 +50,8 @@
 	      redisplay-skip-fontification-on-input t ;; Skip ‘fontification_functions‘ when there is input pending.
 	      jit-lock-defer-time 0                   ;; similar to redisplay-skip-fontification-on-input
 	                                              ;; This should make input smoother
+	      jit-lock-defer-contextually t
+	      jit-lock-stealth-load 40            ;; Load in percentage above which stealth fontification is suspended.
 
 	      x-stretch-cursor t                  ;; Draw cursor as wide as the gliph below
 	      scroll-error-top-bottom t           ;; Move cursor before error scroll
@@ -62,7 +64,7 @@
 	      pgtk-wait-for-event-timeout nil     ;; Not wait for events in pgtk
 	      ;; jit-lock-stealth-load 60           ;; load of fontification (def: 200)
 	      jit-lock-stealth-nice 0.2           ;; Time between fortifications (def: 0.5)
-	      jit-lock-stealth-time 2             ;; Time to wait before fortifications (def: nil)
+	      jit-lock-stealth-time 16             ;; Time to wait before fortifications (def: nil)
 	      inhibit-default-init t              ;; Avoid emacs default init
 	      term-suppress-hard-newline t        ;; Text can resize
 	      echo-keystrokes 0.001                ;; Unfinished bindings in the echo area
@@ -115,6 +117,7 @@
 	      async-shell-command-display-buffer nil ;;command buffer wait until there is output
 	      shell-kill-buffer-on-exit t
 	      large-file-warning-threshold nil
+	      garbage-collection-messages t
 	      )
 
 ;; Vertical window divider
@@ -807,7 +810,7 @@ M-<left>' and repeat with M-<left>."
    ((member "Hack" (font-family-list))
     (set-face-attribute 'default nil :family "Hack" :height 105))
    ((member "Cascadia Mono" (font-family-list))
-    (set-face-attribute 'default nil :family "Cascadia Mono" :height 105))))
+    (set-face-attribute 'default nil :family "Cascadia Mono" :height 110))))
 
 (cond
  ((daemonp) (add-hook 'server-after-make-frame-hook
@@ -831,7 +834,9 @@ M-<left>' and repeat with M-<left>."
 ;;__________________________________________________________
 ;; compile
 (setq-default compilation-scroll-output 'first-error
-	      compilation-always-kill t)
+	      compilation-always-kill t
+	      compilation-skip-threshold 2 ;; dont jump to warnings
+	      )
 
 ;;; Display compilation buffer at buttom
 (add-to-list 'display-buffer-alist `("*compilation*" . ,my/display-buffer-at-bottom))
@@ -1348,7 +1353,7 @@ M-<left>' and repeat with M-<left>."
 
   (add-hook 'text-mode-delay-hook
 	    (lambda nil
-	      (add-to-list 'completion-at-point-functions #'cape-ispell))))
+	      (add-to-list 'completion-at-point-functions #'cape-dict))))
 
 ;; (use-package lsp-mode :defer t
 ;;   :diminish lsp
@@ -2101,25 +2106,42 @@ Nested namespaces should not be indented with new indentations."
 
 (use-package magit :defer t
   :init
-  (setq-default magit-define-global-key-bindings nil
+  (setq-default magit-git-executable (executable-find "git")
+		magit-define-global-key-bindings nil
 		magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1
 		;; This may help for tramp
 		auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffer-p
+		magit-git-debug t
+		magit-process-display-mode-line-error nil ;; magit errors in modeline
+		;; magit-process-extreme-logging t ;; log all commands to *Messages*
 
-		;; magit-completing-read-function #'ivy-completing-read ;; this is not needed anymore.
+		;; This may help on MS_Windows
+		magit-refresh-status-buffer nil
+
+		magit-diff-highlight-indentation nil
+		magit-revision-insert-related-refs nil
+		magit-diff-highlight-trailing nil
+		magit-diff-paint-whitespace nil
+		magit-diff-highlight-hunk-body nil
+		magit-diff-refine-hunk nil
+
 		;;magit-bury-buffer-function #'magit-mode-quit-window
 		)
   :config
   (keymap-unset magit-section-mode-map "C-<tab>" t) ;; magit-section-cycle shadows tab next
 
-  (add-hook 'after-save-hook (lambda nil
-			       (unless (file-remote-p default-directory)
-				 (message "Refreshing magit for: %s" default-directory)
-				 (magit-after-save-refresh-status))))
+  ;; (add-hook 'after-save-hook (lambda nil
+  ;; 			       (unless (file-remote-p default-directory)
+  ;; 				 (message "Refreshing magit for: %s" default-directory)
+  ;; 				 (magit-after-save-refresh-status))))
 
   (add-hook 'magit-log-mode-hook (lambda nil
 				   (setq-local show-trailing-whitespace nil
-					       tab-width 4))))
+					       tab-width 4)))
+
+  (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
+  (remove-hook 'magit-section-unhighlight-hook 'magit-diff-unhighlight))
+
 (use-package git-modes
   :mode (("\\.gitattributes\\'" . gitattributes-mode)
 	 ("\\.gitconfig\\'" . gitconfig-mode)
@@ -2293,10 +2315,11 @@ Nested namespaces should not be indented with new indentations."
   :init
   (my/repeat-keymap move-dup-repeat-map ctl-x-map
     :doc "The keymap for `move-dup-repeat' commands."
-    "C-M-<up>" #'move-dup-move-lines-up
-    "C-M-<down>" #'move-dup-move-lines-down
-    "M-<up>" #'move-dup-duplicate-up
-    "M-<down>" #'move-dup-duplicate-down))
+    "M-<up>" #'move-dup-move-lines-up
+    "M-<down>" #'move-dup-move-lines-down
+    ;;"M-<up>" #'move-dup-duplicate-up
+    ;;"M-<down>" #'move-dup-duplicate-down
+    ))
 
 ;;__________________________________________________________
 ;; avy mode
@@ -2609,9 +2632,28 @@ Nested namespaces should not be indented with new indentations."
   (with-eval-after-load 'dired
     (require 'citre-lang-fileref)))
 
+(defun my/c-lineup-namespace ()
+  "Linup namespace"
+  (save-excursion
+    (back-to-indentation)
+    (let ((initial-pos (point))
+	  (syn-elt (car c-syntactic-context)))
+      (when (and (eq (c-langelem-sym syn-elt) 'innamespace)
+		 (looking-at-p "namespace[[:blank:]]+[[:alnum:]:]+[[:space:]]*{")
+		 (re-search-backward "namespace[[:blank:]]+[[:alnum:]:]+[[:space:]]*{" nil t))
+	(let ((end (point))
+	      (start (progn (beginning-of-line)
+			    (point))))
+	  (goto-char initial-pos)
+	  (delete-horizontal-space)
+	  (insert-buffer-substring-no-properties (current-buffer) start end))))))
+
 ;;__________________________________________________________
 ;; Enable tree-sitter for some modes by default if the tree-sitter
 ;; directory exists
+
+(setenv "PATH" "C:\\Users\\T008593\\Downloads\\msys2_64\\mingw64\\bin;$PATH" t)
+(setenv "PATH" "C:\\Users\\T008593\\Downloads\\msys2_64\\usr\\bin;$PATH" t)
 
 (when (file-exists-p (expand-file-name "tree-sitter" user-emacs-directory))
 
