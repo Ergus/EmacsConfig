@@ -774,6 +774,7 @@ M-<left>' and repeat with M-<left>."
 			  (recenter nil t)))
 
   (add-hook 'occur-mode-hook (lambda ()
+			       (setq-local window-size-fixed 'height)
 			       (hl-line-mode 1)
 			       (display-line-numbers-mode -1)
 			       (switch-to-buffer-other-window "*Occur*")
@@ -1495,7 +1496,9 @@ Nested namespaces should not be indented with new indentations."
   (add-hook 'c-mode-common-hook #'my/c-mode-common-hook))
 
 (use-package google-c-style :defer t
-  :after cc-mode)
+  :after cc-mode
+  :config
+  (c-add-style "Google" google-c-style))
 
 ;; (use-package preproc-font-lock :defer t ;; Preprocessor
 ;;   :init
@@ -1717,7 +1720,7 @@ Nested namespaces should not be indented with new indentations."
 
 (setq-default flymake-no-changes-timeout 1.0
 	      flymake-wrap-around nil
-	      flymake-show-diagnostics-at-end-of-line t  ;; I want to try that
+	      ;; flymake-show-diagnostics-at-end-of-line t  ;; I want to try that
 	      flymake-mode-line-format nil)
 
 (with-eval-after-load 'flymake
@@ -2026,7 +2029,9 @@ Nested namespaces should not be indented with new indentations."
 
 (use-package imenu-list :defer t
   :init
-  (setq-default imenu-list-position 'left)
+  (setq-default imenu-list-position 'left
+		imenu-list-focus-after-activation t
+		imenu-list-size 0.2)
   (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle))
 
 ;; (use-package amx :defer t) ;; Complete history
