@@ -314,6 +314,8 @@ M-<left>' and repeat with M-<left>."
 (setq-default imenu-use-markers nil
 	      imenu-auto-rescan t
 	      imenu-max-item-length 256)
+(with-eval-after-load 'imenu
+  (add-hook 'imenu-after-jump-hook #'pulse-momentary-highlight-one-line))
 
 ;; uniquify
 (setq-default uniquify-buffer-name-style 'forward) ;; default 'post-forward-angle-brackets
@@ -2032,7 +2034,11 @@ Nested namespaces should not be indented with new indentations."
   (setq-default imenu-list-position 'left
 		imenu-list-focus-after-activation t
 		imenu-list-size 0.2)
-  (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle))
+  (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle)
+  :config
+  (add-hook 'imenu-list-after-jump-hook #'pulse-momentary-highlight-one-line)
+
+)
 
 ;; (use-package amx :defer t) ;; Complete history
 
