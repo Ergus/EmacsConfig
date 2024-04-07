@@ -731,15 +731,23 @@ M-<left>' and repeat with M-<left>."
 	      ;; isearch-wrap-function #'ignore       ;; Look at the emacs-major-version check
 	      ;; isearch-wrap-pause t                 ;; Disable wrapping nil.
 	      isearch-repeat-on-direction-change t ;; Don't go to the other end on direction change
-	      isearch-lax-whitespace t
-	      isearch-regexp-lax-whitespace t      ;; swiper like fuzzy search
-	      search-whitespace-regexp ".*?"
+	      isearch-lax-whitespace nil
+	      ;; isearch-regexp-lax-whitespace t      ;; swiper like fuzzy search
+	      ;; search-whitespace-regexp ".*?"
 	      ;; Emacs version > 28
 	      lazy-highlight-no-delay-length 1     ;; use this instead of lazy-highlight-initial-delay
 	      isearch-allow-motion t
 	      isearch-forward-thing-at-point '(region symbol sexp word)
 	      ;; isearch-motion-changes-direction t
 	      )
+
+(defun my/isearch-forward ()
+  (interactive)
+  (let ((search-whitespace-regexp ".*?")
+	(search-spaces-regexp ".*?")
+	(isearch-lax-whitespace t))
+    (call-interactively 'isearch-forward)
+    ))
 
 (with-eval-after-load 'isearch
   (defun my/isearch-exit-other-end ()
@@ -754,7 +762,6 @@ M-<left>' and repeat with M-<left>."
   (keymap-set isearch-mode-map "<remap> <isearch-delete-char>" #'isearch-del-char)
 
   (keymap-set search-map "." #'isearch-forward-thing-at-point)
-
   (which-key-add-key-based-replacements "M-s h" "highlight")
 
   (when (fboundp #'avy-isearch)
@@ -2426,9 +2433,9 @@ Nested namespaces should not be indented with new indentations."
 (use-package nginx-mode
   :mode ("sites-\\(?:available\\|enabled\\)\\'" "nginx\\.config\\'"))
 
-(use-package company-nginx :defer t
-  :hook (nginx-mode . (lambda nil
-			(my/company-backend-after-load #'company-nginx))))
+;; (use-package company-nginx :defer t
+;;   :hook (nginx-mode . (lambda nil
+;; 			(my/company-backend-after-load #'company-nginx))))
 
 (use-package lice :defer t
   :init
