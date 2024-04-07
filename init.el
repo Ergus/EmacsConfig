@@ -219,28 +219,6 @@ M-<left>' and repeat with M-<left>."
   (message "Creating %s" custom-file))
 (load custom-file)
 
-;; Personal Lisp dir
-;; (defconst mylisp-dir (expand-file-name "lisp" user-emacs-directory))
-
-;; (if (file-exists-p mylisp-dir)
-;;     (progn
-;;       (add-to-list 'load-path mylisp-dir)
-
-;;       ;; Next file is in my lisp directory. it only defines mu4e
-;;       ;; config and a variable for the gmail calendar. It goes in the
-;;       ;; lisp directory.
-;;       (unless (require 'configmail "configmail.el" t)
-;; 	(message "No mail config file found: ignoring")))
-
-;;   ;; No lisp subdir so ignore.
-;;   (message "Subdir %s does not exist: ignoring" mylisp-dir))
-
-;; System Lisp dir
-;; (defconst syslisp-dir "/usr/share/emacs/site-lisp")
-;; (when (file-exists-p syslisp-dir)
-;;   (add-to-list 'load-path syslisp-dir t))
-
-
 ;;__________________________________________________________
 ;; which-key
 (use-package diminish :defer t)   ;; if you use :diminish
@@ -599,125 +577,6 @@ M-<left>' and repeat with M-<left>."
   "Windows configuration for display-buffer-alist")
 
 ;;__________________________________________________________
-;; Completion with vertico/consult/orderless/embark
-
-;; (use-package vertico :defer 0.2
-;;   :init
-;;   (setq-default vertico-quick1 "asdfghjklmnqp")
-;;   :config
-;;   (vertico-mode 1)
-;;   (vertico-mouse-mode 1)
-;;   ;; (vertico-indexed-mode 1)    ;; prefix does not work...
-;;   (keymap-set vertico-map "TAB" 'minibuffer-complete)
-;;   (keymap-set vertico-map "C-'" #'vertico-quick-insert) ;; like avy
-;;   (keymap-set vertico-map "C-q" #'vertico-quick-exit)   ;; to exit
-
-;;   (keymap-global-set "C-c c c" #'vertico-repeat)
-;;   (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
-
-;;   (keymap-set vertico-map "^" #'vertico-directory-up)
-;;   (keymap-set vertico-map "RET" #'vertico-directory-enter)
-;;   (keymap-set vertico-map "DEL" #'vertico-directory-delete-char)
-;;   (keymap-set vertico-map "M-d" #'vertico-directory-delete-word)
-;;   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
-
-;; (use-package orderless
-;;   :after vertico
-;;   :config
-;;   (setq completion-styles '(orderless basic)
-;; 	orderless-matching-styles '(orderless-regexp orderless-literal)
-;; 	completion-category-overrides '((file (styles basic partial-completion)))))
-
-;; (use-package consult :defer t
-;;   :preface
-;;   (defun consult-line-symbol-at-point ()
-;;     (interactive)
-;;     (consult-line (thing-at-point 'symbol)))
-
-;;   (defvar-keymap my/consult-mode-map
-;;     :doc "Map for consult commands."
-;;     "<remap> <switch-to-buffer>" #'consult-buffer
-;;     "<remap> <switch-to-buffer-other-window>" #'consult-buffer-other-window
-;;     "<remap> <switch-to-buffer-other-frame>" #'consult-buffer-other-frame
-;;     "<remap> <repeat-complex-command>" #'consult-complex-command
-;;     "<remap> <bookmark-jump>" #'consult-bookmark
-;;     "<remap> <project-switch-to-buffer>" #'consult-project-buffer
-;;     "<remap> <yank-pop>" #'consult-yank-pop
-;;     "<remap> <apropos-command>" #'consult-apropos
-;;     "<remap> <goto-line>" #'consult-goto-line
-;;     ;; Register not remapped because some are repeated
-;;     "C-x r s" #'consult-register-store
-;;     "C-x r i" #'consult-register       ;; register use interactive
-;;     "C-x r g" #'consult-register-load  ;; register use quick
-
-;;     "C-c c C-SPC" #'consult-mark         ;; pop-to-mark-command
-;;     "C-c c M-SPC" #'consult-global-mark  ;; pop mar but globaly
-;;     "<remap> <imenu>" #'consult-imenu        ;; imenu
-;;     "C-c c I" #'consult-imenu-multi
-;;     "C-c c m" #'consult-flymake
-;;     "C-c c p" #'consult-ripgrep
-;;     "C-c c g" #'consult-grep
-;;     "C-c c G" #'consult-git-grep
-;;     "C-c c f" #'consult-find
-;;     ;; isearch integration
-;;     "M-s f" #'consult-focus-lines  ;; Hide not matching lines
-;;     "M-s l" #'consult-line-symbol-at-point
-;;     "M-s m" #'consult-line-multi
-;;     "M-s M-r" #'consult-isearch-history)
-
-;;   (define-minor-mode my/consult-mode
-;;     "Enable my consult bindings."
-;;     :global t
-;;     :init-value t
-;;     (cond
-;;      (my/consult-mode
-;;       (setq register-preview-delay 0.0
-;; 	    ;; Use this only when enabled vertico.
-;; 	    completion-in-region-function #'consult-completion-in-region
-;; 	    register-preview-function #'consult-register-format
-;; 	    xref-show-xrefs-function #'consult-xref
-;; 	    xref-show-definitions-function #'consult-xref
-;; 	    consult-line-start-from-top t
-;; 	    consult-narrow-key (kbd "<"))
-
-;;       (advice-add #'completing-read-multiple
-;; 		  :override #'consult-completing-read-multiple)
-
-;;       (keymap-set minibuffer-local-map "C-r" #'consult-history)
-;;       (keymap-unset minibuffer-local-map "M-s"))))
-
-;;   (my/consult-mode 1)
-;;   :config
-;;   (consult-customize consult-theme
-;; 		     :preview-key '(:debounce 0.2 any)
-;; 		     consult-buffer consult-ripgrep consult-git-grep consult-grep
-;; 		     consult-bookmark consult-recent-file consult-xref
-;; 		     consult--source-bookmark consult--source-recent-file
-;; 		     consult--source-project-recent-file
-;; 		     :preview-key (kbd "M-.")
-;; 		     consult-buffer :group nil  ;; Hide groups titles
-;; 		     ))
-
-;; (use-package embark
-;;   :bind (("M-o" . embark-act)         ;; pick some comfortable binding
-;; 	 ("C-h B" . embark-bindings))) ;; alternative for `describe-bindings'
-
-;; ;; Consult users will also want the embark-consult package.
-;; (use-package embark-consult
-;;   :after (embark consult)
-;;   :init
-;;   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
-
-;;__________________________________________________________
-;; Paradox
-;; This package has been archived, so, not maintained anymore
-;; (use-package paradox :defer t
-;;   :init
-;;   (setq-default paradox-spinner-type 'progress-bar
-;; 		paradox-display-download-count t
-;; 		paradox-display-star-count t
-;; 		paradox-github-token t))
-;;__________________________________________________________
 ;; Isearch
 
 (setq-default search-nonincremental-instead nil    ;; No incremental if enter & empty
@@ -878,16 +737,6 @@ M-<left>' and repeat with M-<left>."
 
 ;; Edit files as sudo
 (use-package sudo-edit :defer t)
-
-;; ssh deploy
-;; (use-package ssh-deploy :defer t
-;;   :bind-keymap ("C-c C-z" . ssh-deploy-prefix-map)
-;;   :hook ((after-save . ssh-deploy-after-save)
-;;          (find-file . ssh-deploy-find-file))
-;;   :config
-;;   (debug)
-;;   (ssh-deploy-line-mode) ;; If you want mode-line feature
-;;   )
 
 ;;__________________________________________________________
 ;; splitting
@@ -1171,31 +1020,6 @@ M-<left>' and repeat with M-<left>."
 		      :foreground (my/named-color brightblack)))
 
 ;;__________________________________________________________
-;; Resalta scopes entorno al cursor
-;; (use-package highlight-blocks
-;;   :defer t
-;;   :diminish
-;;   :init
-;;   (keymap-global-set "M-s h b" #'highlight-blocks-now)
-;;   (keymap-global-set "M-s h B" #'highlight-blocks-mode)
-;;   :config
-;;   (set-face-attribute 'highlight-blocks-depth-2-face nil :background "#262626") ;; gray15
-;;   (set-face-attribute 'highlight-blocks-depth-3-face nil :background "#333333") ;; gray20
-;;   (set-face-attribute 'highlight-blocks-depth-4-face nil :background "#404040") ;; gray25
-;;   (set-face-attribute 'highlight-blocks-depth-5-face nil :background "#4d4d4d")
-;;   (set-face-attribute 'highlight-blocks-depth-6-face nil :background "#595959")
-;;   (set-face-attribute 'highlight-blocks-depth-7-face nil :background "#666666")
-;;   (set-face-attribute 'highlight-blocks-depth-8-face nil :background "#737373")
-;;   (set-face-attribute 'highlight-blocks-depth-9-face nil :background "#7f7f7f"))
-
-;; (use-package highlight-escape-sequences
-;;   :diminish
-;;   :defer t
-;;   :init
-;;   (keymap-global-set "M-s h s" #'hes-mode)
-;;   (which-key-add-key-based-replacements "M-s h s" "highlight-escape-mode"))
-
-;;__________________________________________________________
 ;; Flyspell (Orthography)
 (setq-default ispell-following-word t ;;Check word around point not only before
 	      ispell-quietly t)       ;; Suppress messages in ispell-word
@@ -1300,15 +1124,6 @@ M-<left>' and repeat with M-<left>."
 
 (use-package cape
   :defer 0.2
-  ;;:preface
-  ;; (defmacro my/cape-with-company (cape-func)
-  ;;   "Wrap company completion to use an specific cape backend."
-  ;;   `(lambda ()
-  ;;      (interactive)
-  ;;      (let ((completion-at-point-functions (list ,cape-func))
-  ;; 	     (company-backends '(company-capf)))
-  ;; 	 (my/company-complete))))
-
   :init
   (setq-default cape-dabbrev-check-other-buffers nil) ;; default t
 
@@ -1342,54 +1157,6 @@ M-<left>' and repeat with M-<left>."
 	    (lambda nil
 	      (add-to-list 'completion-at-point-functions #'cape-ispell))))
 
-;; (use-package lsp-mode :defer t
-;;   :diminish lsp
-;;   :hook (lsp-mode . (lambda nil
-;; 		      (my/company-backend-after-load #'company-capf)
-;; 		      (lsp-enable-which-key-integration t)))
-;;   :init
-;;   (setq-default lsp-keymap-prefix (kbd "C-c l")
-;; 		lsp-enable-snippet nil
-;; 		lsp-eldoc-hook nil
-;; 		lsp-enable-indentation nil
-;; 		lsp-prefer-capf t
-;; 		read-process-output-max (* 1024 1024)) ;; 1mb (data read from a process)
-;;   ;; lsp-diagnostic-package t ;; prefer flymake
-;;   ;; :init
-;;   ;; (add-hook 'c-mode-common-hook #'lsp-deferred)
-;;   ;; (add-hook 'python-mode-hook #'lsp-deferred)
-;;   :config
-;;   (lsp-register-client
-;;    (make-lsp-client :new-connection (lsp-tramp-connection "clangd")
-;;                     :major-modes '(c-mode c++-mode)
-;;                     :remote? t
-;;                     :server-id 'clangd-remote)))
-
-;; (use-package consult-lsp :defer t)
-
-;; (use-package lsp-ui
-;;   :diminish
-;;   :after lsp-mode
-;;   :init
-;;   ;;(lsp-ui-sideline-delay 1.0)
-;;   (setq-default lsp-ui-sideline-enable nil
-;; 		lsp-ui-doc-enable nil)
-;;   :config
-;;   (which-key-add-keymap-based-replacements lsp-command-map "C-c l u" "lsp-ui")
-
-;;   (keymap-set lsp-command-map "u d" #'lsp-ui-peek-find-definitions)
-;;   (keymap-set lsp-command-map "u r" #'lsp-ui-peek-find-references)
-;;   (keymap-set lsp-command-map "u i" #'lsp-ui-peek-find-implementation)
-;;   ;;("s" . lsp-ui-peek-find-workspace-symbol)
-;;   (keymap-set lsp-command-map "u c" #'lsp-ui-peek-find-custom)
-;;   ;; imenu
-;;   (keymap-set lsp-command-map "u m" #'lsp-ui-imenu)
-;;   ;; flycheck
-;;   (keymap-set lsp-command-map "u f" #'lsp-ui-flycheck-list)
-;;   ;; lsp-ui
-;;   (keymap-set lsp-command-map "u n" #'lsp-ui-find-next-reference)
-;;   (keymap-set lsp-command-map "u p" #'lsp-ui-find-prev-reference)
-;;   )
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languages)
@@ -1514,16 +1281,6 @@ Nested namespaces should not be indented with new indentations."
 ;;   (add-hook 'c-mode-common-hook #'preproc-font-lock-mode)
 ;;   (setq-default preproc-font-lock-preprocessor-background-face 'font-lock-preprocessor-face))
 
-;; company-c-headers
-;; (use-package company-c-headers :defer t
-;;   :preface
-;;   (defun my/c-mode-hook ()
-;;     (my/company-backend-after-load #'company-c-headers))
-;;   :init
-;;   (add-hook 'c-mode-hook #'my/c-mode-hook)
-;;   (add-hook 'c++-mode-hook #'my/c-mode-hook)
-;;   (add-hook 'objc-mode-hook #'my/c-mode-hook))
-
 (use-package clang-format :defer t)
 
 ;;__________________________________________________________
@@ -1581,31 +1338,10 @@ Nested namespaces should not be indented with new indentations."
 (setq-default ruby-indent-level 2)
 (add-to-list 'auto-mode-alist '("\\.rjs\\'" . ruby-mode))
 
-;; (use-package ruby-electric :defer t
-;;   :init
-;;   (add-hook 'ruby-mode-hook  #'ruby-electric-mode))
-
 ;;__________________________________________________________
 ;; Julia Mode
-;; There is a tree-sitter mode for this, I will try that
-;; (use-package julia-mode
-;;   :mode "\\.jl\\'")
-
-;; (use-package flycheck-julia :defer t
-;;   :init
-;;   (add-hook 'julia-mode-hook #'flycheck-julia-setup))
 
 (use-package julia-ts-mode :defer t)
-
-;;__________________________________________________________
-;; Rust Mode
-;; There is a tree-sitter module for this, I will try that
-;; (use-package rust-mode
-;;   :mode "\\.rs\\'")
-
-;; (use-package flycheck-rust :defer t
-;;   :init
-;;   (add-hook 'rust-mode-hook #'flycheck-rust-setup))
 
 ;;__________________________________________________________
 ;; Ocaml Mode
@@ -1620,25 +1356,14 @@ Nested namespaces should not be indented with new indentations."
   (add-to-list 'auto-mode-alist '("\\.d\\'" . d-mode)))
 
 ;;__________________________________________________________
-;; Go languaje
-;; (use-package go-mode :defer t
-;;   :init
-;;   (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode)))
-
-;;__________________________________________________________
 ;; lua language
 (use-package lua-mode :defer t
   :init
   (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
   (add-to-list 'interpreter-mode-alist '("lua" . lua-mode)))
 
-;; (use-package company-lua :defer t
-;;   :hook (lua-mode . (lambda nil
-;; 		      (my/company-backend-after-load #'company-lua))))
-
 ;;__________________________________________________________
 ;; groovy language
-
 (use-package groovy-mode :defer t)
 
 ;;__________________________________________________________
@@ -1788,14 +1513,7 @@ Nested namespaces should not be indented with new indentations."
 (use-package notmuch :defer t
   :init
   (setenv "NOTMUCH_CONFIG" (expand-file-name "/mnt/casa/mail/notmuch-config"))
-  ;; :hook (message-mode . (lambda nil
-  ;; 			  (my/company-backend-after-load #'notmuch-company)))
   )
-
-;; (with-eval-after-load 'notmuch-company
-;;   ;; This is requires because of an issue in notmuch-company not
-;;   ;; loading notmuch-address.
-;;   (require 'notmuch-address))
 
 ;;__________________________________________________________
 ;; Latex mode
@@ -1852,29 +1570,6 @@ Nested namespaces should not be indented with new indentations."
 			   (TeX-source-correlate-mode 1))) ;; open PDF in the edditing page
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . TeX-latex-mode))
 
-;; auctex-latexmk is broken
-;; auctex-latexmk
-;; (use-package auctex-latexmk
-;;   :init
-;;   (setq-default auctex-latexmk-inherit-TeX-PDF-mode t)
-;;   :after tex
-;;   :config
-;;   (auctex-latexmk-setup))
-
-;; company-math-symbols-latex: at the end I need to search it
-;; company-latex-commands: is better company-auctex-macros
-;; (use-package company-math :defer t
-;;   :hook (TeX-mode . (lambda nil
-;; 		      (my/company-backend-after-load
-;; 		       '(company-math-symbols-latex company-latex-commands)))))
-
-;; (use-package company-auctex :defer t
-;;   :hook (TeX-mode . (lambda nil
-;; 		      ;; This is similar code than company-auctex-init, but setting it only locally.
-;; 		      (my/company-backend-after-load 'company-auctex-labels)
-;; 		      (my/company-backend-after-load 'company-auctex-bibs)
-;; 		      (my/company-backend-after-load '(company-auctex-macros company-auctex-symbols company-auctex-environments)))))
-
 ;; reftex
 (setq-default reftex-cite-prompt-optional-args t   ; Prompt for empty optional arguments in cite
 	      reftex-cite-format 'biblatex
@@ -1888,21 +1583,10 @@ Nested namespaces should not be indented with new indentations."
 
 (eval-after-load 'reftex '(reftex-isearch-minor-mode))
 
-;; (use-package company-reftex :defer t
-;;   :hook (reftex-mode . (lambda nil
-;; 			 (my/company-backend-after-load
-;; 			  '(company-reftex-labels company-reftex-citations)))))
-
 ;;__________________________________________________________
 ;;bibtex mode set use biblatex
-
 (setq-default bibtex-dialect 'biblatex)
 (add-to-list 'auto-mode-alist '("\\.bib\\'" . bibtex-mode))
-
-;; Not working or usefull
-;; (use-package company-bibtex :defer t
-;;   :hook (bibtex-mode . (lambda nil
-;; 			 (my/company-backend-after-load #'company-bibtex))))
 
 ;;__________________________________________________________
 ;; Python mode
@@ -1972,27 +1656,6 @@ Nested namespaces should not be indented with new indentations."
   :init
   (keymap-set my/sidebar-map "b" #'ibuffer-sidebar-toggle-sidebar))
 
-;; Uses cl which is obsolete
-;; (use-package ibuffer-tramp
-;;   :after ibuffer
-;;   :config
-;;   (keymap-set ibuffer--filter-map "G t" #'ibuffer-tramp-set-filter-groups-by-tramp-connection))
-
-;; (use-package ibuffer-project
-;;   :after ibuffer
-;;   :preface
-;;   (defun my/ibuffer-set-filter-groups-by-project ()
-;;     (interactive)
-;;     (setq ibuffer-filter-groups (ibuffer-project-generate-filter-groups))
-;;     (ibuffer-update nil t))
-;;   :config
-;;   (keymap-set ibuffer--filter-map "G p" #'my/ibuffer-set-filter-groups-by-project))
-
-;; (use-package ibuffer-vc
-;;   :after ibuffer
-;;   :config
-;;   (keymap-set ibuffer--filter-map "G v" #'ibuffer-vc-set-filter-groups-by-vc-root))
-
 ;; Sidebar Dired+ibuffer (de emacs defaults)
 (defun my/sidebar-toggle ()
   "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
@@ -2010,7 +1673,6 @@ Nested namespaces should not be indented with new indentations."
 
 ;;__________________________________________________________
 ;; Ivy (probare un tiempo con helm/ivy)
-
 (use-package flx :defer t)
 
 (with-eval-after-load 'xref
@@ -2043,11 +1705,7 @@ Nested namespaces should not be indented with new indentations."
 		imenu-list-size 0.2)
   (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle)
   :config
-  (add-hook 'imenu-list-after-jump-hook #'pulse-momentary-highlight-one-line)
-
-)
-
-;; (use-package amx :defer t) ;; Complete history
+  (add-hook 'imenu-list-after-jump-hook #'pulse-momentary-highlight-one-line))
 
 (use-package dumb-jump :defer t
   :bind-keymap ("C-c j" . dumb-jump-mode-map)
@@ -2056,8 +1714,7 @@ Nested namespaces should not be indented with new indentations."
 		dumb-jump-disable-obsolete-warnings t
 		dumb-jump-prefer-searcher 'rg
 		dumb-jump-quiet (not init-file-debug)
-		dumb-jump-debug init-file-debug
-		)
+		dumb-jump-debug init-file-debug)
   (which-key-add-key-based-replacements
     "C-c j" "dumb-jump"
     "C-c j 4" "other-window")
@@ -2089,7 +1746,6 @@ Nested namespaces should not be indented with new indentations."
 
 ;;__________________________________________________________
 ;; Magit and git packages
-
 (use-package magit :defer t
   :init
   (setq-default magit-define-global-key-bindings nil
@@ -2181,23 +1837,6 @@ Nested namespaces should not be indented with new indentations."
 (use-package flymake-nasm :defer t
   :init
   (add-hook 'asm-mode-hook-hook #'flymake-nasm-setup))
-
-;;__________________________________________________________
-;; CMake
-;; (use-package cmake-mode :defer t
-;;   :init
-;;   (add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
-;;   (add-to-list 'auto-mode-alist '("\\.cmake(.in)?\\'" . cmake-mode)))
-
-;; (use-package cmake-font-lock :defer t
-;;   :preface
-;;   (defun my/cmake-font-lock ()
-;;     (let ((auto-refresh-defaults (boundp 'font-lock-keywords)))
-;;       (cmake-font-lock-activate)
-;;       (when auto-refresh-defaults
-;; 	(font-lock-refresh-defaults))))
-;;   :init
-;;   (add-hook 'cmake-mode-hook #'my/cmake-font-lock))
 
 ;;__________________________________________________________
 ;; Cobol
@@ -2410,25 +2049,6 @@ Nested namespaces should not be indented with new indentations."
     (keymap-set mc-basic-map "i" #'iedit-mode)))
 
 ;;__________________________________________________________
-;; Web mode
-;; I will use the tree-sitter alternative because web-mode is very intrusive
-;; (use-package web-mode
-;;   :mode ("\\.\\(p\\|dj\\)?html\\'"
-;; 	 "\\(\\.tpl\\)?\\.php\\'" "\\.[agj]sp\\'"
-;; 	 "\\.as[cp]x\\'" "\\.erb\\'")
-;;   :init
-;;   (setq-default web-mode-markup-indent-offset tab-width
-;; 		web-mode-css-indent-offset tab-width
-;; 		web-mode-code-indent-offset tab-width
-;; 		web-mode-enable-auto-pairing t
-;; 		web-mode-enable-auto-closing t
-;; 		web-mode-enable-css-colorization t))
-
-;; (use-package company-web :defer t
-;;   :hook (web-mode . (lambda nil
-;; 		      (my/company-backend-after-load #'company-web-html))))
-
-;;__________________________________________________________
 ;; nginx mode
 (use-package nginx-mode
   :mode ("sites-\\(?:available\\|enabled\\)\\'" "nginx\\.config\\'"))
@@ -2441,18 +2061,6 @@ Nested namespaces should not be indented with new indentations."
   :init
   (setq-default lice:copyright-holder "Jimmy Aguilar Mena"))
 (use-package lorem-ipsum :defer t)
-;;__________________________________________________________
-;; json mode
-
-;; There is a tree-sitter module for this, I will try that
-;; (use-package json-mode
-;;   :mode "\\.json\\'"
-;;   :preface
-;;   (my/gen-delay-hook json-mode))
-
-;; (use-package flymake-json :defer t
-;;   :init
-;;   (add-hook 'json-mode-delay-hook #'flymake-json-load))
 
 ;;__________________________________________________________
 ;; csv mode
@@ -2462,19 +2070,8 @@ Nested namespaces should not be indented with new indentations."
 
 ;;__________________________________________________________
 ;; Protobuf mode
-;; There is a tree-sitter module for this, I will try that
-;; (use-package protobuf-mode :defer t)
-
-(use-package protobuf-ts-mode :defer t)
-
-;;__________________________________________________________
-;; yaml mode
-;; There is a tree-sitter module for this, I will try that
-;; (use-package yaml-mode
-;;   :mode "\\.yaml\\'"
-;;   :preface
-;;   (my/gen-delay-hook yaml-mode))
-
+(use-package protobuf-ts-mode
+  :mode "\\.proto\\'")
 
 ;;__________________________________________________________
 
@@ -2636,8 +2233,6 @@ Nested namespaces should not be indented with new indentations."
 				(c-ts-mode-set-style 'linux)
 				(setq-local tab-width 4
 					    c-ts-mode-indent-offset tab-width)))
-
-  
 
   ;; (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
   ;; (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
