@@ -1116,7 +1116,9 @@ M-<left>' and repeat with M-<left>."
 	 (message-mode-delay . completion-preview-mode)
 	 (shell-mode . completion-preview-mode)
 	 (eshell-mode . completion-preview-mode)
-	 (vterm-mode . completion-preview-mode)))
+	 (vterm-mode . completion-preview-mode))
+  :init
+  (setq-default completion-preview-exact-match-only 'common))
 
 (use-package corfu-terminal
   :config
@@ -1144,18 +1146,14 @@ M-<left>' and repeat with M-<left>."
     "r" 'cape-rfc1345)
 
   (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-dict)
   (add-to-list 'completion-at-point-functions #'cape-keyword)
 
   (keymap-global-set "C-c p" (cons "cape" my/cape-basic-map))
 
   (add-hook 'TeX-mode-hook
 	    (lambda nil
-	      (add-to-list 'completion-at-point-functions #'cape-tex)))
-
-  (add-hook 'text-mode-delay-hook
-	    (lambda nil
-	      (add-to-list 'completion-at-point-functions #'cape-ispell))))
+	      (add-to-list 'completion-at-point-functions #'cape-tex))))
 
 
 ;;__________________________________________________________
