@@ -376,6 +376,17 @@ M-<left>' and repeat with M-<left>."
 ;; (eval-after-load 'elec-pair
 ;;   '(add-to-list 'electric-pair-pairs '(?< . ?>) t))
 
+(defun my/delete-trailing-function ()
+  "Hook that removes trailing whitespaces when RET at end of line."
+  (when (and (not electric-indent-mode)
+	     (eq last-command-event ?\n)
+	     (eq (char-before) ?\n))
+    (save-excursion
+      (backward-char 1)
+      (when (and (eolp))
+        (delete-horizontal-space t)))))
+(add-hook 'post-self-insert-hook #'my/delete-trailing-function)
+
 (defun my/delayed-common-hook ()
   "Enable electric-pair-local-mode"
   (setq-local show-trailing-whitespace t  ;; Show trailing whitespaces
