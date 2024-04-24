@@ -1746,6 +1746,13 @@ Nested namespaces should not be indented with new indentations."
 
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 
+(use-package project-multi-mode :defer t :ensure nil
+  :preface
+  (when (file-exists-p "/mnt/casa/gits/emacs_clones/project-multi/")
+    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/project-multi/"))
+  :init
+  :hook ((emacs-startup . project-multi-mode)))
+
 (use-package gtags-mode :defer t
   :preface
   (when (file-exists-p "/mnt/casa/gits/emacs_clones/gtags-mode/")
@@ -1753,13 +1760,6 @@ Nested namespaces should not be indented with new indentations."
   :init
   (setq-default gtags-mode-lighter "")
   :hook ((emacs-startup . gtags-mode)))
-
-(use-package project-multi-mode :defer t :ensure nil
-  :preface
-  (when (file-exists-p "/mnt/casa/gits/emacs_clones/project-multi/")
-    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/project-multi/"))
-  :init
-  :hook ((emacs-startup . project-multi-mode)))
 
 ;;__________________________________________________________
 ;; Magit and git packages
