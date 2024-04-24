@@ -387,12 +387,19 @@ M-<left>' and repeat with M-<left>."
         (delete-horizontal-space t)))))
 (add-hook 'post-self-insert-hook #'my/delete-trailing-function)
 
+(with-eval-after-load 'whitespace
+  (setq whitespace-style '(faces tab-mark)
+	whitespace-display-mappings `((tab-mark ?\t [,(make-glyph-code ?» 'whitespace-tab) ?\t] ))
+	))
+
 (defun my/delayed-common-hook ()
   "Enable electric-pair-local-mode"
   (setq-local show-trailing-whitespace t  ;; Show trailing whitespaces
 	      indicate-empty-lines t      ;; Show empty lines at end of file
 	      )
-  (electric-pair-local-mode 1))
+  (whitespace-mode 1)
+  (electric-pair-local-mode 1)
+  )
 
 (add-hook 'prog-mode-delay-hook #'my/delayed-common-hook)
 (add-hook 'text-mode-delay-hook #'my/delayed-common-hook)

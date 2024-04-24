@@ -85,6 +85,8 @@
  `(trailing-whitespace ((default :background ,(simple-16-theme-color cyan))
 			(((class color) (min-colors 16)) :background ,(simple-16-theme-color brightblack))))
 
+ `(whitespace-tab ((t :background unspecified :foreground ,(simple-16-theme-color brightblack))))
+
  ;; Modeline
  `(mode-line ((t :background ,(simple-16-theme-color blue)
 		 :foreground ,(simple-16-theme-color white)
