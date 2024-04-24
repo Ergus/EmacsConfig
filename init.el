@@ -1135,8 +1135,9 @@ M-<left>' and repeat with M-<left>."
 	 (shell-mode . completion-preview-mode)
 	 (eshell-mode . completion-preview-mode)
 	 (vterm-mode . completion-preview-mode))
-  :init
-  (setq-default completion-preview-exact-match-only 'common))
+  :config
+  (keymap-set completion-preview-active-mode-map "TAB" #'completion-preview-complete)
+  )
 
 (use-package corfu-terminal
   :config
