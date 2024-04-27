@@ -511,7 +511,7 @@ M-<left>' and repeat with M-<left>."
 	      ;; minibuffer-visible-completions t      ;; Jury completions selection
 	      completion-auto-wrap t                ;; wrap movement
 	      completions-detailed t                ;; show more detailed completions
-	      ;; completions-format 'one-column        ;; Vertical completion list
+	      completions-format 'one-column        ;; Vertical completion list
 	      completions-max-height 15
 	      completion-styles '(substring partial-completion emacs22)
 	      ;; M-x show context-local commands
@@ -522,6 +522,8 @@ M-<left>' and repeat with M-<left>."
 
 	      completion-auto-deselect t            ;; De-select completions on write
 	      completions-sort 'historical          ;; alphabetical + historical
+	      
+	      minibuffer-completion-auto-choose nil ;; no insert completions in minib
 	      )
 
 (defun my/fido-mode ()
@@ -1668,7 +1670,7 @@ Nested namespaces should not be indented with new indentations."
 ;;__________________________________________________________
 ;; ibuffer
 (setq-default ibuffer-default-sorting-mode 'alphabetic  ;; can use recency)
-	      ibuffer-use-other-window t
+	      ibuffer-use-other-window t                ;; ibuffer in other windows
 	      ibuffer-jump-offer-only-visible-buffers t)
 (keymap-global-set "<remap> <list-buffers>" #'ibuffer)
 (add-hook 'ibuffer-mode-hook #'hl-line-mode)
@@ -2227,7 +2229,9 @@ Nested namespaces should not be indented with new indentations."
 
   (setq-default toml-ts-mode-indent-offset 4
 		cmake-ts-mode-indent-offset 4
-		json-ts-mode-indent-offset 4)
+		json-ts-mode-indent-offset 4
+		rust-ts-mode-indent-offset 4
+		go-ts-mode-indent-offset 4)
 
   (add-to-list 'major-mode-remap-alist '(conf-toml-mode . toml-ts-mode))
   (add-to-list 'major-mode-remap-alist '(ruby-mode . ruby-ts-mode))
