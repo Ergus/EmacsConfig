@@ -1447,27 +1447,27 @@ Nested namespaces should not be indented with new indentations."
 
 ;;__________________________________________________________
 ;; Chequeo de syntaxis
-(use-package flycheck :defer t
-  :diminish
-  :when (< (buffer-size) 200000)
-  :preface
-  (defun my/flycheck-mode-hook ()
-    "Hook to enable flycheck-mode."
-    (pcase major-mode
-      ('c-mode
-       (setq-local flycheck-gcc-language-standard "c17"
-		   flycheck-clang-language-standard "c17"))
-      ('c++-mode
-       (setq-local flycheck-gcc-language-standard "c++17"
-		   flycheck-clang-language-standard "c++17")))
-    (flycheck-mode 1))
-  :init
-  (add-hook 'prog-mode-delay-hook #'my/flycheck-mode-hook)
-  (setq-default flycheck-display-errors-delay 0.5
-		flycheck-idle-change-delay 1.0
-		flycheck-keymap-prefix (kbd "C-c a"))
-  :config
-  (which-key-add-keymap-based-replacements flycheck-mode-map "C-c a" "flycheck"))
+;; (use-package flycheck :defer t
+;;   :diminish
+;;   :when (< (buffer-size) 200000)
+;;   :preface
+;;   (defun my/flycheck-mode-hook ()
+;;     "Hook to enable flycheck-mode."
+;;     (pcase major-mode
+;;       ('c-mode
+;;        (setq-local flycheck-gcc-language-standard "c17"
+;; 		   flycheck-clang-language-standard "c17"))
+;;       ('c++-mode
+;;        (setq-local flycheck-gcc-language-standard "c++20"
+;; 		   flycheck-clang-language-standard "c++20")))
+;;     (flycheck-mode 1))
+;;   :init
+;;   ;;(add-hook 'prog-mode-delay-hook #'my/flycheck-mode-hook)
+;;   (setq-default flycheck-display-errors-delay 0.5
+;; 		flycheck-idle-change-delay 1.0
+;; 		flycheck-keymap-prefix (kbd "C-c a"))
+;;   :config
+;;   (which-key-add-keymap-based-replacements flycheck-mode-map "C-c a" "flycheck"))
 
 (setq-default flymake-no-changes-timeout 1.0
 	      flymake-wrap-around nil
@@ -1613,7 +1613,11 @@ Nested namespaces should not be indented with new indentations."
               python-shell-interpreter-args "-i --simple-prompt"
 	      ;;python-shell-prompt-detect-failure-warning nil
 	      python-check-command "pyflakes"
-	      flycheck-python-flake8-executable "flake8")
+	      ;; flycheck-python-flake8-executable "flake8"
+	      python-indent-block-paren-deeper t
+	      python-shell-dedicated 'project
+	      python-shell-completion-native-enable t
+	      )
 
 (eval-after-load 'python
   '(keymap-set python-mode-map "C-c C-z" #'python-shell))
