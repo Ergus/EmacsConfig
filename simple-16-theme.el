@@ -156,6 +156,9 @@
  ;; Flymake
  `(flymake-error ((t :inherit nil :background unspecified :foreground unspecified :underline t)))
 
+ `(eshell-prompt ((t :weight bold :background unspecified
+		     :foreground ,(simple-16-theme-color brightblack))))
+
  ;; highlight-escape-sequences
  `(hes-escape-backslash-face ((t :inherit font-lock-regexp-grouping-backslash
 				 :foreground ,(simple-16-theme-color magenta))))

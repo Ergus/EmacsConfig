@@ -98,7 +98,6 @@
 	      bookmark-save-flag 1                    ;; Save bookmarks immediately when added
 
 	      register-use-preview t                  ;; newer interface to show registers
-	      eshell-history-append t                 ;; No override eshell history; append
 	      idle-update-delay 0.25                  ;; idle to update screen
 
 	      ;; translate-upper-case-key-bindings nil ;; Make keybindings case sensitive (inhibit binding translation)
@@ -128,10 +127,11 @@
 ;; (defvar my/require-tree nil)
 ;; (defun require--advice (orig-fun feature &rest args)
 ;;   (setq my/require-tree
-;;     (append my/require-tree
-;;         (list (let ((my/require-tree (list feature)))
-;;             (apply orig-fun feature args)
-;;             my/require-tree)))))
+;; 	(append my/require-tree
+;; 		(list (let ((my/require-tree (list feature)))
+;; 			(apply orig-fun feature args)
+;; 			my/require-tree)))))
+
 ;; (advice-add 'require :around 'require--advice)
 
 ;; (debug-on-entry #'package--download-one-archive)
@@ -933,6 +933,27 @@ M-<left>' and repeat with M-<left>."
   (keymap-global-set "<remap> <shell-command>" #'shell-command+))
 
 ;;__________________________________________________________
+;; eshell mouse
+
+(defun with-face (str &rest face-plist)
+    (propertize str 'face face-plist))
+
+(defun my/eshell-prompt-function ()
+  "Personalized Eshell prompt."
+  (concat
+   (with-face (concat (user-login-name) "@" (system-name))
+	      :foreground (simple-16-theme-color green))
+   (with-face (concat ":" (abbreviate-file-name (eshell/pwd)))
+	      :foreground (simple-16-theme-color blue))
+   (if (= (file-user-uid) 0) " #" " $")
+   `,(with-face "\n>" :foreground (simple-16-theme-color cyan))
+   " "))
+
+(setq-default eshell-history-append t   ;; No override eshell history; append
+	      eshell-prompt-function #'my/eshell-prompt-function
+	      eshell-highlight-prompt nil)
+
+;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
 (use-package xclip
   :preface
@@ -1043,7 +1064,6 @@ M-<left>' and repeat with M-<left>."
 ;; Flyspell (Orthography)
 (setq-default ispell-following-word t ;;Check word around point not only before
 	      ispell-quietly t)       ;; Suppress messages in ispell-word
-
 
 ;; Flyspell
 (setq-default flyspell-use-meta-tab nil       ;; Not correct with M-TAB
