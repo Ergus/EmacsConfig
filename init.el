@@ -1279,6 +1279,7 @@ Nested namespaces should not be indented with new indentations."
 		 (fill-column . 80)
 		 ;; (c-hanging-semi&comma-criteria my/c-semi&comma)
 		 (c-hanging-semi&comma-criteria . nil)
+		 (c-doc-comment-style . doxygen)    ;; Use doxygen comments
 		 (c-cleanup-list empty-defun-braces ;; {}
 				 brace-else-brace   ;; } else {
 				 brace-elseif-brace ;; } else if {
@@ -1632,7 +1633,7 @@ Nested namespaces should not be indented with new indentations."
 ;; There is a tree-sitter module for this, I will try that
 
 (setq-default python-shell-interpreter "ipython"
-              python-shell-interpreter-args "-i --simple-prompt"
+              python-shell-interpreter-args "--simple-prompt"
 	      ;;python-shell-prompt-detect-failure-warning nil
 	      python-check-command "pyflakes"
 	      ;; flycheck-python-flake8-executable "flake8"
