@@ -935,18 +935,18 @@ M-<left>' and repeat with M-<left>."
 ;;__________________________________________________________
 ;; eshell mouse
 
-(defun with-face (str &rest face-plist)
+(defun my/with-face (str &rest face-plist)
     (propertize str 'face face-plist))
 
 (defun my/eshell-prompt-function ()
   "Personalized Eshell prompt."
   (concat
-   (with-face (concat (user-login-name) "@" (system-name))
-	      :foreground (simple-16-theme-color green))
-   (with-face (concat ":" (abbreviate-file-name (eshell/pwd)))
-	      :foreground (simple-16-theme-color blue))
+   (my/with-face (concat (user-login-name) "@" (system-name))
+		 :foreground (simple-16-theme-color green))
+   (my/with-face (concat ":" (abbreviate-file-name (eshell/pwd)))
+		 :foreground (simple-16-theme-color blue))
    (if (= (file-user-uid) 0) " #" " $")
-   `,(with-face "\n>" :foreground (simple-16-theme-color cyan))
+   `,(my/with-face "\n>" :foreground (simple-16-theme-color cyan))
    " "))
 
 (setq-default eshell-history-append t   ;; No override eshell history; append
