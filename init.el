@@ -113,7 +113,7 @@
 	      debugger-stack-frame-as-list t        ;; display call stack frames as lists.
 	      async-shell-command-display-buffer nil ;;command buffer wait until there is output
 	      shell-kill-buffer-on-exit t
-	      large-file-warning-threshold nil
+	      ;;large-file-warning-threshold nil    ;; no warning when the file is too big
 	      )
 
 ;; Vertical window divider
@@ -951,7 +951,8 @@ M-<left>' and repeat with M-<left>."
 
 (setq-default eshell-history-append t   ;; No override eshell history; append
 	      eshell-prompt-function #'my/eshell-prompt-function
-	      eshell-highlight-prompt nil)
+	      eshell-highlight-prompt nil
+	      eshell-buffer-name "*Eshell*")
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
@@ -1837,10 +1838,12 @@ Nested namespaces should not be indented with new indentations."
 
 (defun my/enable-smerge-maybe ()
   "Auto-enable `smerge-mode' when merge conflict is detected."
-  (save-excursion
-    (goto-char (point-min))
-    (when (re-search-forward "^<<<<<<< " nil t)
-      (smerge-mode 1))))
+  (when (or (not large-file-warning-threshold)
+	    (< (buffer-size) large-file-warning-threshold))
+    (save-excursion
+      (goto-char (point-min))
+      (when (re-search-forward "^<<<<<<< " nil t)
+	(smerge-mode 1)))))
 
 (with-eval-after-load 'smerge-mode
   (my/repeat-keymap smerge-repeat-map smerge-basic-map
