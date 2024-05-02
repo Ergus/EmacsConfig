@@ -338,23 +338,41 @@ M-<left>' and repeat with M-<left>."
 (defvar my/profile-start-gcs-done nil)
 (defvar my/profile-start-gcs-elapsed nil)
 
+(defun my/profiler-set (arg)
+  "Change the profiler status and reset some report variables."
+  (interactive "P")
+  (let ((profiler-on (profiler-running-p 'cpu)))
+    (cond
+     ((and arg (not profiler-on))
+      (profiler-reset)
+      (garbage-collect)
+      (setq my/profile-start-time (current-time)
+	    my/profile-start-gcs-done gcs-done
+	    my/profile-start-gcs-elapsed gc-elapsed)
+      (profiler-start 'cpu))
+     ((and (not arg) profiler-on)
+      (profiler-stop)
+      (message "Profiled: %s secs & %s gcs-done %s gcs-elapsed"
+	       (float-time (time-subtract (current-time) my/profile-start-time))
+	       (- gcs-done my/profile-start-gcs-done)
+	       (- gc-elapsed my/profile-start-gcs-elapsed))
+      (profiler-report))
+     (t (user-error
+	 (format "Profiler status (%s) and arg (%s) mistmatch"
+		 profiler-on arg))))))
+
 (defun my/profiler-toggle ()
   (interactive)
-  (if (profiler-running-p 'cpu)
-      (progn
-	(profiler-stop)
-	(message "Profiled: %s secs & %s gcs-done %s gcs-elapsed"
-		 (time-subtract (current-time) my/profile-start-time)
-		 (- gcs-done my/profile-start-gcs-done)
-		 (- gc-elapsed my/profile-start-gcs-elapsed))
-	(profiler-report))
+  (my/profiler-set (not (profiler-running-p 'cpu))))
 
-    (profiler-reset)
-    (garbage-collect)
-    (setq my/profile-start-time (current-time)
-	  my/profile-start-gcs-done gcs-done
-	  my/profile-start-gcs-elapsed gc-elapsed)
-    (profiler-start 'cpu)))
+(defmacro my/with-profiler (&rest body)
+  "Execute function body with profiler."
+  (declare (indent 0) (debug t))
+  `(unwind-protect
+       (progn
+	 (my/profiler-set 1)
+	 ,@body)
+     (my/profiler-set nil)))
 
 (keymap-global-set "M-P" 'my/profiler-toggle)
 
