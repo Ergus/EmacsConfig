@@ -114,6 +114,7 @@
 	      async-shell-command-display-buffer nil ;;command buffer wait until there is output
 	      shell-kill-buffer-on-exit t
 	      ;;large-file-warning-threshold nil    ;; no warning when the file is too big
+	      proced-enable-color-flag t            ;; colors in proced
 	      )
 
 ;; Vertical window divider
@@ -1203,9 +1204,12 @@ M-<left>' and repeat with M-<left>."
     "g" 'cape-sgml
     "r" 'cape-rfc1345)
 
-  (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-dict)
-  (add-to-list 'completion-at-point-functions #'cape-keyword)
+  (setq-local completion-at-point-functions
+              (list (cape-capf-super #'cape-dabbrev #'cape-keyword)))
+
+  ;;(add-to-list 'completion-at-point-functions #'cape-file)
+  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
+  ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
 
   (keymap-global-set "C-c p" (cons "cape" my/cape-basic-map))
 
