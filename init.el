@@ -98,7 +98,6 @@
 	      bookmark-save-flag 1                    ;; Save bookmarks immediately when added
 
 	      register-use-preview t                  ;; newer interface to show registers
-	      idle-update-delay 0.25                  ;; idle to update screen
 
 	      ;; translate-upper-case-key-bindings nil ;; Make keybindings case sensitive (inhibit binding translation)
 	      outline-minor-mode-use-buttons t      ;; Use buttons to hide/show outlines
@@ -380,9 +379,9 @@ M-<left>' and repeat with M-<left>."
   (when (package-installed-p pkg)
     (package-delete (package-get-descriptor pkg))))
 
-
 ;; Shows the function in spaceline
 (eval-after-load 'which-func '(diminish 'which-func-mode))
+(setq-default which-func-update-delay 0.2)  ;; Substitutes idle-update-delay
 
 ;; delay hooks
 (my/gen-delay-hook text-mode)
@@ -404,6 +403,7 @@ M-<left>' and repeat with M-<left>."
         (delete-horizontal-space t)))))
 (add-hook 'post-self-insert-hook #'my/delete-trailing-function)
 
+;; Show the tab indicator symbol in whitespace mode
 (with-eval-after-load 'whitespace
   (setq whitespace-style '(faces tab-mark)
 	whitespace-display-mappings `((tab-mark ?\t [,(make-glyph-code ?» 'whitespace-tab) ?\t] ))
@@ -415,8 +415,7 @@ M-<left>' and repeat with M-<left>."
 	      indicate-empty-lines t      ;; Show empty lines at end of file
 	      )
   (whitespace-mode 1)
-  (electric-pair-local-mode 1)
-  )
+  (electric-pair-local-mode 1))
 
 (add-hook 'prog-mode-delay-hook #'my/delayed-common-hook)
 (add-hook 'text-mode-delay-hook #'my/delayed-common-hook)
@@ -729,7 +728,8 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; compile
-(setq-default compilation-scroll-output 'first-error
+(setq-default compilation-scroll-output nil
+	      compilation-context-lines t   ;; Don't scroll compilation buffer
 	      compilation-always-kill t)
 
 ;;; Display compilation buffer at buttom
@@ -2061,6 +2061,12 @@ Nested namespaces should not be indented with new indentations."
   (keymap-set deadgrep-mode-map "SPC" (lambda ()
 					(interactive)
 					(next-error-follow-mode-post-command-hook))))
+
+(use-package urgrep
+  :init
+  (setq-default urgrep-preferred-tools '(git-grep grep)
+		urgrep-case-fold 'smart))
+
 
 ;;__________________________________________________________
 ;; Arduino Mode
