@@ -1138,6 +1138,7 @@ M-<left>' and repeat with M-<left>."
 
 (use-package corfu
   ;; Optional customizations
+  :defer 0.2
   :init
   (setq-default corfu-cycle t)      ;; Enable cycling for `corfu-next/previous'
   ;; (corfu-auto t)                 ;; Enable auto completion
@@ -1177,6 +1178,7 @@ M-<left>' and repeat with M-<left>."
   )
 
 (use-package corfu-terminal
+  :defer 0.2
   :config
   (corfu-terminal-mode +1))
 
@@ -2059,7 +2061,7 @@ Nested namespaces should not be indented with new indentations."
 					(interactive)
 					(next-error-follow-mode-post-command-hook))))
 
-(use-package urgrep
+(use-package urgrep :defer t
   :init
   (setq-default urgrep-preferred-tools '(git-grep grep)
 		urgrep-case-fold 'smart))
