@@ -218,24 +218,19 @@ M-<left>' and repeat with M-<left>."
 (load custom-file)
 
 ;;__________________________________________________________
-;; which-key
+;; Keybindings
 (use-package diminish :defer t)   ;; if you use :diminish
 (use-package bind-key :defer t)   ;; if you use any :bind variant
 
-(use-package which-key
-  :diminish
-  :init
-  (setq-default which-key-idle-delay 2.0               ;; default 1.0, 1000 to not show
-		which-key-show-early-on-C-h t          ;; Show which-key on C-h
-		which-key-idle-secondary-delay 0.01    ;; nil sets the same delay, use when which-key-show-early-on-C-h
-		which-key-dont-use-unicode t
-		which-key-is-verbose init-file-debug
-		which-key-show-remaining-keys t        ;; Show remaining keys in last slot
-		which-key-lighter nil                  ;; Not show in modeline
-		which-key-separator ": ")              ;; default " : "
-  :config
-  (which-key-mode t)
-  (which-key-add-key-based-replacements
+
+(setq-default which-key-idle-delay 2.0 which-key-show-early-on-C-h t
+	      which-key-idle-secondary-delay 0.01
+	      which-key-dont-use-unicode t which-key-is-verbose
+	      init-file-debug which-key-show-remaining-keys t
+	      which-key-lighter nil which-key-separator ": ")
+
+;; which-key
+(which-key-add-key-based-replacements
     "C-x r" "rectangle||register"
     "C-x n" "narrow"
     "C-x p" "project"
@@ -247,8 +242,10 @@ M-<left>' and repeat with M-<left>."
     "C-x 4" "other-window"
     "C-x 5" "other-frame"
     "C-x w" "window"
-    "C-x C-k" "kmacro"
-    ))
+    "C-x C-k" "kmacro")
+
+(eval-after-load 'which-key '(diminish 'which-key-mode))
+
 
 (defvar-keymap my/sidebar-map
   :doc "Keymap to toggle sidebars.")
