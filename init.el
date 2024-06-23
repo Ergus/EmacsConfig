@@ -222,14 +222,20 @@ M-<left>' and repeat with M-<left>."
 (use-package diminish :defer t)   ;; if you use :diminish
 (use-package bind-key :defer t)   ;; if you use any :bind variant
 
-
-(setq-default which-key-idle-delay 2.0 which-key-show-early-on-C-h t
-	      which-key-idle-secondary-delay 0.01
-	      which-key-dont-use-unicode t which-key-is-verbose
-	      init-file-debug which-key-show-remaining-keys t
-	      which-key-lighter nil which-key-separator ": ")
-
 ;; which-key
+(setq-default which-key-idle-delay 2.0
+	      which-key-show-early-on-C-h t
+	      which-key-idle-secondary-delay 0.01
+	      which-key-side-window-max-height 0.15
+	      ;; which-key-dont-use-unicode t
+	      which-key-is-verbose init-file-debug
+	      which-key-show-remaining-keys t
+	      which-key-lighter nil
+	      ;;which-key-popup-type 'minibuffer
+	      ;;which-key-show-prefix 'mode-line
+	      which-key-separator ": ")
+
+(which-key-mode t)
 (which-key-add-key-based-replacements
     "C-x r" "rectangle||register"
     "C-x n" "narrow"
@@ -243,10 +249,9 @@ M-<left>' and repeat with M-<left>."
     "C-x 5" "other-frame"
     "C-x w" "window"
     "C-x C-k" "kmacro")
-
 (eval-after-load 'which-key '(diminish 'which-key-mode))
 
-
+;; sidebar
 (defvar-keymap my/sidebar-map
   :doc "Keymap to toggle sidebars.")
 (keymap-global-set "C-c b" (cons "sidebars" my/sidebar-map))
