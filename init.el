@@ -756,7 +756,7 @@ M-<left>' and repeat with M-<left>."
 	      compilation-always-kill t)
 
 ;;; Display compilation buffer at buttom
-(add-to-list 'display-buffer-alist `("*compilation*" . ,my/display-buffer-at-bottom))
+(add-to-list 'display-buffer-alist `((major-mode . compilation-mode) . ,my/display-buffer-at-bottom))
 
 (with-eval-after-load 'compile
   (add-hook 'compilation-mode-hook
