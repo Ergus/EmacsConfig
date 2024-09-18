@@ -1007,7 +1007,9 @@ M-<left>' and repeat with M-<left>."
 			       'xclip)
 			      ((and (string-equal "wayland" (getenv "XDG_SESSION_TYPE"))
 				    (executable-find "wl-copy")) ;; wayland
-			       'wl-copy)))
+			       'wl-copy)
+			      ((message "Error xclip failed to get environment OR external program") nil)
+			      ))
   :if xclip-method
   :config
   (xclip-mode 1))
