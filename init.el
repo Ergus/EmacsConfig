@@ -2285,7 +2285,9 @@ Nested namespaces should not be indented with new indentations."
 		cmake-ts-mode-indent-offset 4
 		json-ts-mode-indent-offset 4
 		rust-ts-mode-indent-offset 4
-		go-ts-mode-indent-offset 4)
+		go-ts-mode-indent-offset 4
+		treesit-font-lock-level 4)
+  (defvaralias 'c-ts-mode-indent-offset 'tab-width)
 
   (add-to-list 'major-mode-remap-alist '(conf-toml-mode . toml-ts-mode))
   (add-to-list 'major-mode-remap-alist '(ruby-mode . ruby-ts-mode))
@@ -2310,14 +2312,14 @@ Nested namespaces should not be indented with new indentations."
                '("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
                  . dockerfile-ts-mode))
 
-  (add-hook 'c++-ts-mode-hook (lambda ()
-				(c-ts-mode-set-style 'linux)
-				(setq-local tab-width 4
-					    c-ts-mode-indent-offset tab-width)))
+  (setq-default c-ts-mode-indent-style 'linux)
 
-  ;; (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
-  ;; (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
-  ;; (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
+  (add-hook 'c++-ts-mode-hook (lambda ()
+				(setq-local tab-width 4)))
+
+  (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
   ;; (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
   ;; (add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
   )
