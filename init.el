@@ -1690,6 +1690,7 @@ Nested namespaces should not be indented with new indentations."
 	      python-indent-block-paren-deeper t
 	      python-shell-dedicated 'project
 	      python-shell-completion-native-enable t
+	      python-forward-sexp-function nil
 	      )
 
 (eval-after-load 'python
