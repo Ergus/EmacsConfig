@@ -1855,6 +1855,11 @@ Nested namespaces should not be indented with new indentations."
   (add-hook 'git-commit-setup-hook (lambda nil
 				     (setq-local fill-column 72)
 				     (git-commit-turn-on-flyspell))))
+(use-package with-editor
+  :hook ((term-exec . with-editor-export-editor)
+	 (shell-mode . with-editor-export-editor)
+	 (eshell-mode . with-editor-export-editor)
+	 (vterm-mode . with-editor-export-editor)))
 
 ;; smerge
 (setq-default smerge-diff-buffer-name "*smerge-diff*"
