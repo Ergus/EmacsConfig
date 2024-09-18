@@ -1871,16 +1871,17 @@ Nested namespaces should not be indented with new indentations."
 
 (use-package git-timemachine :defer t)
 
-(use-package git-commit :defer t
-  :mode ("COMMIT_EDITMSG" . git-commit-setup)
-  :init
-  (setq-default git-commit-summary-max-length 68)
-  :config
-  (add-to-list 'git-commit-style-convention-checks 'overlong-summary-line)
+;; (use-package git-commit :defer t
+;;   :mode ("COMMIT_EDITMSG" . git-commit-setup)
+;;   :init
+;;   (setq-default git-commit-summary-max-length 68)
+;;   :config
+;;   (add-to-list 'git-commit-style-convention-checks 'overlong-summary-line)
 
-  (add-hook 'git-commit-setup-hook (lambda nil
-				     (setq-local fill-column 72)
-				     (git-commit-turn-on-flyspell))))
+;;   (add-hook 'git-commit-setup-hook (lambda nil
+;; 				     (setq-local fill-column 72)
+;; 				     (git-commit-turn-on-flyspell))))
+
 (use-package with-editor
   :hook ((term-exec . with-editor-export-editor)
 	 (shell-mode . with-editor-export-editor)
