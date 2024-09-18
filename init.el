@@ -1407,10 +1407,12 @@ Nested namespaces should not be indented with new indentations."
 
 ;;__________________________________________________________
 ;; Markdown mode
-(use-package markdown-mode
-  :mode (("README\\.md\\'" . gfm-mode))
-  :init
-  (setq-default markdown-indent-on-enter nil))
+;; (use-package markdown-mode
+;;   :mode (("README\\.md\\'" . gfm-mode))
+;;   :init
+;;   (setq-default markdown-indent-on-enter nil))
+(use-package markdown-ts-mode)
+
 
 ;;__________________________________________________________
 ;; Restructured text
