@@ -515,7 +515,7 @@ M-<left>' and repeat with M-<left>."
 (setq-default vc-follow-symlinks t          ;; Open links not open
 	      vc-handled-backends '(Git Hg) ;; Only git or mercurial
 	      vc-display-status nil         ;; No info on the modeline.
-	      vc-ignore-dir-regexp (format "\\(%s\\)\\|\\(%s\\)"
+	      vc-ignore-dir-regexp (format "\\(%s\\)\\|\\(%s\\)" ;; disable vc on remotes
 					   vc-ignore-dir-regexp
 					   tramp-file-name-regexp))
 (which-key-add-key-based-replacements "C-x v" "vc")
@@ -580,7 +580,8 @@ M-<left>' and repeat with M-<left>."
 
 ;; project
 (setq-default project-vc-include-untracked nil
-	      project-mode-line t)
+	      project-mode-line nil ;; Disabled due to performance issue with tramp.
+	      )
 
 ;; {previous,next}-buffer only move within this project
 (defun with-current-project (funct)
@@ -778,6 +779,9 @@ M-<left>' and repeat with M-<left>."
 	      ;; tramp-use-ssh-controlmaster-options nil      ;; use system control master.
 	      tramp-use-connection-share nil
 	      tramp-completion-use-auth-sources nil        ;; not use auth-sources in tramp
+	      ;; tramp-ssh-controlmaster-options (concat
+	      ;; 				       "-o ControlPath=~/.ssh/%%r@%%h-%%p "
+	      ;; 				       "-o ControlMaster=auto -o ControlPersist=yes")
 	      )
 
 (with-eval-after-load 'tramp
