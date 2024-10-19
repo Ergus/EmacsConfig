@@ -41,6 +41,7 @@
 
 	      split-width-threshold 140     ;; Limit for vertical split (default 160)
 	      ;; kill-whole-line t
+	      kill-region-dwim 'emacs-word
 	      load-prefer-newer t
 	      ;; mark-even-if-inactive nil     ;; no mark no region
 	      mark-ring-max 128             ;; Max number of marks in the ring
@@ -220,7 +221,6 @@ M-<left>' and repeat with M-<left>."
 ;;__________________________________________________________
 ;; Keybindings
 (use-package diminish :defer t)   ;; if you use :diminish
-(use-package bind-key :defer t)   ;; if you use any :bind variant
 
 ;; which-key
 (setq-default which-key-idle-delay 2.0
@@ -320,13 +320,14 @@ M-<left>' and repeat with M-<left>."
 
 (run-with-idle-timer 1 nil (lambda ()
 			     (ffap-bindings)
+			     (recentf-mode 1)
 			     (global-auto-revert-mode 1))) ;; Autoload files changed in disk
 
-;; recentf (is loaded by counsel, so not call it in the run-with-idle-timer)
+;; recentf
 (setq-default recentf-max-saved-items 48     ;; Max items saved
 	      recentf-auto-cleanup nil)      ;; Make cleanup when idle for 10 seconds. (default 'mode)
+
 (with-eval-after-load 'recentf
-  (recentf-mode 1)
   (run-with-idle-timer 10 nil #'recentf-cleanup))
 
 ;;__________________________________________________________

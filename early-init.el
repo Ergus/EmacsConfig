@@ -47,7 +47,7 @@
 		       (float-time (time-subtract after-init-time before-init-time))
 		       (float-time (time-subtract curtime before-init-time))
 		       gcs-done
-		       (format-time-string "%I:%M:S %d/%m/%Y" curtime))))
+		       (format-time-string "%I:%M:%S %d/%m/%Y" curtime))))
 	  90)
 
 (if (fboundp #'tool-bar-mode)
