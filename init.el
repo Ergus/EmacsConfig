@@ -75,6 +75,8 @@
 	      ;; minibuffer-message-timeout 1     ;; default 2
 	      read-quoted-char-radix 16           ;; Read number of chars with C-q
 	      ;; kill-buffer-query-functions nil     ;; Functions to call before quering a buffer (nil default)
+	      kill-buffer-quit-windows t          ;; Kill and quit
+	      quit-restore-window-no-switch t     ;; No show previous buffer but quit on kill buffer
 	                                          ;; Default asks if process running.
 	      kill-do-not-save-duplicates t       ;; duplicate kill ring entries
 	      kill-ring-max (* kill-ring-max 2)   ;; increase kill ring
@@ -416,7 +418,7 @@ M-<left>' and repeat with M-<left>."
 
 ;; Show the tab indicator symbol in whitespace mode
 (with-eval-after-load 'whitespace
-  (setq whitespace-style '(faces tab-mark)
+  (setq whitespace-style '(faces tab-mark missing-newline-at-eof)
 	whitespace-display-mappings `((tab-mark ?\t [,(make-glyph-code ?» 'whitespace-tab) ?\t] ))
 	))
 
@@ -2363,7 +2365,8 @@ Nested namespaces should not be indented with new indentations."
                '("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
                  . dockerfile-ts-mode))
 
-  (setq-default c-ts-mode-indent-style 'linux)
+  (setq-default c-ts-mode-indent-style 'linux
+		c-ts-mode-enable-doxygen t)
 
   (add-hook 'c++-ts-mode-hook (lambda ()
 				(setq-local tab-width 4)))
