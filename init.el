@@ -206,6 +206,14 @@ M-<left>' and repeat with M-<left>."
   (interactive)
   (find-file user-init-file))
 
+(defun my/treesit-install-grammar (lang source)
+  "Attempt to install a grammar if not available already"
+  (setf (alist-get lang treesit-language-source-alist)  ;; Add the grammar source entry
+	`(,source nil nil nil nil))
+
+  (unless (treesit-language-available-p lang)
+    (treesit-install-language-grammar lang)))
+
 (use-package esup :defer t)
 
 ;;__________________________________________________________
@@ -2365,7 +2373,22 @@ Nested namespaces should not be indented with new indentations."
   (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
   ;; (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
   ;; (add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
-  )
+
+  ;; ts mode for qml files, NOT in melpa
+  ;; https://github.com/danilshvalov/git-commit-ts-mode
+  (when (file-exists-p (expand-file-name "mylisp/qml-ts-mode" user-emacs-directory))
+    (use-package qml-ts-mode :ensure nil
+      :load-path "mylisp/qml-ts-mode"
+      :mode "\\.qml\\'"
+      :config
+      (my/treesit-install-grammar 'qmljs "https://github.com/yuja/tree-sitter-qmljs.git")))
+
+  (use-package git-commit-ts-mode
+    :mode "\\COMMIT_EDITMSG\\'"
+    :config
+    (my/treesit-install-grammar 'gitcommit "https://github.com/gbprod/tree-sitter-gitcommit"))
+)
+
 
 ;;__________________________________________________________
 
