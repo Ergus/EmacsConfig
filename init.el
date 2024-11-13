@@ -598,7 +598,7 @@ M-<left>' and repeat with M-<left>."
   "Call FUNCT setting `switch-to-prev-buffer-skip'."
   (let ((switch-to-prev-buffer-skip
 	 (lambda (_window buffer _bury-or-kill)
-	   (when-let ((pr1 (project-current)))
+	   (when-let* ((pr1 (project-current)))
 	     (with-current-buffer buffer
 	       (not (and buffer-file-name
 			 (eq pr1 (project-current)))))))))
