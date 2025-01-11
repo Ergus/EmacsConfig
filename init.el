@@ -2368,14 +2368,33 @@ Nested namespaces should not be indented with new indentations."
   (setq-default c-ts-mode-indent-style 'linux
 		c-ts-mode-enable-doxygen t)
 
-  (add-hook 'c++-ts-mode-hook (lambda ()
-				(setq-local tab-width 4)))
-
   (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
   (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
   (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
   ;; (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
   ;; (add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
+
+  (defun my/c++-ts-mode-hook ()
+    (setq-local tab-width 4)
+
+    ;; prepend extra rules to the c++ indentation.
+    (setf (alist-get 'cpp treesit-simple-indent-rules)
+	  (append '(((node-is ")") parent-bol 0)
+		    ((parent-is "argument_list") parent-bol c-ts-mode-indent-offset)
+		    ((parent-is "parameter_list") parent-bol c-ts-mode-indent-offset))
+		  (alist-get 'cpp treesit-simple-indent-rules))))
+
+  (add-hook 'c++-ts-mode-hook #'my/c++-ts-mode-hook)
+
+
+  (defun my/rust-ts-mode-hook ()
+    (setf (alist-get 'rust treesit-simple-indent-rules)
+	  (append '(((and (parent-is "function_item")
+			  (node-is "block")) parent-bol 0)) ;; K&R indent { in functions
+		  (alist-get 'rust treesit-simple-indent-rules)))
+    )
+  (add-hook 'rust-ts-mode-hook #'my/rust-ts-mode-hook)
+
 
   ;; ts mode for qml files, NOT in melpa
   ;; https://github.com/danilshvalov/git-commit-ts-mode
