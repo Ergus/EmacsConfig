@@ -2340,22 +2340,27 @@ Nested namespaces should not be indented with new indentations."
 		rust-ts-mode-indent-offset 4
 		go-ts-mode-indent-offset 4
 		treesit-font-lock-level 4
-		treesit-indent-function #'my/treesit-simple-indent
 		treesit--indent-verbose init-file-debug)
 
   (defvar-local my/treesit-indent-rules nil)
 
-  (defun my/treesit-simple-indent (node parent bol)
-    "Allow indent with custom rules but without hacks"
+  
+  (defun my/treesit-simple-indent (oldfun node parent bol)
+    "Allow indent with custom rules without hacks in the predefined rules
+
+It is possible to change the treesit-indent-function BUT the python mode
+breaks because there is some hacky condition assigning the indentation
+function in the tree-sitter library."
     (or (when-let* ((rules (alist-get (treesit-node-language parent)
 				      my/treesit-indent-rules))
 		    (treesit-simple-indent-rules my/treesit-indent-rules)
-		    (result (treesit-simple-indent node parent bol))
+		    (result (funcall oldfun node parent bol))
 		    ((or (car result)
 			 (cdr result))))
 	  result)
-	(treesit-simple-indent node parent bol))
-    )
+	(funcall oldfun node parent bol)))
+
+  (advice-add 'treesit-simple-indent :around #'my/treesit-simple-indent)
 
   (defvaralias 'c-ts-mode-indent-offset 'tab-width)
 
@@ -2383,7 +2388,7 @@ Nested namespaces should not be indented with new indentations."
                  . dockerfile-ts-mode))
 
   (setq-default c-ts-mode-indent-style 'linux
-		c-ts-mode-enable-doxygen t)
+		c-ts-mode-enable-doxygen nil)
 
   (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
   (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
@@ -2393,8 +2398,7 @@ Nested namespaces should not be indented with new indentations."
 
 
   (defun my/c-ts-mode-hook ()
-    (setq-local tab-width 4
-		treesit-indent-function #'my/treesit-simple-indent)
+    (setq-local tab-width 4)
 
     (setq-local my/treesit-indent-rules
 		`((c . (((node-is ")") parent-bol 0)
@@ -2412,11 +2416,10 @@ Nested namespaces should not be indented with new indentations."
 
 
   (defun my/c++-ts-mode-hook ()
-    (setq-local tab-width 4
-		treesit-indent-function #'my/treesit-simple-indent)
+    (setq-local tab-width 4)
 
     (setq-local my/treesit-indent-rules
-		`((c . (((node-is ")") parent-bol 0)
+		`((cpp . (((node-is ")") parent-bol 0)
 			;; Arguments inside a function definition and call
 			((parent-is "argument_list") parent-bol c-ts-mode-indent-offset)
 			((parent-is "parameter_list") parent-bol c-ts-mode-indent-offset)
@@ -2442,8 +2445,7 @@ Nested namespaces should not be indented with new indentations."
 
 
   (defun my/rust-ts-mode-hook ()
-    (setq-local tab-width 4
-		treesit-indent-function #'my/treesit-simple-indent)
+    (setq-local tab-width 4)
 
     (setq-local my/treesit-indent-rules
 		`((rust . (((and (parent-is "function_item")
