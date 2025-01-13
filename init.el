@@ -2339,7 +2339,24 @@ Nested namespaces should not be indented with new indentations."
 		json-ts-mode-indent-offset 4
 		rust-ts-mode-indent-offset 4
 		go-ts-mode-indent-offset 4
-		treesit-font-lock-level 4)
+		treesit-font-lock-level 4
+		treesit-indent-function #'my/treesit-simple-indent
+		treesit--indent-verbose init-file-debug)
+
+  (defvar-local my/treesit-indent-rules nil)
+
+  (defun my/treesit-simple-indent (node parent bol)
+    "Allow indent with custom rules but without hacks"
+    (or (when-let* ((rules (alist-get (treesit-node-language parent)
+				      my/treesit-indent-rules))
+		    (treesit-simple-indent-rules my/treesit-indent-rules)
+		    (result (treesit-simple-indent node parent bol))
+		    ((or (car result)
+			 (cdr result))))
+	  result)
+	(treesit-simple-indent node parent bol))
+    )
+
   (defvaralias 'c-ts-mode-indent-offset 'tab-width)
 
   (add-to-list 'major-mode-remap-alist '(conf-toml-mode . toml-ts-mode))
@@ -2374,25 +2391,64 @@ Nested namespaces should not be indented with new indentations."
   ;; (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
   ;; (add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
 
-  (defun my/c++-ts-mode-hook ()
-    (setq-local tab-width 4)
 
-    ;; prepend extra rules to the c++ indentation.
-    (setf (alist-get 'cpp treesit-simple-indent-rules)
-	  (append '(((node-is ")") parent-bol 0)
-		    ((parent-is "argument_list") parent-bol c-ts-mode-indent-offset)
-		    ((parent-is "parameter_list") parent-bol c-ts-mode-indent-offset))
-		  (alist-get 'cpp treesit-simple-indent-rules))))
+  (defun my/c-ts-mode-hook ()
+    (setq-local tab-width 4
+		treesit-indent-function #'my/treesit-simple-indent)
+
+    (setq-local my/treesit-indent-rules
+		`((c . (((node-is ")") parent-bol 0)
+			;; Arguments inside a function definition and call
+			((parent-is "argument_list") parent-bol c-ts-mode-indent-offset)
+			((parent-is "parameter_list") parent-bol c-ts-mode-indent-offset)
+			;; pragmas
+			((lambda (node parent _)
+			   (and (string-match-p "preproc_call" (treesit-node-type node))
+				(string-match-p "compound_statement" (treesit-node-type parent))
+				(string-match-p "#pragma" (treesit-node-text node))))
+			 parent-bol c-ts-mode-indent-offset))))))
+
+  (add-hook 'c-ts-mode-hook #'my/c-ts-mode-hook)
+
+
+  (defun my/c++-ts-mode-hook ()
+    (setq-local tab-width 4
+		treesit-indent-function #'my/treesit-simple-indent)
+
+    (setq-local my/treesit-indent-rules
+		`((c . (((node-is ")") parent-bol 0)
+			;; Arguments inside a function definition and call
+			((parent-is "argument_list") parent-bol c-ts-mode-indent-offset)
+			((parent-is "parameter_list") parent-bol c-ts-mode-indent-offset)
+			;; labels in a class
+			((and (node-is "access_specifier")
+			      (parent-is "field_declaration_list")) parent-bol 0)
+			;; closing } in a class
+			((and (node-is "}")
+			      (parent-is "field_declaration_list")) parent-bol 0)
+			;; Everything in a class
+			((parent-is "field_declaration_list") parent-bol c-ts-mode-indent-offset)
+			;; { of lambda
+			((and (node-is "compound_statement")
+			      (parent-is "lambda_expression")) parent-bol 0)
+			;; pragmas
+			((lambda (node parent _)
+			   (and (string-match-p "preproc_call" (treesit-node-type node))
+				(string-match-p "compound_statement" (treesit-node-type parent))
+				(string-match-p "#pragma" (treesit-node-text node))))
+			 parent-bol c-ts-mode-indent-offset))))))
 
   (add-hook 'c++-ts-mode-hook #'my/c++-ts-mode-hook)
 
 
   (defun my/rust-ts-mode-hook ()
-    (setf (alist-get 'rust treesit-simple-indent-rules)
-	  (append '(((and (parent-is "function_item")
-			  (node-is "block")) parent-bol 0)) ;; K&R indent { in functions
-		  (alist-get 'rust treesit-simple-indent-rules)))
-    )
+    (setq-local tab-width 4
+		treesit-indent-function #'my/treesit-simple-indent)
+
+    (setq-local my/treesit-indent-rules
+		`((rust . (((and (parent-is "function_item")
+				 (node-is "block")) parent-bol 0))))))
+
   (add-hook 'rust-ts-mode-hook #'my/rust-ts-mode-hook)
 
 
@@ -2403,7 +2459,10 @@ Nested namespaces should not be indented with new indentations."
       :load-path "mylisp/qml-ts-mode"
       :mode "\\.qml\\'"
       :config
-      (my/treesit-install-grammar 'qmljs "https://github.com/yuja/tree-sitter-qmljs.git")))
+      (my/treesit-install-grammar 'qmljs "https://github.com/yuja/tree-sitter-qmljs.git")
+      (with-eval-after-load 'eglot
+	(add-to-list 'eglot-server-programs `(qml-ts-mode . ("qmlls6"))))
+      ))
 
   (use-package git-commit-ts-mode
     :mode "\\COMMIT_EDITMSG\\'"
