@@ -2328,6 +2328,8 @@ Nested namespaces should not be indented with new indentations."
   (with-eval-after-load 'dired
     (require 'citre-lang-fileref)))
 
+(use-package compiler-explorer :defer t)
+
 ;;__________________________________________________________
 ;; Enable tree-sitter for some modes by default if the tree-sitter
 ;; directory exists
