@@ -300,6 +300,7 @@ M-<left>' and repeat with M-<left>."
 
 ;; imenu
 (setq-default imenu-use-markers nil
+	      imenu-flatten 'annotation
 	      imenu-auto-rescan t
 	      imenu-max-item-length 256)
 (with-eval-after-load 'imenu
