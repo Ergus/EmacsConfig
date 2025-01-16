@@ -48,6 +48,10 @@
  `(default ((t :background ,(simple-16-theme-color black)
                :foreground ,(simple-16-theme-color white))))
 
+ `(shadow ((t :background ,(simple-16-theme-color black)
+              :foreground ,(simple-16-theme-color brightblack))))
+ `(error ((t :foreground ,(simple-16-theme-color brightred))))
+
  `(font-lock-builtin-face ((t :foreground ,(simple-16-theme-color green))))
  `(font-lock-comment-face ((t :foreground ,(simple-16-theme-color blue))))
  `(font-lock-constant-face ((t :foreground ,(simple-16-theme-color magenta))))
@@ -154,7 +158,8 @@
  `(flycheck-error ((t :inherit nil :background unspecified :foreground unspecified :underline t)))
 
  ;; Flymake
- `(flymake-error ((t :inherit nil :background unspecified :foreground unspecified :underline t)))
+ ;; Error in line
+ `(flymake-end-of-line-diagnostics-face ((t :inherit shadow :slant italic))) ;; make it less annoying
 
  `(eshell-prompt ((t :weight bold :background unspecified
 		     :foreground ,(simple-16-theme-color brightblack))))
@@ -170,6 +175,14 @@
  `(mu4e-trashed-face ((t :inherit nil :foreground ,(simple-16-theme-color red))))
  ;;`(mu4e-replied-face ((t (:inherit nil :foreground ,(simple-16-theme-color blue)))))
  `(mu4e-header-highlight-face ((t :inherit hl-line :weight bold :underline nil)))
+
+ ;; eglot
+ ;; hints inline
+ `(eglot-inlay-hint-face ((t :inherit shadow :weight ultra-light :slant italic)))
+ `(eglot-diagnostic-tag-unnecessary-face ((t :inherit nil :background unspecified :foreground unspecified :underline t)))
+ `(eglot-diagnostic-tag-deprecated-face ((t :inherit nil :background unspecified :foreground unspecified :underline t :strike-through t)))
+ 
+ 
  )
 
 (provide-theme 'simple-16)
