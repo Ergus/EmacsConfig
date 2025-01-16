@@ -1711,11 +1711,13 @@ Nested namespaces should not be indented with new indentations."
 (eval-after-load 'python
   '(keymap-set python-mode-map "C-c C-z" #'python-shell))
 
-(use-package py-vterm-interaction :defer t
-  :init
-  (add-hook 'python-ts-mode-hook #'py-vterm-interaction-mode)
-  (setq-default py-vterm-interaction-repl-program "ipython3 -i"
-		py-vterm-interaction-silent-cells t))
+;; (use-package py-vterm-interaction :defer t
+;;   :init
+;;   (add-hook 'python-ts-mode-hook (lambda ()
+;; 				   (superword-mode 1)
+;; 				   (py-vterm-interaction-mode 1)))
+;;   (setq-default py-vterm-interaction-repl-program "ipython3 -i"
+;; 		py-vterm-interaction-silent-cells t))
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
