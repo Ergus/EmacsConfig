@@ -58,7 +58,7 @@
 
 (menu-bar-mode -1)
 (tooltip-mode -1)			;; Tool tip in the echo
-(electric-indent-mode -1)
+;;(electric-indent-mode -1)
 
 ;; (debug-on-entry #'package-refresh-contents)
 
