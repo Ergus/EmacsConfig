@@ -1163,9 +1163,10 @@ M-<left>' and repeat with M-<left>."
   (setq-default eglot-events-buffer-config '(:size 2000000 :format lisp)
 		eglot-send-changes-idle-time 1.0  ;; Server idle
 		eglot-extend-to-xref t            ;; Include external headers and sources
-		eglot-ignored-server-capabilities '(:inlayHintProvider
+		eglot-ignored-server-capabilities '(;;:inlayHintProvider
 						    :documentRangeFormattingProvider
-						    :documentOnTypeFormattingProvider)
+						    :documentOnTypeFormattingProvider
+						    )
 		)
 
   ;; (setq-default eglot-stay-out-of '(eldoc))
@@ -1176,6 +1177,22 @@ M-<left>' and repeat with M-<left>."
 	    (lambda ()
 	      (when (eldoc--supported-p)
 		(eldoc-mode (if (eglot-managed-p) 1 -1))))))
+
+
+(use-package eglot-booster
+  ;; TODO: Automatize the installation of the executable file
+  ;; See explication: https://github.com/blahgeek/emacs-lsp-booster.git
+  ;; TODO: Check what to do in remote systems with tramp
+  :vc (:url "https://github.com/jdtsmith/eglot-booster")
+  :after eglot
+  :init
+  ;; Maybe this is better for now by default, and activate it
+  ;; selectively once the executable is available in the remote server.
+  (setq-default eglot-booster-no-remote-boost t)
+  :config
+  (if (executable-find "emacs-lsp-booster")
+      (eglot-booster-mode)
+    (message "Error: emacs-lsp-booster is not installed")))
 
 ;; (use-package consult-eglot :defer t)
 
