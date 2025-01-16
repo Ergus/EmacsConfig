@@ -2436,9 +2436,11 @@ function in the tree-sitter library."
 			      (parent-is "lambda_expression")) parent-bol 0)
 			;; pragmas
 			((lambda (node parent _)
-			   (and (string-match-p "preproc_call" (treesit-node-type node))
+			   (and (stringp (treesit-node-type node))
+				(stringp (treesit-node-type parent))
+				(string-match-p "preproc_call" (treesit-node-type node))
 				(string-match-p "compound_statement" (treesit-node-type parent))
-				(string-match-p "#pragma" (treesit-node-text node))))
+				(string-match-p "#pragma" (treesit-node-text node nil))))
 			 parent-bol c-ts-mode-indent-offset))))))
 
   (add-hook 'c++-ts-mode-hook #'my/c++-ts-mode-hook)
