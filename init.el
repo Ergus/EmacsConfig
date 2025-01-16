@@ -1237,10 +1237,10 @@ M-<left>' and repeat with M-<left>."
   (keymap-set completion-preview-active-mode-map "TAB" #'completion-preview-complete)
   )
 
-(use-package corfu-terminal
-  :defer 0.2
-  :config
-  (corfu-terminal-mode +1))
+;; (use-package corfu-terminal
+;;   :defer 0.2
+;;   :config
+;;   (corfu-terminal-mode +1))
 
 (use-package cape
   :defer 0.2
