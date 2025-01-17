@@ -1430,10 +1430,10 @@ Nested namespaces should not be indented with new indentations."
 
 ;;__________________________________________________________
 ;; Cuda
-(use-package cuda-mode :defer t
-  :preface
-  (when (file-exists-p "/mnt/casa/gits/emacs_clones/cuda-mode/")
-    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/cuda-mode")))
+;; (use-package cuda-mode :defer t
+;;   :preface
+;;   (when (file-exists-p "/mnt/casa/gits/emacs_clones/cuda-mode/")
+;;     (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/cuda-mode")))
 
 ;;__________________________________________________________
 ;; OpenCL Mode
@@ -1881,6 +1881,13 @@ Nested namespaces should not be indented with new indentations."
   :init
   (setq-default gtags-mode-lighter "")
   :hook ((emacs-startup . gtags-mode)))
+
+(use-package cuda-ts-mode :defer t :ensure nil
+  :preface
+  (when (file-exists-p "/mnt/casa/gits/emacs_clones/cuda-ts-mode/")
+    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/cuda-ts-mode//"))
+  :commands cuda-ts-mode
+  :mode "\\.cu[h]?\\'")
 
 ;;__________________________________________________________
 ;; Magit and git packages
