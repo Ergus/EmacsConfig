@@ -2369,7 +2369,10 @@ Nested namespaces should not be indented with new indentations."
 		rust-ts-mode-indent-offset 4
 		go-ts-mode-indent-offset 4
 		treesit-font-lock-level 4
-		treesit--indent-verbose init-file-debug)
+		;; use these two to debug when developing, but they
+		;; are too verbose
+		treesit--indent-verbose nil
+		treesit--font-lock-verbose nil)
 
   (defvar-local my/treesit-indent-rules nil)
 
@@ -2425,63 +2428,50 @@ function in the tree-sitter library."
   ;; (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
   ;; (add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
 
+  
+  (defun my/c-ts-indent-rules-generate (mode)
+    "Rules generator for c, c++ and cuda modes"
+    `(((node-is ")") parent-bol 0)
+      ;; Arguments inside a function definition and call
+      ((parent-is "argument_list") parent-bol c-ts-mode-indent-offset)
+      ((parent-is "parameter_list") parent-bol c-ts-mode-indent-offset)
+      ;; pragmas
+      ((lambda (node parent _)
+	 (and (stringp (treesit-node-type node))
+	      (stringp (treesit-node-type parent))
+	      (string-match-p "preproc_call" (treesit-node-type node))
+	      (string-match-p "compound_statement" (treesit-node-type parent))
+	      (string-match-p "#pragma" (treesit-node-text node nil))))
+       parent-bol c-ts-mode-indent-offset)
+      ,@(when (not (eq mode 'c))
+	  ;; labels in a class
+	  '(((and (node-is "access_specifier")
+		  (parent-is "field_declaration_list")) parent-bol 0)
+	    ;; closing } in a class
+	    ((and (node-is "}")
+		  (parent-is "field_declaration_list")) parent-bol 0)
+	    ;; Everything in a class
+	    ((parent-is "field_declaration_list") parent-bol c-ts-mode-indent-offset)
+	    ;; { of lambda
+	    ((and (node-is "compound_statement")
+		  (parent-is "lambda_expression")) parent-bol 0)))))
 
-  (defun my/c-ts-mode-hook ()
-    (setq-local tab-width 4)
-
-    (setq-local my/treesit-indent-rules
-		`((c . (((node-is ")") parent-bol 0)
-			;; Arguments inside a function definition and call
-			((parent-is "argument_list") parent-bol c-ts-mode-indent-offset)
-			((parent-is "parameter_list") parent-bol c-ts-mode-indent-offset)
-			;; pragmas
-			((lambda (node parent _)
-			   (and (string-match-p "preproc_call" (treesit-node-type node))
-				(string-match-p "compound_statement" (treesit-node-type parent))
-				(string-match-p "#pragma" (treesit-node-text node))))
-			 parent-bol c-ts-mode-indent-offset))))))
-
-  (add-hook 'c-ts-mode-hook #'my/c-ts-mode-hook)
-
-
-  (defun my/c++-ts-mode-hook ()
-    (setq-local tab-width 4)
-
-    (setq-local my/treesit-indent-rules
-		`((cpp . (((node-is ")") parent-bol 0)
-			;; Arguments inside a function definition and call
-			((parent-is "argument_list") parent-bol c-ts-mode-indent-offset)
-			((parent-is "parameter_list") parent-bol c-ts-mode-indent-offset)
-			;; labels in a class
-			((and (node-is "access_specifier")
-			      (parent-is "field_declaration_list")) parent-bol 0)
-			;; closing } in a class
-			((and (node-is "}")
-			      (parent-is "field_declaration_list")) parent-bol 0)
-			;; Everything in a class
-			((parent-is "field_declaration_list") parent-bol c-ts-mode-indent-offset)
-			;; { of lambda
-			((and (node-is "compound_statement")
-			      (parent-is "lambda_expression")) parent-bol 0)
-			;; pragmas
-			((lambda (node parent _)
-			   (and (stringp (treesit-node-type node))
-				(stringp (treesit-node-type parent))
-				(string-match-p "preproc_call" (treesit-node-type node))
-				(string-match-p "compound_statement" (treesit-node-type parent))
-				(string-match-p "#pragma" (treesit-node-text node nil))))
-			 parent-bol c-ts-mode-indent-offset))))))
-
-  (add-hook 'c++-ts-mode-hook #'my/c++-ts-mode-hook)
-
+  (defun my/c-ts-base-mode-hook ()
+    "Hook to improve indentation in c, c++ and cuda modes"
+    (let ((name (intern (string-trim-right (symbol-name major-mode) "-ts-mode"))))
+      (message "Generate indent rules for %s" name)
+      (setq-local tab-width 4)
+      (setq-local my/treesit-indent-rules
+		  `((,name . ,(my/c-ts-indent-rules-generate name))))))
+  (add-hook 'c-ts-base-mode-hook #'my/c-ts-base-mode-hook)
 
   (defun my/rust-ts-mode-hook ()
+    "Hook to improve indentation in rust mode"
     (setq-local tab-width 4)
 
     (setq-local my/treesit-indent-rules
 		`((rust . (((and (parent-is "function_item")
 				 (node-is "block")) parent-bol 0))))))
-
   (add-hook 'rust-ts-mode-hook #'my/rust-ts-mode-hook)
 
 
