@@ -1763,11 +1763,18 @@ Nested namespaces should not be indented with new indentations."
   (add-hook 'dired-mode-hook #'hl-line-mode))
 
 (use-package dired-sidebar :defer t
+  :commands 'dired-sidebar-showing-sidebar-p
   :init
   ;;(dired-sidebar-use-term-integration t)
   (setq-default dired-sidebar-theme 'nerd
-		dired-sidebar-subtree-line-prefix ".")
+		dired-sidebar-subtree-line-prefix "."
+		dired-sidebar-should-follow-file t
+		;; dired-sidebar-use-omit-mode-integration t ;; default t
+		;; dired-sidebar-close-sidebar-on-file-open t
+		dired-sidebar-use-one-instance t
+		)
   (add-hook 'dired-sidebar-mode-hook (lambda ()
+				       (dired-omit-mode 1)
 				       (unless (file-remote-p default-directory)
 					 (auto-revert-mode 1))))
   (keymap-set my/sidebar-map "d" #'dired-sidebar-toggle-sidebar))
@@ -1791,15 +1798,24 @@ Nested namespaces should not be indented with new indentations."
   '(which-key-add-keymap-based-replacements ibuffer--filter-map "G" "Groups"))
 
 (use-package ibuffer-sidebar :defer t
+  :commands 'ibuffer-sidebar-showing-sidebar-p
   :init
   (keymap-set my/sidebar-map "b" #'ibuffer-sidebar-toggle-sidebar))
 
-;; Sidebar Dired+ibuffer (de emacs defaults)
 (defun my/sidebar-toggle ()
   "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
   (interactive)
-  (ibuffer-sidebar-toggle-sidebar)
-  (dired-sidebar-toggle-sidebar))
+  (let ((ibuffer-showing (ibuffer-sidebar-showing-sidebar-p))
+	(dired-showing (dired-sidebar-showing-sidebar-p)))
+    (if (or ibuffer-showing dired-showing)
+	(progn
+	  (when dired-showing
+	    (dired-sidebar-hide-sidebar))
+	  (when ibuffer-showing
+	    (ibuffer-sidebar-hide-sidebar)))
+      (dired-sidebar-toggle-sidebar)
+      (ibuffer-sidebar-toggle-sidebar))))
+
 
 (keymap-set my/sidebar-map "s" #'my/sidebar-toggle)
 
