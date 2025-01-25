@@ -181,8 +181,19 @@
  `(eglot-inlay-hint-face ((t :inherit shadow :weight ultra-light :slant italic)))
  `(eglot-diagnostic-tag-unnecessary-face ((t :inherit nil :background unspecified :foreground unspecified :underline t)))
  `(eglot-diagnostic-tag-deprecated-face ((t :inherit nil :background unspecified :foreground unspecified :underline t :strike-through t)))
+
+ ;; tty menu
+ `(tty-menu-enabled-face ((t :inherit nil
+			     :foreground ,(simple-16-theme-color black)
+			     :background ,(simple-16-theme-color white)
+			     :weight bold)))
+ `(tty-menu-disabled-face ((t :inherit tty-menu-enabled-face
+			      :foreground ,(simple-16-theme-color brightblack)
+			      :weight ultra-light)))
  
- 
+ `(tty-menu-selected-face ((t :inherit tty-menu-enabled-face
+			      :background ,(simple-16-theme-color cyan))))
+
  )
 
 (provide-theme 'simple-16)
