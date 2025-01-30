@@ -2397,7 +2397,7 @@ Nested namespaces should not be indented with new indentations."
 		treesit-font-lock-level 4
 		;; use these two to debug when developing, but they
 		;; are too verbose
-		treesit--indent-verbose nil
+		treesit--indent-verbose t
 		treesit--font-lock-verbose nil)
 
   (defvar-local my/treesit-indent-rules nil)
@@ -2417,7 +2417,7 @@ function in the tree-sitter library."
 			 (cdr result))))
 	  result)
 	(funcall oldfun node parent bol)))
-
+  ;; Add an advise to check my indentations before the default ones.
   (advice-add 'treesit-simple-indent :around #'my/treesit-simple-indent)
 
   (defvaralias 'c-ts-mode-indent-offset 'tab-width)
@@ -2445,16 +2445,16 @@ function in the tree-sitter library."
                '("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
                  . dockerfile-ts-mode))
 
+  ;; C/C++/Cuda modes
   (setq-default c-ts-mode-indent-style 'linux
-		c-ts-mode-enable-doxygen nil)
+		c-ts-mode-enable-doxygen t)
 
   (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
   (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
   (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
-  ;; (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
-  ;; (add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
 
-  
   (defun my/c-ts-indent-rules-generate (mode)
     "Rules generator for c, c++ and cuda modes"
     `(((node-is ")") parent-bol 0)
@@ -2504,7 +2504,8 @@ function in the tree-sitter library."
 
     (setq-local my/treesit-indent-rules
 		`((rust . (((and (parent-is "function_item")
-				 (node-is "block")) parent-bol 0))))))
+				 (node-is "block")) parent-bol 0)
+			   ((node-is "where_clause")  parent-bol 0))))))
   (add-hook 'rust-ts-mode-hook #'my/rust-ts-mode-hook)
 
 
