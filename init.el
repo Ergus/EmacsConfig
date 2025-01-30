@@ -1579,7 +1579,11 @@ Nested namespaces should not be indented with new indentations."
 (setq-default flymake-no-changes-timeout 1.0
 	      flymake-wrap-around nil
 	      flymake-show-diagnostics-at-end-of-line 'short  ;; I want to try that, t shows all diagnostics
-	      flymake-mode-line-format nil)
+	      flymake-mode-line-format nil
+	      flymake-margin-indicators-string '((error "!" compilation-error)
+						 (warning "!" compilation-warning)
+						 (note "!" compilation-info))
+	      )
 
 (with-eval-after-load 'flymake
   ;; (remove-hook 'flymake-diagnostic-functions 'flymake-proc-legacy-flymake)
