@@ -595,7 +595,7 @@ M-<left>' and repeat with M-<left>."
 	      )
 
 ;; {previous,next}-buffer only move within this project
-(defun with-current-project (funct)
+(defun my/with-current-project (funct)
   "Call FUNCT setting `switch-to-prev-buffer-skip'."
   (let ((switch-to-prev-buffer-skip
 	 (lambda (_window buffer _bury-or-kill)
@@ -605,20 +605,20 @@ M-<left>' and repeat with M-<left>."
 			 (eq pr1 (project-current)))))))))
     (call-interactively funct)))
 
-(defun project-next-buffer ()
+(defun my/project-next-buffer ()
   "Next buffer within project."
   (interactive)
-  (with-current-project #'next-buffer))
+  (my/with-current-project #'next-buffer))
 
-(defun project-previous-buffer ()
+(defun my/project-previous-buffer ()
   "Previous buffer within project."
   (interactive)
-  (with-current-project #'previous-buffer))
+  (my/with-current-project #'previous-buffer))
 
 (my/repeat-keymap my/project-prefix-map project-prefix-map
   :doc "Next buffer in current project."
-  "C-<right>" #'project-next-buffer
-  "C-<left>" #'project-previous-buffer)
+  "C-<right>" #'my/project-next-buffer
+  "C-<left>" #'my/project-previous-buffer)
 
 ;; These two must be enabled/disabled together
 ;; (setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
