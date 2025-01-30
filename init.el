@@ -801,6 +801,12 @@ M-<left>' and repeat with M-<left>."
 					  '((auth-sources . nil)))
   (connection-local-set-profiles '(:application tramp :protocol "sudo") 'my/tramp-profile)
 
+  ;; (connection-local-set-profile-variables 'my/pelago-profile
+  ;; 					  '((project-mode-line . nil))) ;; Disable project modeline because it kills performance
+  ;; (connection-local-set-profiles '(:application tramp :user "ubuntu") 'my/pelago-profile)
+
+
+
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
   (add-to-list 'tramp-remote-process-environment
                (format "DISPLAY=%s" (getenv "DISPLAY"))))
@@ -1169,12 +1175,11 @@ M-<left>' and repeat with M-<left>."
 						    :documentRangeFormattingProvider
 						    :documentOnTypeFormattingProvider
 						    )
+		;;eglot-code-action-indications '(modeline nearby)
 		)
 
   ;; (setq-default eglot-stay-out-of '(eldoc))
   :config
-  (add-to-list 'eglot-server-programs '((cuda-mode) "clangd"))
-
   (add-hook 'eglot-managed-mode-hook
 	    (lambda ()
 	      (when (eldoc--supported-p)
@@ -1726,7 +1731,7 @@ Nested namespaces should not be indented with new indentations."
 	      python-check-command "pyflakes"
 	      ;; flycheck-python-flake8-executable "flake8"
 	      python-indent-block-paren-deeper t
-	      python-shell-dedicated 'project
+	      ;; python-shell-dedicated 'project  ;; This is better to set in a dir-locals file
 	      python-shell-completion-native-enable t
 	      python-forward-sexp-function nil
 	      )
