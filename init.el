@@ -2491,6 +2491,13 @@ function in the tree-sitter library."
 		  `((,name . ,(my/c-ts-indent-rules-generate name))))))
   (add-hook 'c-ts-base-mode-hook #'my/c-ts-base-mode-hook)
 
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs `(((cuda-mode :language-id "cpp")
+					   (cuda-ts-mode :language-id "cpp"))
+					  . ,(eglot-alternatives
+					      '("clangd" "ccls")))))
+
+  ;; Rust mode
   (defun my/rust-ts-mode-hook ()
     "Hook to improve indentation in rust mode"
     (setq-local tab-width 4)
