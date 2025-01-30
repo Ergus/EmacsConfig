@@ -1125,7 +1125,8 @@ M-<left>' and repeat with M-<left>."
 	      ispell-quietly t)       ;; Suppress messages in ispell-word
 
 ;; Flyspell
-(setq-default flyspell-use-meta-tab nil       ;; Not correct with M-TAB
+(setq-default flyspell-delay-use-timer t      ;; New flyspell behavior
+	      flyspell-use-meta-tab nil       ;; Not correct with M-TAB
 	      flyspell-mode-line-string nil   ;; Not show Fly in modeline
 	      flyspell-delay 1                ;; default 3
 	      flyspell-sort-corrections t     ;; Alphabetically sort corrections
