@@ -2400,26 +2400,6 @@ Nested namespaces should not be indented with new indentations."
 		treesit--indent-verbose t
 		treesit--font-lock-verbose nil)
 
-  (defvar-local my/treesit-indent-rules nil)
-
-  
-  (defun my/treesit-simple-indent (oldfun node parent bol)
-    "Allow indent with custom rules without hacks in the predefined rules
-
-It is possible to change the treesit-indent-function BUT the python mode
-breaks because there is some hacky condition assigning the indentation
-function in the tree-sitter library."
-    (or (when-let* ((rules (alist-get (treesit-node-language parent)
-				      my/treesit-indent-rules))
-		    (treesit-simple-indent-rules my/treesit-indent-rules)
-		    (result (funcall oldfun node parent bol))
-		    ((or (car result)
-			 (cdr result))))
-	  result)
-	(funcall oldfun node parent bol)))
-  ;; Add an advise to check my indentations before the default ones.
-  (advice-add 'treesit-simple-indent :around #'my/treesit-simple-indent)
-
   (defvaralias 'c-ts-mode-indent-offset 'tab-width)
 
   (add-to-list 'major-mode-remap-alist '(conf-toml-mode . toml-ts-mode))
@@ -2483,11 +2463,11 @@ function in the tree-sitter library."
 		  (parent-is "lambda_expression")) parent-bol 0)))))
 
   (defun my/c-ts-base-mode-hook ()
-    "Hook to improve indentation in c, c++ and cuda modes"
-    (let ((name (intern (string-trim-right (symbol-name major-mode) "-ts-mode"))))
+    "Hook to improve indentation in c, c++ and cuda (remapped) modes."
+    (let ((name (treesit-parser-language treesit-primary-parser)))
       (message "Generate indent rules for %s" name)
       (setq-local tab-width 4)
-      (setq-local my/treesit-indent-rules
+      (setq-local treesit-simple-indent-override-rules
 		  `((,name . ,(my/c-ts-indent-rules-generate name))))))
   (add-hook 'c-ts-base-mode-hook #'my/c-ts-base-mode-hook)
 
@@ -2502,7 +2482,7 @@ function in the tree-sitter library."
     "Hook to improve indentation in rust mode"
     (setq-local tab-width 4)
 
-    (setq-local my/treesit-indent-rules
+    (setq-local treesit-simple-indent-override-rules
 		`((rust . (((and (parent-is "function_item")
 				 (node-is "block")) parent-bol 0)
 			   ((node-is "where_clause")  parent-bol 0))))))
