@@ -2456,7 +2456,10 @@ Nested namespaces should not be indented with new indentations."
 	    ;; closing } in a class
 	    ((and (node-is "}")
 		  (parent-is "field_declaration_list")) parent-bol 0)
-	    ;; Everything in a class
+	    ;; Initialization list in a class
+	    ((and (parent-is"function_definition")
+		  (node-is "field_initializer_list")) parent-bol c-ts-mode-indent-offset)
+	    ;; Everything insize a class
 	    ((parent-is "field_declaration_list") parent-bol c-ts-mode-indent-offset)
 	    ;; { of lambda
 	    ((and (node-is "compound_statement")
