@@ -1050,8 +1050,9 @@ M-<left>' and repeat with M-<left>."
 						((control) . 9)
 						((meta) . hscroll)
 						((shift) . text-scale)) ;; in terminal does not work
-		    mouse-wheel-tilt-scroll t          ;; horizontal scrolling with touchpad
-		    mouse-wheel-progressive-speed nil
+		    ;;mouse-wheel-tilt-scroll t          ;; horizontal scrolling with touchpad
+		    ;;mouse-wheel-progressive-speed nil
+		    mouse-wheel-scroll-amount-horizontal 5 ;; Faster horizontal scroll
 		    mouse-scroll-delay 0)
       (mouse-wheel-mode 1))                    ;; Explicit call mouse-wheel-mode AFTER setting mouse-wheel-scroll-amount
 
