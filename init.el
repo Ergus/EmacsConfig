@@ -59,6 +59,7 @@
 	      scroll-step 1                       ;; Scroll step (better conservatively)
 	      scroll-conservatively 1000
 	      window-combination-resize t         ;; Windows resize proportional
+	      frame-inhibit-implied-resize t      ;; test this for tilling windows manager
 	      x-wait-for-event-timeout nil        ;; Not wait for events in X (when built with X)
 	      pgtk-wait-for-event-timeout nil     ;; Not wait for events in pgtk
 	      ;; jit-lock-stealth-load 60           ;; load of fontification (def: 200)
@@ -125,6 +126,11 @@
 			(make-glyph-code ?\u2502))  ;; also works 2503, it is wider
 ;;__________________________________________________________
 ;; use-package
+
+;; (use-package benchmark-init
+;;   :config
+;;   ;; To disable collection of benchmark data after init is done.
+;;   (add-hook 'window-setup-hook 'benchmark-init/deactivate))
 
 ;; Function to see the dependencies list.
 ;; (defvar my/require-tree nil)
@@ -260,6 +266,11 @@ M-<left>' and repeat with M-<left>."
     "C-x w" "window"
     "C-x C-k" "kmacro")
 (eval-after-load 'which-key '(diminish 'which-key-mode))
+
+;; (use-package which-key-posframe
+;;   :after which-key
+;;   :config
+;;   (which-key-posframe-mode))
 
 ;; sidebar
 (defvar-keymap my/sidebar-map
@@ -431,6 +442,10 @@ M-<left>' and repeat with M-<left>."
   (whitespace-mode 1)
   (electric-pair-local-mode 1))
 
+;; Esto no funciona
+;; (advice-add 'electric-pair-open-newline-between-pairs-psif
+;; 	    :after #'delete-horizontal-space)
+
 ;; New indent bars mode ready to test: https://github.com/jdtsmith/indent-bars
 ;; (use-package indent-bars
 ;;   :config
@@ -512,6 +527,7 @@ M-<left>' and repeat with M-<left>."
 	      gdb-many-windows nil
 	      gdb-show-main t)
 
+
 ;; hideif mode
 (setq-default hide-ifdef-shadow t
 	      hide-ifdef-initially t)
@@ -573,7 +589,7 @@ M-<left>' and repeat with M-<left>."
 
 	      completion-auto-deselect t            ;; De-select completions on write
 	      completions-sort 'historical          ;; alphabetical + historical
-	      
+
 	      minibuffer-completion-auto-choose nil ;; no insert completions in minib
 	      )
 
@@ -1453,7 +1469,7 @@ Nested namespaces should not be indented with new indentations."
 ;;   :mode (("README\\.md\\'" . gfm-mode))
 ;;   :init
 ;;   (setq-default markdown-indent-on-enter nil))
-(use-package markdown-ts-mode)
+;;(use-package markdown-ts-mode)
 
 
 ;;__________________________________________________________
@@ -1785,6 +1801,7 @@ Nested namespaces should not be indented with new indentations."
 		dired-sidebar-use-one-instance t
 		)
   (add-hook 'dired-sidebar-mode-hook (lambda ()
+				       (setq-local dired-omit-extensions nil)
 				       (dired-omit-mode 1)
 				       (unless (file-remote-p default-directory)
 					 (auto-revert-mode 1))))
@@ -1912,9 +1929,15 @@ Nested namespaces should not be indented with new indentations."
 (use-package cuda-ts-mode :defer t :ensure nil
   :preface
   (when (file-exists-p "/mnt/casa/gits/emacs_clones/cuda-ts-mode/")
-    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/cuda-ts-mode//"))
+    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/cuda-ts-mode/"))
   :commands cuda-ts-mode
   :mode "\\.cu[h]?\\'")
+
+(use-package flymake-cppcheck :defer :ensure nil
+  :preface
+  (when (file-exists-p "/mnt/casa/gits/emacs_clones/flymake-cppcheck")
+    (add-to-list 'load-path "/mnt/casa/gits/emacs_clones/flymake-cppcheck/"))
+  :commands flymake-cppcheck-mode)
 
 ;;__________________________________________________________
 ;; Magit and git packages
@@ -2246,6 +2269,7 @@ Nested namespaces should not be indented with new indentations."
 (use-package lice :defer t
   :init
   (setq-default lice:copyright-holder "Jimmy Aguilar Mena"))
+
 (use-package lorem-ipsum :defer t)
 
 ;;__________________________________________________________
@@ -2419,6 +2443,7 @@ Nested namespaces should not be indented with new indentations."
   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-ts-mode))
 
   (add-to-list 'auto-mode-alist '("\\.\\(ba\\)?sh\\'" . bash-ts-mode))
 
@@ -2428,7 +2453,7 @@ Nested namespaces should not be indented with new indentations."
 
   ;; C/C++/Cuda modes
   (setq-default c-ts-mode-indent-style 'linux
-		c-ts-mode-enable-doxygen t)
+		c-ts-mode-enable-doxygen nil)
 
   (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
   (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
@@ -2489,9 +2514,32 @@ Nested namespaces should not be indented with new indentations."
     (setq-local treesit-simple-indent-override-rules
 		`((rust . (((and (parent-is "function_item")
 				 (node-is "block")) parent-bol 0)
+			   ((and (node-is ")")
+				 (parent-is "tuple_expression")) parent-bol 0)
+			   ((parent-is "tuple_expression") parent-bol rust-ts-mode-indent-offset)
 			   ((node-is "where_clause")  parent-bol 0))))))
   (add-hook 'rust-ts-mode-hook #'my/rust-ts-mode-hook)
 
+  (defun my/markdown-ts-mode-hook ()
+    "Hook to improve indentation in markdown mode"
+    (setq-local tab-width 4)
+
+    (require 'c-ts-mode)
+
+    (setq-local treesit-font-lock-settings
+                (append
+                 treesit-font-lock-settings
+                 (c-ts-mode--font-lock-settings 'cpp)))
+
+    (setq-local treesit-range-settings
+                (treesit-range-rules
+                 :embed 'cpp
+                 :host 'markdown
+                 :local t
+		 :offset '(7 . -4)
+		 '(((fenced_code_block) @cap (:match "```C++" @cap)))))
+    )
+  (add-hook 'markdown-ts-mode-hook #'my/markdown-ts-mode-hook)
 
   ;; ts mode for qml files, NOT in melpa
   ;; https://github.com/danilshvalov/git-commit-ts-mode
@@ -2502,8 +2550,7 @@ Nested namespaces should not be indented with new indentations."
       :config
       (my/treesit-install-grammar 'qmljs "https://github.com/yuja/tree-sitter-qmljs.git")
       (with-eval-after-load 'eglot
-	(add-to-list 'eglot-server-programs `(qml-ts-mode . ("qmlls6"))))
-      ))
+	(add-to-list 'eglot-server-programs `(qml-ts-mode . ("qmlls6"))))))
 
   (use-package git-commit-ts-mode
     :mode "\\COMMIT_EDITMSG\\'"
@@ -2517,3 +2564,4 @@ Nested namespaces should not be indented with new indentations."
 (provide 'init)
 
 ;;; init.el ends here
+
