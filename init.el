@@ -33,6 +33,7 @@
 	      create-lockfiles nil          ;; No lock files, good for tramp
 	      visible-bell nil              ;; Flash the screen (def)
 	      confirm-kill-processes nil    ;; no ask kill processes on exit
+	      read-process-output-max       1048576
 	      ;; read-key-delay 0.01           ;; already default
 	      recenter-redisplay nil
 	      ;;recenter-positions '(top middle bottom)
@@ -517,6 +518,8 @@ M-<left>' and repeat with M-<left>."
 (with-eval-after-load 'eldoc
   (diminish 'eldoc-mode)
   (global-eldoc-mode -1))   ;; This is enabled by default, disable it
+
+;;(use-package eldoc-box :defer t)
 
 (add-hook 'emacs-lisp-mode-hook #'turn-on-eldoc-mode)
 (add-hook 'lisp-interaction-mode-hook #'turn-on-eldoc-mode)
@@ -1058,7 +1061,8 @@ M-<left>' and repeat with M-<left>."
 
 (unless (or (display-graphic-p)
 	    (string-equal (getenv "TERM") "linux"))
-  (xterm-mouse-mode t))                    ;; mover el cursor al click
+  (tty-tip-mode 1)
+  (xterm-mouse-mode t))  ;; mover el cursor al click
 
 (if (fboundp #'mouse-wheel-mode)
     (progn
@@ -2506,6 +2510,12 @@ Nested namespaces should not be indented with new indentations."
 					  . ,(eglot-alternatives
 					      '("clangd" "ccls")))))
 
+  (defun my/rust-arguments-indent (node-t parent-t grand-parent-t)
+    ;;(message "HEE: %s | %s | %s" node-t parent-t grand-parent-t)
+    (and (string-match-p "arguments" (treesit-node-type parent-t))
+	 (string-equal "."
+	  (treesit-node-type (treesit-node-next-sibling (treesit-node-parent parent-t))))))
+
   ;; Rust mode
   (defun my/rust-ts-mode-hook ()
     "Hook to improve indentation in rust mode"
@@ -2514,10 +2524,18 @@ Nested namespaces should not be indented with new indentations."
     (setq-local treesit-simple-indent-override-rules
 		`((rust . (((and (parent-is "function_item")
 				 (node-is "block")) parent-bol 0)
+			   ;; Extra indentation if the arguments are followed by a .
+			   ;; As rust seems to like concatenation syntax
+			   ((and (node-is ")")
+				 my/rust-arguments-indent) parent-bol rust-ts-mode-indent-offset)
+			   (my/rust-arguments-indent parent-bol ,(* 2 rust-ts-mode-indent-offset))
+			   ;; Indentation for tuples
 			   ((and (node-is ")")
 				 (parent-is "tuple_expression")) parent-bol 0)
 			   ((parent-is "tuple_expression") parent-bol rust-ts-mode-indent-offset)
-			   ((node-is "where_clause")  parent-bol 0))))))
+			   ;; Indent the where in generics
+			   ((node-is "where_clause")  parent-bol 0)))))
+    )
   (add-hook 'rust-ts-mode-hook #'my/rust-ts-mode-hook)
 
   (defun my/markdown-ts-mode-hook ()
