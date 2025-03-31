@@ -758,7 +758,7 @@ M-<left>' and repeat with M-<left>."
   "Conditionally set the Hack font."
   (cond
    ((member "Hack" (font-family-list))
-    (set-face-attribute 'default nil :family "Hack" :height 105))
+    (set-face-attribute 'default nil :family "Hack" :height 110))
    ((member "Cascadia Mono" (font-family-list))
     (set-face-attribute 'default nil :family "Cascadia Mono" :height 105))))
 
