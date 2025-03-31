@@ -135,6 +135,8 @@
 
  `(dired-directory ((t :foreground ,(simple-16-theme-color cyan))))
 
+ ;;`(tooltip ((t :background ,(simple-16-theme-color brightblack) :foreground ,(simple-16-theme-color white))))
+ 
  ;; External packages
  ;; Company
  `(company-tooltip ((default :background ,(simple-16-theme-color blue)
