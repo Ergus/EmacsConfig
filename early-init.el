@@ -19,7 +19,7 @@
   (add-hook 'window-setup-hook #'profiler-stop 0))
 
 (defconst file-name-handler-alist-save file-name-handler-alist)
-(defconst my/gc-cons-threshold (* 4 gc-cons-threshold))
+(defconst my/gc-cons-threshold (* 8 gc-cons-threshold))
 
 (defsubst my/unset-gc ()
   "Disable the gc."
@@ -29,7 +29,7 @@
 (defsubst my/restore-gc ()
   "Restore the gc."
   (setq gc-cons-threshold my/gc-cons-threshold
-	gc-cons-percentage 0.15))
+	gc-cons-percentage 0.2))
 
 (setq-default file-name-handler-alist nil
 	      message-log-max 16384)
@@ -59,6 +59,8 @@
 (menu-bar-mode -1)
 (tooltip-mode -1)			;; Tool tip in the echo
 ;;(electric-indent-mode -1)
+
+(setenv "LSP_USE_PLISTS" "true")
 
 ;; (debug-on-entry #'package-refresh-contents)
 
