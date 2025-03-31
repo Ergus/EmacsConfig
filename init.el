@@ -2471,37 +2471,49 @@ Nested namespaces should not be indented with new indentations."
       ;; Arguments inside a function definition and call
       ((parent-is "argument_list") parent-bol c-ts-mode-indent-offset)
       ((parent-is "parameter_list") parent-bol c-ts-mode-indent-offset)
+      ;; indent { after struct declaration
+      ((node-is "^initializer_list$") parent-bol 0)
+      ;; Open { for scope
+      ((n-p-gp "compound_statement" "compound_statement" nil) parent-bol c-ts-mode-indent-offset)
+      ;; Open { after if, while, else... etc
+      ((node-is "compound_statement") standalone-parent 0)
+      ;; switch-case
+      ((node-is "case") standalone-parent c-ts-mode-indent-offset)
       ;; pragmas
       ((lambda (node parent _)
-	 (and (stringp (treesit-node-type node))
-	      (stringp (treesit-node-type parent))
-	      (string-match-p "preproc_call" (treesit-node-type node))
-	      (string-match-p "compound_statement" (treesit-node-type parent))
-	      (string-match-p "#pragma" (treesit-node-text node nil))))
+	 (and (string-match-p "#pragma" (or (treesit-node-text node t) ""))
+	      (string-match-p "preproc_call" (or (treesit-node-type node) ""))
+	      (string-match-p "compound_statement" (or (treesit-node-type parent) ""))))
        parent-bol c-ts-mode-indent-offset)
+      ;; pragma multiline
+      ((and no-node (parent-is "preproc_arg")) parent-bol c-ts-mode-indent-offset)
+      ;; C++ specific
       ,@(when (not (eq mode 'c))
-	  ;; labels in a class
-	  '(((and (node-is "access_specifier")
-		  (parent-is "field_declaration_list")) parent-bol 0)
-	    ;; closing } in a class
-	    ((and (node-is "}")
-		  (parent-is "field_declaration_list")) parent-bol 0)
-	    ;; Initialization list in a class
-	    ((and (parent-is"function_definition")
-		  (node-is "field_initializer_list")) parent-bol c-ts-mode-indent-offset)
-	    ;; Everything insize a class
-	    ((parent-is "field_declaration_list") parent-bol c-ts-mode-indent-offset)
-	    ;; { of lambda
-	    ((and (node-is "compound_statement")
-		  (parent-is "lambda_expression")) parent-bol 0)))))
+	  `(;;labels and closing } in a class
+            ((n-p-gp ,(rx (or "}" "access_specifier")) "field_declaration_list" nil) parent-bol 0)
+	    ;; Initialization list in a class : and rest of elements in constructor
+	    ((n-p-gp "field_initializer_list" "function_definition" nil) standalone-parent c-ts-mode-indent-offset)
+	    ((parent-is "field_initializer_list") parent-bol 0)
+	    ;; Everything inside a class
+	    ((node-is "field_declaration_list") parent-bol 0) ;; open {
+	    ((parent-is "field_declaration_list") parent-bol c-ts-mode-indent-offset) ;; everything inside
+	    ;; Opening { in namespace
+            ((parent-is "namespace_definition") standalone-parent 0)
+	    ;; try-catch fix
+	    ((node-is "catch_clause") parent-bol 0)
+	    ))))
 
   (defun my/c-ts-base-mode-hook ()
     "Hook to improve indentation in c, c++ and cuda (remapped) modes."
     (let ((name (treesit-parser-language treesit-primary-parser)))
       (message "Generate indent rules for %s" name)
       (setq-local tab-width 4)
-      (setq-local treesit-simple-indent-override-rules
-		  `((,name . ,(my/c-ts-indent-rules-generate name))))))
+      ;; These are the same rules, but one uses the override variable
+      ;; and the other modifies the original `treesit-simple-indent-rules'
+      (treesit-simple-indent-add-rules name (my/c-ts-indent-rules-generate name))
+      ;; (setq-local treesit-simple-indent-override-rules
+      ;; 		  `((,name . ,(my/c-ts-indent-rules-generate name))))
+      ))
   (add-hook 'c-ts-base-mode-hook #'my/c-ts-base-mode-hook)
 
   (with-eval-after-load 'eglot
