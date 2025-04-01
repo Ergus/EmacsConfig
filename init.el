@@ -528,6 +528,7 @@ M-<left>' and repeat with M-<left>."
 ;; gdb
 (setq-default gdb-debug-log-max nil   ;; no limit log
 	      gdb-many-windows nil
+	      gdb-restore-window-configuration-after-quit t
 	      gdb-show-main t)
 
 
