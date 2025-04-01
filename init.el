@@ -1224,6 +1224,18 @@ M-<left>' and repeat with M-<left>."
 
 ;; (use-package consult-eglot :defer t)
 
+(use-package dape
+  :defer t
+  :config
+  (dape-breakpoint-global-mode)
+  (setq dape-buffer-window-arrangement 'gud
+	dape-info-hide-mode-line nil
+	;;dape-inlay-hints t  ;; t by default
+	)
+  (add-hook 'dape-display-source-hook 'pulse-momentary-highlight-one-line)
+  ;; :hook (dape-mode . dape-ui-mode)
+  )
+
 (use-package corfu
   ;; Optional customizations
   :defer 0.2
