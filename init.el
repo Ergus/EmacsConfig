@@ -492,7 +492,8 @@ M-<left>' and repeat with M-<left>."
 
 ;; winner
 (setq-default winner-dont-bind-my-keys t)
-(winner-mode t)
+(add-hook 'window-setup-hook #'winner-mode)
+
 
 ;; There is already a winner-repeat-map with different bindings
 ;; so I cannot use the same, becaus eas it is loaded latter,
