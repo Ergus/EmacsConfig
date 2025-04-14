@@ -1478,8 +1478,8 @@ Nested namespaces should not be indented with new indentations."
 
 ;;__________________________________________________________
 ;; OpenCL Mode
-(use-package opencl-mode
-  :mode "\\.cl\\'")
+;;(use-package opencl-mode
+;;  :mode "\\.cl\\'")
 
 ;;__________________________________________________________
 ;; Markdown mode
