@@ -862,6 +862,7 @@ M-<left>' and repeat with M-<left>."
 (keymap-set ctl-x-map "<down>" #'windmove-down)
 (keymap-set ctl-x-map "<up>" #'windmove-up)
 
+;; See also the window-layout-* family of functions
 (keymap-set ctl-x-map "S-<left>" #'windmove-swap-states-left)
 (keymap-set ctl-x-map "S-<right>" #'windmove-swap-states-right)
 (keymap-set ctl-x-map "S-<down>" #'windmove-swap-states-down)
@@ -2430,7 +2431,7 @@ Nested namespaces should not be indented with new indentations."
 ;; Enable tree-sitter for some modes by default if the tree-sitter
 ;; directory exists
 
-(when (file-exists-p (expand-file-name "tree-sitter" user-emacs-directory))
+(when (file-readable-p (expand-file-name "tree-sitter" user-emacs-directory))
 
   (setq-default toml-ts-mode-indent-offset 4
 		cmake-ts-mode-indent-offset 4
@@ -2486,8 +2487,8 @@ Nested namespaces should not be indented with new indentations."
       ((parent-is "argument_list") parent-bol c-ts-mode-indent-offset)
       ((parent-is "parameter_list") parent-bol c-ts-mode-indent-offset)
       ;; indent { after struct declaration
-      ((node-is "^initializer_list$") parent-bol 0)
-      ;; Open { for scope
+      ;;((node-is "^initializer_list$") parent-bol 0)
+      ;; Open { for scope (code block)
       ((n-p-gp "compound_statement" "compound_statement" nil) parent-bol c-ts-mode-indent-offset)
       ;; Open { after if, while, else... etc
       ((node-is "compound_statement") standalone-parent 0)
@@ -2560,10 +2561,10 @@ Nested namespaces should not be indented with new indentations."
 				 (parent-is "tuple_expression")) parent-bol 0)
 			   ((parent-is "tuple_expression") parent-bol rust-ts-mode-indent-offset)
 			   ;; Indent the where in generics
-			   ((node-is "where_clause")  parent-bol 0)))))
-    )
+			   ((node-is "where_clause")  parent-bol 0))))))
   (add-hook 'rust-ts-mode-hook #'my/rust-ts-mode-hook)
 
+  ;; Markdown
   (defun my/markdown-ts-mode-hook ()
     "Hook to improve indentation in markdown mode"
     (setq-local tab-width 4)
@@ -2575,14 +2576,14 @@ Nested namespaces should not be indented with new indentations."
                  treesit-font-lock-settings
                  (c-ts-mode--font-lock-settings 'cpp)))
 
+    ;; C++ embeded in Markdown
     (setq-local treesit-range-settings
                 (treesit-range-rules
                  :embed 'cpp
                  :host 'markdown
                  :local t
 		 :offset '(7 . -4)
-		 '(((fenced_code_block) @cap (:match "```C++" @cap)))))
-    )
+		 '(((fenced_code_block) @cap (:match "```C++" @cap))))))
   (add-hook 'markdown-ts-mode-hook #'my/markdown-ts-mode-hook)
 
   ;; ts mode for qml files, NOT in melpa
