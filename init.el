@@ -875,6 +875,13 @@ M-<left>' and repeat with M-<left>."
 
 (keymap-set ctl-x-map "0" (cons "windmove-delete" my/0-map))
 
+(which-key-add-key-based-replacements
+    "C-x w f" "flip"
+    "C-x w r" "rotate layout"
+    "C-x w o" "rotate buffers"
+    "C-x w ^" "break"
+    )
+
 ;;__________________________________________________________
 ;; tab-bar
 (setq-default tab-bar-tab-hints t  ;; show tab numbers
@@ -910,7 +917,15 @@ M-<left>' and repeat with M-<left>."
   "S-<left>" #'windmove-swap-states-left
   "S-<right>" #'windmove-swap-states-right
   "S-<down>" #'windmove-swap-states-down
-  "S-<up>" #'windmove-swap-states-up)
+  "S-<up>" #'windmove-swap-states-up
+  "v" #'split-window-below
+  "h" #'split-window-right
+  "V" #'split-root-window-below
+  "H" #'split-root-window-right
+  "B" #'tab-window-detach
+
+  "r" #'balance-windows
+  )
 
 (keymap-global-set "C-z" my/tmux-like-keymap)
 
@@ -948,7 +963,10 @@ M-<left>' and repeat with M-<left>."
 			(auto-fill-mode -1)))
   :init
   (setq-default vterm-kill-buffer-on-exit t
+		vterm-always-compile-module t
 		vterm-max-scrollback 10000)
+  ;; toggle vterm with C-z t like in tmux.
+  (keymap-set my/tmux-like-keymap "t" #'vterm-toggle)
   :config
   ;; Add find-file-other-window to accepted commands
   (add-to-list 'vterm-eval-cmds
