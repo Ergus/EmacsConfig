@@ -1856,9 +1856,11 @@ Nested namespaces should not be indented with new indentations."
   (ptemplate-templates-mode 1))
 ;;__________________________________________________________
 ;; ibuffer
-(setq-default ibuffer-default-sorting-mode 'alphabetic  ;; can use recency)
+(setq-default ibuffer-default-sorting-mode 'recency  ;; can use alphabetic)
 	      ibuffer-use-other-window t                ;; ibuffer in other windows
-	      ibuffer-jump-offer-only-visible-buffers t)
+	      ibuffer-jump-offer-only-visible-buffers t
+	      ibuffer-human-readable-size t
+	      )
 (keymap-global-set "<remap> <list-buffers>" #'ibuffer)
 (add-hook 'ibuffer-mode-hook #'hl-line-mode)
 (eval-after-load 'ibuffer
