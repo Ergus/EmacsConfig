@@ -974,11 +974,17 @@ M-<left>' and repeat with M-<left>."
 
   (keymap-unset vterm-mode-map "C-z")  ;; I use C-x to change tab
   (keymap-unset vterm-mode-map "M-O")  ;; Fix arrow keys in vterm
-  (keymap-set vterm-mode-map "C-c C-z" #'vterm-send-C-z)
-  (keymap-set vterm-mode-map "C-c C-x" #'vterm-send-C-x)
-  (keymap-set vterm-mode-map "C-c [" #'vterm-copy-mode)
-  (keymap-set vterm-mode-map "C-c ]" #'vterm-yank)
+  (keymap-set vterm-mode-map "C-x C-x" #'vterm-send-C-x) ;; exchange point and mark is pointless here
+
+  ;; emmulate tmux
+  (keymap-set vterm-mode-map "C-z [" #'vterm-copy-mode)
+  (keymap-set vterm-mode-map "C-z ]" #'vterm-yank)
+  (keymap-set vterm-mode-map "C-z C-z" #'vterm-send-C-z)
+
+  (keymap-set vterm-copy-mode-map "C-z [" #'vterm-copy-mode)
+  (keymap-set vterm-copy-mode-map "C-z C-z" #'vterm-send-C-z)
   (keymap-set vterm-copy-mode-map "M-w" #'vterm-copy-mode-done)
+  vterm-copy-mode-map
   )
 
 (use-package vterm-toggle :defer t
