@@ -1032,11 +1032,6 @@ M-<left>' and repeat with M-<left>."
 (use-package tmux-mode :defer t)
 
 ;;__________________________________________________________
-;; Better shell (for ssh)
-(use-package better-shell :defer t
-  :init
-  (keymap-set my/term-keymap "b" #'better-shell-shell))
-
 (use-package shell-command+ :defer t
   :init
   (keymap-global-set "<remap> <shell-command>" #'shell-command+))
