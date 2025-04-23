@@ -1037,7 +1037,7 @@ M-<left>' and repeat with M-<left>."
   (keymap-global-set "<remap> <shell-command>" #'shell-command+))
 
 ;;__________________________________________________________
-;; eshell mouse
+;; eshell
 
 (defun my/with-face (str &rest face-plist)
     (propertize str 'face face-plist))
@@ -1057,6 +1057,16 @@ M-<left>' and repeat with M-<left>."
 	      eshell-prompt-function #'my/eshell-prompt-function
 	      eshell-highlight-prompt nil
 	      eshell-buffer-name "*Eshell*")
+
+(use-package eshell-toggle
+  :init
+  (setq-default eshell-toggle-size-fraction 3
+		eshell-toggle-find-project-root-package t ;; for projectile
+		eshell-toggle-use-projectile-root 'project
+		eshell-toggle-run-command nil
+		;; eshell-toggle-init-function #'eshell-toggle-init-ansi-term
+		)
+  (keymap-set my/term-keymap "e" #'eshell-toggle))
 
 ;;__________________________________________________________
 ;; Clipboard copy and paste with: M-w & C-c v
