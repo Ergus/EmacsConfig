@@ -1848,12 +1848,13 @@ Nested namespaces should not be indented with new indentations."
 
 ;; __________________________________________________________
 ;; Templates Projects
-(use-package ptemplate :defer t)
+;; (use-package ptemplate :defer t)
 
-(use-package ptemplate-templates
-  :after ptemplate
-  :config
-  (ptemplate-templates-mode 1))
+;; (use-package ptemplate-templates
+;;   :after ptemplate
+;;   :config
+;;   (ptemplate-templates-mode 1))
+
 ;;__________________________________________________________
 ;; ibuffer
 (setq-default ibuffer-default-sorting-mode 'recency  ;; can use alphabetic)
@@ -2009,17 +2010,6 @@ Nested namespaces should not be indented with new indentations."
 	 ("\\.gitignore\\'" . gitignore-mode)))
 
 (use-package git-timemachine :defer t)
-
-;; (use-package git-commit :defer t
-;;   :mode ("COMMIT_EDITMSG" . git-commit-setup)
-;;   :init
-;;   (setq-default git-commit-summary-max-length 68)
-;;   :config
-;;   (add-to-list 'git-commit-style-convention-checks 'overlong-summary-line)
-
-;;   (add-hook 'git-commit-setup-hook (lambda nil
-;; 				     (setq-local fill-column 72)
-;; 				     (git-commit-turn-on-flyspell))))
 
 (use-package with-editor
   :hook ((term-exec . with-editor-export-editor)
@@ -2434,18 +2424,19 @@ Nested namespaces should not be indented with new indentations."
   :init
   (keymap-global-set "C-x r a" #'goto-last-change))
 
-(use-package citre :defer t
-  :commands (citre-update-tags-file
-	     citre-update-this-tags-file
-	     citre-edit-tags-file-recipe
-	     citre-create-tags-file
-	     citre-global-create-database
-	     citre-global-update-database)
-  :init
-  (with-eval-after-load 'cc-mode
-    (require 'citre-lang-c))
-  (with-eval-after-load 'dired
-    (require 'citre-lang-fileref)))
+;; I never use citre finally gtags managed better
+;; (use-package citre :defer t
+;;   :commands (citre-update-tags-file
+;; 	     citre-update-this-tags-file
+;; 	     citre-edit-tags-file-recipe
+;; 	     citre-create-tags-file
+;; 	     citre-global-create-database
+;; 	     citre-global-update-database)
+;;   :init
+;;   (with-eval-after-load 'cc-mode
+;;     (require 'citre-lang-c))
+;;   (with-eval-after-load 'dired
+;;     (require 'citre-lang-fileref)))
 
 (use-package compiler-explorer :defer t)
 
