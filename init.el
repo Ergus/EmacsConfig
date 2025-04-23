@@ -1700,10 +1700,10 @@ Nested namespaces should not be indented with new indentations."
 	      user-mail-address "spacibba@aol.com"
 	      )
 
-(with-eval-after-load 'message-mode
-  (auto-fill-mode t)
-  (mail-abbrevs-setup)
-  (flyspell-mode t))
+(add-hook 'message-mode-delay-hook (lambda ()
+				     (auto-fill-mode t)
+				     (mail-abbrevs-setup)
+				     (flyspell-mode t)))
 
 (add-to-list 'auto-mode-alist '("/neomut" . message-mode))
 (add-to-list 'auto-mode-alist '("neomutt-Ergus-" . message-mode))
@@ -1711,8 +1711,7 @@ Nested namespaces should not be indented with new indentations."
 
 (use-package notmuch :defer t
   :init
-  (setenv "NOTMUCH_CONFIG" (expand-file-name "/mnt/casa/mail/notmuch-config"))
-  )
+  (setenv "NOTMUCH_CONFIG" (expand-file-name "/mnt/casa/mail/notmuch-config")))
 
 ;;__________________________________________________________
 ;; Latex mode
