@@ -236,6 +236,37 @@ M-<left>' and repeat with M-<left>."
 (load custom-file)
 
 ;;__________________________________________________________
+;; Save sessions
+
+(setq-default desktop-globals-to-save nil
+	      desktop-files-not-to-save "^$"
+	      desktop-modes-not-to-save '(tags-table-mode))
+
+(defun my/desktop-save (filename)
+  "Save session to a file asked interactively"
+  (interactive
+   (list (read-file-name "Save session in: "
+			 user-emacs-directory
+			 (expand-file-name "emacs.desktop" user-emacs-directory)
+			 'confirm)))
+  (require 'desktop)
+  (message "Saving session to: %s" filename)
+  (let ((desktop-base-file-name (file-name-nondirectory filename)))
+    (desktop-save (file-name-directory filename) t)))
+
+(defun my/desktop-read (filename)
+  "Recover session to a file asked interactively"
+  (interactive
+   (list (read-file-name "Save session in: "
+			 user-emacs-directory
+			 (expand-file-name "emacs.desktop" user-emacs-directory)
+			 t)))
+  (require 'desktop)
+  (message "Recovering session from: %s" filename)
+  (let ((desktop-base-file-name (file-name-nondirectory filename)))
+    (desktop-read (file-name-directory filename))))
+
+;;__________________________________________________________
 ;; Keybindings
 (use-package diminish :defer t)   ;; if you use :diminish
 
