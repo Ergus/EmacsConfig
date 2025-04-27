@@ -57,7 +57,7 @@
     (scroll-bar-mode -1))
 
 (menu-bar-mode -1)
-(tooltip-mode -1)			;; Tool tip in the echo
+;;(tooltip-mode -1)			;; Tool tip in the echo
 ;;(electric-indent-mode -1)
 
 (setenv "LSP_USE_PLISTS" "true")
