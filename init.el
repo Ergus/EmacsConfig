@@ -549,7 +549,6 @@ M-<left>' and repeat with M-<left>."
 (setq-default winner-dont-bind-my-keys t)
 (add-hook 'window-setup-hook #'winner-mode)
 
-
 ;; There is already a winner-repeat-map with different bindings
 ;; so I cannot use the same, becaus eas it is loaded latter,
 ;; it will be overwritten
@@ -876,11 +875,6 @@ M-<left>' and repeat with M-<left>."
   (connection-local-set-profile-variables 'my/tramp-profile
 					  '((auth-sources . nil)))
   (connection-local-set-profiles '(:application tramp :protocol "sudo") 'my/tramp-profile)
-
-  ;; (connection-local-set-profile-variables 'my/pelago-profile
-  ;; 					  '((project-mode-line . nil))) ;; Disable project modeline because it kills performance
-  ;; (connection-local-set-profiles '(:application tramp :user "ubuntu") 'my/pelago-profile)
-
 
 
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
@@ -1407,122 +1401,122 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; C common mode (for all c-like languages)
-(defun ms-space-for-alignment-hook ()
-  "Make the current line use tabs for indentation and spaces for alignment.
+;; (defun ms-space-for-alignment-hook ()
+;;   "Make the current line use tabs for indentation and spaces for alignment.
 
-It is intended to be called from the hook
-`c-special-indent-hook'.  It assumes that `indent-tabs-mode' is
-non-nil and probably assumes that `c-basic-offset' is the same as
-`tab-width'."
-  (when (and indent-tabs-mode
-	     (= c-basic-offset tab-width))
-    (save-excursion
-      (let* ((indent-pos (progn (back-to-indentation) (point)))
-	     (indent-col (current-column))
-	     (syn-elt (car c-syntactic-context))
-	     (syn-sym (c-langelem-sym syn-elt)))
-	(when (memq syn-sym '(arglist-cont-nonempty
-			      stream-op
-			      template-args-cont)) ;; <==============
-	  (let* ((syn-anchor (c-langelem-pos syn-elt))
-		 (anchor-col (progn (goto-char syn-anchor)
-				    (back-to-indentation)
-				    (current-column))))
-	    ;;
-	    (goto-char indent-pos)
-	    (delete-horizontal-space)
-	    (insert-char ?\t (/ anchor-col tab-width))
-	    (insert-char ?\  (- indent-col (current-column)))))))
-    (when (= (current-column) 0)
-      (back-to-indentation))))
+;; It is intended to be called from the hook
+;; `c-special-indent-hook'.  It assumes that `indent-tabs-mode' is
+;; non-nil and probably assumes that `c-basic-offset' is the same as
+;; `tab-width'."
+;;   (when (and indent-tabs-mode
+;; 	     (= c-basic-offset tab-width))
+;;     (save-excursion
+;;       (let* ((indent-pos (progn (back-to-indentation) (point)))
+;; 	     (indent-col (current-column))
+;; 	     (syn-elt (car c-syntactic-context))
+;; 	     (syn-sym (c-langelem-sym syn-elt)))
+;; 	(when (memq syn-sym '(arglist-cont-nonempty
+;; 			      stream-op
+;; 			      template-args-cont)) ;; <==============
+;; 	  (let* ((syn-anchor (c-langelem-pos syn-elt))
+;; 		 (anchor-col (progn (goto-char syn-anchor)
+;; 				    (back-to-indentation)
+;; 				    (current-column))))
+;; 	    ;;
+;; 	    (goto-char indent-pos)
+;; 	    (delete-horizontal-space)
+;; 	    (insert-char ?\t (/ anchor-col tab-width))
+;; 	    (insert-char ?\  (- indent-col (current-column)))))))
+;;     (when (= (current-column) 0)
+;;       (back-to-indentation))))
 
-(define-minor-mode c-ms-space-for-alignment-mode
-  "Enable indent with tabs align with spaces."
-  :global nil
-  :init-value nil
-  (if c-ms-space-for-alignment-mode
-      (add-hook 'c-special-indent-hook #'ms-space-for-alignment-hook nil t)
-    (remove-hook 'c-special-indent-hook #'ms-space-for-alignment-hook t)))
+;; (define-minor-mode c-ms-space-for-alignment-mode
+;;   "Enable indent with tabs align with spaces."
+;;   :global nil
+;;   :init-value nil
+;;   (if c-ms-space-for-alignment-mode
+;;       (add-hook 'c-special-indent-hook #'ms-space-for-alignment-hook nil t)
+;;     (remove-hook 'c-special-indent-hook #'ms-space-for-alignment-hook t)))
 
 ;;==============================
 ;; Special function to (un)indent nested namespaces in C++
 
-(defun ms-unindent-nested-namespace ()
-  "Indent namespaces properly.
-Nested namespaces should not be indented with new indentations."
-  (save-excursion
-    (back-to-indentation)
-    (let ((initial-pos (point))
-          (syn-elt (car c-syntactic-context)))
-      (when (and (eq (c-langelem-sym syn-elt) 'innamespace)
-                 (looking-at-p "namespace[[:blank:]]+[[:alnum:]:]+[[:space:]]*{")
-                 (re-search-backward "namespace[[:blank:]]+[[:alnum:]:]+[[:space:]]*{" nil t))
-        (let ((end (point))
-              (start (line-beginning-position)))
-          (goto-char initial-pos)
-          (delete-horizontal-space)
-          (insert-buffer-substring-no-properties (current-buffer) start end)
-          )))))
+;; (defun ms-unindent-nested-namespace ()
+;;   "Indent namespaces properly.
+;; Nested namespaces should not be indented with new indentations."
+;;   (save-excursion
+;;     (back-to-indentation)
+;;     (let ((initial-pos (point))
+;;           (syn-elt (car c-syntactic-context)))
+;;       (when (and (eq (c-langelem-sym syn-elt) 'innamespace)
+;;                  (looking-at-p "namespace[[:blank:]]+[[:alnum:]:]+[[:space:]]*{")
+;;                  (re-search-backward "namespace[[:blank:]]+[[:alnum:]:]+[[:space:]]*{" nil t))
+;;         (let ((end (point))
+;;               (start (line-beginning-position)))
+;;           (goto-char initial-pos)
+;;           (delete-horizontal-space)
+;;           (insert-buffer-substring-no-properties (current-buffer) start end)
+;;           )))))
 
-(define-minor-mode c++-unindent-namespace-mode
-  "Enable indent with tabs align with spaces."
-  :global nil
-  :init-value nil
-  (if c++-unindent-namespace-mode
-      (add-hook 'c-special-indent-hook #'ms-unindent-nested-namespace nil t)
-    (remove-hook 'c-special-indent-hook #'ms-unindent-nested-namespace t)))
+;; (define-minor-mode c++-unindent-namespace-mode
+;;   "Enable indent with tabs align with spaces."
+;;   :global nil
+;;   :init-value nil
+;;   (if c++-unindent-namespace-mode
+;;       (add-hook 'c-special-indent-hook #'ms-unindent-nested-namespace nil t)
+;;     (remove-hook 'c-special-indent-hook #'ms-unindent-nested-namespace t)))
 
 ;;====================
 ;; cc-mode
-(setq-default c-default-style '((java-mode . "java")
-				(awk-mode . "awk")
-				(other . "mylinux")))
+;; (setq-default c-default-style '((java-mode . "java")
+;; 				(awk-mode . "awk")
+;; 				(other . "mylinux")))
 
-(with-eval-after-load 'cc-mode
-  (c-add-style "mylinux"
-	       '("linux"
-		 (tab-width . 4)
-		 (c-basic-offset . 4)
-		 (indent-tabs-mode . t)
-		 (fill-column . 80)
-		 ;; (c-hanging-semi&comma-criteria my/c-semi&comma)
-		 (c-hanging-semi&comma-criteria . nil)
-		 (c-doc-comment-style . doxygen)    ;; Use doxygen comments
-		 (c-cleanup-list empty-defun-braces ;; {}
-				 brace-else-brace   ;; } else {
-				 brace-elseif-brace ;; } else if {
-				 defun-close-semi   ;; }; after class
-				 )
-		 (c-hanging-braces-alist (defun-open before after) ;; function\n{\n
-					 (brace-list-open)         ;; brace
-					 (brace-entry-open)
-					 (substatement-open after)
-					 (namespace-open after)
-					 (namespace-close before)
-					 (block-close . c-snug-do-while)
-					 (arglist-cont-nonempty)
-					 (class-open after)
-					 (class-close before))
-		 (c-offsets-alist (inline-open . 0)
-				  (comment-intro . 0)
-				  (arglist-close . 0)
-				  ;;(innamespace . [0])
-				  ;;(access-label '-)
-				  )))
+;; (with-eval-after-load 'cc-mode
+;;   (c-add-style "mylinux"
+;; 	       '("linux"
+;; 		 (tab-width . 4)
+;; 		 (c-basic-offset . 4)
+;; 		 (indent-tabs-mode . t)
+;; 		 (fill-column . 80)
+;; 		 ;; (c-hanging-semi&comma-criteria my/c-semi&comma)
+;; 		 (c-hanging-semi&comma-criteria . nil)
+;; 		 (c-doc-comment-style . doxygen)    ;; Use doxygen comments
+;; 		 (c-cleanup-list empty-defun-braces ;; {}
+;; 				 brace-else-brace   ;; } else {
+;; 				 brace-elseif-brace ;; } else if {
+;; 				 defun-close-semi   ;; }; after class
+;; 				 )
+;; 		 (c-hanging-braces-alist (defun-open before after) ;; function\n{\n
+;; 					 (brace-list-open)         ;; brace
+;; 					 (brace-entry-open)
+;; 					 (substatement-open after)
+;; 					 (namespace-open after)
+;; 					 (namespace-close before)
+;; 					 (block-close . c-snug-do-while)
+;; 					 (arglist-cont-nonempty)
+;; 					 (class-open after)
+;; 					 (class-close before))
+;; 		 (c-offsets-alist (inline-open . 0)
+;; 				  (comment-intro . 0)
+;; 				  (arglist-close . 0)
+;; 				  ;;(innamespace . [0])
+;; 				  ;;(access-label '-)
+;; 				  )))
 
-  (defun my/c-mode-common-hook ()
-    "my/c-mode-common common."
-    (c-toggle-auto-newline 1)
-    (c-toggle-cpp-indent-to-body 1)
-    (c-ms-space-for-alignment-mode 1)
-    ;; (hide-ifdef-mode 1)
-    (subword-mode 1))
-  (add-hook 'c-mode-common-hook #'my/c-mode-common-hook))
+;;   (defun my/c-mode-common-hook ()
+;;     "my/c-mode-common common."
+;;     (c-toggle-auto-newline 1)
+;;     (c-toggle-cpp-indent-to-body 1)
+;;     (c-ms-space-for-alignment-mode 1)
+;;     ;; (hide-ifdef-mode 1)
+;;     (subword-mode 1))
+;;   (add-hook 'c-mode-common-hook #'my/c-mode-common-hook))
 
-(use-package google-c-style :defer t
-  :after cc-mode
-  :config
-  (c-add-style "Google" google-c-style))
+;; (use-package google-c-style :defer t
+;;   :after cc-mode
+;;   :config
+;;   (c-add-style "Google" google-c-style))
 
 ;; (use-package preproc-font-lock :defer t ;; Preprocessor
 ;;   :init
@@ -1533,10 +1527,10 @@ Nested namespaces should not be indented with new indentations."
 
 ;;__________________________________________________________
 ;; C++ mode
-(use-package modern-cpp-font-lock :defer t
-  :diminish modern-c++-font-lock-mode
-  :init
-  (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
+;; (use-package modern-cpp-font-lock :defer t
+;;   :diminish modern-c++-font-lock-mode
+;;   :init
+;;   (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
 
 ;;__________________________________________________________
 ;; elisp mode (all after the company declaration)
@@ -1705,6 +1699,7 @@ Nested namespaces should not be indented with new indentations."
 (setq-default flymake-no-changes-timeout 1.0
 	      flymake-wrap-around nil
 	      flymake-show-diagnostics-at-end-of-line 'short  ;; I want to try that, t shows all diagnostics
+	      ;;flymake-show-diagnostics-at-end-of-line 'fancy
 	      flymake-mode-line-format nil
 	      flymake-margin-indicators-string '((error "!" compilation-error)
 						 (warning "!" compilation-warning)
@@ -2068,6 +2063,7 @@ Nested namespaces should not be indented with new indentations."
   (add-hook 'magit-log-mode-hook (lambda nil
 				   (setq-local show-trailing-whitespace nil
 					       tab-width 4))))
+
 (use-package git-modes
   :mode (("\\.gitattributes\\'" . gitattributes-mode)
 	 ("\\.gitconfig\\'" . gitconfig-mode)
