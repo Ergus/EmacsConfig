@@ -220,8 +220,7 @@ M-<left>' and repeat with M-<left>."
   (setf (alist-get lang treesit-language-source-alist)  ;; Add the grammar source entry
 	`(,source nil nil nil nil))
 
-  (unless (treesit-language-available-p lang)
-    (treesit-install-language-grammar lang)))
+  (treesit-ensure-installed lang))
 
 (use-package esup :defer t)
 
@@ -1114,7 +1113,7 @@ M-<left>' and repeat with M-<left>."
 	      eshell-highlight-prompt nil
 	      eshell-buffer-name "*Eshell*")
 
-(use-package eshell-toggle
+(use-package eshell-toggle :defer t
   :init
   (setq-default eshell-toggle-size-fraction 3
 		eshell-toggle-find-project-root-package t ;; for projectile
