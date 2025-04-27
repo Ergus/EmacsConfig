@@ -254,17 +254,42 @@ M-<left>' and repeat with M-<left>."
   (let ((desktop-base-file-name (file-name-nondirectory filename)))
     (desktop-save (file-name-directory filename) t)))
 
-(defun my/desktop-read (filename)
-  "Recover session to a file asked interactively"
-  (interactive
-   (list (read-file-name "Save session in: "
-			 user-emacs-directory
-			 (expand-file-name "emacs.desktop" user-emacs-directory)
-			 t)))
+(defun my/desktop-read (ask)
+  "Recover session from a file asked interactively"
+  (interactive "P")
   (require 'desktop)
-  (message "Recovering session from: %s" filename)
-  (let ((desktop-base-file-name (file-name-nondirectory filename)))
-    (desktop-read (file-name-directory filename))))
+  (let* ((root (or (and (project-current)
+			(project-root (project-current)))
+		   user-emacs-directory))
+	 (default-file (expand-file-name desktop-base-file-name root))
+	 (filename (if (or ask (not (file-exists-p default-file)))
+		       (read-file-name "Recover session: "
+				       (file-name-as-directory root)
+				       nil
+				       t
+				       desktop-base-file-name)
+		     default-file)))
+    (message "Recovering session from: %s" filename)
+    (let ((desktop-base-file-name (file-name-nondirectory filename)))
+      (desktop-read (file-name-directory filename)))))
+
+(defun my/desktop-save-project (ask)
+  "Save project session to a file asked interactively"
+  (interactive "P")
+  (require 'desktop)
+  (let* ((project (project-current))
+	 (root (project-root project))
+	 (desktop-buffers-not-to-save-function (lambda (_ bufname _ &rest _)
+						 (with-current-buffer bufname
+						   (eq (project-current) project))))
+	 (filename (read-file-name "Save project session: "
+				   root
+				   (expand-file-name desktop-base-file-name root)
+				   'confirm
+				   desktop-base-file-name)))
+    (message "Saving project session to: %s" filename)
+    (let ((desktop-base-file-name (file-name-nondirectory filename)))
+      (desktop-save (file-name-directory filename) t))))
 
 ;;__________________________________________________________
 ;; Keybindings
