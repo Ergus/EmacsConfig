@@ -1346,6 +1346,11 @@ M-<left>' and repeat with M-<left>."
   (keymap-unset comint-mode-map "C-x <up>")
   (keymap-unset comint-mode-map "C-x <down>"))
 
+;; Debugger
+(setq-default gud-highlight-current-line t)
+;; This doesn't work
+;;(add-to-list 'display-buffer-alist `((major-mode . gud-mode) . ,my/display-buffer-at-bottom))
+
 (use-package dape
   :defer t
   :config
