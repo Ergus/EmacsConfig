@@ -1306,7 +1306,37 @@ M-<left>' and repeat with M-<left>."
       (eglot-booster-mode)
     (message "Error: emacs-lsp-booster is not installed")))
 
-;; (use-package consult-eglot :defer t)
+
+;; Workaround to fix gud windows issues
+(add-to-list 'display-buffer-alist
+	     `(,(lambda (buffer args)
+		  (let ((buffer (get-buffer buffer)))
+		    (and buffer
+			 (buffer-file-name buffer)
+			 (not (eq (buffer-local-value 'major-mode buffer) 'gud-mode))
+			 (buffer-local-boundp 'gud-minor-mode buffer)
+			 (buffer-local-value 'gud-minor-mode buffer)
+			 (message "Matches %s " buffer)
+			 t)))
+	       . ((display-buffer-reuse-mode-window)
+		  (inhibit-same-window . nil))))
+
+(add-to-list 'display-buffer-alist
+	     `(,(lambda (buffer args)
+		  (let ((buffer (get-buffer buffer)))
+		    (and buffer
+			 (string-prefix-p "*gud-" (buffer-name buffer))
+			 (or (eq (buffer-local-value 'major-mode buffer) 'gud-mode)
+			     (eq this-command 'lldb))
+			 (buffer-local-boundp 'gud-minor-mode buffer)
+			 (message "Matches2 %s " buffer)
+			 t)))
+	       . ,my/display-buffer-at-bottom))
+
+;; This bindigs conflict with my own ones
+(with-eval-after-load 'comint
+  (keymap-unset comint-mode-map "C-x <up>")
+  (keymap-unset comint-mode-map "C-x <down>"))
 
 (use-package dape
   :defer t
