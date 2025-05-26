@@ -2275,11 +2275,11 @@ M-<left>' and repeat with M-<left>."
 
 (keymap-global-set "M-Z" #'zap-up-to-char)
 
-(use-package avy-zap :defer t
-  :after avy
-  :init
-  (keymap-set avy-basic-map "z" #'avy-zap-to-char-dwim)
-  (keymap-set avy-basic-map "u" #'avy-zap-up-to-char-dwim))
+;; (use-package avy-zap :defer t
+;;   :after avy
+;;   :init
+;;   (keymap-set avy-basic-map "z" #'avy-zap-to-char-dwim)
+;;   (keymap-set avy-basic-map "u" #'avy-zap-up-to-char-dwim))
 
 (use-package deadgrep :defer t
   :init
