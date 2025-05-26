@@ -2291,7 +2291,7 @@ M-<left>' and repeat with M-<left>."
 
 (use-package urgrep :defer t
   :init
-  (setq-default urgrep-preferred-tools '(git-grep grep)
+  (setq-default urgrep-preferred-tools '(ugrep ripgrep grep)
 		urgrep-case-fold 'smart))
 
 
