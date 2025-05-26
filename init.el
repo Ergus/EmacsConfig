@@ -490,14 +490,17 @@ M-<left>' and repeat with M-<left>."
 (with-eval-after-load 'whitespace
   (setq whitespace-style '(faces tab-mark missing-newline-at-eof)
 	whitespace-display-mappings `((tab-mark ?\t [,(make-glyph-code ?» 'whitespace-tab) ?\t] ))
-	))
+	)
+  )
+
+(setq-default delete-pair-push-mark t) ;; 'delete-pair' push a mark at the end
 
 (defun my/delayed-common-hook ()
   "Enable electric-pair-local-mode"
   (setq-local show-trailing-whitespace t  ;; Show trailing whitespaces
 	      indicate-empty-lines t      ;; Show empty lines at end of file
 	      )
-  (whitespace-mode 1)
+  ;(whitespace-mode 1)
   (electric-pair-local-mode 1))
 
 ;; Esto no funciona
@@ -1224,11 +1227,15 @@ M-<left>' and repeat with M-<left>."
   :diminish
   :init
   (setq-default highlight-indent-guides-auto-enabled nil
-		highlight-indent-guides-method 'character)
+		highlight-indent-guides-method 'character
+		;; highlight-indent-guides-character ?\x00BB ;; This doesn't work
+		)
   (keymap-global-set "M-s h i" #'highlight-indent-guides-mode)
   :config
   (set-face-attribute 'highlight-indent-guides-character-face nil
 		      :foreground (my/named-color brightblack)))
+
+(add-hook 'prog-mode-delay-hook #'highlight-indent-guides-mode)
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
