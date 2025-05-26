@@ -122,9 +122,11 @@
 	      )
 
 ;; Vertical window divider
-(set-display-table-slot standard-display-table
-			'vertical-border
-			(make-glyph-code ?\u2502))  ;; also works 2503, it is wider
+;; (set-display-table-slot standard-display-table
+;; 			'vertical-border
+;; 			(make-glyph-code ?\u2502))  ;; also works 2503, it is wider
+(standard-display-unicode-special-glyphs)
+
 ;;__________________________________________________________
 ;; use-package
 
