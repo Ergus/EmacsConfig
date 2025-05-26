@@ -2449,23 +2449,6 @@ M-<left>' and repeat with M-<left>."
   (setq-default evil-collection-setup-minibuffer t)
   (add-hook 'evil-mode-hook #'evil-collection-init))
 
-(use-package evil-leader :defer t
-  :init
-  (add-hook 'evil-mode-hook #'global-evil-leader-mode)
-  :config
-  (evil-leader/set-leader ",")
-  (evil-leader/set-key
-   "e" 'find-file
-   "f" 'projectile-find-file
-   "b" 'switch-to-buffer
-   "k" 'kill-buffer
-   "1" 'delete-other-windows
-   "m" 'helm-bookmarks
-   "0" 'toggle-fullscreen
-   "w" 'whitespace-mode
-   ";" 'comment-line)
-  )
-
 
 ;; (use-package composable
 ;;   :diminish
