@@ -1874,7 +1874,7 @@ M-<left>' and repeat with M-<left>."
 					      (dired-directory-changed-p dirname))) ;; auto revert dired
 	      ;; dired-listing-switches "-alh"                ;; commands to ls
 	      dired-listing-switches "-agho --group-directories-first"
-	      dired-isearch-filenames 'dwim
+	      ;; dired-isearch-filenames 'dwim                ;; This causes performance issues
 	      dired-hide-details-hide-symlink-targets nil  ;; don't hide linkk targets
 	      dired-maybe-use-globstar t                   ;; use shell's globstar
 	      dired-kill-when-opening-new-dired-buffer t   ;; kill when opening a new directory.
