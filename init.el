@@ -40,7 +40,7 @@
 	      ;; line-move-visual nil       ;; move cursor visual lines
 	      backward-delete-char-untabify-method nil ;; Don't untabify on backward delete
 
-	      split-width-threshold 140     ;; Limit for vertical split (default 160)
+	      split-width-threshold 145     ;; Limit for vertical split (default 160)
 	      ;; kill-whole-line t
 	      kill-region-dwim 'emacs-word
 	      load-prefer-newer t
@@ -68,8 +68,8 @@
 	      jit-lock-stealth-time 2             ;; Time to wait before fortifications (def: nil)
 	      inhibit-default-init t              ;; Avoid emacs default init
 	      term-suppress-hard-newline t        ;; Text can resize
-	      echo-keystrokes 0.001                ;; Unfinished bindings in the echo area
-	      confirm-kill-emacs nil              ;; No confirm exit emacs
+	      echo-keystrokes 0.001               ;; Unfinished bindings in the echo area
+	      confirm-kill-emacs 'y-or-n-p        ;; No confirm exit emacs
 	      disabled-command-function nil
 	      auto-save-default nil               ;; No autosave
 	      auto-save-list-file-name nil
@@ -501,7 +501,7 @@ M-<left>' and repeat with M-<left>."
   (setq-local show-trailing-whitespace t  ;; Show trailing whitespaces
 	      indicate-empty-lines t      ;; Show empty lines at end of file
 	      )
-  ;(whitespace-mode 1)
+  (whitespace-mode 1)
   (electric-pair-local-mode 1))
 
 ;; Esto no funciona
@@ -650,7 +650,7 @@ M-<left>' and repeat with M-<left>."
 	      read-extended-command-predicate #'command-completion-default-include-p
 	      read-file-name-completion-ignore-case t
 	      read-buffer-completion-ignore-case t
-	      completion-ignore-case t
+	      completion-ignore-case nil
 
 	      completion-auto-deselect t            ;; De-select completions on write
 	      completions-sort 'historical          ;; alphabetical + historical
@@ -946,7 +946,7 @@ M-<left>' and repeat with M-<left>."
 
 (defvar-keymap my/tmux-like-keymap
   :doc "A keymap that emulates some of the tmux bindings."
-  "i" #'tab-new
+  "C-i" #'tab-new
   "k" #'tab-close
   "1" #'tab-close-other
   "r" #'tab-rename
@@ -1224,19 +1224,19 @@ M-<left>' and repeat with M-<left>."
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
 
-(use-package highlight-indent-guides :defer t
-  :diminish
-  :init
-  (setq-default highlight-indent-guides-auto-enabled nil
-		highlight-indent-guides-method 'character
-		;; highlight-indent-guides-character ?\x00BB ;; This doesn't work
-		)
-  (keymap-global-set "M-s h i" #'highlight-indent-guides-mode)
-  :config
-  (set-face-attribute 'highlight-indent-guides-character-face nil
-		      :foreground (my/named-color brightblack)))
+;; (use-package highlight-indent-guides :defer t
+;;   :diminish
+;;   :init
+;;   (setq-default highlight-indent-guides-auto-enabled nil
+;; 		highlight-indent-guides-method 'character
+;; 		;; highlight-indent-guides-character ?\x00BB ;; This doesn't work
+;; 		)
+;;   (keymap-global-set "M-s h i" #'highlight-indent-guides-mode)
+;;   :config
+;;   (set-face-attribute 'highlight-indent-guides-character-face nil
+;; 		      :foreground (my/named-color brightblack)))
 
-(add-hook 'prog-mode-delay-hook #'highlight-indent-guides-mode)
+;; (add-hook 'prog-mode-delay-hook #'highlight-indent-guides-mode)
 
 ;;__________________________________________________________
 ;; Flyspell (Orthography)
@@ -1400,6 +1400,9 @@ M-<left>' and repeat with M-<left>."
 	 (shell-mode . completion-preview-mode)
 	 (eshell-mode . completion-preview-mode)
 	 (vterm-mode . completion-preview-mode))
+  :init
+  (setq-default completion-preview-idle-delay 0.3
+		completion-preview-ignore-case nil)
   :config
   (keymap-set completion-preview-active-mode-map "TAB" #'completion-preview-complete)
   )
@@ -2566,6 +2569,10 @@ M-<left>' and repeat with M-<left>."
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-ts-mode))
 
   (add-to-list 'auto-mode-alist '("\\.\\(ba\\)?sh\\'" . bash-ts-mode))
+  (add-to-list 'interpreter-mode-alist '("bash" . bash-ts-mode))
+  (add-hook 'bash-ts-mode-hook (lambda ()
+				 (setq-local indent-tabs-mode t
+					     tab-width 4)))
 
   (add-to-list 'auto-mode-alist
                '("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
@@ -2666,6 +2673,7 @@ M-<left>' and repeat with M-<left>."
   (add-hook 'rust-ts-mode-hook #'my/rust-ts-mode-hook)
 
   ;; Markdown
+  (setq-default markdown-command "cmark-gfm")
   (defun my/markdown-ts-mode-hook ()
     "Hook to improve indentation in markdown mode"
     (setq-local tab-width 4)

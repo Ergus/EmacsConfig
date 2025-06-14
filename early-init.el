@@ -19,7 +19,7 @@
   (add-hook 'window-setup-hook #'profiler-stop 0))
 
 (defconst file-name-handler-alist-save file-name-handler-alist)
-(defconst my/gc-cons-threshold (* 8 gc-cons-threshold))
+(defconst my/gc-cons-threshold (* 16 gc-cons-threshold))
 
 (defsubst my/unset-gc ()
   "Disable the gc."
