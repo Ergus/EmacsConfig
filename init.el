@@ -1266,15 +1266,15 @@ M-<left>' and repeat with M-<left>."
   (setf (cdr flyspell-mode-map) nil)  ;; clear yas minor map
   (keymap-set flyspell-mode-map "C-c f" (cons "flyspell" flyspell-basic-map)))
 
-(use-package flyspell-correct
-  :diminish
-  :after flyspell
-  :config
-  (keymap-set flyspell-basic-map "w" #'flyspell-correct-wrapper)
-  (keymap-set flyspell-basic-map "f" #'flyspell-correct-at-point)
-  (keymap-set flyspell-basic-map "C-n" #'flyspell-correct-next)
-  (keymap-set flyspell-basic-map "C-p" #'flyspell-correct-previous)
-  )
+;; (use-package flyspell-correct
+;;   :diminish
+;;   :after flyspell
+;;   :config
+;;   (keymap-set flyspell-basic-map "w" #'flyspell-correct-wrapper)
+;;   (keymap-set flyspell-basic-map "f" #'flyspell-correct-at-point)
+;;   (keymap-set flyspell-basic-map "C-n" #'flyspell-correct-next)
+;;   (keymap-set flyspell-basic-map "C-p" #'flyspell-correct-previous)
+;;   )
 
 ;;__________________________________________________________
 ;; Completions
@@ -1974,27 +1974,27 @@ M-<left>' and repeat with M-<left>."
 (eval-after-load 'ibuffer
   '(which-key-add-keymap-based-replacements ibuffer--filter-map "G" "Groups"))
 
-(use-package ibuffer-sidebar :defer t
-  :commands 'ibuffer-sidebar-showing-sidebar-p
-  :init
-  (keymap-set my/sidebar-map "b" #'ibuffer-sidebar-toggle-sidebar))
+;; (use-package ibuffer-sidebar :defer t
+;;   :commands 'ibuffer-sidebar-showing-sidebar-p
+;;   :init
+;;   (keymap-set my/sidebar-map "b" #'ibuffer-sidebar-toggle-sidebar))
 
-(defun my/sidebar-toggle ()
-  "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
-  (interactive)
-  (let ((ibuffer-showing (ibuffer-sidebar-showing-sidebar-p))
-	(dired-showing (dired-sidebar-showing-sidebar-p)))
-    (if (or ibuffer-showing dired-showing)
-	(progn
-	  (when dired-showing
-	    (dired-sidebar-hide-sidebar))
-	  (when ibuffer-showing
-	    (ibuffer-sidebar-hide-sidebar)))
-      (dired-sidebar-toggle-sidebar)
-      (ibuffer-sidebar-toggle-sidebar))))
+;; (defun my/sidebar-toggle ()
+;;   "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
+;;   (interactive)
+;;   (let ((ibuffer-showing (ibuffer-sidebar-showing-sidebar-p))
+;; 	(dired-showing (dired-sidebar-showing-sidebar-p)))
+;;     (if (or ibuffer-showing dired-showing)
+;; 	(progn
+;; 	  (when dired-showing
+;; 	    (dired-sidebar-hide-sidebar))
+;; 	  (when ibuffer-showing
+;; 	    (ibuffer-sidebar-hide-sidebar)))
+;;       (dired-sidebar-toggle-sidebar)
+;;       (ibuffer-sidebar-toggle-sidebar))))
 
 
-(keymap-set my/sidebar-map "s" #'my/sidebar-toggle)
+;(keymap-set my/sidebar-map "s" #'my/sidebar-toggle)
 
 ;;__________________________________________________________
 ;; neotree (Like dired sidebar but a bit fancier.)
@@ -2029,14 +2029,14 @@ M-<left>' and repeat with M-<left>."
 
 (keymap-global-set "C-c x" (cons "xref" my/xref-basic-map))
 
-(use-package imenu-list :defer t
-  :init
-  (setq-default imenu-list-position 'left
-		imenu-list-focus-after-activation t
-		imenu-list-size 0.2)
-  (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle)
-  :config
-  (add-hook 'imenu-list-after-jump-hook #'pulse-momentary-highlight-one-line))
+;; (use-package imenu-list :defer t
+;;   :init
+;;   (setq-default imenu-list-position 'left
+;; 		imenu-list-focus-after-activation t
+;; 		imenu-list-size 0.2)
+;;   (keymap-set my/sidebar-map "i" #'imenu-list-smart-toggle)
+;;   :config
+;;   (add-hook 'imenu-list-after-jump-hook #'pulse-momentary-highlight-one-line))
 
 (use-package dumb-jump :defer t
   :bind-keymap ("C-c j" . dumb-jump-mode-map)
@@ -2176,9 +2176,9 @@ M-<left>' and repeat with M-<left>."
 (use-package nasm-mode
   :mode ("\\.asm\\'" "\\.s\\'"))
 
-(use-package flymake-nasm :defer t
-  :init
-  (add-hook 'asm-mode-hook-hook #'flymake-nasm-setup))
+;; (use-package flymake-nasm :defer t
+;;   :init
+;;   (add-hook 'asm-mode-hook-hook #'flymake-nasm-setup))
 
 ;;__________________________________________________________
 ;; Cobol
@@ -2359,10 +2359,10 @@ M-<left>' and repeat with M-<left>."
 ;;__________________________________________________________
 ;; Multiple Cursors
 
-(use-package iedit :defer t
-  :init
-  (setq-default iedit-toggle-key-default nil) ;; this avoids calling iedit-update-key-bindings
-  )
+;; (use-package iedit :defer t
+;;   :init
+;;   (setq-default iedit-toggle-key-default nil) ;; this avoids calling iedit-update-key-bindings
+;;   )
 
 (global-unset-key (kbd "C-c <down-mouse-1>"))
 (use-package multiple-cursors :defer t
