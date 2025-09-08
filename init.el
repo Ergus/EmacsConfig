@@ -1206,7 +1206,7 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; Undo
-(setq-default undo-only t)               ;; undo does not go throw redo entries
+(setq-default undo-no-redo t)               ;; undo does not go throw redo entries
 (keymap-global-set "C-M-/" #'undo-redo)  ;; For gui; in tty "C-M-/" == "C-M-_"
 ;; (global-set-key (kbd "C-M-_") #'undo-redo) already set by default
 
