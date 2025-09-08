@@ -1937,6 +1937,8 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; Dired-mode settings (file manager)
+(customize-set-variable 'dired-mouse-drag-files t)
+
 (setq-default dired-recursive-copies 'top                  ;; Always ask recursive copy
 	      dired-recursive-deletes 'top                 ;; Always ask recursive delete
 	      dired-dwim-target 'dired-dwim-target-recent  ;; Copy in split mode with p
@@ -1949,7 +1951,6 @@ M-<left>' and repeat with M-<left>."
 	      dired-hide-details-hide-symlink-targets nil  ;; don't hide linkk targets
 	      dired-maybe-use-globstar t                   ;; use shell's globstar
 	      dired-kill-when-opening-new-dired-buffer t   ;; kill when opening a new directory.
-	      dired-mouse-drag-files t
 	      dired-guess-shell-alist-user '(("\\.pdf\\'" "xdg-open")
 					     ("\\.jpe?g\\'" "xdg-open")
 					     ("\\.png\\'" "xdg-open")
