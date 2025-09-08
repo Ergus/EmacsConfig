@@ -1208,18 +1208,33 @@ M-<left>' and repeat with M-<left>."
   (setq vundo-glyph-alist vundo-unicode-symbols))
 
 ;;__________________________________________________________
-;; Cycle string capitalization for programming:
-;; "foo_bar => FOO_BAR => FooBar => fooBar => foo-bar => Foo_Bar => foo_bar"
+;; Cycle string capitalization for programming:\
 (use-package string-inflection :defer t
+  :preface
+  (defun my/string-inflection-cpp-style-cycle-function (str)
+    "fooBar => FOO_BAR => FooBar => fooBar"
+    (cond
+     ((string-inflection-snake-case-p str)
+      (string-inflection-camel-case-function str))
+     ((string-inflection-camel-case-p str)
+      (string-inflection-pascal-case-function str))
+     ((string-inflection-pascal-case-p str)
+      (string-inflection-snake-case-function str))
+     (t
+      (string-inflection-camel-case-function str))))
+
+  (defun my/string-inflection-cpp-cycle ()
+    (interactive)
+    (string-inflection--symbol-or-region #'my/string-inflection-cpp-style-cycle-function))
   :init
-  (keymap-global-set "C-c SPC" #'string-inflection-all-cycle)
-
+  (keymap-global-set "C-c SPC" #'my/string-inflection-cpp-cycle)
+  :autoload string-inflection--symbol-or-region
   :config
-  (defvar-keymap string-inflection-repeat-map
+  (defvar-keymap my/string-inflection-repeat-map
     :doc "Keymap to repeat inflection. Used in `string-inflection-all-cycle'."
-    "SPC" #'string-inflection-all-cycle)
+    "SPC" #'my/string-inflection-cpp-cycle)
 
-  (put #'string-inflection-all-cycle 'repeat-map 'string-inflection-repeat-map))
+  (put #'my/string-inflection-cpp-cycle 'repeat-map 'my/string-inflection-repeat-map))
 
 ;;__________________________________________________________
 ;; Mark column 80 when crossed
