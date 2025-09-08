@@ -137,10 +137,11 @@
 ;;__________________________________________________________
 ;; use-package
 
-;; (use-package benchmark-init
-;;   :config
-;;   ;; To disable collection of benchmark data after init is done.
-;;   (add-hook 'window-setup-hook 'benchmark-init/deactivate))
+(use-package benchmark-init
+  :if init-file-debug 
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'window-setup-hook #'benchmark-init/deactivate 91))
 
 ;; Function to see the dependencies list.
 ;; (defvar my/require-tree nil)
