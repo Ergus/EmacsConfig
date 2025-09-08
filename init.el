@@ -2144,9 +2144,12 @@ M-<left>' and repeat with M-<left>."
 (use-package magit :defer t
   :init
   (setq-default magit-define-global-key-bindings nil
+		magit-refresh-status-buffer nil
 		magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1
 		;; This may help for tramp
 		auto-revert-buffer-list-filter 'magit-auto-revert-repository-buffer-p
+		magit-refresh-verbose init-file-debug  ;; print verbose information
+		;; magit-auto-revert-tracked-only nil
 
 		;; magit-completing-read-function #'ivy-completing-read ;; this is not needed anymore.
 		;;magit-bury-buffer-function #'magit-mode-quit-window
