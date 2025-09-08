@@ -120,6 +120,7 @@
 	      ;;large-file-warning-threshold nil    ;; no warning when the file is too big
 	      proced-enable-color-flag t            ;; colors in proced
 	      load-path-filter-function #'load-path-filter-cache-directory-files
+	      ;; garbage-collection-messages t
 	      )
 
 ;; Vertical window divider
