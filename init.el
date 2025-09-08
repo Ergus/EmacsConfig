@@ -2033,8 +2033,11 @@ M-<left>' and repeat with M-<left>."
 
 (with-eval-after-load 'xref
   (setq-default xref-search-program 'ripgrep
-		xref-show-definitions-function #'xref-show-definitions-buffer-at-bottom
-		xref-show-xrefs-function #'xref-show-definitions-buffer-at-bottom)
+		xref-show-definitions-function #'xref-show-definitions-completing-read
+		xref-show-xrefs-function #'xref-show-definitions-completing-read
+		;; xref-show-definitions-function #'xref-show-definitions-buffer-at-bottom 
+		;; xref-show-xrefs-function #'xref-show-definitions-buffer-at-bottom
+		)
   (add-to-list 'xref-prompt-for-identifier 'xref-find-references t))
 
 (defvar-keymap my/xref-basic-map
