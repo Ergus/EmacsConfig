@@ -939,9 +939,11 @@ M-<left>' and repeat with M-<left>."
 
 ;;__________________________________________________________
 ;; tab-bar
-(setq-default tab-bar-tab-hints t  ;; show tab numbers
-	      tab-bar-close-last-tab-choice 'tab-bar-mode-disable ;; When close last
-	      tab-bar-show 1)
+(customize-set-variable 'tab-bar-tab-hints t) ;; show tab numbers
+(customize-set-variable 'tab-bar-show 1) ;; show tab numbers
+
+(setq-default tab-bar-close-last-tab-choice 'tab-bar-mode-disable) ;; When close last
+
 (which-key-add-key-based-replacements "C-x t" "tab-bar")  ;; by default
 
 (defvar-keymap my/tmux-like-keymap
