@@ -1819,7 +1819,7 @@ M-<left>' and repeat with M-<left>."
 	      message-kill-buffer-on-exit t
 	      message-send-mail-function #'message-use-send-mail-function
 	      mail-header-separator ""
-	      auth-sources '("/mnt/casa/mail/authinfo.gpg")
+	      auth-sources `(,(expand-file-name "authinfo.gpg" user-emacs-directory))
 	      user-mail-address "spacibba@aol.com"
 	      )
 
