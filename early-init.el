@@ -40,7 +40,7 @@
           (lambda ()
             (setq file-name-handler-alist file-name-handler-alist-save)
 	    (my/restore-gc)
-	    ;; (garbage-collect)
+	    (garbage-collect)
 	    (let ((curtime (current-time)))
 
 	      (message "Times: init:%.06f total:%.06f gc-done:%d (%s)"
