@@ -368,6 +368,7 @@ M-<left>' and repeat with M-<left>."
 (global-display-fill-column-indicator-mode t)
 
 ;; Save history
+(setq-default savehist-ignored-variables '(command-history)) ;; creates performance issues
 (savehist-mode t)
 
 ;; Compress and delete selection
