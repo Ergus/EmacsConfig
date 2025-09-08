@@ -403,6 +403,7 @@ M-<left>' and repeat with M-<left>."
 ;; autorevert
 (setq-default ffap-machine-p-known 'accept   ;; stop ffap from pinging random hosts
 	      ffap-require-prefix t          ;; require prefix for ffap
+	      ffap-prefer-remote-file t      ;; ffap always finds remote files in buffers with remote
 	      dired-at-point-require-prefix t ;; Como ffap-require-prefix para directorios
 	      auto-revert-verbose nil        ;; not show message when file changes
 	      auto-revert-mode-text ""
