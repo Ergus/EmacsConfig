@@ -1278,6 +1278,16 @@ M-<left>' and repeat with M-<left>."
     "b" #'flyspell-buffer
     "n" #'flyspell-goto-next-error)
 
+  (defvar-keymap my/flyspell-repeat-map
+    :doc "The repeat keymap for `flyspell-mode'."
+    "n" #'flyspell-goto-next-error
+    "c" #'flyspell-correct-word-before-point
+    "TAB" #'flyspell-auto-correct-word)
+
+  (put #'flyspell-goto-next-error 'repeat-map my/flyspell-repeat-map)
+  (put #'flyspell-correct-word-before-point 'repeat-map my/flyspell-repeat-map)
+  (put #'flyspell-auto-correct-word 'repeat-map my/flyspell-repeat-map)
+
   (setf (cdr flyspell-mode-map) nil)  ;; clear yas minor map
   (keymap-set flyspell-mode-map "C-c f" (cons "flyspell" flyspell-basic-map)))
 
