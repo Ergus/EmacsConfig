@@ -128,6 +128,12 @@
 ;; 			(make-glyph-code ?\u2502))  ;; also works 2503, it is wider
 (standard-display-unicode-special-glyphs)
 
+(add-hook 'post-gc-hook (lambda ()
+			  (message "GC %s %s elapsed:%s count:%s"
+				   gc-cons-threshold gc-cons-percentage
+				   gc-elapsed gcs-done)))
+
+
 ;;__________________________________________________________
 ;; use-package
 
@@ -705,8 +711,15 @@ M-<left>' and repeat with M-<left>."
 ;; (setq-default enable-recursive-minibuffers t) ;; Enable nesting in minibuffer
 ;; (minibuffer-depth-indicate-mode 1)            ;; Mostrar nivel de nesting en minibuffer
 
-(add-hook 'minibuffer-setup-hook #'my/unset-gc)
-(add-hook 'minibuffer-exit-hook #'my/restore-gc)
+;; (add-hook 'minibuffer-setup-hook #'my/unset-gc)
+;; (add-hook 'minibuffer-exit-hook #'my/restore-gc)
+
+;; Improve garbage collection strategy.
+(use-package gcmh :defer t
+  :init
+  (add-hook 'window-setup-hook (lambda ()
+				 (gcmh-mode 1))
+	    91))
 
 ;; Arrows up/down search prefix in history like `history-search-backward' in bash
 (keymap-set minibuffer-local-map "<down>" #'next-complete-history-element)
