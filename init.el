@@ -2537,6 +2537,8 @@ M-<left>' and repeat with M-<left>."
 
 (when (file-readable-p (expand-file-name "tree-sitter" user-emacs-directory))
 
+  (customize-set-variable 'treesit-enabled-modes t)
+
   (setq-default toml-ts-mode-indent-offset 4
 		cmake-ts-mode-indent-offset 4
 		json-ts-mode-indent-offset 4
@@ -2550,43 +2552,12 @@ M-<left>' and repeat with M-<left>."
 
   (defvaralias 'c-ts-mode-indent-offset 'tab-width)
 
-  (add-to-list 'major-mode-remap-alist '(conf-toml-mode . toml-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(ruby-mode . ruby-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(javascript-mode . js-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(css-mode . css-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(js-json-mode . json-ts-mode))
-
-  (add-to-list 'auto-mode-alist
-               '("\\(?:CMakeLists\\.txt\\|\\.cmake\\)\\'" . cmake-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.html\\'" . html-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode))
-  (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
-  (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-ts-mode))
-
-  (add-to-list 'auto-mode-alist '("\\.\\(ba\\)?sh\\'" . bash-ts-mode))
-  (add-to-list 'interpreter-mode-alist '("bash" . bash-ts-mode))
   (add-hook 'bash-ts-mode-hook (lambda ()
 				 (setq-local indent-tabs-mode t
 					     tab-width 4)))
-
-  (add-to-list 'auto-mode-alist
-               '("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
-                 . dockerfile-ts-mode))
-
   ;; C/C++/Cuda modes
   (setq-default c-ts-mode-indent-style 'linux
 		c-ts-mode-enable-doxygen nil)
-
-  (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))
-  (add-to-list 'major-mode-remap-alist '(csharp-mode . csharp-ts-mode))
 
   (defun my/c-ts-indent-rules-generate (mode)
     "Rules generator for c, c++ and cuda modes"
@@ -2648,8 +2619,7 @@ M-<left>' and repeat with M-<left>."
   (defun my/rust-arguments-indent (node-t parent-t grand-parent-t)
     ;;(message "HEE: %s | %s | %s" node-t parent-t grand-parent-t)
     (and (string-match-p "arguments" (treesit-node-type parent-t))
-	 (string-equal "."
-	  (treesit-node-type (treesit-node-next-sibling (treesit-node-parent parent-t))))))
+	 (string-equal "." (treesit-node-type (treesit-node-next-sibling (treesit-node-parent parent-t))))))
 
   ;; Rust mode
   (defun my/rust-ts-mode-hook ()
@@ -2709,8 +2679,7 @@ M-<left>' and repeat with M-<left>."
   (use-package git-commit-ts-mode
     :mode "\\COMMIT_EDITMSG\\'"
     :config
-    (my/treesit-install-grammar 'gitcommit "https://github.com/gbprod/tree-sitter-gitcommit"))
-)
+    (my/treesit-install-grammar 'gitcommit "https://github.com/gbprod/tree-sitter-gitcommit")))
 
 
 ;;__________________________________________________________
